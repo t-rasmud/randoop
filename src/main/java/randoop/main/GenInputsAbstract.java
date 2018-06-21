@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
@@ -835,10 +836,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      /*@Nullable*/ Path listFile,
-      String fileDescription,
-      String commentRegex,
-      String includeRegex) {
+      @Nullable Path listFile, String fileDescription, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
