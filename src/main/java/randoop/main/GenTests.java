@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
@@ -78,6 +79,7 @@ import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -86,8 +88,8 @@ import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
-import randoop.util.predicate.Predicate;
 
+/** Test generation. */
 public class GenTests extends GenInputsAbstract {
 
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
@@ -312,6 +314,7 @@ public class GenTests extends GenInputsAbstract {
     assert operationModel != null;
 
     List<TypedOperation> operations = operationModel.getOperations();
+    Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
      * Stop if there is only 1 operation. This will be Object().
@@ -364,7 +367,12 @@ public class GenTests extends GenInputsAbstract {
      */
     AbstractGenerator explorer =
         new ForwardGenerator(
-            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+            operations,
+            observers,
+            new GenInputsAbstract.Limits(),
+            componentMgr,
+            listenerMgr,
+            classesUnderTest);
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();

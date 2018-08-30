@@ -177,7 +177,7 @@ occasions when they fail and reveal a bug or a regression failure.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
-Randoop runs on a Java 7 or Java 8 JVM.
+Randoop runs on a Java 8 JVM.
 </p>
 
 <p>
@@ -590,6 +590,9 @@ Violation of any of these contracts is highly likely to indicate an error.
 
 <p>
 You can add additional contracts to Randoop.
+Define a contract in directory
+<code>randoop/src/main/java/randoop/contract/</code>,
+and reference it in the constructor for <code>OperationModel</code>.
 </p>
 
 
@@ -1118,6 +1121,14 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
   <li><b>PACKAGE</b> A literal is used as input to methods of any classes in the same package.
   <li><b>ALL</b> Each literal is used as input to any method under test.
+</ul>
+
+            <li id="option:method-selection"><b>--method-selection=</b><i>enum</i>.
+             Randoop generates new tests by choosing from a set of methods under test. This controls how the
+ next method is chosen, from among all methods under test. [default UNIFORM]
+<ul>
+  <li><b>UNIFORM</b> Select methods randomly with uniform probability.
+  <li><b>BLOODHOUND</b> The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
 </ul>
 
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
@@ -2276,8 +2287,8 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
-  Another possible cause of the problem is using Java 9; Randoop currently
-  only runs under a Java 7 or Java 8 JVM.
+  Another possible cause of the problem is using Java 9 or higher; Randoop currently
+  only runs under a Java 8 JVM.
 </p>
 
 

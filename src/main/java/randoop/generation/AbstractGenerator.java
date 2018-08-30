@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
@@ -21,7 +22,6 @@ import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
-import randoop.util.predicate.Predicate;
 
 /**
  * Algorithm template for implementing a test generator.
@@ -332,6 +332,7 @@ public abstract class AbstractGenerator {
           outErrorSeqs.add(eSeq);
         } else {
           outRegressionSeqs.add(eSeq);
+          newRegressionTestHook(eSeq.sequence);
         }
       }
 
@@ -450,4 +451,13 @@ public abstract class AbstractGenerator {
   public OperationHistoryLogInterface getOperationHistory() {
     return operationHistory;
   }
+
+  /**
+   * Take action based on the given {@link Sequence} that was classified as a regression test, i.e.,
+   * normal behavior.
+   *
+   * @param sequence the new test sequence that was classified as a regression test, i.e., normal
+   *     behavior
+   */
+  public abstract void newRegressionTestHook(Sequence sequence);
 }
