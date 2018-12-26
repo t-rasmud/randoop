@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 
@@ -18,13 +19,13 @@ public class TestCoverageInfo {
     final int covered;
     final int inMethod;
 
-    BranchCov(int covered, int inMethod) {
+    BranchCov(@Det int covered, @Det int inMethod) {
       this.covered = covered;
       this.inMethod = inMethod;
     }
   }
 
-  public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
+  public TestCoverageInfo(@Det int totalBranches, @Det Map<String, Set<Integer>> map) {
     if (totalBranches < 0) throw new IllegalArgumentException();
     branchTrue = new int[totalBranches];
     branchFalse = new int[totalBranches];
@@ -83,7 +84,7 @@ public class TestCoverageInfo {
     return new BranchCov(branchesCovered, totalBranches);
   }
 
-  public static String getCoverageInfo(Class<?> clazz) {
+  public static String getCoverageInfo(@Det Class<?> clazz) {
 
     if (!isInstrumented(clazz)) {
       return "Class<?> not instrumented for branch coverage: " + clazz.getName();

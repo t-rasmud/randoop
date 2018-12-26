@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -43,7 +44,7 @@ public final class Util {
    * @param o2 second object to test
    * @return true if arguments are both null or equal, and false otherwise
    */
-  public static boolean equalsWithNull(Object o1, Object o2) {
+  public static boolean equalsWithNull(@Det Object o1, @Det Object o2) {
     if (o1 == null) {
       return o2 == null;
     }
@@ -56,7 +57,7 @@ public final class Util {
    * @param s string to test
    * @return true if the string is a legal Java identifier
    */
-  public static boolean isJavaIdentifier(String s) {
+  public static boolean isJavaIdentifier(@Det String s) {
     if (s == null || s.length() == 0 || !Character.isJavaIdentifierStart(s.charAt(0))) {
       return false;
     }
@@ -74,8 +75,8 @@ public final class Util {
    * @param unicodeString string to convert
    * @return converted string
    */
-  public static String convertToHexString(String unicodeString) {
-    char[] chars = unicodeString.toCharArray();
+  public static String convertToHexString(@Det String unicodeString) {
+    char @Det [] chars = unicodeString.toCharArray();
     StringBuilder output = new StringBuilder();
     for (int i = 0; i < chars.length; i++) {
       output.append("\\u");
@@ -97,7 +98,7 @@ public final class Util {
    * @param pattern string pattern to search for
    * @return the number of times the pattern appears in the text
    */
-  public static int occurCount(StringBuilder text, String pattern) {
+  public static int occurCount(@Det StringBuilder text, @Det String pattern) {
     if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
     int i = 0;
     int currIdx = text.indexOf(pattern);
@@ -118,13 +119,14 @@ public final class Util {
    * @param indentWidth the number of spaces before each line other than the first line
    * @return a string representation of the formatted paragraph, include line separators
    */
-  public static String hangingParagraph(String string, int colWidth, int indentWidth) {
+  public static String hangingParagraph(
+      @Det String string, @Det int colWidth, @Det int indentWidth) {
     if (string == null) throw new IllegalArgumentException("string cannot be null.");
     if (indentWidth > colWidth) {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
     }
 
-    String indentString = new String(new char[indentWidth]).replace("\0", " ");
+    String indentString = new String(new @Det char @Det [indentWidth]).replace("\0", " ");
 
     StringBuilder b = new StringBuilder();
 
@@ -173,7 +175,7 @@ public final class Util {
    * @param replacements the map of replacements to perform
    * @return the text modified by replacing original names with replacement names
    */
-  public static String replaceWords(String text, Map<String, String> replacements) {
+  public static String replaceWords(@Det String text, @Det Map<String, String> replacements) {
     Pattern namesPattern =
         Pattern.compile("\\b(" + UtilPlume.join(replacements.keySet().toArray(), "|") + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);

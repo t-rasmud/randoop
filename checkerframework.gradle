@@ -54,7 +54,12 @@ compileJava {
   doFirst {
     options.compilerArgs = [
         // '-processor', 'org.checkerframework.checker.nullness.NullnessChecker,org.checkerframework.checker.signature.SignatureChecker',
-        '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
+        // '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
+        '-processor',
+		'org.checkerframework.checker.determinism.DeterminismChecker',
+		'-AonlyDefs=randoop.util',
+		// '-AonlyDefs=randoop.util.StringEscapeUtils',
+		// '-AonlyDefs=IdentityMultiMap',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
         // '-Awarns',      // -Awarns turns Checker Framework errors into warnings

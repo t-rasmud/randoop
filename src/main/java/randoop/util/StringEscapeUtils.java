@@ -20,6 +20,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.Writer;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Escapes and unescapes {@code String}s for Java, JavaScript, HTML, XML, and SQL.
@@ -75,7 +76,7 @@ public class StringEscapeUtils {
    * @param str string to escape values in, may be null
    * @return a String with escaped values, {@code null} if input string was null
    */
-  public static String escapeJava(String str) {
+  public static String escapeJava(@Det String str) {
     return escapeJavaStyleString(str, false);
   }
 
@@ -90,11 +91,11 @@ public class StringEscapeUtils {
    * @throws IOException if error occurs on underlying Writer
    * @see #escapeJava(java.lang.String)
    */
-  public static void escapeJava(Writer out, String str) throws IOException {
+  public static void escapeJava(@Det Writer out, @Det String str) throws IOException {
     escapeJavaStyleString(out, str, false);
   }
 
-  public static String escapeJavaStyleString(String str, boolean escapeSingleQuotes) {
+  public static String escapeJavaStyleString(@Det String str, @Det boolean escapeSingleQuotes) {
     if (str == null) {
       return null;
     }
@@ -109,8 +110,8 @@ public class StringEscapeUtils {
     }
   }
 
-  private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote)
-      throws IOException {
+  private static void escapeJavaStyleString(
+      @Det Writer out, @Det String str, @Det boolean escapeSingleQuote) throws IOException {
     if (out == null) {
       throw new IllegalArgumentException("The Writer must not be null");
     }
