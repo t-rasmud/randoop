@@ -6,9 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
-public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
+public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements IMultiMap<T1, T2> {
 
   private final Map<T1, Set<T2>> map;
 
@@ -20,18 +21,18 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
     map = new LinkedHashMap<>(initialCapacity);
   }
 
-  public void put(T1 key, Collection<? extends T2> values) {
+  public void put(@Det MultiMap<T1, T2> this, @Det T1 key, @Det Collection<? extends T2> values) {
     if (contains(key)) remove(key);
     map.put(key, new LinkedHashSet<T2>(values));
   }
 
-  public void addAll(Map<? extends T1, ? extends T2> m) {
+  public void addAll(@Det Map<? extends T1, ? extends T2> m) {
     for (T1 t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
-  public void addAll(T1 key, Collection<? extends T2> values) {
+  public void addAll(T1 key, @Det Collection<? extends T2> values) {
     for (T2 t2 : values) {
       add(key, t2);
     }

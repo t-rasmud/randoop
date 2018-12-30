@@ -33,6 +33,7 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -121,7 +122,7 @@ public class ClassFileConstants {
    * @return the set of constants of the given type
    * @see #getConstants(String,ConstantSet)
    */
-  public static ConstantSet getConstants(String classname) {
+  public static ConstantSet getConstants(@Det String classname) {
     ConstantSet result = new ConstantSet();
     getConstants(classname, result);
     return result;
@@ -135,7 +136,7 @@ public class ClassFileConstants {
    * @return the set of constants with new constants of given type added
    * @see #getConstants(String)
    */
-  public static ConstantSet getConstants(String classname, ConstantSet result) {
+  public static ConstantSet getConstants(@Det String classname, @Det ConstantSet result) {
 
     ClassParser cp;
     JavaClass jc;
@@ -154,7 +155,7 @@ public class ClassFileConstants {
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
-    for (Constant c : constant_pool.getConstantPool()) {
+    for (@Det Constant c : constant_pool.getConstantPool()) {
       // System.out.printf ("*Constant = %s%n", c);
       if (c == null
           || c instanceof ConstantClass
@@ -192,7 +193,7 @@ public class ClassFileConstants {
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
       if (il != null) {
-        for (Instruction inst : il.getInstructions()) {
+        for (@Det Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
               // Compare two objects, no literals

@@ -3,6 +3,7 @@ package randoop.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
@@ -10,7 +11,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   /** If an inner class has a receiver, it is the first element of this array. */
   private final Object[] inputs;
 
-  public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
+  public ConstructorReflectionCode(@Det Constructor<?> constructor, @Det Object @Det [] inputs) {
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");
     }

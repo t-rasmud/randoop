@@ -1,8 +1,9 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
-public interface ISimpleSet<T> {
+public interface ISimpleSet<T extends @Det Object> {
 
   /**
    * Adds the given elt to the set.

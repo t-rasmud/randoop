@@ -1,12 +1,13 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
  */
-public class CheckpointingSet<T> implements ISimpleSet<T> {
+public class CheckpointingSet<T extends @Det Object> implements ISimpleSet<T> {
 
   public final CheckpointingMultiMap<T, Boolean> map;
 
@@ -15,7 +16,7 @@ public class CheckpointingSet<T> implements ISimpleSet<T> {
   }
 
   @Override
-  public void add(T elt) {
+  public void add(@Det CheckpointingSet<T> this, T elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
     if (contains(elt)) throw new IllegalArgumentException("set already contains elt " + elt);
     map.add(elt, true);
@@ -33,7 +34,7 @@ public class CheckpointingSet<T> implements ISimpleSet<T> {
   }
 
   @Override
-  public void remove(T elt) {
+  public void remove(@Det CheckpointingSet<T> this, T elt) {
     if (elt == null) {
       throw new IllegalArgumentException("arg cannot be null.");
     }

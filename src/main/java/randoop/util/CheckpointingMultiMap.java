@@ -7,12 +7,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
+public class CheckpointingMultiMap<T1 extends @Det Object, T2 extends @Det Object>
+    implements IMultiMap<T1, T2> {
 
   public static boolean verbose_log = false;
 
@@ -35,7 +37,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     final T1 key;
     final T2 val;
 
-    OpKeyVal(final Ops op, final T1 key, final T2 val) {
+    OpKeyVal(final @Det Ops op, final T1 key, final T2 val) {
       this.op = op;
       this.key = key;
       this.val = val;
