@@ -3,6 +3,7 @@ package randoop.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -34,7 +35,7 @@ public final class Log {
    *
    * @param s the string to output
    */
-  private static void log(String s) {
+  private static void log(@Det String s) {
     if (!isLoggingOn()) {
       return;
     }
@@ -63,7 +64,7 @@ public final class Log {
    *
    * @param s the string to output (followed by a newline)
    */
-  private static void logLine(String s) {
+  private static void logLine(@Det String s) {
     try {
       GenInputsAbstract.log.write(s);
       GenInputsAbstract.log.write(Globals.lineSep);
@@ -79,7 +80,7 @@ public final class Log {
    * @param fmt the format string
    * @param args arguments to the format string
    */
-  public static void logPrintf(String fmt, Object... args) {
+  public static void logPrintf(@Det String fmt, @Det Object... args) {
     if (!isLoggingOn()) {
       return;
     }
@@ -112,7 +113,7 @@ public final class Log {
    *
    * @param t the Throwable whose stack trace to log
    */
-  public static void logStackTrace(Throwable t) {
+  public static void logStackTrace(@Det Throwable t) {
     if (!isLoggingOn()) {
       return;
     }

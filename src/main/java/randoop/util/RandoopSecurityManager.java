@@ -4,6 +4,7 @@ import java.io.FileDescriptor;
 import java.lang.reflect.ReflectPermission;
 import java.net.InetAddress;
 import java.security.Permission;
+import org.checkerframework.checker.determinism.qual.Det;
 
 public class RandoopSecurityManager extends SecurityManager {
 
@@ -14,7 +15,7 @@ public class RandoopSecurityManager extends SecurityManager {
 
   public Status status;
 
-  public RandoopSecurityManager(Status status) {
+  public RandoopSecurityManager(@Det Status status) {
     this.status = status;
   }
 
@@ -65,7 +66,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkDelete(String file) {
+  public void checkDelete(@Det String file) {
     if (status == Status.OFF) return;
     if (file == null) throw new NullPointerException();
     throw new SecurityException(
@@ -73,7 +74,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkExec(String cmd) {
+  public void checkExec(@Det String cmd) {
     if (status == Status.OFF) return;
     if (cmd == null) throw new NullPointerException();
     throw new SecurityException("checkExec: Randoop does not allow this operation by tested code");
@@ -130,7 +131,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkPermission(Permission perm, Object context) {
+  public void checkPermission(@Det Permission perm, @Det Object context) {
     if (status == Status.OFF) return;
     if (perm instanceof ReflectPermission) {
       // Randoop allows reflection operations.
@@ -140,7 +141,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkPermission(Permission perm) {
+  public void checkPermission(@Det Permission perm) {
     if (status == Status.OFF) return;
     if (perm instanceof ReflectPermission) {
       // Randoop allows reflection operations.
@@ -168,14 +169,14 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkRead(FileDescriptor fd) {
+  public void checkRead(@Det FileDescriptor fd) {
     if (status == Status.OFF) return;
     if (fd == null) throw new NullPointerException();
     throw new SecurityException("checkRead: Randoop does not allow this operation by tested code");
   }
 
   @Override
-  public void checkRead(String file, Object context) {
+  public void checkRead(@Det String file, @Det Object context) {
     if (status == Status.OFF) return;
     if (file == null) throw new NullPointerException();
     throw new SecurityException(
@@ -183,7 +184,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkRead(String file) {
+  public void checkRead(@Det String file) {
     if (status == Status.OFF) return;
     if (file == null) throw new NullPointerException();
     // throw new SecurityException("Randoop does not allow this operation by
@@ -211,7 +212,7 @@ public class RandoopSecurityManager extends SecurityManager {
 
   @SuppressWarnings("deprecation")
   @Override
-  public boolean checkTopLevelWindow(Object window) {
+  public boolean checkTopLevelWindow(@Det Object window) {
     if (status == Status.OFF) {
       return true;
     }
@@ -222,7 +223,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkWrite(FileDescriptor fd) {
+  public void checkWrite(@Det FileDescriptor fd) {
     if (status == Status.OFF) return;
     if (fd == null) throw new NullPointerException();
     throw new SecurityException(
@@ -230,7 +231,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkWrite(String file) {
+  public void checkWrite(@Det String file) {
     if (status == Status.OFF) return;
     if (file == null) throw new NullPointerException();
     throw new SecurityException(

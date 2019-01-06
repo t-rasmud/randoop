@@ -12,7 +12,7 @@ public interface ISimpleSet<T extends @Det Object> {
    *
    * @param elt cannot be null
    */
-  void add(T elt);
+  void add(@Det ISimpleSet<T> this, T elt);
 
   /**
    * Removes the given elt from the set.
@@ -21,7 +21,7 @@ public interface ISimpleSet<T extends @Det Object> {
    *
    * @param elt cannot be null
    */
-  void remove(T elt);
+  void remove(@Det ISimpleSet<T> this, T elt);
 
   /**
    * Returns true if elt is in this set.

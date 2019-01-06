@@ -3,6 +3,7 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.main.RandoopBug;
 
 /**
@@ -14,7 +15,7 @@ import randoop.main.RandoopBug;
  * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  * SequenceCollection.getSequencesThatYield).
  */
-public class ListOfLists<T> implements SimpleList<T>, Serializable {
+public class ListOfLists<T extends @Det Object> implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = -3307714585442970263L;
 
@@ -26,7 +27,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   private int totalelements;
 
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
-  public ListOfLists(SimpleList<T>... lists) {
+  public ListOfLists(@Det SimpleList<T>... lists) {
     this.lists = new ArrayList<>(lists.length);
     for (SimpleList<T> sl : lists) {
       this.lists.add(sl);
@@ -43,7 +44,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
     }
   }
 
-  public ListOfLists(List<SimpleList<T>> lists) {
+  public ListOfLists(@Det List<SimpleList<T>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
     this.cumulativeSize = new int[lists.size()];
@@ -69,7 +70,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   }
 
   @Override
-  public T get(int index) {
+  public T get(@Det int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -84,7 +85,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   }
 
   @Override
-  public SimpleList<T> getSublist(int index) {
+  public SimpleList<T> getSublist(@Det int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -100,7 +101,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   }
 
   @Override
-  public List<T> toJDKList() {
+  public @Det List<T> toJDKList(@Det ListOfLists<T> this) {
     List<T> result = new ArrayList<>();
     for (SimpleList<T> l : lists) {
       result.addAll(l.toJDKList());
@@ -109,7 +110,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   }
 
   @Override
-  public String toString() {
+  public String toString(@Det ListOfLists<T> this) {
     return toJDKList().toString();
   }
 }

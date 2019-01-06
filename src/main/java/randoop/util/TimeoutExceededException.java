@@ -1,5 +1,7 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 /** Indicates that a test execution timed out. */
 public final class TimeoutExceededException extends RuntimeException {
 
@@ -7,7 +9,7 @@ public final class TimeoutExceededException extends RuntimeException {
 
   public TimeoutExceededException() {}
 
-  public TimeoutExceededException(String string) {
+  public TimeoutExceededException(@Det String string) {
     super(string);
   }
 }

@@ -100,7 +100,7 @@ public class StringEscapeUtils {
       return null;
     }
     try {
-      StringPrintWriter writer = new StringPrintWriter(str.length() * 2);
+      @Det StringPrintWriter writer = new StringPrintWriter(str.length() * 2);
       escapeJavaStyleString(writer, str, escapeSingleQuotes);
       return writer.getString();
     } catch (IOException ioe) {

@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Processes a single record given by RecordListReader. */
 public interface RecordProcessor {
@@ -10,5 +11,5 @@ public interface RecordProcessor {
    *
    * @param record the lines of a record
    */
-  void processRecord(List<String> record);
+  void processRecord(@Det RecordProcessor this, @Det List<String> record);
 }

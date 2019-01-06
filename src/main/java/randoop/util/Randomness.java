@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -32,7 +33,7 @@ public final class Randomness {
    */
   static Random random = new Random(SEED);
 
-  public static void setSeed(long newSeed) {
+  public static void setSeed(@Det long newSeed) {
     random.setSeed(newSeed);
     totalCallsToRandom = 0;
     logSelection("[Random object]", "setSeed", newSeed);
@@ -57,7 +58,7 @@ public final class Randomness {
    *
    * @return the internal random seed
    */
-  public static long getSeed() {
+  public static @Det long getSeed() {
     try {
       return ((AtomicLong) seedField.get(Randomness.random)).get();
     } catch (IllegalAccessException e) {
@@ -73,7 +74,7 @@ public final class Randomness {
    *
    * @param caller the name of the method that called Randomness.random
    */
-  private static void incrementCallsToRandom(String caller) {
+  private static void incrementCallsToRandom(@Det String caller) {
     totalCallsToRandom++;
     Log.logPrintf(
         "randoop.util.Randomness called by %s: %d calls to Random so far, seed = %d%n",
@@ -86,7 +87,7 @@ public final class Randomness {
    * @param i upper bound on range for generated values
    * @return a value selected from range [0, i)
    */
-  public static int nextRandomInt(int i) {
+  public static @Det int nextRandomInt(@Det int i) {
     incrementCallsToRandom("nextRandomInt");
     int value = Randomness.random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
@@ -100,7 +101,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(List<T> list) {
+  public static <T extends @Det Object> T randomMember(@Det List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
@@ -116,7 +117,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(SimpleList<T> list) {
+  public static <T extends @Det Object> T randomMember(@Det SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
@@ -135,7 +136,8 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
+  public static <T extends @Det Object> T randomMemberWeighted(
+      @Det SimpleList<T> list, @Det Map<T, Double> weights) {
 
     if (list.size() == 0) {
       throw new IllegalArgumentException("Empty list");
@@ -165,8 +167,8 @@ public final class Randomness {
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(
-      SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
+  public static <T extends @Det Object> T randomMemberWeighted(
+      @Det SimpleList<T> list, Map<T, Double> weights, @Det double totalWeight) {
 
     if (list.size() == 0) {
       throw new IllegalArgumentException("Empty list");
@@ -211,7 +213,8 @@ public final class Randomness {
    * @param point the value used to find the index within the cumulative weight distribution
    * @return the index corresponding to point's location in the cumulative weight distribution
    */
-  private static int binarySearchForIndex(double[] cumulativeWeights, double point) {
+  private static @Det int binarySearchForIndex(
+      @Det double @Det [] cumulativeWeights, @Det double point) {
     int low = 0;
     int high = cumulativeWeights.length;
     int mid = (low + high) / 2;
@@ -234,7 +237,7 @@ public final class Randomness {
    * @param set the collection from which to select an element
    * @return a randomly-selected member of the set
    */
-  public static <T> T randomSetMember(Collection<T> set) {
+  public static <T extends @Det Object> T randomSetMember(@Det Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
     logSelection(randIndex, "randomSetMember", set);
@@ -247,7 +250,7 @@ public final class Randomness {
    * @param trueProb the likelihood that true is returned; must be within [0..1]
    * @return true with likelihood {@code trueProb}; otherwise false
    */
-  public static boolean weightedCoinFlip(double trueProb) {
+  public static @Det boolean weightedCoinFlip(@Det double trueProb) {
     if (trueProb < 0 || trueProb > 1) {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
     }
@@ -265,7 +268,7 @@ public final class Randomness {
    * @param trueProb the likelihood that true is returned; an arbitrary non-negative number
    * @return true or false, with the given probabilities
    */
-  public static boolean randomBoolFromDistribution(double falseProb, double trueProb) {
+  public static boolean randomBoolFromDistribution(@Det double falseProb, @Det double trueProb) {
     if (falseProb < 0) {
       throw new IllegalArgumentException("falseProb is " + falseProb + ", must be non-negative");
     }
@@ -290,7 +293,8 @@ public final class Randomness {
    * @param methodName the name of the method called
    * @param argument the method argument
    */
-  private static void logSelection(Object returnValue, String methodName, Object argument) {
+  private static void logSelection(
+      @Det Object returnValue, @Det String methodName, @Det Object argument) {
     if (GenInputsAbstract.selection_log != null && verbosity > 0) {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;
@@ -317,7 +321,7 @@ public final class Randomness {
    * @return a printed representation of the argument
    * @see #verbosity
    */
-  private static String toString(Object o) {
+  private static String toString(@Det Object o) {
     if (o instanceof Collection<?>) {
       Collection<?> coll = (Collection<?>) o;
       switch (verbosity) {

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import org.checkerframework.checker.determinism.qual.Det;
 
 public class JarReader {
 
@@ -22,7 +23,7 @@ public class JarReader {
     System.out.println(CollectionsExt.toStringInLines(names));
   }
 
-  public static List<String> getClassNamesInPackage(String jarName, String packageName)
+  public static List<String> getClassNamesInPackage(@Det String jarName, @Det String packageName)
       throws IOException {
     ArrayList<String> classes = new ArrayList<>();
 
@@ -52,7 +53,7 @@ public class JarReader {
     return classes;
   }
 
-  public static List<String> getClasseNamesInJar(String jarName) throws IOException {
+  public static List<String> getClasseNamesInJar(@Det String jarName) throws IOException {
     ArrayList<String> classes = new ArrayList<>();
 
     if (debug) {

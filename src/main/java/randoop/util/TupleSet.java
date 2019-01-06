@@ -51,8 +51,8 @@ public class TupleSet<E extends @Det Object> {
    */
   public TupleSet<E> extend(@Det TupleSet<E> this, @Det List<E> elements) {
     List<List<E>> tupleList = new ArrayList<>(tuples.size() * elements.size());
-    for (List<E> tuple : tuples) {
-      for (E e : elements) {
+    for (@Det List<E> tuple : tuples) {
+      for (@Det E e : elements) {
         List<E> extTuple = extendTuple(tuple, e);
         assert extTuple.size() == tupleLength + 1
             : "tuple lengths don't match, expected " + tupleLength + " have " + extTuple.size();
@@ -77,8 +77,8 @@ public class TupleSet<E extends @Det Object> {
    */
   public TupleSet<E> exhaustivelyExtend(@Det TupleSet<E> this, @Det List<E> elements) {
     List<List<E>> tupleList = new ArrayList<>(tuples.size() * (tupleLength + 1));
-    for (List<E> tuple : tuples) {
-      for (E e : elements) {
+    for (@Det List<E> tuple : tuples) {
+      for (@Det E e : elements) {
         for (int i = 0; i <= tuple.size(); i++) {
           tupleList.add(insertInTuple(tuple, e, i));
         }
@@ -95,7 +95,7 @@ public class TupleSet<E extends @Det Object> {
    * @param e the element to insert
    * @return a new list with the element inserted at the end
    */
-  private List<E> extendTuple(@Det List<E> tuple, E e) {
+  private List<E> extendTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     extTuple.addAll(tuple);
     extTuple.add(e);
@@ -111,7 +111,7 @@ public class TupleSet<E extends @Det Object> {
    * @param i the position where element is to be inserted
    * @return a new list with the element inserted at the given position
    */
-  private List<E> insertInTuple(@Det List<E> tuple, E e, @Det int i) {
+  private List<E> insertInTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e, @Det int i) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     // It's a bit inefficient to insert then shift; a better implementation could avoid that.
     extTuple.addAll(tuple);

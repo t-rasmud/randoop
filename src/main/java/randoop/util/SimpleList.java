@@ -53,7 +53,7 @@ public interface SimpleList<T extends @Det Object> {
    * @param index the position for the element
    * @return the element at the index
    */
-  public T get(int index);
+  public T get(@Det int index);
 
   /**
    * Return a sublist of this list that contains the index. Does not necessarily contain the first
@@ -65,7 +65,7 @@ public interface SimpleList<T extends @Det Object> {
    * @param index the index into this list
    * @return the sublist containing this index
    */
-  public SimpleList<T> getSublist(int index);
+  public SimpleList<T> getSublist(@Det int index);
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   /**
@@ -73,5 +73,5 @@ public interface SimpleList<T extends @Det Object> {
    *
    * @return {@link java.util.List} for this list
    */
-  public abstract List<T> toJDKList();
+  public abstract @Det List<T> toJDKList(@Det SimpleList<T> this);
 }

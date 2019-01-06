@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.io.PrintStream;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.reflection.ReflectionPlume;
@@ -83,7 +84,8 @@ public final class ReflectionExecutor {
    * @param out stream to print exception details to or null
    * @return the execution result
    */
-  public static ExecutionOutcome executeReflectionCode(ReflectionCode code, PrintStream out) {
+  public static ExecutionOutcome executeReflectionCode(
+      @Det ReflectionCode code, @Det PrintStream out) {
     long start = System.nanoTime();
     if (usethreads) {
       try {
@@ -122,7 +124,7 @@ public final class ReflectionExecutor {
    * @throws TimeoutExceededException if execution times out
    */
   @SuppressWarnings({"deprecation", "DeprecatedThreadMethods"})
-  private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out)
+  private static void executeReflectionCodeThreaded(@Det ReflectionCode code, @Det PrintStream out)
       throws TimeoutExceededException {
 
     RunnerThread runnerThread = new RunnerThread(null);
@@ -161,7 +163,8 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null
    */
-  private static void executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
+  private static void executeReflectionCodeUnThreaded(
+      @Det ReflectionCode code, @Det PrintStream out) {
     try {
       code.runReflectionCode();
       return;
@@ -179,7 +182,7 @@ public final class ReflectionExecutor {
     }
   }
 
-  private static void printExceptionDetails(Throwable e, PrintStream out) {
+  private static void printExceptionDetails(@Det Throwable e, @Det PrintStream out) {
     out.println("Exception thrown: " + e.toString());
     out.println("Message: " + e.getMessage());
     out.println("Stack trace: ");

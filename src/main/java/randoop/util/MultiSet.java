@@ -3,8 +3,9 @@ package randoop.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
-public class MultiSet<T> {
+public class MultiSet<T extends @Det Object> {
 
   private final Map<T, Integer> frequencyMap;
 
@@ -12,7 +13,7 @@ public class MultiSet<T> {
     frequencyMap = new LinkedHashMap<>();
   }
 
-  public void add(T obj) {
+  public void add(@Det MultiSet<T> this, T obj) {
     Integer i = frequencyMap.get(obj);
     if (i == null) {
       i = 0;
@@ -20,7 +21,7 @@ public class MultiSet<T> {
     frequencyMap.put(obj, i + 1);
   }
 
-  public void remove(T obj) {
+  public void remove(@Det MultiSet<T> this, T obj) {
     Integer i = frequencyMap.get(obj);
     if (i == null || i < 1) {
       throw new IllegalStateException(
@@ -38,7 +39,7 @@ public class MultiSet<T> {
     return frequencyMap.isEmpty();
   }
 
-  public void removeAllInstances(Set<T> values) {
+  public void removeAllInstances(@Det MultiSet<T> this, Set<T> values) {
     for (T value : values) {
       frequencyMap.remove(value);
     }

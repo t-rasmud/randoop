@@ -22,7 +22,7 @@ public class IdentityMultiMap<K extends @Det Object, V extends @Det Object> {
    * @param key the key
    * @param value the value
    */
-  public void put(K key, V value) {
+  public void put(@Det IdentityMultiMap<K, V> this, K key, V value) {
     Set<V> set = map.get(key);
     if (set == null) {
       set = new LinkedHashSet<>();

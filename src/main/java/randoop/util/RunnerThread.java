@@ -1,5 +1,7 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 public class RunnerThread extends Thread {
 
   // Fields assigned when calling setup(..)
@@ -21,7 +23,7 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  RunnerThread(ThreadGroup threadGroup) {
+  RunnerThread(@Det ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;
@@ -29,7 +31,7 @@ public class RunnerThread extends Thread {
     this.setUncaughtExceptionHandler(RandoopUncaughtRunnerThreadExceptionHandler.getHandler());
   }
 
-  public void setup(ReflectionCode code) {
+  public void setup(@Det ReflectionCode code) {
     if (state != NextCallMustBe.SETUP) throw new IllegalStateException();
     if (code == null) throw new IllegalArgumentException("code cannot be null.");
     this.code = code;
@@ -37,7 +39,7 @@ public class RunnerThread extends Thread {
   }
 
   @Override
-  public final void run() {
+  public final void run(@Det RunnerThread this) {
     if (state != NextCallMustBe.RUN) throw new IllegalStateException();
     runFinished = false;
     executeReflectionCode();
@@ -45,7 +47,8 @@ public class RunnerThread extends Thread {
     this.state = NextCallMustBe.SETUP;
   }
 
-  private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
+  private void executeReflectionCode(@Det RunnerThread this)
+      throws ReflectionCode.ReflectionCodeException {
     code.runReflectionCode();
   }
 

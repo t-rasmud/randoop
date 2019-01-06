@@ -57,7 +57,7 @@ public class CheckpointingSet<T extends @Det Object> implements ISimpleSet<T> {
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
-  public void undoToLastMark() {
+  public void undoToLastMark(@Det CheckpointingSet<T> this) {
     map.undoToLastMark();
   }
 

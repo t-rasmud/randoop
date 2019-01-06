@@ -11,7 +11,7 @@ public class SimpleArrayList<E extends @Det Object> extends ArrayList<E>
 
   private static final long serialVersionUID = 20180317;
 
-  public SimpleArrayList(Collection<? extends E> c) {
+  public SimpleArrayList(@Det Collection<? extends E> c) {
     super(c);
   }
 
@@ -30,7 +30,7 @@ public class SimpleArrayList<E extends @Det Object> extends ArrayList<E>
   }
 
   @Override
-  public List<E> toJDKList() {
+  public @Det List<E> toJDKList(@Det SimpleArrayList<E> this) {
     return new ArrayList<>(this);
   }
 }
