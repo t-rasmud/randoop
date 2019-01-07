@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.RandoopBug;
 
 /**
@@ -28,13 +29,17 @@ public class ListOfLists<T extends @Det Object> implements SimpleList<T>, Serial
 
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public ListOfLists(@Det SimpleList<T>... lists) {
-    this.lists = new ArrayList<>(lists.length);
+    @SuppressWarnings("determinism") // can't declare lists @Det but its order is decided at compile
+    // time anyway
+    @Det
+    int len = lists.length;
+    this.lists = new ArrayList<>(len);
     for (SimpleList<T> sl : lists) {
       this.lists.add(sl);
     }
     this.cumulativeSize = new int[lists.length];
     this.totalelements = 0;
-    for (int i = 0; i < lists.length; i++) {
+    for (int i = 0; i < len; i++) {
       SimpleList<T> l = lists[i];
       if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
@@ -110,7 +115,10 @@ public class ListOfLists<T extends @Det Object> implements SimpleList<T>, Serial
   }
 
   @Override
-  public String toString(@Det ListOfLists<T> this) {
-    return toJDKList().toString();
+  public String toString(ListOfLists<T> this) {
+    @SuppressWarnings("determinism") // toJDKList requires @Det but it's clearly @PolyDet
+    @PolyDet
+    String result = toJDKList().toString();
+    return result;
   }
 }

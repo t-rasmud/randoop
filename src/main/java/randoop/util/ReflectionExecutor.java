@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.PrintStream;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.reflection.ReflectionPlume;
@@ -48,9 +49,9 @@ public final class ReflectionExecutor {
   public static int call_timeout = CALL_TIMEOUT_DEFAULT;
 
   // Execution statistics.
-  private static long normal_exec_duration = 0;
+  private static @NonDet long normal_exec_duration = 0;
   private static int normal_exec_count = 0;
-  private static long excep_exec_duration = 0;
+  private static @NonDet long excep_exec_duration = 0;
   private static int excep_exec_count = 0;
 
   public static void resetStatistics() {
@@ -68,11 +69,11 @@ public final class ReflectionExecutor {
     return excep_exec_count;
   }
 
-  public static double normalExecAvgMillis() {
+  public static @NonDet double normalExecAvgMillis() {
     return ((normal_exec_duration / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
-  public static double excepExecAvgMillis() {
+  public static @NonDet double excepExecAvgMillis() {
     return ((excep_exec_duration / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
@@ -84,7 +85,7 @@ public final class ReflectionExecutor {
    * @param out stream to print exception details to or null
    * @return the execution result
    */
-  public static ExecutionOutcome executeReflectionCode(
+  public static @NonDet ExecutionOutcome executeReflectionCode(
       @Det ReflectionCode code, @Det PrintStream out) {
     long start = System.nanoTime();
     if (usethreads) {
@@ -97,7 +98,7 @@ public final class ReflectionExecutor {
     } else {
       executeReflectionCodeUnThreaded(code, out);
     }
-    long duration = System.nanoTime() - start;
+    @NonDet long duration = System.nanoTime() - start;
 
     if (code.getExceptionThrown() != null) {
       // Add duration to running average for exceptional execution.

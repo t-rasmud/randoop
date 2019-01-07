@@ -68,6 +68,10 @@ public abstract class ReflectionCode {
     RandoopSecurityManager randoopsecurity;
     RandoopSecurityManager.Status oldStatus;
     {
+      // Even though security may be @NonDet, it simply updates it. Doesn't cause any
+      // non-deterministic behavior.
+      @SuppressWarnings("determinism")
+      @Det
       SecurityManager security = System.getSecurityManager();
       if (security != null && security instanceof RandoopSecurityManager) {
         randoopsecurity = (RandoopSecurityManager) security;
@@ -100,14 +104,14 @@ public abstract class ReflectionCode {
   protected abstract void runReflectionCodeRaw(@Det ReflectionCode this)
       throws ReflectionCodeException;
 
-  public Object getReturnValue() {
+  public Object getReturnValue(@Det ReflectionCode this) {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
     return retval;
   }
 
-  public Throwable getExceptionThrown() {
+  public @Det Throwable getExceptionThrown(@Det ReflectionCode this) {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
@@ -119,7 +123,7 @@ public abstract class ReflectionCode {
    *
    * @return the status of the command
    */
-  protected String status() {
+  protected String status(@Det ReflectionCode this) {
     if (!hasStarted() && !hasRun()) {
       return " not run yet";
     } else if (hasStarted() && !hasRun()) {

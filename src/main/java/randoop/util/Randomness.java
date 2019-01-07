@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -322,8 +323,10 @@ public final class Randomness {
    * @see #verbosity
    */
   private static String toString(@Det Object o) {
-    if (o instanceof Collection<?>) {
-      Collection<?> coll = (Collection<?>) o;
+    if (o instanceof @NonDet Collection<?>) {
+      @SuppressWarnings("determinism") // @NonDet is required for a valid type but o is still @Det.
+      @Det
+      Collection<?> coll = (@NonDet Collection<?>) o;
       switch (verbosity) {
         case 1:
           return coll.getClass() + " of size " + coll.size();
@@ -332,7 +335,7 @@ public final class Randomness {
         default:
           throw new Error("verbosity = " + verbosity);
       }
-    } else if (o instanceof SimpleList<?>) {
+    } else if (o instanceof @NonDet SimpleList<?>) {
       SimpleList<?> sl = (SimpleList<?>) o;
       switch (verbosity) {
         case 1:

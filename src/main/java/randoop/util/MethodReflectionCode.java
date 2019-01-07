@@ -76,12 +76,15 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
+    @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
+    @Det
+    String status = status();
     return "Call to "
         + method
         + " receiver: "
         + receiver
         + " args: "
         + Arrays.toString(inputs)
-        + status();
+        + status;
   }
 }

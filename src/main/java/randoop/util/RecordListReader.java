@@ -97,7 +97,7 @@ public class RecordListReader {
     }
   }
 
-  private List<String> readOneRecord(@Det RecordListReader this, @Det BufferedReader reader)
+  private @Det List<String> readOneRecord(@Det RecordListReader this, @Det BufferedReader reader)
       throws IOException {
     List<String> ret = new ArrayList<>();
     String line = nextNWCLine(reader);

@@ -83,7 +83,7 @@ public class StreamRedirectThread extends Thread {
 
   /** Copy. */
   @Override
-  public void run(@Det StreamRedirectThread this) {
+  public void run(StreamRedirectThread this) {
     try {
       BufferedReader br = new BufferedReader(in, BUFFER_SIZE);
 

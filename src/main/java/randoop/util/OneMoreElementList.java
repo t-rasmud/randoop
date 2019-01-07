@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public final class OneMoreElementList<T extends @Det Object>
     implements SimpleList<T>, Serializable {
@@ -62,7 +63,11 @@ public final class OneMoreElementList<T extends @Det Object>
   }
 
   @Override
-  public String toString() {
-    return toJDKList().toString();
+  public @PolyDet("up") String toString() {
+    @SuppressWarnings(
+        "determinism") // toJDKList requires @Det this but it's clearly a @PolyDet method.
+    @PolyDet
+    String result = toJDKList().toString();
+    return result;
   }
 }

@@ -57,7 +57,7 @@ public class StringPrintWriter extends PrintWriter {
    *
    * @return the contents of the internal string buffer
    */
-  public String getString(@Det StringPrintWriter this) {
+  public @Det String getString(@Det StringPrintWriter this) {
     flush();
     return this.out.toString();
   }

@@ -73,8 +73,10 @@ public class ProgressDisplay extends Thread {
    */
   public boolean shouldStop = false;
 
+  @SuppressWarnings("determinism") // Running this thread is inherintly non-deterministic because it
+  // uses the system time. This is expected.
   @Override
-  public void run(@Det ProgressDisplay this) {
+  public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
     while (true) {
       if (shouldStop) {
@@ -212,7 +214,7 @@ public class ProgressDisplay extends Thread {
    *
    * @param message the message to display
    */
-  private void display(String message) {
+  private void display(@Det ProgressDisplay this, @Det String message) {
     if (noProgressOutput()) return;
     synchronized (print_synchro) {
       System.out.print(

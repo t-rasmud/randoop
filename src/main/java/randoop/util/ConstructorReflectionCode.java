@@ -36,7 +36,11 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw(@Det ConstructorReflectionCode this) {
     try {
-      this.retval = this.constructor.newInstance(this.inputs);
+      @SuppressWarnings("determinism") // Invoking a constructor could be non-deterministic, but
+      // this can't be verified.
+      @Det
+      Object retval = this.constructor.newInstance(this.inputs);
+      this.retval = retval;
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();
@@ -48,6 +52,9 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
+    @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
+    @Det
+    String status = status();
+    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status;
   }
 }

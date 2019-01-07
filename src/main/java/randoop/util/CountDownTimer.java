@@ -2,6 +2,7 @@ package randoop.util;
 
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public class CountDownTimer {
 
@@ -37,7 +38,10 @@ public class CountDownTimer {
   }
 
   @Override
-  public @NonDet String toString() {
-    return "elapsed: " + elapsedTime() + ", remaining: " + remainingTime();
+  public @PolyDet("up") String toString() {
+    @SuppressWarnings("determinism") // this is @NonDet, but all instances will be @NonDet
+    @PolyDet("up")
+    String result = "elapsed: " + elapsedTime() + ", remaining: " + remainingTime();
+    return result;
   }
 }

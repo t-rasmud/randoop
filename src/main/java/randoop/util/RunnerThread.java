@@ -39,10 +39,13 @@ public class RunnerThread extends Thread {
   }
 
   @Override
-  public final void run(@Det RunnerThread this) {
+  public final void run() {
     if (state != NextCallMustBe.RUN) throw new IllegalStateException();
     runFinished = false;
-    executeReflectionCode();
+    @SuppressWarnings("determinism") // requires @Det, but all instances are guaranteed to be @Det
+    @Det
+    RunnerThread runner = this;
+    runner.executeReflectionCode();
     runFinished = true;
     this.state = NextCallMustBe.SETUP;
   }

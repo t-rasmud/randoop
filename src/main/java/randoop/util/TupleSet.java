@@ -95,7 +95,7 @@ public class TupleSet<E extends @Det Object> {
    * @param e the element to insert
    * @return a new list with the element inserted at the end
    */
-  private List<E> extendTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e) {
+  private @Det List<E> extendTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     extTuple.addAll(tuple);
     extTuple.add(e);
@@ -111,7 +111,7 @@ public class TupleSet<E extends @Det Object> {
    * @param i the position where element is to be inserted
    * @return a new list with the element inserted at the given position
    */
-  private List<E> insertInTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e, @Det int i) {
+  private @Det List<E> insertInTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e, @Det int i) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     // It's a bit inefficient to insert then shift; a better implementation could avoid that.
     extTuple.addAll(tuple);

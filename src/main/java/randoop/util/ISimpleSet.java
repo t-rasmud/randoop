@@ -29,7 +29,7 @@ public interface ISimpleSet<T extends @Det Object> {
    * @param elt cannot be null
    * @return true if this set contains the element, false otherwise
    */
-  boolean contains(T elt);
+  boolean contains(@Det ISimpleSet<T> this, T elt);
 
   /**
    * Returns the elements in this set, as a java.util.Set
