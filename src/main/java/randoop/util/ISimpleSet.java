@@ -1,8 +1,9 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
-public interface ISimpleSet<T> {
+public interface ISimpleSet<T extends @Det Object> {
 
   /**
    * Adds the given elt to the set.
@@ -11,7 +12,7 @@ public interface ISimpleSet<T> {
    *
    * @param elt cannot be null
    */
-  void add(T elt);
+  void add(@Det ISimpleSet<T> this, T elt);
 
   /**
    * Removes the given elt from the set.
@@ -20,7 +21,7 @@ public interface ISimpleSet<T> {
    *
    * @param elt cannot be null
    */
-  void remove(T elt);
+  void remove(@Det ISimpleSet<T> this, T elt);
 
   /**
    * Returns true if elt is in this set.
@@ -28,7 +29,7 @@ public interface ISimpleSet<T> {
    * @param elt cannot be null
    * @return true if this set contains the element, false otherwise
    */
-  boolean contains(T elt);
+  boolean contains(@Det ISimpleSet<T> this, T elt);
 
   /**
    * Returns the elements in this set, as a java.util.Set

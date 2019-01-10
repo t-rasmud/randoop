@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -14,7 +15,8 @@ public final class CollectionsExt {
     throw new IllegalStateException("no instances");
   }
 
-  static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
+  static <T extends @Det Object> T getNthIteratedElement(
+      @Det Collection<? extends T> s, @Det int index) {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     if (s.isEmpty()) throw new IllegalArgumentException("s cannot be empty.");
     if (index >= s.size()) {
@@ -24,7 +26,8 @@ public final class CollectionsExt {
     return getNthIteratedElement(s.iterator(), index);
   }
 
-  private static <T> T getNthIteratedElement(Iterator<? extends T> iter, int index) {
+  private static <T extends @Det Object> T getNthIteratedElement(
+      @Det Iterator<? extends T> iter, @Det int index) {
     if (index < 0) throw new IllegalArgumentException("Index " + index + " out of bounds");
     int counter = 0;
     while (iter.hasNext()) {
@@ -43,7 +46,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
    */
-  static String toStringInLines(Collection<?> c) {
+  static String toStringInLines(@Det Collection<? extends @Det Object> c) {
     if (c.isEmpty()) {
       return "";
     }
@@ -56,7 +59,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
    */
-  private static List<String> toStringLines(Collection<?> c) {
+  private static List<String> toStringLines(@Det Collection<? extends @Det Object> c) {
     List<String> lines = new ArrayList<>(c.size());
     for (Object each : c) {
       lines.add(String.valueOf(each));
@@ -75,7 +78,8 @@ public final class CollectionsExt {
    * @param maxLength the maximum length of a list partition
    * @return the partitioned list
    */
-  public static <T> List<List<T>> formSublists(List<T> list, int maxLength) {
+  public static <T extends @Det Object> List<List<T>> formSublists(
+      @Det List<T> list, @Det int maxLength) {
     if (maxLength <= 0) {
       throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
     }

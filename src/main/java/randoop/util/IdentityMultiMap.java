@@ -3,9 +3,10 @@ package randoop.util;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** A multi-map using key identity rather than equality. */
-public class IdentityMultiMap<K, V> {
+public class IdentityMultiMap<K extends @Det Object, V extends @Det Object> {
 
   /** the underlying map */
   private IdentityHashMap<K, Set<V>> map;
@@ -21,7 +22,7 @@ public class IdentityMultiMap<K, V> {
    * @param key the key
    * @param value the value
    */
-  public void put(K key, V value) {
+  public void put(@Det IdentityMultiMap<K, V> this, K key, V value) {
     Set<V> set = map.get(key);
     if (set == null) {
       set = new LinkedHashSet<>();

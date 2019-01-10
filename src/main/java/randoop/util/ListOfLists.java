@@ -3,7 +3,9 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import randoop.main.RandoopBug;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
@@ -14,7 +16,7 @@ import randoop.BugInRandoopException;
  * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  * SequenceCollection.getSequencesThatYield).
  */
-public class ListOfLists<T> implements SimpleList<T>, Serializable {
+public class ListOfLists<T extends @Det Object> implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = -3307714585442970263L;
 
@@ -26,14 +28,18 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   private int totalelements;
 
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
-  public ListOfLists(SimpleList<T>... lists) {
-    this.lists = new ArrayList<>(lists.length);
+  public ListOfLists(@Det SimpleList<T>... lists) {
+    @SuppressWarnings("determinism") // can't declare lists @Det but its order is decided at compile
+    // time anyway
+    @Det
+    int len = lists.length;
+    this.lists = new ArrayList<>(len);
     for (SimpleList<T> sl : lists) {
       this.lists.add(sl);
     }
     this.cumulativeSize = new int[lists.length];
     this.totalelements = 0;
-    for (int i = 0; i < lists.length; i++) {
+    for (int i = 0; i < len; i++) {
       SimpleList<T> l = lists[i];
       if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
@@ -43,7 +49,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
     }
   }
 
-  public ListOfLists(List<SimpleList<T>> lists) {
+  public ListOfLists(@Det List<SimpleList<T>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
     this.cumulativeSize = new int[lists.size()];
@@ -69,7 +75,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   }
 
   @Override
-  public T get(int index) {
+  public T get(@Det int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -80,11 +86,11 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
       }
       previousListSize = this.cumulativeSize[i];
     }
-    throw new BugInRandoopException("Indexing error in ListOfLists");
+    throw new RandoopBug("Indexing error in ListOfLists");
   }
 
   @Override
-  public SimpleList<T> getSublist(int index) {
+  public SimpleList<T> getSublist(@Det int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -96,11 +102,11 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
       }
       previousListSize = cumulativeSize[i];
     }
-    throw new BugInRandoopException("indexing error in ListOfLists");
+    throw new RandoopBug("indexing error in ListOfLists");
   }
 
   @Override
-  public List<T> toJDKList() {
+  public @Det List<T> toJDKList(@Det ListOfLists<T> this) {
     List<T> result = new ArrayList<>();
     for (SimpleList<T> l : lists) {
       result.addAll(l.toJDKList());
@@ -109,7 +115,10 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   }
 
   @Override
-  public String toString() {
-    return toJDKList().toString();
+  public String toString(ListOfLists<T> this) {
+    @SuppressWarnings("determinism") // toJDKList requires @Det but it's clearly @PolyDet
+    @PolyDet
+    String result = toJDKList().toString();
+    return result;
   }
 }

@@ -3,6 +3,8 @@ package randoop.util;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
@@ -39,7 +41,9 @@ public class ProgressDisplay extends Thread {
   private AbstractGenerator generator;
 
   public ProgressDisplay(
-      AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode) {
+      @Det AbstractGenerator generator,
+      @Det RandoopListenerManager listenerMgr,
+      @Det Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
@@ -69,6 +73,8 @@ public class ProgressDisplay extends Thread {
    */
   public boolean shouldStop = false;
 
+  @SuppressWarnings("determinism") // Running this thread is inherintly non-deterministic because it
+  // uses the system time. This is expected.
   @Override
   public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
@@ -152,7 +158,7 @@ public class ProgressDisplay extends Thread {
   }
 
   /** When the most recent step completed. */
-  private long lastStepTime = System.currentTimeMillis();
+  private @NonDet long lastStepTime = System.currentTimeMillis();
   /** The step number of the most recent step. */
   private long lastNumSteps = 0;
 
@@ -176,7 +182,7 @@ public class ProgressDisplay extends Thread {
   }
 
   /** Clear the display; good to do before printing to System.out. */
-  public void clear() {
+  public void clear(@Det ProgressDisplay this) {
     if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
@@ -189,7 +195,7 @@ public class ProgressDisplay extends Thread {
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
    */
-  public void displayWithTime() {
+  public void displayWithTime(@Det ProgressDisplay this) {
     if (noProgressOutput()) return;
     display(messageWithTime());
   }
@@ -198,7 +204,7 @@ public class ProgressDisplay extends Thread {
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
    */
-  public void displayWithoutTime() {
+  public void displayWithoutTime(@Det ProgressDisplay this) {
     if (noProgressOutput()) return;
     display(messageWithoutTime());
   }
@@ -208,7 +214,7 @@ public class ProgressDisplay extends Thread {
    *
    * @param message the message to display
    */
-  private void display(String message) {
+  private void display(@Det ProgressDisplay this, @Det String message) {
     if (noProgressOutput()) return;
     synchronized (print_synchro) {
       System.out.print(

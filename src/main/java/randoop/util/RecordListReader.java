@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -35,7 +36,7 @@ public class RecordListReader {
   /** The object in charge of doing whatever is to be done with the record. */
   private final RecordProcessor processor;
 
-  public RecordListReader(String recordType, RecordProcessor proc) {
+  public RecordListReader(@Det String recordType, @Det RecordProcessor proc) {
     if (recordType == null || recordType.length() == 0) {
       throw new IllegalArgumentException(
           "No record type given: " + (recordType == null ? "null" : "\"\""));
@@ -46,7 +47,7 @@ public class RecordListReader {
     this.endMarker = "END " + recordType;
   }
 
-  public void parse(String inFile) {
+  public void parse(@Det RecordListReader this, @Det String inFile) {
     if (inFile == null || inFile.length() == 0) {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
     }
@@ -61,7 +62,7 @@ public class RecordListReader {
     parse(reader);
   }
 
-  public void parse(Path inFile) {
+  public void parse(@Det RecordListReader this, @Det Path inFile) {
     if (inFile == null) {
       throw new IllegalArgumentException("Null input file");
     }
@@ -76,7 +77,7 @@ public class RecordListReader {
     parse(reader);
   }
 
-  public void parse(BufferedReader reader) {
+  public void parse(@Det RecordListReader this, @Det BufferedReader reader) {
 
     String line;
     try {
@@ -96,7 +97,8 @@ public class RecordListReader {
     }
   }
 
-  private List<String> readOneRecord(BufferedReader reader) throws IOException {
+  private @Det List<String> readOneRecord(@Det RecordListReader this, @Det BufferedReader reader)
+      throws IOException {
     List<String> ret = new ArrayList<>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
@@ -107,7 +109,7 @@ public class RecordListReader {
     return ret;
   }
 
-  private static String nextNWCLine(BufferedReader reader) throws IOException {
+  private static String nextNWCLine(@Det BufferedReader reader) throws IOException {
     String line = reader.readLine();
     if (line != null) line = line.trim();
     while (line != null && (line.length() == 0 || line.indexOf('#') == 0)) {

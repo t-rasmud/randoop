@@ -86,7 +86,7 @@ public class ExecutableSequence {
    */
   private boolean hasNullInput = false;
 
-  /** Captures output from the executed sequence */
+  /** Captures output from the executed sequence. */
   // static, so initializing eagerly is not a large cost.
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
 
@@ -244,7 +244,6 @@ public class ExecutableSequence {
    *         <li>execute the i-th statement, using reflection
    *         <li>call {@code visitor.visitAfter(this, i)}
    *       </ul>
-   *
    *   <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
    * </ul>
    *

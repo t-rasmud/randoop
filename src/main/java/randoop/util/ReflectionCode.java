@@ -1,5 +1,6 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.util.RandoopSecurityManager.Status;
 
 /**
@@ -59,7 +60,7 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  public final void runReflectionCode() throws ReflectionCodeException {
+  public final void runReflectionCode(@Det ReflectionCode this) throws ReflectionCodeException {
 
     this.setHasStarted();
 
@@ -67,6 +68,10 @@ public abstract class ReflectionCode {
     RandoopSecurityManager randoopsecurity;
     RandoopSecurityManager.Status oldStatus;
     {
+      // Even though security may be @NonDet, it simply updates it. Doesn't cause any
+      // non-deterministic behavior.
+      @SuppressWarnings("determinism")
+      @Det
       SecurityManager security = System.getSecurityManager();
       if (security != null && security instanceof RandoopSecurityManager) {
         randoopsecurity = (RandoopSecurityManager) security;
@@ -96,16 +101,17 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  protected abstract void runReflectionCodeRaw() throws ReflectionCodeException;
+  protected abstract void runReflectionCodeRaw(@Det ReflectionCode this)
+      throws ReflectionCodeException;
 
-  public Object getReturnValue() {
+  public Object getReturnValue(@Det ReflectionCode this) {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
     return retval;
   }
 
-  public Throwable getExceptionThrown() {
+  public @Det Throwable getExceptionThrown(@Det ReflectionCode this) {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
@@ -117,7 +123,7 @@ public abstract class ReflectionCode {
    *
    * @return the status of the command
    */
-  protected String status() {
+  protected String status(@Det ReflectionCode this) {
     if (!hasStarted() && !hasRun()) {
       return " not run yet";
     } else if (hasStarted() && !hasRun()) {
@@ -135,15 +141,15 @@ public abstract class ReflectionCode {
   static final class ReflectionCodeException extends IllegalStateException {
     private static final long serialVersionUID = -7508201027241079866L;
 
-    ReflectionCodeException(String msg) {
+    ReflectionCodeException(@Det String msg) {
       super(msg);
     }
 
-    ReflectionCodeException(String msg, Throwable cause) {
+    ReflectionCodeException(@Det String msg, @Det Throwable cause) {
       super(msg, cause);
     }
 
-    ReflectionCodeException(Throwable cause) {
+    ReflectionCodeException(@Det Throwable cause) {
       super(cause);
     }
   }

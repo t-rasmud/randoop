@@ -3,8 +3,11 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
-public final class OneMoreElementList<T> implements SimpleList<T>, Serializable {
+public final class OneMoreElementList<T extends @Det Object>
+    implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = 1332963552183905833L;
 
@@ -12,7 +15,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   public final SimpleList<T> list;
   public final int size;
 
-  public OneMoreElementList(SimpleList<T> list, T extraElement) {
+  public OneMoreElementList(@Det SimpleList<T> list, T extraElement) {
     this.list = list;
     this.lastElement = extraElement;
     this.size = list.size() + 1;
@@ -29,7 +32,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public T get(int index) {
+  public T get(@Det int index) {
     if (index < size - 1) {
       return list.get(index);
     }
@@ -40,7 +43,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public SimpleList<T> getSublist(int index) {
+  public SimpleList<T> getSublist(@Det int index) {
     if (index == size - 1) { // is lastElement
       return this;
     }
@@ -52,7 +55,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public List<T> toJDKList() {
+  public @Det List<T> toJDKList(@Det OneMoreElementList<T> this) {
     List<T> result = new ArrayList<>();
     result.addAll(list.toJDKList());
     result.add(lastElement);
@@ -60,7 +63,11 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public String toString() {
-    return toJDKList().toString();
+  public @PolyDet("up") String toString() {
+    @SuppressWarnings(
+        "determinism") // toJDKList requires @Det this but it's clearly a @PolyDet method.
+    @PolyDet
+    String result = toJDKList().toString();
+    return result;
   }
 }

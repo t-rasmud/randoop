@@ -1,6 +1,5 @@
 package randoop.main;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -9,11 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
@@ -596,7 +597,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
-  /** Maximum number of tests to write to each JUnit file */
+  /** Maximum number of tests to write to each JUnit file. */
   @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
@@ -662,7 +663,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
 
-  /** Name of the directory to which JUnit files should be written */
+  /** Name of the directory to which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 
@@ -742,18 +743,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * logs slows down Randoop.
    */
   @Option("<filename> Log lots of information to this file")
-  public static FileWriter log = null;
+  public static FileWriterWithName log = null;
 
   /**
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
   @Option("<filename> Log each random selection to this file")
-  public static FileWriter selection_log = null;
+  public static FileWriterWithName selection_log = null;
 
   /** A file to which to log the operation usage history. */
   @Option("<filename> Log operation usage counts to this file")
-  public static FileWriter operation_history_log = null;
+  public static FileWriterWithName operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
   public static boolean print_erroneous_file = false;
@@ -770,7 +771,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
-  public static List<String> visitor = new ArrayList<>();
+  public static List<@ClassGetName String> visitor = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working
@@ -853,8 +854,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
-  public static Set<String> getClassnamesFromArgs() {
-    Set<String> classnames = getStringSetFromFile(classlist, "tested classes");
+  /**
+   * Read names of classes under test, as provided with the --classlist command-line argument.
+   *
+   * @return the classes provided via the --classlist command-line argument
+   */
+  @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
+  public static Set<@ClassGetName String> getClassnamesFromArgs() {
+    Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");
     classnames.addAll(testclass);
     return classnames;
   }

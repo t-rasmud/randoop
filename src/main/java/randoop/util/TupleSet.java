@@ -2,19 +2,20 @@ package randoop.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Represents a non-empty set of tuples. All the tuples have the same length. The tuple elements
  * have type {@code E}.
  */
-public class TupleSet<E> {
+public class TupleSet<E extends @Det Object> {
 
   // TODO: given that the tuples are fixed-size, why not use an array rather than lists for both
   // levels of the data structure?  That would be more efficient.
   /** The list of element lists (tuples) */
   private List<List<E>> tuples;
 
-  /** The length of tuples in the set */
+  /** The length of tuples in the set. */
   private int tupleLength;
 
   /** Creates a tuple set with a single empty tuple. */
@@ -24,7 +25,7 @@ public class TupleSet<E> {
     this.tupleLength = 0;
   }
 
-  private TupleSet(List<List<E>> tuples, int tupleLength) {
+  private TupleSet(@Det List<List<E>> tuples, @Det int tupleLength) {
     this.tuples = tuples;
     this.tupleLength = tupleLength;
   }
@@ -48,10 +49,10 @@ public class TupleSet<E> {
    * @param elements the list of elements
    * @return a tuple set formed by extending the tuples with the elements of the given list
    */
-  public TupleSet<E> extend(List<E> elements) {
+  public TupleSet<E> extend(@Det TupleSet<E> this, @Det List<E> elements) {
     List<List<E>> tupleList = new ArrayList<>(tuples.size() * elements.size());
-    for (List<E> tuple : tuples) {
-      for (E e : elements) {
+    for (@Det List<E> tuple : tuples) {
+      for (@Det E e : elements) {
         List<E> extTuple = extendTuple(tuple, e);
         assert extTuple.size() == tupleLength + 1
             : "tuple lengths don't match, expected " + tupleLength + " have " + extTuple.size();
@@ -74,10 +75,10 @@ public class TupleSet<E> {
    * @param elements the list of elements
    * @return a tuple set formed by inserting elements of the given list into the tuples of this set
    */
-  public TupleSet<E> exhaustivelyExtend(List<E> elements) {
+  public TupleSet<E> exhaustivelyExtend(@Det TupleSet<E> this, @Det List<E> elements) {
     List<List<E>> tupleList = new ArrayList<>(tuples.size() * (tupleLength + 1));
-    for (List<E> tuple : tuples) {
-      for (E e : elements) {
+    for (@Det List<E> tuple : tuples) {
+      for (@Det E e : elements) {
         for (int i = 0; i <= tuple.size(); i++) {
           tupleList.add(insertInTuple(tuple, e, i));
         }
@@ -94,7 +95,7 @@ public class TupleSet<E> {
    * @param e the element to insert
    * @return a new list with the element inserted at the end
    */
-  private List<E> extendTuple(List<E> tuple, E e) {
+  private @Det List<E> extendTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     extTuple.addAll(tuple);
     extTuple.add(e);
@@ -110,7 +111,7 @@ public class TupleSet<E> {
    * @param i the position where element is to be inserted
    * @return a new list with the element inserted at the given position
    */
-  private List<E> insertInTuple(List<E> tuple, E e, int i) {
+  private @Det List<E> insertInTuple(@Det TupleSet<E> this, @Det List<E> tuple, E e, @Det int i) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     // It's a bit inefficient to insert then shift; a better implementation could avoid that.
     extTuple.addAll(tuple);

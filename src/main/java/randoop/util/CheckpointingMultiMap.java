@@ -7,12 +7,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
+public class CheckpointingMultiMap<T1 extends @Det Object, T2 extends @Det Object>
+    implements IMultiMap<T1, T2> {
 
   public static boolean verbose_log = false;
 
@@ -35,7 +37,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     final T1 key;
     final T2 val;
 
-    OpKeyVal(final Ops op, final T1 key, final T2 val) {
+    OpKeyVal(final @Det Ops op, final T1 key, final T2 val) {
       this.op = op;
       this.key = key;
       this.val = val;
@@ -55,7 +57,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
    * @see randoop.util.IMultiMap#add(T1, T2)
    */
   @Override
-  public void add(T1 key, T2 value) {
+  public void add(@Det CheckpointingMultiMap<T1, T2> this, T1 key, T2 value) {
     if (verbose_log) {
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
@@ -64,7 +66,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     steps++;
   }
 
-  private void add_bare(T1 key, T2 value) {
+  private void add_bare(@Det CheckpointingMultiMap<T1, T2> this, T1 key, T2 value) {
     if (key == null || value == null) {
       throw new IllegalArgumentException("args cannot be null.");
     }
@@ -86,7 +88,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
    * @see randoop.util.IMultiMap#remove(T1, T2)
    */
   @Override
-  public void remove(T1 key, T2 value) {
+  public void remove(@Det CheckpointingMultiMap<T1, T2> this, T1 key, T2 value) {
     if (verbose_log) {
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
@@ -95,7 +97,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     steps++;
   }
 
-  private void remove_bare(T1 key, T2 value) {
+  private void remove_bare(@Det CheckpointingMultiMap<T1, T2> this, T1 key, T2 value) {
     if (key == null || value == null) {
       throw new IllegalArgumentException("args cannot be null.");
     }
@@ -113,13 +115,13 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   /** Checkpoint the state of the data structure, for use by {@link #undoToLastMark()}. */
-  public void mark() {
+  public void mark(@Det CheckpointingMultiMap<T1, T2> this) {
     marks.add(steps);
     steps = 0;
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
-  public void undoToLastMark() {
+  public void undoToLastMark(@Det CheckpointingMultiMap<T1, T2> this) {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
     }
@@ -130,7 +132,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     steps = marks.remove(marks.size() - 1);
   }
 
-  private void undoLastOp() {
+  private void undoLastOp(@Det CheckpointingMultiMap<T1, T2> this) {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
     OpKeyVal last = ops.remove(ops.size() - 1);
     Ops op = last.op;

@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
 public final class MethodReflectionCode extends ReflectionCode {
@@ -16,7 +17,8 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   private final Object[] inputs;
 
-  public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
+  public MethodReflectionCode(
+      @Det Method method, @Det Object receiver, @Det Object @Det [] inputs) {
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
@@ -38,7 +40,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @SuppressWarnings("Finally")
   @Override
-  public void runReflectionCodeRaw() {
+  public void runReflectionCodeRaw(@Det MethodReflectionCode this) {
     Log.logPrintf("runReflectionCodeRaw: %s%n", method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
@@ -74,12 +76,15 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
+    @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
+    @Det
+    String status = status();
     return "Call to "
         + method
         + " receiver: "
         + receiver
         + " args: "
         + Arrays.toString(inputs)
-        + status();
+        + status;
   }
 }

@@ -33,6 +33,8 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
@@ -62,7 +64,7 @@ public class ClassFileConstants {
   static char c = 'a';
 
   public static class ConstantSet {
-    public String classname;
+    public @ClassGetName String classname;
     public Set<Integer> ints = new TreeSet<>();
     public Set<Long> longs = new TreeSet<>();
     public Set<Float> floats = new TreeSet<>();
@@ -120,7 +122,7 @@ public class ClassFileConstants {
    * @return the set of constants of the given type
    * @see #getConstants(String,ConstantSet)
    */
-  public static ConstantSet getConstants(String classname) {
+  public static ConstantSet getConstants(@Det String classname) {
     ConstantSet result = new ConstantSet();
     getConstants(classname, result);
     return result;
@@ -134,7 +136,7 @@ public class ClassFileConstants {
    * @return the set of constants with new constants of given type added
    * @see #getConstants(String)
    */
-  public static ConstantSet getConstants(String classname, ConstantSet result) {
+  public static ConstantSet getConstants(@Det String classname, @Det ConstantSet result) {
 
     ClassParser cp;
     JavaClass jc;
@@ -146,11 +148,14 @@ public class ClassFileConstants {
     } catch (java.io.IOException e) {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
-    result.classname = jc.getClassName();
+    @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
+    @ClassGetName
+    String resultClassname = jc.getClassName();
+    result.classname = resultClassname;
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
-    for (Constant c : constant_pool.getConstantPool()) {
+    for (@Det Constant c : constant_pool.getConstantPool()) {
       // System.out.printf ("*Constant = %s%n", c);
       if (c == null
           || c instanceof ConstantClass
@@ -184,10 +189,11 @@ public class ClassFileConstants {
 
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
+      @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
       if (il != null) {
-        for (Instruction inst : il.getInstructions()) {
+        for (@Det Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
               // Compare two objects, no literals
@@ -618,7 +624,8 @@ public class ClassFileConstants {
    * @param constantSets the sets of constantSets
    * @return a map of types to constant operations
    */
-  public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
+  public static MultiMap<Class<?>, NonreceiverTerm> toMap(
+      @Det Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
       Class<?> clazz;

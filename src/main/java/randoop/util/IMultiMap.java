@@ -1,9 +1,10 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** A multimap, which maps each key to a set of values. */
-public interface IMultiMap<T1, T2> {
+public interface IMultiMap<T1 extends @Det Object, T2 extends @Det Object> {
 
   /**
    * Precondition: the mapping key&rarr;value is not already in the map.
@@ -11,7 +12,7 @@ public interface IMultiMap<T1, T2> {
    * @param key cannot be null
    * @param value cannot be null
    */
-  void add(T1 key, T2 value);
+  void add(@Det IMultiMap<T1, T2> this, T1 key, T2 value);
 
   /**
    * Precondition: the mapping key&rarr;value is in the map.
@@ -19,7 +20,7 @@ public interface IMultiMap<T1, T2> {
    * @param key cannot be null
    * @param value cannot be null
    */
-  void remove(T1 key, T2 value);
+  void remove(@Det IMultiMap<T1, T2> this, T1 key, T2 value);
 
   /**
    * Returns the values that the given key maps to.

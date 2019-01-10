@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 
-public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, Serializable {
+public class SimpleArrayList<E extends @Det Object> extends ArrayList<E>
+    implements SimpleList<E>, Serializable {
 
   private static final long serialVersionUID = 20180317;
 
-  public SimpleArrayList(Collection<? extends E> c) {
+  public SimpleArrayList(@Det Collection<? extends E> c) {
     super(c);
   }
 
@@ -28,7 +30,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
   }
 
   @Override
-  public List<E> toJDKList() {
+  public @Det List<E> toJDKList(@Det SimpleArrayList<E> this) {
     return new ArrayList<>(this);
   }
 }

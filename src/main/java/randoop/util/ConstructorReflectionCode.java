@@ -3,6 +3,7 @@ package randoop.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
@@ -10,7 +11,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   /** If an inner class has a receiver, it is the first element of this array. */
   private final Object[] inputs;
 
-  public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
+  public ConstructorReflectionCode(@Det Constructor<?> constructor, @Det Object @Det [] inputs) {
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");
     }
@@ -33,9 +34,13 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @SuppressWarnings("Finally")
   @Override
-  public void runReflectionCodeRaw() {
+  public void runReflectionCodeRaw(@Det ConstructorReflectionCode this) {
     try {
-      this.retval = this.constructor.newInstance(this.inputs);
+      @SuppressWarnings("determinism") // Invoking a constructor could be non-deterministic, but
+      // this can't be verified.
+      @Det
+      Object retval = this.constructor.newInstance(this.inputs);
+      this.retval = retval;
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();
@@ -47,6 +52,9 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
+    @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
+    @Det
+    String status = status();
+    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status;
   }
 }

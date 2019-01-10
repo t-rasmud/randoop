@@ -45,6 +45,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * StreamRedirectThread is a thread which copies it's input to it's output and terminates when it
@@ -69,18 +70,20 @@ public class StreamRedirectThread extends Thread {
    * @param in stream to copy from
    * @param out stream to copy to
    */
-  public StreamRedirectThread(String name, InputStream in, OutputStream out) {
+  @SuppressWarnings("ThreadPriorityCheck")
+  public StreamRedirectThread(@Det String name, @Det InputStream in, @Det OutputStream out) {
     super(name);
     this.in = new InputStreamReader(in, UTF_8);
     this.out = new OutputStreamWriter(out, UTF_8);
     this.outWriter = new PrintStream(out);
 
+    //  heuristic to improve performance; unnecessary?
     setPriority(Thread.MAX_PRIORITY - 1);
   }
 
   /** Copy. */
   @Override
-  public void run() {
+  public void run(StreamRedirectThread this) {
     try {
       BufferedReader br = new BufferedReader(in, BUFFER_SIZE);
 
