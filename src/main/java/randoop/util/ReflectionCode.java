@@ -73,7 +73,7 @@ public abstract class ReflectionCode {
       @SuppressWarnings("determinism")
       @Det
       SecurityManager security = System.getSecurityManager();
-      if (security != null && security instanceof RandoopSecurityManager) {
+      if (security instanceof RandoopSecurityManager) {
         randoopsecurity = (RandoopSecurityManager) security;
         oldStatus = randoopsecurity.status;
         randoopsecurity.status = Status.ON;

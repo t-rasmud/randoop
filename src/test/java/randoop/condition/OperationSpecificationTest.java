@@ -41,8 +41,7 @@ public class OperationSpecificationTest {
   @Test
   public void conditionTest() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Method method = null;
-    method = c.getDeclaredMethod("category", int.class);
+    Method method = c.getDeclaredMethod("category", int.class);
     ExecutableSpecification execSpec = getMethodSpecification(method);
 
     ClassWithConditions receiver = new ClassWithConditions(5);
@@ -197,10 +196,9 @@ public class OperationSpecificationTest {
 
   private ExecutableSequence createConstructorSequence(int initValue) throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Constructor<?> reflectionConstructor = null;
-    reflectionConstructor = c.getConstructor(int.class);
+    Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
-    constructorOp.addExecutableSpecification(getConstructorConditions(reflectionConstructor));
+    constructorOp.setExecutableSpecification(getConstructorConditions(reflectionConstructor));
     Sequence sequence = new Sequence();
     sequence =
         sequence.extend(
@@ -211,13 +209,11 @@ public class OperationSpecificationTest {
 
   private ExecutableSequence createCategorySequence(int value) throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Constructor<?> reflectionConstructor = null;
-    reflectionConstructor = c.getConstructor(int.class);
+    Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
-    Method method = null;
-    method = c.getDeclaredMethod("category", int.class);
+    Method method = c.getDeclaredMethod("category", int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.addExecutableSpecification(getMethodSpecification(method));
+    methodOp.setExecutableSpecification(getMethodSpecification(method));
 
     Sequence sequence = new Sequence();
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 5));
@@ -233,10 +229,9 @@ public class OperationSpecificationTest {
 
   private ExecutableSequence createBadnessSequence() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Method method = null;
-    method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
+    Method method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.addExecutableSpecification(getBadnessConditions(method));
+    methodOp.setExecutableSpecification(getBadnessConditions(method));
 
     Sequence sequence = new Sequence();
     sequence =
@@ -317,9 +312,7 @@ public class OperationSpecificationTest {
     return collection.getExecutableSpecification(method);
   }
 
-  /*
-   * Creates ExecutableSpecification including post-condition for constructor that will fail.
-   */
+  /** Creates ExecutableSpecification including post-condition for constructor that will fail. */
   private ExecutableSpecification getConstructorConditions(Constructor<?> constructor) {
 
     List<String> paramNames = new ArrayList<>();

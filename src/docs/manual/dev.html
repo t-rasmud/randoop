@@ -220,16 +220,20 @@ Gradle allows you to run multiple tasks.  For instance, for a clean build,
 The tasks <code>cleanSite</code>, <code>publishSite</code> and <code>buildRelease</code>
 should not be run except while making a release, and so should never be run
 within a branch other than master.
-These tasks will delete and/or replace the GitHub pages site located in the <code>docs</code> directory of the repository.
+These tasks will delete and/or replace the GitHub pages site located in the <code>gh-pages</code> branch of the repository, which is checked out in a directory <code>randoop-branch-gh-pages</code> that is a sibling of <code>randoop</code>
+</p>
+
+<p>
 If you happen to run these commands, you should use git to revert to the previous version.
 For instance, the command
 </p>
 
 <pre><code>
-  git checkout -- docs/
+  git checkout -- .
 </code></pre>
 
 <p>
+in the <code>gh-pages</code> branch
 can be used to restore the files before they have been committed.
 </p>
 
@@ -289,7 +293,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.1.0.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.1.1.jar</code></pre>
 
 
 
@@ -355,7 +359,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.1.0.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.1.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -691,7 +695,7 @@ task described below.
 <p>
   The website, including the manuals, can be found in <code>src/docs</code>.
   These files, along with the Javadoc API, are moved to the
-  <code>docs</code> directory by the <code>publishSite</code> task.
+  <code>gh-pages</code> branch by the <code>publishSite</code> task.
 </p>
 
 
@@ -702,6 +706,10 @@ task described below.
   there are no changes needed:
 </p>
 <ol>
+  <li>Optionally update dependencies; see occurrences
+    of <code>version</code> in file <code>build.gradle</code>.
+    Do this in a branch, and make a pull request.
+  </li>
   <li>Ensure that your clone is up to date:
     <pre>git pull</pre>
   </li>
@@ -730,10 +738,10 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.1.0</em>
-NEWVERSION=<em>4.1.1</em></pre>
+OLDVERSION=<em>4.1.1</em>
+NEWVERSION=<em>4.1.2</em></pre>
     </li>
-    <li>Update the version number and date in these files:
+    <li>Update the version number <em>and date</em> in these files:
 <pre>
 build.gradle
 src/docs/CHANGES.txt
@@ -750,10 +758,11 @@ The following commands do part of the work.
 </pre>
     You still need to manually edit <code>src/docs/CHANGES.txt</code>:
     update the date and undo undesirable changes.
-    Also, double-check all changes.
+    Also, double-check all changes.<br/>
+    Don't commit your changes yet.
     </li>
     <li>Add two exceptions for the Randoop zip file
-      to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args</a>,
+      to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
       Don't forget to commit and push your changes.
     </li>
@@ -761,7 +770,7 @@ The following commands do part of the work.
 </li>
 <li>Create the distribution files, commit, make a tag, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
-  the <code>docs</code> directory.
+  the <code>gh-pages</code> branch.
 <pre>
   ./gradlew clean buildRelease \
   && git add -A . \
@@ -783,33 +792,32 @@ The following commands do part of the work.
         buildRelease</code> step.
   </li>
   <li>
+    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
+    build to succeed.  (This takes about half an hour.)
+    If it fails, commit fixes, then wait again.
+  </li>
+  <li>
     Tag the release.
 <pre>
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
-    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
-    build to succeed.  (This takes about half an hour.)
-    If it fails, commit fixes, then re-tag and re-push tags
-    (adding <code>-f</code> to both commands).
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag,
-    name it "Randoop version <em>4.1.0</em>", use the changelog entry as the
+    click "Draft a new release", in the "Tag" text field, choose v<em>4.1.1</em>,
+    name it "Randoop version <em>4.1.1</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
-    jar files from <code>build/libs</code> and the zip file from
-    <code>build/distributions</code> (it doesn't matter what order you upload
-    them in; they will be listed alphabetically on the release webpage)
+    the zip file from <code>build/distributions</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>4.1.0</em>
+    Subject: Randoop version <em>4.1.1</em>
     <br/>
-    Randoop <em>4.1.0</em> has been released and is available at
+    Randoop <em>4.1.1</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
@@ -817,12 +825,6 @@ The following commands do part of the work.
       <li>
         Defects4J.  As of this writing, the Randoop version number appears only
         in files <code>init.sh</code> and <code>framework/test/README.md</code>.
-      </li>
-      <li>
-        MUSE.  Update the <code>integration-test2</code> repository
-        (the version number appears twice in the URL) and
-        optionally the <code>pascali-coverage</code> repository
-        (documentation only).
       </li>
     </ul>
   </li>

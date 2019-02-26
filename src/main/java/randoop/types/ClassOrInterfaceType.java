@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
@@ -339,7 +338,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   public List<ClassOrInterfaceType> getImmediateSupertypes(@Det ClassOrInterfaceType this) {
     if (this.isObject()) {
-      return Collections.emptyList();
+      // "return Collections.emptyList();" leads to Error Prone warning "MixedMutabilityReturnType"
+      return new ArrayList<>();
     }
     List<ClassOrInterfaceType> supertypes = new ArrayList<>();
     ClassOrInterfaceType superclass = this.getSuperclass();

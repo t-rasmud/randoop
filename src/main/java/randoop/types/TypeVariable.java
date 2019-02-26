@@ -2,10 +2,10 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
@@ -159,8 +159,8 @@ public abstract class TypeVariable extends ParameterType {
    * @return this variable
    */
   @Override
-  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det TypeVariable this) {
-    Set<TypeVariable> parameters = new HashSet<>(super.getTypeParameters());
+  public @Det List<TypeVariable> getTypeParameters(@Det TypeVariable this) {
+    Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
