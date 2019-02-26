@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -65,7 +66,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public abstract ParameterizedType apply(Substitution<ReferenceType> substitution);
+  public abstract ParameterizedType apply(
+      @Det ParameterizedType this, @Det Substitution<ReferenceType> substitution);
 
   /**
    * Returns the {@link GenericClassType} for this parameterized type.

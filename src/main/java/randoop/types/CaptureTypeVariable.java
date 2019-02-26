@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Represents a type variable introduced by capture conversion over a wildcard type argument.
@@ -32,7 +33,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
-  CaptureTypeVariable(WildcardArgument wildcard) {
+  CaptureTypeVariable(@Det WildcardArgument wildcard) {
     super();
     this.varID = count++;
     this.wildcard = wildcard;
@@ -53,7 +54,10 @@ class CaptureTypeVariable extends TypeVariable {
    * @param upperBound the upper type bound of the variable
    */
   private CaptureTypeVariable(
-      int varID, WildcardArgument wildcard, ParameterBound lowerBound, ParameterBound upperBound) {
+      @Det int varID,
+      @Det WildcardArgument wildcard,
+      @Det ParameterBound lowerBound,
+      @Det ParameterBound upperBound) {
     super(lowerBound, upperBound);
     this.varID = varID;
     this.wildcard = wildcard;
@@ -107,7 +111,10 @@ class CaptureTypeVariable extends TypeVariable {
    * @param typeParameter the formal type parameter of the generic type
    * @param substitution the capture conversion substitution
    */
-  public void convert(TypeVariable typeParameter, Substitution<ReferenceType> substitution) {
+  public void convert(
+      @Det CaptureTypeVariable this,
+      @Det TypeVariable typeParameter,
+      @Det Substitution<ReferenceType> substitution) {
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
     ParameterBound parameterBound = typeParameter.getUpperTypeBound().apply(substitution);
     if (getUpperTypeBound().isObject()) {
@@ -141,7 +148,8 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public @Det ReferenceType apply(
+      @Det CaptureTypeVariable this, @Det Substitution<ReferenceType> substitution) {
     ReferenceType type = substitution.get(this);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
@@ -168,7 +176,8 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
+  public TypeVariable createCopyWithBounds(
+      @Det ParameterBound lowerBound, @Det ParameterBound upperBound) {
     return new CaptureTypeVariable(this.varID, this.wildcard, lowerBound, upperBound);
   }
 }

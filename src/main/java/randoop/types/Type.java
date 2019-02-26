@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.lang.reflect.WildcardType;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
@@ -40,7 +42,7 @@ public abstract class Type implements Comparable<Type> {
    * @param classType the {@code Class} object for the type
    * @return the {@code Type} object for the given reflection type
    */
-  public static Type forClass(Class<?> classType) {
+  public static Type forClass(@Det Class<?> classType) {
     if (classType.equals(void.class)) {
       return VoidType.getVoidType();
     }
@@ -64,7 +66,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type forName(@ClassGetName String typeName) throws ClassNotFoundException {
+  public static Type forName(@ClassGetName @Det String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);
@@ -78,7 +80,7 @@ public abstract class Type implements Comparable<Type> {
    * @param value the Object value
    * @return the {@link Type} for the given value
    */
-  public static Type forValue(Object value) {
+  public static Type forValue(@Det Object value) {
     return Type.forClass(value.getClass());
   }
 
@@ -95,7 +97,7 @@ public abstract class Type implements Comparable<Type> {
    * @return a {@link Type} object corresponding to the given type
    * @throws IllegalArgumentException if the type is a {@code java.lang.reflect.WildcardType}
    */
-  public static Type forType(java.lang.reflect.Type type) {
+  public static Type forType(java.lang.reflect.@Det Type type) {
 
     if (type instanceof WildcardType) {
       throw new IllegalArgumentException("Cannot construct type for wildcard " + type);
@@ -131,7 +133,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the fully-qualified type name for this type
    */
-  public abstract String getName();
+  public abstract String getName(@Det Type this);
 
   /**
    * Returns the name of this type without type arguments or package qualifiers. For {@code
@@ -139,7 +141,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the name of this type without type arguments
    */
-  public abstract String getSimpleName();
+  public abstract String getSimpleName(@Det Type this);
 
   /**
    * Returns the name of this type as the "canonical name" of the underlying runtime class.
@@ -161,7 +163,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the unqualified name of this type
    */
-  public String getUnqualifiedName() {
+  public String getUnqualifiedName(@Det Type this) {
     return this.getSimpleName();
   }
 
@@ -180,8 +182,12 @@ public abstract class Type implements Comparable<Type> {
    * @param c the {@code Class<?>} to check
    * @return true if {@code c} is the runtime {@code Class<?>} of this type, false otherwise
    */
-  public boolean runtimeClassIs(Class<?> c) {
-    return this.getRuntimeClass().equals(c);
+  public boolean runtimeClassIs(@Det Class<?> c) {
+    @SuppressWarnings(
+        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @PolyDet
+    boolean result = this.getRuntimeClass().equals(c);
+    return result;
   }
 
   /**
@@ -208,7 +214,11 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is the Class type, and false otherwise
    */
   public boolean isClass() {
-    return this.equals(JavaTypes.CLASS_TYPE);
+    @SuppressWarnings(
+        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @PolyDet
+    boolean result = this.equals(JavaTypes.CLASS_TYPE);
+    return result;
   }
 
   /**
@@ -245,7 +255,11 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this is the {@code Object} type, false otherwise
    */
   public boolean isObject() {
-    return this.equals(JavaTypes.OBJECT_TYPE);
+    @SuppressWarnings(
+        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @PolyDet
+    boolean result = this.equals(JavaTypes.OBJECT_TYPE);
+    return result;
   }
 
   /**
@@ -254,7 +268,11 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is the String type, and false otherwise
    */
   public boolean isString() {
-    return this.equals(JavaTypes.STRING_TYPE);
+    @SuppressWarnings(
+        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @PolyDet
+    boolean result = this.equals(JavaTypes.STRING_TYPE);
+    return result;
   }
 
   /**
@@ -263,7 +281,11 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is void, false otherwise
    */
   public boolean isVoid() {
-    return this.equals(JavaTypes.VOID_TYPE);
+    @SuppressWarnings(
+        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @PolyDet
+    boolean result = this.equals(JavaTypes.VOID_TYPE);
+    return result;
   }
 
   /**
@@ -342,7 +364,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} constructed by substituting for type parameters in this type, or this
    *     type if this is not a generic class type
    */
-  public Type apply(Substitution<ReferenceType> substitution) {
+  public Type apply(@Det Type this, @Det Substitution<ReferenceType> substitution) {
     return this;
   }
 
@@ -351,7 +373,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return a copy of this type with wildcards replaced by type conversion
    */
-  public Type applyCaptureConversion() {
+  public Type applyCaptureConversion(@Det Type this) {
     return this;
   }
 
@@ -380,7 +402,7 @@ public abstract class Type implements Comparable<Type> {
    * @param sourceType the type to test for assignability
    * @return true if this type can be assigned from the source type, and false otherwise
    */
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det Type this, @Det Type sourceType) {
     // default behavior, refined by overrides in subclasses
     if (sourceType.isVoid()) {
       return false;
@@ -399,7 +421,7 @@ public abstract class Type implements Comparable<Type> {
    * @param <T> the type of the value
    * @return true if the type of {@code value} is assignable to this type, false otherwise
    */
-  public <T> boolean isAssignableFromTypeOf(T value) {
+  public <T extends @Det Object> boolean isAssignableFromTypeOf(@Det Type this, T value) {
     if (value == null) {
       return !this.isPrimitive();
     }
@@ -416,7 +438,7 @@ public abstract class Type implements Comparable<Type> {
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det Type this, @Det Type otherType) {
     // default behavior, refined by overrides in subclasses
     return this.equals(otherType);
   }
@@ -440,7 +462,13 @@ public abstract class Type implements Comparable<Type> {
    */
   @Override
   public int compareTo(Type type) {
+    @SuppressWarnings(
+        "determinism") // These really are @PolyDet, but can't pass them to conditional.
+    @Det
     String name1 = this.getCanonicalName();
+    @SuppressWarnings(
+        "determinism") // These really are @PolyDet, but can't pass them to conditional.
+    @Det
     String name2 = this.getCanonicalName();
     if (name1 != null && name2 != null) {
       return this.getCanonicalName().compareTo(type.getCanonicalName());

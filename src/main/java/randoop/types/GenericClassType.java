@@ -4,6 +4,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
@@ -22,7 +24,7 @@ public class GenericClassType extends ParameterizedType {
    *
    * @param rawType the {@code Class} raw type
    */
-  GenericClassType(Class<?> rawType) {
+  GenericClassType(@Det Class<?> rawType) {
     this.rawType = rawType;
     this.parameters = new ArrayList<>();
 
@@ -67,7 +69,8 @@ public class GenericClassType extends ParameterizedType {
    * @return a {@link ParameterizedType} instantiating this generic class by the given substitution
    */
   @Override
-  public InstantiatedType apply(Substitution<ReferenceType> substitution) {
+  public InstantiatedType apply(
+      @Det GenericClassType this, @Det Substitution<ReferenceType> substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
@@ -81,7 +84,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public GenericClassType applyCaptureConversion() {
+  public GenericClassType applyCaptureConversion(@Det GenericClassType this) {
     return (GenericClassType) applyCaptureConversion(this);
   }
 
@@ -114,7 +117,8 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the list of instantiated directly-implemented interface types of this type
    */
-  List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
+  List<ClassOrInterfaceType> getInterfaces(
+      @Det GenericClassType this, @Det Substitution<ReferenceType> substitution) {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
       interfaces.add(ClassOrInterfaceType.forType(type).apply(substitution));
@@ -162,7 +166,8 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the instantiated type
    */
-  ClassOrInterfaceType getSuperclass(Substitution<ReferenceType> substitution) {
+  ClassOrInterfaceType getSuperclass(
+      @Det GenericClassType this, @Det Substitution<ReferenceType> substitution) {
     java.lang.reflect.Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return JavaTypes.OBJECT_TYPE;
@@ -185,7 +190,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the list of type parameters of this generic class
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det GenericClassType this) {
     List<TypeVariable> params = super.getTypeParameters();
     params.addAll(parameters);
     return params;
@@ -198,7 +203,8 @@ public class GenericClassType extends ParameterizedType {
    * @return a type which is this type parameterized by the given type arguments
    * @see #apply(Substitution)
    */
-  public InstantiatedType instantiate(ReferenceType... typeArguments) {
+  public InstantiatedType instantiate(
+      @Det GenericClassType this, @Det ReferenceType @Det ... typeArguments) {
     if (typeArguments.length != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
@@ -224,7 +230,8 @@ public class GenericClassType extends ParameterizedType {
    * @return the type that is this type instantiated by the given type arguments
    * @see #apply(Substitution)
    */
-  public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
+  public InstantiatedType instantiate(
+      @Det GenericClassType this, @Det List<ReferenceType> typeArguments) {
     if (typeArguments.size() != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }

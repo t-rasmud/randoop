@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -17,7 +19,7 @@ import org.plumelib.util.UtilPlume;
  * <p>Because a substitution represents the instantiation from a generic class to a parameterized
  * type, an instance is built using {@link Substitution#forArgs(List, List)} and then not modified.
  */
-public class Substitution<T> {
+public class Substitution<T extends @Det Object> {
 
   /** The substitution map. */
   private Map<TypeVariable, T> map;
@@ -31,12 +33,12 @@ public class Substitution<T> {
     rawMap = new LinkedHashMap<>();
   }
 
-  public Substitution(Substitution<T> substitution) {
+  public Substitution(@Det Substitution<T> substitution) {
     map = new LinkedHashMap<>(substitution.map);
     rawMap = new LinkedHashMap<>(substitution.rawMap);
   }
 
-  public static <T> Substitution<T> forArg(TypeVariable parameter, T argument) {
+  public static <T extends @Det Object> Substitution<T> forArg(TypeVariable parameter, T argument) {
     Substitution<T> s = new Substitution<>();
     s.put(parameter, argument);
     return s;
@@ -52,7 +54,8 @@ public class Substitution<T> {
    * @return a {@code Substitution} mapping each type variable to a type argument
    */
   @SafeVarargs
-  public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, T... arguments) {
+  public static <T extends @Det Object> Substitution<T> forArgs(
+      @Det List<TypeVariable> parameters, T... arguments) {
     assert parameters.size() == arguments.length;
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
@@ -69,7 +72,8 @@ public class Substitution<T> {
    * @param <T> the argument type
    * @return the substitution that maps the type parameters to the corresponding type argument
    */
-  public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, List<T> arguments) {
+  public static <T extends @Det Object> Substitution<T> forArgs(
+      @Det List<TypeVariable> parameters, List<T> arguments) {
     assert parameters.size() == arguments.size();
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
@@ -94,7 +98,7 @@ public class Substitution<T> {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(map);
   }
 
@@ -120,7 +124,7 @@ public class Substitution<T> {
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the the substitutions are consistent, false otherwise
    */
-  public boolean isConsistentWith(Substitution<T> substitution) {
+  public boolean isConsistentWith(@Det Substitution<T> this, @Det Substitution<T> substitution) {
     for (Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
       if (this.map.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
@@ -143,7 +147,7 @@ public class Substitution<T> {
    * @param substitution the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
-  public Substitution<T> extend(Substitution<T> substitution) {
+  public Substitution<T> extend(@Det Substitution<T> this, @Det Substitution<T> substitution) {
     Substitution<T> result = new Substitution<>(this);
     for (Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
       if (result.map.containsKey(entry.getKey())

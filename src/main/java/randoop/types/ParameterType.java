@@ -5,6 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -23,7 +25,7 @@ public abstract class ParameterType extends ReferenceType {
     this.upperBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
   }
 
-  ParameterType(ParameterBound lowerBound, ParameterBound upperBound) {
+  ParameterType(@Det ParameterBound lowerBound, @Det ParameterBound upperBound) {
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
   }
@@ -61,7 +63,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det ParameterType this) {
     Set<TypeVariable> parameters = new LinkedHashSet<>();
     parameters.addAll(lowerBound.getTypeParameters());
     parameters.addAll(upperBound.getTypeParameters());
@@ -78,11 +80,11 @@ public abstract class ParameterType extends ReferenceType {
     return null;
   }
 
-  void setUpperBound(ParameterBound upperBound) {
+  void setUpperBound(@Det ParameterBound upperBound) {
     this.upperBound = upperBound;
   }
 
-  void setLowerBound(ParameterBound lowerBound) {
+  void setLowerBound(@Det ParameterBound lowerBound) {
     this.lowerBound = lowerBound;
   }
 

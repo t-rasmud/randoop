@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Represents a reference type defined in <a
@@ -26,7 +28,7 @@ public abstract class ReferenceType extends Type {
    * @param classType the {@code Class} object representing the type
    * @return the {@code ReferenceType} object for the given type
    */
-  public static ReferenceType forClass(Class<?> classType) {
+  public static ReferenceType forClass(@Det Class<?> classType) {
     if (classType.isPrimitive()) {
       throw new IllegalArgumentException("type must be a reference type");
     }
@@ -52,7 +54,7 @@ public abstract class ReferenceType extends Type {
    * @param type the type reference
    * @return the {@code ReferenceType} for the given {@code Type}
    */
-  public static ReferenceType forType(java.lang.reflect.Type type) {
+  public static ReferenceType forType(java.lang.reflect.@Det Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return ArrayType.forType(type);
     }
@@ -79,10 +81,11 @@ public abstract class ReferenceType extends Type {
    * @return the type created by applying the substitution to this type
    */
   @Override
-  public abstract ReferenceType apply(Substitution<ReferenceType> substitution);
+  public abstract ReferenceType apply(
+      @Det ReferenceType this, @Det Substitution<ReferenceType> substitution);
 
   @Override
-  public ReferenceType applyCaptureConversion() {
+  public ReferenceType applyCaptureConversion(@Det ReferenceType this) {
     return this;
   }
 
@@ -93,7 +96,7 @@ public abstract class ReferenceType extends Type {
    *
    * @return the type parameters for this type
    */
-  public List<TypeVariable> getTypeParameters() {
+  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det ReferenceType this) {
     return new ArrayList<>();
   }
 
@@ -115,7 +118,7 @@ public abstract class ReferenceType extends Type {
    * 5.1.5</a> for details.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det ReferenceType this, @Det Type sourceType) {
     return super.isAssignableFrom(sourceType)
         || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
   }
@@ -145,7 +148,7 @@ public abstract class ReferenceType extends Type {
    * @param otherType the general reference type
    * @return true if this type instantiates the other reference type, false otherwise
    */
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det ReferenceType this, @Det ReferenceType otherType) {
     if (this.equals(otherType)) {
       return true;
     }
@@ -156,7 +159,8 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
-  Substitution<ReferenceType> getInstantiatingSubstitution(ReferenceType otherType) {
+  Substitution<ReferenceType> getInstantiatingSubstitution(
+      @Det ReferenceType this, @Det ReferenceType otherType) {
     if (this.equals(otherType)) {
       return new Substitution<>();
     }
@@ -184,7 +188,7 @@ public abstract class ReferenceType extends Type {
    * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det ReferenceType this, @Det Type otherType) {
     if (otherType == null) {
       throw new IllegalArgumentException("type may not be null");
     }

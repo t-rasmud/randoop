@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
@@ -23,7 +25,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param lowerBound the lower type bound on this variable
    * @param upperBound the upper type bound on this variable
    */
-  TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+  TypeVariable(@Det ParameterBound lowerBound, @Det ParameterBound upperBound) {
     super(lowerBound, upperBound);
   }
 
@@ -34,7 +36,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param type the type reference
    * @return the {@code TypeVariable} for the given type
    */
-  public static TypeVariable forType(java.lang.reflect.Type type) {
+  public static TypeVariable forType(java.lang.reflect.@Det Type type) {
     if (!(type instanceof java.lang.reflect.TypeVariable<?>)) {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
@@ -45,7 +47,8 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType apply(
+      @Det TypeVariable this, @Det Substitution<ReferenceType> substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
@@ -59,12 +62,12 @@ public abstract class TypeVariable extends ParameterType {
    * <p>Returns false, since an uninstantiated type variable may not be assigned to.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public @Det boolean isAssignableFrom(Type sourceType) {
     return false;
   }
 
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det TypeVariable this, @Det ReferenceType otherType) {
     if (super.isInstantiationOf(otherType)) {
       return true;
     }
@@ -82,7 +85,7 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det TypeVariable this, @Det Type otherType) {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
@@ -101,7 +104,7 @@ public abstract class TypeVariable extends ParameterType {
    * @return a substitution that replaces {@code variable} with {@code otherType}
    */
   private static Substitution<ReferenceType> getSubstitution(
-      TypeVariable variable, ReferenceType otherType) {
+      @Det TypeVariable variable, @Det ReferenceType otherType) {
     List<TypeVariable> variableList = new ArrayList<>();
     variableList.add(variable);
     return Substitution.forArgs(variableList, otherType);
@@ -119,7 +122,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  boolean canBeInstantiatedBy(ReferenceType otherType) {
+  boolean canBeInstantiatedBy(@Det TypeVariable this, @Det ReferenceType otherType) {
     Substitution<ReferenceType> substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
@@ -156,14 +159,14 @@ public abstract class TypeVariable extends ParameterType {
    * @return this variable
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det TypeVariable this) {
     Set<TypeVariable> parameters = new HashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
 
   public abstract TypeVariable createCopyWithBounds(
-      ParameterBound lowerBound, ParameterBound upperBound);
+      @Det ParameterBound lowerBound, @Det ParameterBound upperBound);
 
   @Override
   public Type getRawtype() {

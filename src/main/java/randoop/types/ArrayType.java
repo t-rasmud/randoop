@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents an array type as defined in JLS, Section 4.3.
@@ -32,7 +34,7 @@ public class ArrayType extends ReferenceType {
    * @param componentType the component type
    * @param runtimeClass the runtime class
    */
-  private ArrayType(Type componentType, Class<?> runtimeClass) {
+  private ArrayType(@Det Type componentType, @Det Class<?> runtimeClass) {
     this.componentType = componentType;
     this.runtimeClass = runtimeClass;
   }
@@ -43,7 +45,7 @@ public class ArrayType extends ReferenceType {
    * @param arrayClass the {@code Class} object for array type
    * @return the {@code ArrayType} for the given class object
    */
-  public static ArrayType forClass(Class<?> arrayClass) {
+  public static ArrayType forClass(@Det Class<?> arrayClass) {
     if (!arrayClass.isArray()) {
       throw new IllegalArgumentException("type must be an array");
     }
@@ -61,7 +63,7 @@ public class ArrayType extends ReferenceType {
    * @param type the {@link java.lang.reflect.Type} reference
    * @return the {@code Type} for the array type
    */
-  public static ArrayType forType(java.lang.reflect.Type type) {
+  public static ArrayType forType(java.lang.reflect.@Det Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;
       Type componentType = Type.forType(arrayType.getGenericComponentType());
@@ -83,7 +85,7 @@ public class ArrayType extends ReferenceType {
    * @param componentType the component type
    * @return an {@code ArrayType} with the given component type
    */
-  public static ArrayType ofComponentType(Type componentType) {
+  public static ArrayType ofComponentType(@Det Type componentType) {
     if (componentType instanceof TypeVariable) {
       return new ArrayType(componentType, Array.newInstance(Object.class, 0).getClass());
     }
@@ -101,7 +103,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(componentType, runtimeClass);
   }
 
@@ -111,8 +113,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public ArrayType apply(Substitution<ReferenceType> substitution) {
-    Type type = componentType.apply(substitution);
+  public @Det ArrayType apply(@Det ArrayType this, @Det Substitution<ReferenceType> substitution) {
+    @Det Type type = componentType.apply(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);
     } else {
@@ -181,7 +183,7 @@ public class ArrayType extends ReferenceType {
    * C}).
    */
   @Override
-  public boolean isAssignableFrom(Type otherType) {
+  public @Det boolean isAssignableFrom(@Det ArrayType this, @Det Type otherType) {
     if (super.isAssignableFrom(otherType)) {
       return true;
     }
@@ -208,7 +210,7 @@ public class ArrayType extends ReferenceType {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public @Det boolean isSubtypeOf(@Det ArrayType this, @Det Type otherType) {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }

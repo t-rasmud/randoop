@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -112,7 +114,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * objects without casting.
    */
   @Override
-  public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
+  public abstract ClassOrInterfaceType apply(
+      @Det ClassOrInterfaceType this, @Det Substitution<ReferenceType> substitution);
 
   /**
    * Applies the substitution to the enclosing type of this type and adds the result as the
@@ -123,7 +126,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the type with enclosing type added if needed
    */
   final ClassOrInterfaceType apply(
-      Substitution<ReferenceType> substitution, ClassOrInterfaceType type) {
+      @Det ClassOrInterfaceType this,
+      @Det Substitution<ReferenceType> substitution,
+      @Det ClassOrInterfaceType type) {
     if (this.isMemberClass() && !this.isStatic()) {
       type.setEnclosingType(enclosingType.apply(substitution));
     }
@@ -131,7 +136,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public abstract ClassOrInterfaceType applyCaptureConversion();
+  public abstract ClassOrInterfaceType applyCaptureConversion(@Det ClassOrInterfaceType this);
 
   /**
    * Applies capture conversion to the enclosing type of this type and adds the result as the
@@ -140,7 +145,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type this type with capture conversion applied
    * @return the type with converted enclosing type
    */
-  final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
+  final ClassOrInterfaceType applyCaptureConversion(
+      @Det ClassOrInterfaceType this, @Det ClassOrInterfaceType type) {
     if (this.isMemberClass() && !this.isStatic()) {
       type.setEnclosingType(enclosingType.applyCaptureConversion());
     }
@@ -164,7 +170,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det ClassOrInterfaceType this) {
     if (this.isMemberClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
@@ -175,7 +181,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getUnqualifiedName() {
+  public String getUnqualifiedName(@Det ClassOrInterfaceType this) {
     String prefix = "";
     if (this.isMemberClass()) {
       prefix = enclosingType.getUnqualifiedName() + ".";
@@ -197,7 +203,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the package of the runtime class of this type, or null if there is none
    */
-  public Package getPackage() {
+  public Package getPackage(@Det ClassOrInterfaceType this) {
     Class<?> c = getRuntimeClass();
     if (c == null) {
       throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
@@ -226,7 +232,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  public InstantiatedType getMatchingSupertype(
+      @Det ClassOrInterfaceType this, @Det GenericClassType goalType) {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
@@ -271,7 +278,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
+  public Substitution<ReferenceType> getInstantiatingSubstitution(
+      @Det ClassOrInterfaceType this, @Det ClassOrInterfaceType goalType) {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution<ReferenceType> substitution = new Substitution<>();
@@ -307,7 +315,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the set of all supertypes of this type
    */
-  public Collection<ClassOrInterfaceType> getSuperTypes() {
+  public Collection<ClassOrInterfaceType> getSuperTypes(@Det ClassOrInterfaceType this) {
     Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
     if (this.isObject()) {
       return supertypes;
@@ -329,7 +337,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the immediate supertypes of this type
    */
-  public List<ClassOrInterfaceType> getImmediateSupertypes() {
+  public List<ClassOrInterfaceType> getImmediateSupertypes(@Det ClassOrInterfaceType this) {
     if (this.isObject()) {
       return Collections.emptyList();
     }
@@ -360,7 +368,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * {@code otherType}.
    */
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det ClassOrInterfaceType this, @Det ReferenceType otherType) {
     if (super.isInstantiationOf(otherType)) {
       return true;
     }
@@ -407,7 +415,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @see ParameterizedType#isSubtypeOf(Type)
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det ClassOrInterfaceType this, @Det Type otherType) {
     if (debug) {
       System.out.printf(
           "isSubtypeOf(%s, %s) [%s, %s]%n", this, otherType, this.getClass(), otherType.getClass());
@@ -489,7 +497,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @param enclosingType the type for the class enclosing the declaration of this type
    */
-  private void setEnclosingType(ClassOrInterfaceType enclosingType) {
+  private void setEnclosingType(@Det ClassOrInterfaceType enclosingType) {
     this.enclosingType = enclosingType;
   }
 
@@ -503,7 +511,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det ClassOrInterfaceType this) {
     if (this.isMemberClass() && !this.isStatic()) {
       return enclosingType.getTypeParameters();
     }

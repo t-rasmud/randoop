@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3) */
 class ExplicitTypeVariable extends TypeVariable {
@@ -14,7 +15,7 @@ class ExplicitTypeVariable extends TypeVariable {
    * @param variable the type parameter
    * @param bound the upper bound on the parameter
    */
-  ExplicitTypeVariable(java.lang.reflect.TypeVariable<?> variable, ParameterBound bound) {
+  ExplicitTypeVariable(java.lang.reflect.@Det TypeVariable<?> variable, @Det ParameterBound bound) {
     super(new EagerReferenceBound(JavaTypes.NULL_TYPE), bound);
     this.variable = variable;
   }
@@ -47,12 +48,12 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det ExplicitTypeVariable this) {
     return variable.getName();
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det ExplicitTypeVariable this) {
     return this.getName();
   }
 
@@ -66,7 +67,8 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType apply(
+      @Det ExplicitTypeVariable this, @Det Substitution<ReferenceType> substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null && !type.isVariable()) {
       return type;
@@ -85,7 +87,8 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
+  public TypeVariable createCopyWithBounds(
+      ParameterBound lowerBound, @Det ParameterBound upperBound) {
     return new ExplicitTypeVariable(this.variable, upperBound);
   }
 }
