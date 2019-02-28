@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -28,7 +29,7 @@ class IntersectionTypeBound extends ParameterBound {
    *
    * @param boundList the list of type bounds
    */
-  IntersectionTypeBound(List<ParameterBound> boundList) {
+  IntersectionTypeBound(@Det List<ParameterBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -63,7 +64,8 @@ class IntersectionTypeBound extends ParameterBound {
    * @return this bound with the substitution applied to all member bounds
    */
   @Override
-  public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
+  public IntersectionTypeBound apply(
+      @Det IntersectionTypeBound this, @Det Substitution<ReferenceType> substitution) {
     List<ParameterBound> bounds = new ArrayList<>();
     for (ParameterBound bound : this.boundList) {
       bounds.add(bound.apply(substitution));
@@ -133,7 +135,7 @@ class IntersectionTypeBound extends ParameterBound {
    * bounds of this object.
    */
   @Override
-  public boolean isLowerBound(Type otherType, Substitution<ReferenceType> subst) {
+  public boolean isLowerBound(@Det Type otherType, @Det Substitution<ReferenceType> subst) {
     for (ParameterBound b : boundList) {
       if (!b.isLowerBound(otherType, subst)) {
         return false;
@@ -177,7 +179,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @return true if the argument type satisfies all of the bounds in this intersection type bound
    */
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
+  public boolean isUpperBound(@Det Type argType, @Det Substitution<ReferenceType> subst) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(argType, subst)) {
         return false;
@@ -193,7 +195,7 @@ class IntersectionTypeBound extends ParameterBound {
    *     bound
    */
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  boolean isUpperBound(@Det ParameterBound bound, @Det Substitution<ReferenceType> substitution) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(bound, substitution)) {
         return false;

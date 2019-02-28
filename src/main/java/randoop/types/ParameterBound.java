@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Represents a type bound on a type variable or wildcard occurring as a type parameter of a generic
@@ -107,7 +108,8 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
    */
-  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
+  public abstract ParameterBound apply(
+      @Det ParameterBound this, @Det Substitution<ReferenceType> substitution);
 
   /**
    * Applies a capture conversion to any wildcard arguments in the type of this bound.
@@ -202,7 +204,7 @@ public abstract class ParameterBound {
    * @param subst the substitution
    * @return true if this bound is a subtype of the given type
    */
-  public abstract boolean isLowerBound(Type argType, Substitution<ReferenceType> subst);
+  public abstract boolean isLowerBound(@Det Type argType, @Det Substitution<ReferenceType> subst);
 
   /**
    * Tests whether this is a lower bound on the type of a given bound with respect to a type
@@ -240,7 +242,7 @@ public abstract class ParameterBound {
    * @return true if this bound is satisfied by the concrete type when the substitution is used on
    *     the bound, false otherwise
    */
-  public abstract boolean isUpperBound(Type argType, Substitution<ReferenceType> subst);
+  public abstract boolean isUpperBound(@Det Type argType, @Det Substitution<ReferenceType> subst);
 
   /**
    * Indicates whether this bound is an upper bound on the type of the given bound with respect to
@@ -250,7 +252,8 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
    */
-  abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
+  abstract boolean isUpperBound(
+      @Det ParameterBound bound, @Det Substitution<ReferenceType> substitution);
 
   /**
    * Indicates whether this bound is a type variable.

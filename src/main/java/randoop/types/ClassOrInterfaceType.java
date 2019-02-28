@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -195,7 +194,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the list of interfaces directly implemented by this type
    */
-  public abstract List<ClassOrInterfaceType> getInterfaces();
+  public abstract List<ClassOrInterfaceType> getInterfaces(@Det ClassOrInterfaceType this);
 
   /**
    * Returns the package of the runtime class of this type.
@@ -307,7 +306,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return superclass of this type, or the {@code Object} type if this type has no superclass
    */
-  public abstract ClassOrInterfaceType getSuperclass();
+  public abstract ClassOrInterfaceType getSuperclass(@Det ClassOrInterfaceType this);
 
   /**
    * Return the set of all of the supertypes of this type.
@@ -356,7 +355,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isAbstract();
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(@Det ClassOrInterfaceType this) {
     return this.isMemberClass() && !this.isStatic() && enclosingType.isGeneric();
   }
 
@@ -511,7 +510,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det ClassOrInterfaceType this) {
+  public List<TypeVariable> getTypeParameters(@Det ClassOrInterfaceType this) {
     if (this.isMemberClass() && !this.isStatic()) {
       return enclosingType.getTypeParameters();
     }

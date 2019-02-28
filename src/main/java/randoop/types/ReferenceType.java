@@ -3,7 +3,6 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Represents a reference type defined in <a
@@ -96,7 +95,7 @@ public abstract class ReferenceType extends Type {
    *
    * @return the type parameters for this type
    */
-  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det ReferenceType this) {
+  public List<TypeVariable> getTypeParameters(@Det ReferenceType this) {
     return new ArrayList<>();
   }
 

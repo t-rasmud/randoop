@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -63,7 +62,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det ParameterType this) {
+  public List<TypeVariable> getTypeParameters(@Det ParameterType this) {
     Set<TypeVariable> parameters = new LinkedHashSet<>();
     parameters.addAll(lowerBound.getTypeParameters());
     parameters.addAll(upperBound.getTypeParameters());

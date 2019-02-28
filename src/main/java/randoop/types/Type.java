@@ -236,7 +236,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true if this type is generic, false otherwise
    */
-  public boolean isGeneric() {
+  public boolean isGeneric(@Det Type this) {
     return false;
   }
 

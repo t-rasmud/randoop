@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
@@ -190,7 +189,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the list of type parameters of this generic class
    */
   @Override
-  public @OrderNonDet List<TypeVariable> getTypeParameters(@Det GenericClassType this) {
+  public List<TypeVariable> getTypeParameters(@Det GenericClassType this) {
     List<TypeVariable> params = super.getTypeParameters();
     params.addAll(parameters);
     return params;
