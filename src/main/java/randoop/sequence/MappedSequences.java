@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -63,7 +64,7 @@ public class MappedSequences<T> {
   private static final SimpleList<Sequence> emptyList;
 
   static {
-    List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
+    @Det List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
     emptyList = new ListOfLists<>(emptyJDKList);
   }
 
@@ -72,8 +73,8 @@ public class MappedSequences<T> {
    *
    * @return the set of all sequence objects in this set of collections
    */
-  public Set<Sequence> getAllSequences() {
-    Set<Sequence> result = new LinkedHashSet<>();
+  public @Det Set<Sequence> getAllSequences() {
+    @Det Set<Sequence> result = new LinkedHashSet<>();
     for (SequenceCollection c : map.values()) {
       result.addAll(c.getAllSequences());
     }

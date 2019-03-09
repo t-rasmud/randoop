@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents a reference type as a type argument to a parameterized type. (See <a
@@ -18,7 +20,7 @@ public class ReferenceArgument extends TypeArgument {
    *
    * @param referenceType the {@link ReferenceType}
    */
-  private ReferenceArgument(ReferenceType referenceType) {
+  private ReferenceArgument(@Det ReferenceType referenceType) {
     this.referenceType = referenceType;
   }
 
@@ -28,11 +30,11 @@ public class ReferenceArgument extends TypeArgument {
    * @param type the type
    * @return a {@code ReferenceArgument} for the given type
    */
-  public static ReferenceArgument forType(java.lang.reflect.Type type) {
+  public static ReferenceArgument forType(java.lang.reflect.@Det Type type) {
     return forType(ReferenceType.forType(type));
   }
 
-  public static ReferenceArgument forType(ReferenceType referenceType) {
+  public static ReferenceArgument forType(@Det ReferenceType referenceType) {
     return new ReferenceArgument(referenceType);
   }
 
@@ -46,7 +48,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(referenceType);
   }
 
@@ -56,7 +58,8 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public TypeArgument apply(Substitution<ReferenceType> substitution) {
+  public TypeArgument apply(
+      @Det ReferenceArgument this, @Det Substitution<ReferenceType> substitution) {
     return TypeArgument.forType(referenceType.apply(substitution));
   }
 
@@ -72,7 +75,7 @@ public class ReferenceArgument extends TypeArgument {
    * </ul>
    */
   @Override
-  public boolean contains(TypeArgument otherArgument) {
+  public boolean contains(@Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (otherArgument.isWildcard()) {
       ParameterBound boundType = ((WildcardArgument) otherArgument).getTypeBound();
       return boundType.equals(new EagerReferenceBound(referenceType));
@@ -111,7 +114,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOf(TypeArgument otherArgument) {
+  boolean isInstantiationOf(@Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return false;
     }
@@ -122,7 +125,8 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public Substitution<ReferenceType> getInstantiatingSubstitution(
+      @Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }

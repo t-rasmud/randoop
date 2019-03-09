@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
@@ -24,7 +27,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    *
    * @param list the list of types
    */
-  public TypeTuple(List<Type> list) {
+  public TypeTuple(@Det List<Type> list) {
     this.list = new ArrayList<>(list);
   }
 
@@ -43,7 +46,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(list);
   }
 
@@ -60,8 +63,8 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple apply(Substitution<ReferenceType> substitution) {
-    List<Type> typeList = new ArrayList<>();
+  public TypeTuple apply(@Det Substitution<ReferenceType> substitution) {
+    @Det List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
       Type newType = type.apply(substitution);
       if (newType != null) {
@@ -80,7 +83,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple after performing a capture conversion
    */
   public TypeTuple applyCaptureConversion() {
-    List<Type> typeList = new ArrayList<>();
+    @Det List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
       typeList.add(type.applyCaptureConversion());
     }
@@ -93,7 +96,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @param i the component index
    * @return the component type at the position
    */
-  public Type get(int i) {
+  public Type get(@Det int i) {
     return list.get(i);
   }
 
@@ -103,7 +106,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return the list of type parameters for this type tuple
    */
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    @Det Set<TypeVariable> paramSet = new LinkedHashSet<>();
     for (Type type : this.list) {
       if (type.isReferenceType()) {
         paramSet.addAll(((ReferenceType) type).getTypeParameters());
@@ -182,12 +185,12 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
     private Iterator<Type> iterator;
 
-    public TypeIterator(Iterator<Type> iterator) {
+    public TypeIterator(@Det Iterator<Type> iterator) {
       this.iterator = iterator;
     }
 
     @Override
-    public boolean hasNext() {
+    public @PolyDet("down") boolean hasNext() {
       return iterator.hasNext();
     }
 

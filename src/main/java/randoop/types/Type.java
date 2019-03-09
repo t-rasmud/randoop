@@ -152,7 +152,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the fully-qualified canonical name of this type
    */
-  public String getCanonicalName() {
+  public String getCanonicalName(@Det Type this) {
     return getRuntimeClass().getCanonicalName();
   }
 
@@ -462,16 +462,20 @@ public abstract class Type implements Comparable<Type> {
    */
   @Override
   public int compareTo(Type type) {
-    @SuppressWarnings(
-        "determinism") // These really are @PolyDet, but can't pass them to conditional.
+    @SuppressWarnings("determinism") // These really are @PolyDet, but can't pass them to
+    // conditional.
     @Det
     String name1 = this.getCanonicalName();
-    @SuppressWarnings(
-        "determinism") // These really are @PolyDet, but can't pass them to conditional.
+    @SuppressWarnings("determinism") // These really are @PolyDet, but can't pass them to
+    // conditional.
     @Det
     String name2 = this.getCanonicalName();
     if (name1 != null && name2 != null) {
-      return this.getCanonicalName().compareTo(type.getCanonicalName());
+      @SuppressWarnings("determinism") // getCanonicalName can only be called on @Det, but Type must
+      // be @PolyDet to override
+      @PolyDet
+      int result = this.getCanonicalName().compareTo(type.getCanonicalName());
+      return result;
     }
     return this.getRuntimeClass().getName().compareTo(this.getRuntimeClass().getName());
   }

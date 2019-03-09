@@ -3,6 +3,9 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
@@ -27,7 +30,7 @@ class WildcardType extends ParameterType {
     this.hasUpperBound = false;
   }
 
-  WildcardType(ParameterBound bound, boolean hasUpperBound) {
+  WildcardType(@Det ParameterBound bound, @Det boolean hasUpperBound) {
     super();
     this.hasUpperBound = hasUpperBound;
     if (hasUpperBound) {
@@ -46,7 +49,7 @@ class WildcardType extends ParameterType {
    * @param type the {@code java.lang.reflect.WildcardType} object
    * @return a {@link WildcardType} with the bounds from the given reflection type
    */
-  public static WildcardType forType(java.lang.reflect.WildcardType type) {
+  public static WildcardType forType(java.lang.reflect.@Det WildcardType type) {
     // Note: every wildcard has an upper bound, so need to check lower first
     if (type.getLowerBounds().length > 0) {
       assert type.getLowerBounds().length == 1
@@ -73,7 +76,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(hasUpperBound, super.hashCode());
   }
 
@@ -83,22 +86,30 @@ class WildcardType extends ParameterType {
       if (this.getUpperTypeBound().isObject()) {
         return "?";
       }
-      return "? extends " + this.getUpperTypeBound().toString();
+      @SuppressWarnings("determinism") // toString returns @PolyDet("up"), but the Object we call it
+      // on can't be @OrderNonDet so it's actually @PolyDet.
+      @PolyDet
+      String result = "? extends " + this.getUpperTypeBound().toString();
+      return result;
     }
-    return "? super " + this.getLowerTypeBound().toString();
+    @SuppressWarnings("determinism") // toString returns @PolyDet("up"), but the Object we call it
+    // on can't be @OrderNonDet so it's actually @PolyDet.
+    @PolyDet
+    String result = "? super " + this.getLowerTypeBound().toString();
+    return result;
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det WildcardType this) {
     return toString();
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det WildcardType this) {
     return toString();
   }
 
-  ParameterBound getTypeBound() {
+  ParameterBound getTypeBound(@Det WildcardType this) {
     if (hasUpperBound) {
       return getUpperTypeBound();
     }
@@ -106,7 +117,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public WildcardType apply(Substitution<ReferenceType> substitution) {
+  public WildcardType apply(@Det WildcardType this, @Det Substitution<ReferenceType> substitution) {
     ParameterBound bound = getTypeBound().apply(substitution);
     if (bound.equals(this.getTypeBound())) {
       return this;
@@ -115,7 +126,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public WildcardType applyCaptureConversion() {
+  public WildcardType applyCaptureConversion(@Det WildcardType this) {
     if (getTypeBound().hasWildcard()) {
       EagerReferenceBound convertedType =
           (EagerReferenceBound) getTypeBound().applyCaptureConversion();
@@ -146,7 +157,7 @@ class WildcardType extends ParameterType {
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
-  public boolean contains(WildcardType otherType) {
+  public boolean contains(@Det WildcardType this, @Det WildcardType otherType) {
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound
           && this.getUpperTypeBound().isSubtypeOf(otherType.getUpperTypeBound())) {
@@ -163,7 +174,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(@Det WildcardType this) {
     return getTypeBound().isGeneric();
   }
 

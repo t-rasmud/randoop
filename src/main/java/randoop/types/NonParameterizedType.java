@@ -3,6 +3,9 @@ package randoop.types;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
@@ -19,7 +22,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    *
    * @param runtimeType the runtime class for the type
    */
-  public NonParameterizedType(Class<?> runtimeType) {
+  public NonParameterizedType(@Det Class<?> runtimeType) {
     assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
     this.runtimeType = runtimeType;
   }
@@ -39,7 +42,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return runtimeType.hashCode();
   }
 
@@ -51,21 +54,26 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // getName require @Det this, but @PolyDet is required to
+    // override toString. All constructors are @Det so this will never introduce nondeterminism
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   @Override
-  public NonParameterizedType apply(Substitution<ReferenceType> substitution) {
+  public NonParameterizedType apply(
+      @Det NonParameterizedType this, @Det Substitution<ReferenceType> substitution) {
     return (NonParameterizedType) apply(substitution, new NonParameterizedType(this.runtimeType));
   }
 
   @Override
-  public NonParameterizedType applyCaptureConversion() {
+  public NonParameterizedType applyCaptureConversion(@Det NonParameterizedType this) {
     return (NonParameterizedType) applyCaptureConversion(this);
   }
 
   @Override
-  public List<ClassOrInterfaceType> getInterfaces() {
+  public List<ClassOrInterfaceType> getInterfaces(@Det NonParameterizedType this) {
     if (this.isRawtype()) {
       return this.getRawTypeInterfaces();
     }
@@ -78,7 +86,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    @Det List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
       interfaces.add(ClassOrInterfaceType.forType(type));
     }
@@ -96,7 +104,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    @Det List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Class<?> c : runtimeType.getInterfaces()) {
       interfaces.add(new NonParameterizedType(c));
     }
@@ -109,7 +117,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public ClassOrInterfaceType getSuperclass(@Det NonParameterizedType this) {
     if (this.isObject()) {
       return this;
     }
@@ -140,7 +148,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * (section 5.1.7)</a>
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det NonParameterizedType this, @Det Type sourceType) {
     // check identity and reference widening
     if (super.isAssignableFrom(sourceType)) {
       return true;
@@ -172,7 +180,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * NonParameterizedType}.
    */
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det NonParameterizedType this, @Det ReferenceType otherType) {
     boolean instantiationOf = super.isInstantiationOf(otherType);
     if ((otherType instanceof NonParameterizedType)) {
       return instantiationOf && this.runtimeClassIs(otherType.getRuntimeClass());
@@ -201,7 +209,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the primitive type if this is a boxed primitive
    * @throws IllegalArgumentException if this is not a boxed primitive type
    */
-  public PrimitiveType toPrimitive() {
+  public PrimitiveType toPrimitive(@Det NonParameterizedType this) {
     if (this.isBoxedPrimitive()) {
       return new PrimitiveType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
     }

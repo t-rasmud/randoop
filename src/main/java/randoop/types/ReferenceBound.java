@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
@@ -13,7 +15,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param boundType the {@link ReferenceType} of this bound
    */
-  ReferenceBound(ReferenceType boundType) {
+  ReferenceBound(@Det ReferenceType boundType) {
     this.boundType = boundType;
   }
 
@@ -36,7 +38,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(boundType);
   }
 
@@ -46,10 +48,11 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public abstract ReferenceBound apply(Substitution<ReferenceType> substitution);
+  public abstract ReferenceBound apply(
+      @Det ReferenceBound this, @Det Substitution<ReferenceType> substitution);
 
   @Override
-  public abstract ReferenceBound applyCaptureConversion();
+  public abstract ReferenceBound applyCaptureConversion(@Det ReferenceBound this);
 
   @Override
   boolean hasWildcard() {

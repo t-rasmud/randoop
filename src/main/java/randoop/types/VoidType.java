@@ -1,5 +1,9 @@
 package randoop.types;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+
 /**
  * Represents {@code void}. Technically, {@code void} is used to indicate that a method has no
  * return values, and is not a type. However, we need to pretend that it is to be able to represent
@@ -24,13 +28,17 @@ public class VoidType extends Type {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return System.identityHashCode(this);
   }
 
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // getName requires @Det this, but only @Det instances will be
+    // constructed so this never results in nondeterminism.
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   @Override
@@ -39,12 +47,12 @@ public class VoidType extends Type {
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det VoidType this) {
     return "void";
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det VoidType this) {
     return this.getName();
   }
 
@@ -59,7 +67,7 @@ public class VoidType extends Type {
    * <p>Returns false, since {@code void} is not a subtype of any type
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det VoidType this, @Det Type otherType) {
     return false;
   }
 
@@ -69,7 +77,7 @@ public class VoidType extends Type {
    * <p>Return false because cannot assign to void.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det VoidType this, @Det Type sourceType) {
     return false;
   }
 }

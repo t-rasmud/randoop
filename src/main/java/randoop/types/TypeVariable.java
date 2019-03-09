@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
@@ -41,7 +42,7 @@ public abstract class TypeVariable extends ParameterType {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
+    @OrderNonDet Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
     variableSet.add(v);
     return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
   }
@@ -105,9 +106,13 @@ public abstract class TypeVariable extends ParameterType {
    */
   private static Substitution<ReferenceType> getSubstitution(
       @Det TypeVariable variable, @Det ReferenceType otherType) {
-    List<TypeVariable> variableList = new ArrayList<>();
+    @Det List<TypeVariable> variableList = new ArrayList<>();
     variableList.add(variable);
-    return Substitution.forArgs(variableList, otherType);
+    @SuppressWarnings("determinism") // forArgs uses a variable length argument list, which the
+    // checker doesn't handle correctly.
+    @Det
+    Substitution<ReferenceType> result = Substitution.forArgs(variableList, otherType);
+    return result;
   }
 
   @Override
@@ -160,7 +165,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   @Override
   public @Det List<TypeVariable> getTypeParameters(@Det TypeVariable this) {
-    Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
+    @Det Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }

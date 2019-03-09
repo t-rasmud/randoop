@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -54,19 +56,23 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(instantiatedType, argumentList);
   }
 
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // getName requires @Det but only @Det instances will be
+    // constructed so this won't cause nondeterminism.
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   @Override
   public InstantiatedType apply(
       @Det InstantiatedType this, @Det Substitution<ReferenceType> substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
+    @Det List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeArgument argument : this.argumentList) {
       argumentList.add(argument.apply(substitution));
     }
@@ -97,7 +103,7 @@ public class InstantiatedType extends ParameterizedType {
       return this;
     }
 
-    List<ReferenceType> convertedTypeList = new ArrayList<>();
+    @Det List<ReferenceType> convertedTypeList = new ArrayList<>();
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
         WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
@@ -118,7 +124,7 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    List<TypeArgument> convertedArgumentList = new ArrayList<>();
+    @Det List<TypeArgument> convertedArgumentList = new ArrayList<>();
     for (ReferenceType type : convertedTypeList) {
       convertedArgumentList.add(TypeArgument.forType(type));
     }
@@ -136,7 +142,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces(@Det InstantiatedType this) {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    @Det List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
     for (ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
@@ -177,7 +183,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of reference types that are arguments to this type
    */
   List<ReferenceType> getReferenceArguments() {
-    List<ReferenceType> referenceArgList = new ArrayList<>();
+    @Det List<ReferenceType> referenceArgList = new ArrayList<>();
     for (TypeArgument argument : argumentList) {
       if (!argument.isWildcard()) {
         referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
@@ -223,9 +229,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public List<TypeVariable> getTypeParameters(@Det InstantiatedType this) {
-    Set<TypeVariable> paramSet = new LinkedHashSet<TypeVariable>(super.getTypeParameters());
+    @Det Set<TypeVariable> paramSet = new LinkedHashSet<TypeVariable>(super.getTypeParameters());
     for (TypeArgument argument : argumentList) {
-      List<TypeVariable> params = argument.getTypeParameters();
+      @Det List<TypeVariable> params = argument.getTypeParameters();
       paramSet.addAll(params);
     }
     return new ArrayList<TypeVariable>(paramSet);
@@ -240,7 +246,7 @@ public class InstantiatedType extends ParameterizedType {
    *     instantiated type
    */
   public Substitution<ReferenceType> getTypeSubstitution(@Det InstantiatedType this) {
-    List<ReferenceType> arguments = new ArrayList<>();
+    @Det List<ReferenceType> arguments = new ArrayList<>();
     for (TypeArgument arg : this.getTypeArguments()) {
       if (!arg.isWildcard()) {
         arguments.add(((ReferenceArgument) arg).getReferenceType());
@@ -254,7 +260,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean hasWildcard() {
+  public boolean hasWildcard(@Det InstantiatedType this) {
     for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
         return true;
@@ -407,8 +413,8 @@ public class InstantiatedType extends ParameterizedType {
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
         ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
-        List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
-        List<TypeArgument> thisTypeArguments = this.getTypeArguments();
+        @Det List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
+        @Det List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
         int i = 0;
         while (i < thisTypeArguments.size()

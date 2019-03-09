@@ -1,5 +1,9 @@
 package randoop.types;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
  * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section
@@ -15,7 +19,7 @@ public class PrimitiveType extends Type {
    *
    * @param runtimeClass the runtime class
    */
-  public PrimitiveType(Class<?> runtimeClass) {
+  public PrimitiveType(@Det Class<?> runtimeClass) {
     assert runtimeClass.isPrimitive()
         : "must be initialized with primitive type, got " + runtimeClass.getName();
     assert !runtimeClass.equals(void.class) : "void should be represented by VoidType";
@@ -38,7 +42,7 @@ public class PrimitiveType extends Type {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return runtimeClass.hashCode();
   }
 
@@ -49,7 +53,11 @@ public class PrimitiveType extends Type {
    */
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // toString requires @PolyDet, and only @Det instances will be
+    // constructed so this will never introduce nondeterminism.
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   /**
@@ -58,12 +66,12 @@ public class PrimitiveType extends Type {
    * <p>For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
    */
   @Override
-  public String getName() {
+  public String getName(@Det PrimitiveType this) {
     return runtimeClass.getCanonicalName();
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det PrimitiveType this) {
     return runtimeClass.getSimpleName();
   }
 
@@ -88,7 +96,7 @@ public class PrimitiveType extends Type {
    * the source type by primitive widening or unboxing.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det PrimitiveType this, @Det Type sourceType) {
 
     if (super.isAssignableFrom(sourceType)) {
       return true;
@@ -135,7 +143,7 @@ public class PrimitiveType extends Type {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det PrimitiveType this, @Det Type otherType) {
     return otherType.isPrimitive()
         && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
   }
@@ -145,7 +153,7 @@ public class PrimitiveType extends Type {
    *
    * @return the boxed type for this primitive type
    */
-  public NonParameterizedType toBoxedPrimitive() {
+  public NonParameterizedType toBoxedPrimitive(@Det PrimitiveType this) {
     return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

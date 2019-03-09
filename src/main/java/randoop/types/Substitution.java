@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -38,7 +39,8 @@ public class Substitution<T extends @Det Object> {
     rawMap = new LinkedHashMap<>(substitution.rawMap);
   }
 
-  public static <T extends @Det Object> Substitution<T> forArg(TypeVariable parameter, T argument) {
+  public static <T extends @Det Object> Substitution<T> forArg(
+      @Det TypeVariable parameter, T argument) {
     Substitution<T> s = new Substitution<>();
     s.put(parameter, argument);
     return s;
@@ -73,7 +75,7 @@ public class Substitution<T extends @Det Object> {
    * @return the substitution that maps the type parameters to the corresponding type argument
    */
   public static <T extends @Det Object> Substitution<T> forArgs(
-      @Det List<TypeVariable> parameters, List<T> arguments) {
+      @Det List<TypeVariable> parameters, @Det List<T> arguments) {
     assert parameters.size() == arguments.size();
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
@@ -109,7 +111,7 @@ public class Substitution<T extends @Det Object> {
    */
   @Override
   public String toString() {
-    List<String> pairs = new ArrayList<>();
+    @PolyDet List<String> pairs = new ArrayList<>();
     for (Entry<TypeVariable, T> p : map.entrySet()) {
       pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
     }
@@ -209,7 +211,7 @@ public class Substitution<T extends @Det Object> {
    * @param typeParameter the type variable
    * @param type the concrete type
    */
-  private void put(TypeVariable typeParameter, T type) {
+  private void put(@Det TypeVariable typeParameter, T type) {
     map.put(typeParameter, type);
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);

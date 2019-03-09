@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a type variable introduced by capture conversion over a wildcard type argument.
@@ -75,13 +77,17 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(varID, wildcard, super.hashCode());
   }
 
   @Override
   public String toString() {
-    return getName() + " of " + wildcard;
+    @SuppressWarnings("determinism") // getName requires @Det, but only @Det instances will be
+    // constructed.
+    @PolyDet
+    String name = getName() + " of " + wildcard;
+    return name;
   }
 
   /**
@@ -120,7 +126,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
-      List<ParameterBound> boundList = new ArrayList<>();
+      @Det List<ParameterBound> boundList = new ArrayList<>();
       boundList.add(parameterBound);
       boundList.add(getUpperTypeBound());
       setUpperBound(new IntersectionTypeBound(boundList));
@@ -128,12 +134,12 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det CaptureTypeVariable this) {
     return "Capture" + varID;
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det CaptureTypeVariable this) {
     return this.getName();
   }
 
@@ -143,7 +149,7 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(@Det CaptureTypeVariable this) {
     return true;
   }
 

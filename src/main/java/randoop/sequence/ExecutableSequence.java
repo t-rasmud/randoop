@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -102,7 +103,7 @@ public class ExecutableSequence {
    *
    * @param sequence the underlying sequence for this executable sequence
    */
-  public ExecutableSequence(Sequence sequence) {
+  public ExecutableSequence(@Det Sequence sequence) {
     this.sequence = sequence;
     this.executionResults = new Execution(sequence);
   }
@@ -148,7 +149,7 @@ public class ExecutableSequence {
    * @return the sequence as a string
    */
   private List<String> toCodeLines() {
-    List<String> lines = new ArrayList<>();
+    @Det List<String> lines = new ArrayList<>();
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement

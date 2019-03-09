@@ -59,9 +59,10 @@ compileJava {
 		'org.checkerframework.checker.determinism.DeterminismChecker',
 		// '-AonlyDefs=randoop.util',
 		// '-AonlyDefs=randoop.types',
-		'-AonlyDefs=randoop.types.JavaTypes$',
+		'-AonlyDefs=randoop.sequence.MappedSequences',
 		// '-AonlyDefs=randoop.util.StringEscapeUtils',
 		// '-AonlyDefs=IdentityMultiMap',
+		'-AsuppressWarnings=invalid.type.on.conditional',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
         // '-Awarns',      // -Awarns turns Checker Framework errors into warnings

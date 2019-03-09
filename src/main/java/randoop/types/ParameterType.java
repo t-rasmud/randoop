@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -39,7 +40,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(lowerBound, upperBound);
   }
 
@@ -49,11 +50,11 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public String getCanonicalName() {
+  public String getCanonicalName(@Det ParameterType this) {
     return this.getName();
   }
 
-  public ParameterBound getLowerTypeBound() {
+  public ParameterBound getLowerTypeBound(@Det ParameterType this) {
     return lowerBound;
   }
 
@@ -63,7 +64,7 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters(@Det ParameterType this) {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
+    @Det Set<TypeVariable> parameters = new LinkedHashSet<>();
     parameters.addAll(lowerBound.getTypeParameters());
     parameters.addAll(upperBound.getTypeParameters());
     return new ArrayList<>(parameters);
@@ -88,11 +89,11 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public boolean hasWildcard() {
+  public boolean hasWildcard(@Det ParameterType this) {
     return getLowerTypeBound().hasWildcard() || getUpperTypeBound().hasWildcard();
   }
 
-  public boolean hasGenericBound() {
+  public boolean hasGenericBound(@Det ParameterType this) {
     return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
   }
 }

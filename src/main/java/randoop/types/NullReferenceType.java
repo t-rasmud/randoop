@@ -1,5 +1,9 @@
 package randoop.types;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+
 /**
  * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
  * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
@@ -25,13 +29,17 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return System.identityHashCode(this);
   }
 
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // toString requires @PolyDet, and only @Det instances will be
+    // constructed so this will never introduce nondeterminism.
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   /**
@@ -46,22 +54,23 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType apply(
+      @Det NullReferenceType this, @Det Substitution<ReferenceType> substitution) {
     return this;
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det NullReferenceType this) {
     return "NullType";
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det NullReferenceType this) {
     return this.getName();
   }
 
   @Override
-  public String getCanonicalName() {
+  public String getCanonicalName(@Det NullReferenceType this) {
     return this.getName();
   }
 
@@ -71,12 +80,12 @@ class NullReferenceType extends ReferenceType {
    * @return true if this type has a wildcard, and false otherwise
    */
   @Override
-  public boolean hasWildcard() {
+  public @Det boolean hasWildcard() {
     return false;
   }
 
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det NullReferenceType this, @Det Type otherType) {
     return !otherType.equals(JavaTypes.VOID_TYPE) && otherType.isReferenceType();
   }
 }

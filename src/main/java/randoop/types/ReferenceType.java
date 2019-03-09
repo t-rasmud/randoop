@@ -104,7 +104,7 @@ public abstract class ReferenceType extends Type {
    *
    * @return true if this type has a wildcard, false otherwise
    */
-  public boolean hasWildcard() {
+  public boolean hasWildcard(@Det ReferenceType this) {
     return false;
   }
 
@@ -165,8 +165,11 @@ public abstract class ReferenceType extends Type {
     }
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
-      List<TypeVariable> typeParameters = new ArrayList<>();
+      @Det List<TypeVariable> typeParameters = new ArrayList<>();
       typeParameters.add(variable);
+      @SuppressWarnings("determinism") // forArgs takes a variable length parameter list, which the
+      // checker doesn't handle correctly
+      @Det
       Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
           && variable.getUpperTypeBound().isUpperBound(this, substitution)) {

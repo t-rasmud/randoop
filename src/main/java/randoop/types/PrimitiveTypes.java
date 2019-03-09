@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Utilities for working with {@code Class<?> objects} that Java reflection treats as primitive,
@@ -66,14 +69,14 @@ public final class PrimitiveTypes {
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section
    * 5.1.2</a>.
    */
-  private static final Map<Class<?>, Set<Class<?>>> wideningTable = new HashMap<>();
+  private static final Map<Class<?>, @OrderNonDet Set<Class<?>>> wideningTable = new HashMap<>();
 
   static {
     // build transitive widening table for primitive types
     // both boolean and double have no supertypes
     wideningTable.put(boolean.class, new HashSet<Class<?>>());
     wideningTable.put(double.class, new HashSet<Class<?>>());
-    Set<Class<?>> s = new HashSet<>();
+    @OrderNonDet Set<Class<?>> s = new HashSet<>();
     s.add(double.class);
     wideningTable.put(float.class, new HashSet<>(s));
     s.add(float.class);
@@ -114,7 +117,11 @@ public final class PrimitiveTypes {
     }
 
     // check identity and primitive  widening
-    return source.equals(target) || isSubtype(source, target);
+    @SuppressWarnings("determinism") // Return type of equals is @PolyDet("up"), but these will
+    // never be collections
+    @PolyDet
+    boolean result = source.equals(target) || isSubtype(source, target);
+    return result;
   }
 
   /**
@@ -135,11 +142,11 @@ public final class PrimitiveTypes {
    * @param second the second primitive type
    * @return true if the first type is a subtype of the second type
    */
-  static boolean isSubtype(Class<?> first, Class<?> second) {
+  static boolean isSubtype(@Det Class<?> first, @Det Class<?> second) {
     if (!first.isPrimitive() && !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
-    Set<Class<?>> superTypes = wideningTable.get(first);
+    @OrderNonDet Set<Class<?>> superTypes = wideningTable.get(first);
     return superTypes.contains(second);
   }
 

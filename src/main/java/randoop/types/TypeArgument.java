@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Represents a type argument of a parameterized type as described in <a
@@ -26,7 +27,7 @@ public abstract class TypeArgument {
    * @param type the type of a type argument
    * @return the {@code TypeArgument} for the given type
    */
-  public static TypeArgument forType(java.lang.reflect.Type type) {
+  public static TypeArgument forType(java.lang.reflect.@Det Type type) {
     if (type instanceof WildcardType) {
       return WildcardArgument.forType(type);
     } else {
@@ -34,7 +35,7 @@ public abstract class TypeArgument {
     }
   }
 
-  public static TypeArgument forType(ReferenceType referenceType) {
+  public static TypeArgument forType(@Det ReferenceType referenceType) {
     if (referenceType instanceof randoop.types.WildcardType) {
       return WildcardArgument.forType(referenceType);
     }
@@ -47,7 +48,8 @@ public abstract class TypeArgument {
    * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
-  public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
+  public abstract TypeArgument apply(
+      @Det TypeArgument this, @Det Substitution<ReferenceType> substitution);
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in <a
@@ -57,7 +59,7 @@ public abstract class TypeArgument {
    * @param otherArgument the other {@code TypeArgument}
    * @return true if this argument contains the other argument
    */
-  public abstract boolean contains(TypeArgument otherArgument);
+  public abstract boolean contains(@Det TypeArgument this, @Det TypeArgument otherArgument);
 
   /**
    * The type parameters for this type argument.
@@ -91,7 +93,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOf(TypeArgument otherArgument) {
+  boolean isInstantiationOf(@Det TypeArgument this, @Det TypeArgument otherArgument) {
     return false;
   }
 
@@ -104,7 +106,8 @@ public abstract class TypeArgument {
     return false;
   }
 
-  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public Substitution<ReferenceType> getInstantiatingSubstitution(
+      @Det TypeArgument this, @Det TypeArgument otherArgument) {
     return null;
   }
 

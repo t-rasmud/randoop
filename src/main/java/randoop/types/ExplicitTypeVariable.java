@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3) */
 class ExplicitTypeVariable extends TypeVariable {
@@ -38,7 +39,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(variable, super.hashCode());
   }
 
@@ -62,7 +63,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(@Det ExplicitTypeVariable this) {
     return true;
   }
 

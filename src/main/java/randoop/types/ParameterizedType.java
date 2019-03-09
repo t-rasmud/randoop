@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -22,7 +23,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  public static GenericClassType forClass(Class<?> typeClass) {
+  public static GenericClassType forClass(@Det Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
@@ -37,7 +38,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param type the reflective type object
    * @return an object of type {@code ParameterizedType}
    */
-  public static ParameterizedType forType(java.lang.reflect.Type type) {
+  public static ParameterizedType forType(java.lang.reflect.@Det Type type) {
     if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
@@ -47,8 +48,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type ";
 
     // Categorize the type arguments as either a type variable or other kind of argument
-    List<TypeArgument> typeArguments = new ArrayList<>();
-    for (Type argType : t.getActualTypeArguments()) {
+    @Det List<TypeArgument> typeArguments = new ArrayList<>();
+    for (@Det Type argType : t.getActualTypeArguments()) {
       TypeArgument argument = TypeArgument.forType(argType);
       typeArguments.add(argument);
     }
@@ -62,7 +63,11 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // toString requires @PolyDet, and only @Det instances will be
+    // constructed so this will never introduce nondeterminism.
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   @Override
@@ -83,12 +88,12 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * {@code java.lang.List<java.lang.String>}
    */
   @Override
-  public String getName() {
+  public String getName(@Det ParameterizedType this) {
     return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 
   @Override
-  public String getUnqualifiedName() {
+  public String getUnqualifiedName(@Det ParameterizedType this) {
     return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 }

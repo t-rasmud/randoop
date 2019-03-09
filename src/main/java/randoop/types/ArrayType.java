@@ -146,12 +146,12 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getName(@Det ArrayType this) {
     return componentType.getName() + "[]";
   }
 
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det ArrayType this) {
     return componentType.getSimpleName() + "[]";
   }
 
@@ -161,7 +161,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters(@Det ArrayType this) {
     if (componentType.isReferenceType()) {
       return ((ReferenceType) componentType).getTypeParameters();
     } else {
@@ -198,7 +198,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(@Det ArrayType this) {
     return componentType.isGeneric();
   }
 
@@ -246,7 +246,7 @@ public class ArrayType extends ReferenceType {
    * @return true if this type has a wildcard, and false otherwise
    */
   @Override
-  public boolean hasWildcard() {
+  public boolean hasWildcard(@Det ArrayType this) {
     return false;
   }
 

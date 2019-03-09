@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -38,7 +39,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param classType the class type to translate
    * @return the {@code ClassOrInterfaceType} object created from the given class type
    */
-  public static ClassOrInterfaceType forClass(Class<?> classType) {
+  public static ClassOrInterfaceType forClass(@Det Class<?> classType) {
     if (classType.isArray() || classType.isPrimitive()) {
       throw new IllegalArgumentException("type must be a class or interface, got " + classType);
     }
@@ -64,7 +65,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
    */
-  public static ClassOrInterfaceType forType(java.lang.reflect.Type type) {
+  public static ClassOrInterfaceType forType(java.lang.reflect.@Det Type type) {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
@@ -101,7 +102,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(isMemberClass(), enclosingType);
   }
 
@@ -158,12 +159,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the name of this class
    */
   @Override
-  public String getSimpleName() {
+  public String getSimpleName(@Det ClassOrInterfaceType this) {
     return getRuntimeClass().getSimpleName();
   }
 
   @Override
-  public String getCanonicalName() {
+  public String getCanonicalName(@Det ClassOrInterfaceType this) {
     return getRuntimeClass().getCanonicalName();
   }
 
@@ -314,7 +315,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the set of all supertypes of this type
    */
   public Collection<ClassOrInterfaceType> getSuperTypes(@Det ClassOrInterfaceType this) {
-    Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
+    @Det Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
     if (this.isObject()) {
       return supertypes;
     }
@@ -340,7 +341,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // "return Collections.emptyList();" leads to Error Prone warning "MixedMutabilityReturnType"
       return new ArrayList<>();
     }
-    List<ClassOrInterfaceType> supertypes = new ArrayList<>();
+    @Det List<ClassOrInterfaceType> supertypes = new ArrayList<>();
     ClassOrInterfaceType superclass = this.getSuperclass();
     supertypes.add(superclass);
     supertypes.addAll(this.getInterfaces());
@@ -487,7 +488,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return true if this type has a wildcard, and false otherwise
    */
   @Override
-  public boolean hasWildcard() {
+  public boolean hasWildcard(@Det ClassOrInterfaceType this) {
     return false;
   }
 

@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
@@ -18,7 +20,7 @@ class WildcardArgument extends TypeArgument {
    *
    * @param argumentType the wildcard type
    */
-  WildcardArgument(WildcardType argumentType) {
+  WildcardArgument(@Det WildcardType argumentType) {
     this.argumentType = argumentType;
   }
 
@@ -29,7 +31,7 @@ class WildcardArgument extends TypeArgument {
    * @param type the {@code Type} object
    * @return the {@code WildcardArgument} created from the given {@code Type}
    */
-  public static WildcardArgument forType(java.lang.reflect.Type type) {
+  public static WildcardArgument forType(java.lang.reflect.@Det Type type) {
     if (!(type instanceof java.lang.reflect.WildcardType)) {
       throw new IllegalArgumentException("Must be a wildcard type " + type);
     }
@@ -38,7 +40,7 @@ class WildcardArgument extends TypeArgument {
     return new WildcardArgument(WildcardType.forType(wildcardType));
   }
 
-  public static WildcardArgument forType(ReferenceType argumentType) {
+  public static WildcardArgument forType(@Det ReferenceType argumentType) {
     assert argumentType instanceof WildcardType : "argument type must be wildcard type";
     return new WildcardArgument((WildcardType) argumentType);
   }
@@ -53,7 +55,7 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(argumentType);
   }
 
@@ -63,7 +65,8 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public WildcardArgument apply(Substitution<ReferenceType> substitution) {
+  public WildcardArgument apply(
+      @Det WildcardArgument this, @Det Substitution<ReferenceType> substitution) {
     WildcardType argType = this.argumentType.apply(substitution);
     if (argType.equals(this.argumentType)) {
       return this;
@@ -86,7 +89,7 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public boolean contains(TypeArgument argument) {
+  public boolean contains(@Det WildcardArgument this, @Det TypeArgument argument) {
     return argument.isWildcard()
         && argumentType.contains(((WildcardArgument) argument).argumentType);
   }
@@ -131,7 +134,7 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOf(TypeArgument otherArgument) {
+  boolean isInstantiationOf(@Det WildcardArgument this, @Det TypeArgument otherArgument) {
     return this.equals(otherArgument);
   }
 

@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Predicate to check the type of a substitution for a list of type variables. */
 public class TypeCheck {
@@ -13,7 +14,7 @@ public class TypeCheck {
    * @param parameters the list of type parameters checked by the predicate
    * @return the {@link TypeCheck} object for the given parameters
    */
-  public static TypeCheck forParameters(List<TypeVariable> parameters) {
+  public static TypeCheck forParameters(@Det List<TypeVariable> parameters) {
     return new TypeCheck(parameters);
   }
 
@@ -22,7 +23,7 @@ public class TypeCheck {
    *
    * @param parameters the list of of type parameters to be checked by the predicate
    */
-  private TypeCheck(List<TypeVariable> parameters) {
+  private TypeCheck(@Det List<TypeVariable> parameters) {
     this.parameters = parameters;
   }
 
@@ -36,7 +37,8 @@ public class TypeCheck {
    * @param substitution substitution for checking bounds
    * @return true if instantiation of the parameters by the tuple is valid, false otherwise
    */
-  public boolean test(List<ReferenceType> tuple, Substitution<ReferenceType> substitution) {
+  public boolean test(
+      @Det List<ReferenceType> tuple, @Det Substitution<ReferenceType> substitution) {
     int i = 0;
     while (i < tuple.size()
         && parameters.get(i).getLowerTypeBound().isLowerBound(tuple.get(i), substitution)

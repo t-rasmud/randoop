@@ -3,6 +3,8 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
@@ -15,7 +17,7 @@ import java.util.Objects;
  */
 class LazyReferenceBound extends ReferenceBound {
 
-  LazyReferenceBound(ReferenceType boundType) {
+  LazyReferenceBound(@Det ReferenceType boundType) {
     super(boundType);
   }
 
@@ -28,12 +30,13 @@ class LazyReferenceBound extends ReferenceBound {
    * @return the hashCode for the string representation of this bound
    */
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.toString());
   }
 
   @Override
-  public ReferenceBound apply(Substitution<ReferenceType> substitution) {
+  public ReferenceBound apply(
+      @Det LazyReferenceBound this, @Det Substitution<ReferenceType> substitution) {
     // if the substitution has no effect on this bound just return this
     if (substitution.isEmpty()) {
       return this;
@@ -67,13 +70,13 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public ReferenceBound applyCaptureConversion() {
+  public @Det ReferenceBound applyCaptureConversion() {
     return null;
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> parameters = new ArrayList<>();
+  public List<TypeVariable> getTypeParameters(@Det LazyReferenceBound this) {
+    @Det List<TypeVariable> parameters = new ArrayList<>();
     if (getBoundType().isVariable()) {
       parameters.add((TypeVariable) getBoundType());
     } else if (getBoundType().isParameterized()) {
@@ -87,24 +90,31 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution<ReferenceType> substitution) {
+  public boolean isLowerBound(
+      @Det LazyReferenceBound this,
+      @Det Type argType,
+      @Det Substitution<ReferenceType> substitution) {
     ReferenceBound b = this.apply(substitution);
     return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public @Det boolean isSubtypeOf(ParameterBound boundType) {
     assert false : "subtype not implemented for LazyReferenceBound";
     return false;
   }
 
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
+  public boolean isUpperBound(
+      @Det LazyReferenceBound this,
+      @Det Type argType,
+      @Det Substitution<ReferenceType> substitution) {
     ReferenceBound b = this.apply(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 
   @Override
+  @Det
   boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     assert false : "isUpperBound(ParameterBound, Substitution<ReferenceType>) not implemented";
     return false;
