@@ -8,6 +8,7 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -37,7 +38,7 @@ public class SequenceCompiler {
    * @param classLoader the class loader for this compiler
    * @param options the compiler options
    */
-  public SequenceCompiler(SequenceClassLoader classLoader, List<String> options) {
+  public SequenceCompiler(@Det SequenceClassLoader classLoader, @Det List<String> options) {
     this.classLoader = classLoader;
     this.options = new ArrayList<>(options);
     this.compiler = ToolProvider.getSystemJavaCompiler();
@@ -60,7 +61,7 @@ public class SequenceCompiler {
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
-      final String packageName, final String classname, final String javaSource) {
+      final @Det String packageName, final @Det String classname, final @Det String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     return compile(packageName, classname, javaSource, diagnostics);
   }
@@ -73,7 +74,8 @@ public class SequenceCompiler {
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  public void compile(final String packageName, final String classname, final String javaSource)
+  public void compile(
+      final @Det String packageName, final @Det String classname, final @Det String javaSource)
       throws SequenceCompilerException {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -97,12 +99,12 @@ public class SequenceCompiler {
    * @return true if the class source is successfully compiled, false otherwise
    */
   private boolean compile(
-      final String packageName,
-      final String classname,
-      final String javaSource,
+      final @Det String packageName,
+      final @Det String classname,
+      final @Det String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + CompileUtil.JAVA_EXTENSION;
-    List<JavaFileObject> sources = new ArrayList<>();
+    @Det List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);

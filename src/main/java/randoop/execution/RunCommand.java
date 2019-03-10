@@ -10,6 +10,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.util.Log;
@@ -31,10 +32,10 @@ public class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeout)
+  static Status run(@Det List<String> command, @Det Path workingDirectory, @Det long timeout)
       throws CommandException {
 
-    String[] args = command.toArray(new String[0]);
+    @Det String @Det [] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
@@ -69,14 +70,14 @@ public class RunCommand {
     }
     boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
 
-    List<String> standardOutputLines;
+    @Det List<String> standardOutputLines;
     try {
       standardOutputLines = Arrays.asList(outStream.toString().split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process standard output", e);
     }
 
-    List<String> errorOutputLines;
+    @Det List<String> errorOutputLines;
     try {
       errorOutputLines = Arrays.asList(errStream.toString().split(Globals.lineSep));
     } catch (RuntimeException e) {
@@ -120,11 +121,11 @@ public class RunCommand {
      * @param errorOutputLines the lines of process output to standard error
      */
     Status(
-        List<String> command,
-        int exitStatus,
-        boolean timedOut,
-        List<String> standardOutputLines,
-        List<String> errorOutputLines) {
+        @Det List<String> command,
+        @Det int exitStatus,
+        @Det boolean timedOut,
+        @Det List<String> standardOutputLines,
+        @Det List<String> errorOutputLines) {
       this.command = command;
       this.exitStatus = exitStatus;
       this.timedOut = timedOut;

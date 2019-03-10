@@ -3,6 +3,7 @@ package randoop.instrument;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionVisitor;
 import randoop.sequence.ExecutableSequence;
 
@@ -20,7 +21,7 @@ public class CoveredClassVisitor implements ExecutionVisitor {
    *
    * @param classes the set of classes to poll for coverage by a sequence
    */
-  public CoveredClassVisitor(Set<Class<?>> classes) {
+  public CoveredClassVisitor(@Det Set<Class<?>> classes) {
     this.classes = classes;
   }
 

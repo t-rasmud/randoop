@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 
 public class ErrorRevealed implements IMessage {
 
@@ -15,7 +16,10 @@ public class ErrorRevealed implements IMessage {
   public final List<String> failingClassNames;
 
   public ErrorRevealed(
-      String testCode, String description, List<String> failingClassNames, Path junitFile) {
+      @Det String testCode,
+      @Det String description,
+      @Det List<String> failingClassNames,
+      @Det Path junitFile) {
     this.testCode = testCode;
     this.description = description;
     this.failingClassNames = Collections.unmodifiableList(new ArrayList<>(failingClassNames));

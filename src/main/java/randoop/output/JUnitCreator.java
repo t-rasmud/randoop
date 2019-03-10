@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
@@ -98,11 +99,11 @@ public class JUnitCreator {
   private static final String AFTER_EACH_METHOD = "teardown";
 
   public static JUnitCreator getTestCreator(
-      String junit_package_name,
-      BlockStmt beforeAllBody,
-      BlockStmt afterAllBody,
-      BlockStmt beforeEachBody,
-      BlockStmt afterEachBody) {
+      @Det String junit_package_name,
+      @Det BlockStmt beforeAllBody,
+      @Det BlockStmt afterAllBody,
+      @Det BlockStmt beforeEachBody,
+      @Det BlockStmt afterEachBody) {
     assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
@@ -120,7 +121,7 @@ public class JUnitCreator {
     return junitCreator;
   }
 
-  private JUnitCreator(String packageName) {
+  private JUnitCreator(@Det String packageName) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classMethodCounts = new LinkedHashMap<>();
@@ -131,7 +132,7 @@ public class JUnitCreator {
    *
    * @param body the (Java) text for method
    */
-  private void addBeforeAll(BlockStmt body) {
+  private void addBeforeAll(@Det BlockStmt body) {
     this.beforeAllBody = body;
   }
 
@@ -140,7 +141,7 @@ public class JUnitCreator {
    *
    * @param body the (Java) text for method
    */
-  private void addAfterAll(BlockStmt body) {
+  private void addAfterAll(@Det BlockStmt body) {
     this.afterAllBody = body;
   }
 
@@ -149,7 +150,7 @@ public class JUnitCreator {
    *
    * @param body the (Java) text for method
    */
-  private void addBeforeEach(BlockStmt body) {
+  private void addBeforeEach(@Det BlockStmt body) {
     this.beforeEachBody = body;
   }
 
@@ -158,7 +159,7 @@ public class JUnitCreator {
    *
    * @param text the (Java) text for method
    */
-  private void addAfterEach(BlockStmt text) {
+  private void addAfterEach(@Det BlockStmt text) {
     this.afterEachBody = text;
   }
 
@@ -171,7 +172,10 @@ public class JUnitCreator {
    * @return the CompilationUnit for a test class
    */
   public CompilationUnit createTestClass(
-      String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
+      @Det JUnitCreator this,
+      @Det String testClassName,
+      @Det NameGenerator methodNameGen,
+      @Det List<ExecutableSequence> sequences) {
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
@@ -179,7 +183,7 @@ public class JUnitCreator {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
 
-    List<ImportDeclaration> imports = new ArrayList<>();
+    @Det List<ImportDeclaration> imports = new ArrayList<>();
     if (afterEachBody != null) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.After"), false, false));
     }
@@ -201,13 +205,13 @@ public class JUnitCreator {
     // class declaration
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, testClassName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
+    @Det List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(
         new SingleMemberAnnotationExpr(
             new NameExpr("FixMethodOrder"), new NameExpr("MethodSorters.NAME_ASCENDING")));
     classDeclaration.setAnnotations(annotations);
 
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
+    @Det List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
     // add debug field
     VariableDeclarator debugVariable = new VariableDeclarator(new VariableDeclaratorId("debug"));
     debugVariable.setInit(new BooleanLiteralExpr(false));
@@ -256,7 +260,7 @@ public class JUnitCreator {
       }
     }
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
+    @Det List<TypeDeclaration> types = new ArrayList<>();
     types.add(classDeclaration);
     compilationUnit.setTypes(types);
 
@@ -272,22 +276,22 @@ public class JUnitCreator {
    * @return the {@code String} for the test method
    */
   private MethodDeclaration createTestMethod(
-      String className, String methodName, ExecutableSequence testSequence) {
+      @Det String className, @Det String methodName, @Det ExecutableSequence testSequence) {
     MethodDeclaration method = new MethodDeclaration(Modifier.PUBLIC, new VoidType(), methodName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
+    @Det List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(new MarkerAnnotationExpr(new NameExpr("Test")));
     method.setAnnotations(annotations);
 
-    List<ReferenceType> throwsList = new ArrayList<>();
+    @Det List<ReferenceType> throwsList = new ArrayList<>();
     throwsList.add(new ReferenceType(new ClassOrInterfaceType("Throwable")));
     method.setThrows(throwsList);
 
     BlockStmt body = new BlockStmt();
-    List<Statement> statements = new ArrayList<>();
+    @Det List<Statement> statements = new ArrayList<>();
     FieldAccessExpr field = new FieldAccessExpr(new NameExpr("System"), "out");
     MethodCallExpr call = new MethodCallExpr(field, "format");
 
-    List<Expression> arguments = new ArrayList<>();
+    @Det List<Expression> arguments = new ArrayList<>();
     arguments.add(new StringLiteralExpr("%n%s%n"));
     arguments.add(new StringLiteralExpr(className + "." + methodName));
     call.setArgs(arguments);
@@ -326,9 +330,9 @@ public class JUnitCreator {
    * @return the fixture method as a {@code String}
    */
   private MethodDeclaration createFixture(
-      String annotation, int modifiers, String methodName, BlockStmt body) {
+      @Det String annotation, @Det int modifiers, @Det String methodName, @Det BlockStmt body) {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
+    @Det List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(new MarkerAnnotationExpr(new NameExpr(annotation)));
     method.setAnnotations(annotations);
     method.setBody(body);
@@ -342,23 +346,23 @@ public class JUnitCreator {
    * @param testClassNames the names of the test classes in the suite
    * @return the {@code String} with the declaration for the suite class
    */
-  public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
+  public String createTestSuite(@Det String suiteClassName, @Det Set<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
-    List<ImportDeclaration> imports = new ArrayList<>();
+    @Det List<ImportDeclaration> imports = new ArrayList<>();
     imports.add(new ImportDeclaration(new NameExpr("org.junit.runner.RunWith"), false, false));
     imports.add(new ImportDeclaration(new NameExpr("org.junit.runners.Suite"), false, false));
     compilationUnit.setImports(imports);
 
     ClassOrInterfaceDeclaration suiteClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, suiteClassName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
+    @Det List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(
         new SingleMemberAnnotationExpr(new NameExpr("RunWith"), new NameExpr("Suite.class")));
     StringBuilder classList = new StringBuilder();
-    Iterator<String> testIterator = testClassNames.iterator();
+    @Det Iterator<String> testIterator = testClassNames.iterator();
     if (testIterator.hasNext()) {
       String classCode = testIterator.next() + ".class";
       while (testIterator.hasNext()) {
@@ -371,7 +375,7 @@ public class JUnitCreator {
         new SingleMemberAnnotationExpr(
             new NameExpr("Suite.SuiteClasses"), new NameExpr("{ " + classList + " }")));
     suiteClass.setAnnotations(annotations);
-    List<TypeDeclaration> types = new ArrayList<>();
+    @Det List<TypeDeclaration> types = new ArrayList<>();
     types.add(suiteClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
@@ -385,7 +389,8 @@ public class JUnitCreator {
    * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
-  public String createTestDriver(String driverName, Set<String> testClassNames, int numMethods) {
+  public String createTestDriver(
+      @Det String driverName, @Det Set<String> testClassNames, @Det int numMethods) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
@@ -393,7 +398,7 @@ public class JUnitCreator {
 
     MethodDeclaration mainMethod =
         new MethodDeclaration(Modifier.PUBLIC | Modifier.STATIC, new VoidType(), "main");
-    List<Parameter> parameters = new ArrayList<>();
+    @Det List<Parameter> parameters = new ArrayList<>();
     Parameter parameter =
         new Parameter(new ClassOrInterfaceType("String"), new VariableDeclaratorId("args"));
     parameter.setVarArgs(true);
@@ -402,12 +407,12 @@ public class JUnitCreator {
 
     mainMethod.getParameters().get(0).setVarArgs(true);
 
-    List<Statement> bodyStatements = new ArrayList<>();
+    @Det List<Statement> bodyStatements = new ArrayList<>();
     String failureVariableName = "hadFailure";
     VariableDeclarator variableDecl =
         new VariableDeclarator(
             new VariableDeclaratorId(failureVariableName), new BooleanLiteralExpr(false));
-    List<VariableDeclarator> variableList = new ArrayList<>();
+    @Det List<VariableDeclarator> variableList = new ArrayList<>();
     variableList.add(variableDecl);
     VariableDeclarationExpr variableExpr =
         new VariableDeclarationExpr(
@@ -443,7 +448,7 @@ public class JUnitCreator {
         String methodName = methodNameGen.next();
 
         TryStmt tryStmt = new TryStmt();
-        List<Statement> tryStatements = new ArrayList<>();
+        @Det List<Statement> tryStatements = new ArrayList<>();
         tryStatements.add(
             new ExpressionStmt(new MethodCallExpr(new NameExpr(testVariable), methodName)));
         BlockStmt tryBlock = new BlockStmt();
@@ -454,7 +459,7 @@ public class JUnitCreator {
         catchClause.setParam(
             new Parameter(new ClassOrInterfaceType("Throwable"), new VariableDeclaratorId("e")));
         BlockStmt catchBlock = new BlockStmt();
-        List<Statement> catchStatements = new ArrayList<>();
+        @Det List<Statement> catchStatements = new ArrayList<>();
         catchStatements.add(
             new ExpressionStmt(
                 new AssignExpr(
@@ -466,7 +471,7 @@ public class JUnitCreator {
 
         catchBlock.setStmts(catchStatements);
         catchClause.setCatchBlock(catchBlock);
-        List<CatchClause> catches = new ArrayList<>();
+        @Det List<CatchClause> catches = new ArrayList<>();
         catches.add(catchClause);
         tryStmt.setCatchs(catches);
         bodyStatements.add(tryStmt);
@@ -485,9 +490,9 @@ public class JUnitCreator {
     }
 
     BlockStmt exitCall = new BlockStmt();
-    List<Expression> args = new ArrayList<>();
+    @Det List<Expression> args = new ArrayList<>();
     args.add(new IntegerLiteralExpr("1"));
-    List<Statement> exitStatement = new ArrayList<>();
+    @Det List<Statement> exitStatement = new ArrayList<>();
     exitStatement.add(new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
     exitCall.setStmts(exitStatement);
     bodyStatements.add(new IfStmt(new NameExpr(failureVariableName), exitCall, null));
@@ -495,14 +500,14 @@ public class JUnitCreator {
     BlockStmt body = new BlockStmt();
     body.setStmts(bodyStatements);
     mainMethod.setBody(body);
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
+    @Det List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
     bodyDeclarations.add(mainMethod);
 
     ClassOrInterfaceDeclaration driverClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, driverName);
     driverClass.setMembers(bodyDeclarations);
 
-    List<TypeDeclaration> types = new ArrayList<>();
+    @Det List<TypeDeclaration> types = new ArrayList<>();
     types.add(driverClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();

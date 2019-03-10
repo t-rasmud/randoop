@@ -1,6 +1,7 @@
 package randoop.output;
 
 import java.nio.file.Path;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Interface for a method {@code writeClassCode} that writes a class to a file. */
 public interface CodeWriter {
@@ -15,7 +16,8 @@ public interface CodeWriter {
    * @return the {@code Path} object for the Java file written
    * @throws RandoopOutputException if there is an error while writing the code
    */
-  public Path writeClassCode(String packageName, String classname, String classCode)
+  public Path writeClassCode(
+      @Det CodeWriter this, @Det String packageName, @Det String classname, @Det String classCode)
       throws RandoopOutputException;
 
   /**
@@ -27,6 +29,7 @@ public interface CodeWriter {
    * @return the {@code Path} object for the Java file written
    * @throws RandoopOutputException if there is an error while writing the code
    */
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+  public Path writeUnmodifiedClassCode(
+      @Det CodeWriter this, @Det String packageName, @Det String classname, @Det String classCode)
       throws RandoopOutputException;
 }

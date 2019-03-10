@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.signature.qual.BinaryName;
 
 /**
@@ -40,7 +41,7 @@ public final class SequenceClassLoader extends ClassLoader {
       throws ClassNotFoundException {
     JavaFileObject file = classes.get(qualifiedClassName);
     if (file != null) {
-      byte[] bytes = ((SequenceJavaFileObject) file).getByteCode();
+      @Det byte @Det [] bytes = ((SequenceJavaFileObject) file).getByteCode();
       return defineClass(qualifiedClassName, bytes, 0, bytes.length);
     }
     // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6434149
@@ -58,7 +59,7 @@ public final class SequenceClassLoader extends ClassLoader {
    * @param qualifiedName the name of the class
    * @param file the class file object
    */
-  void add(String qualifiedName, JavaFileObject file) {
+  void add(@Det String qualifiedName, @Det JavaFileObject file) {
     classes.put(qualifiedName, file);
   }
 

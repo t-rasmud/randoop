@@ -59,7 +59,7 @@ compileJava {
 		'org.checkerframework.checker.determinism.DeterminismChecker',
 		// '-AonlyDefs=randoop.util',
 		// '-AonlyDefs=randoop.types',
-		'-AonlyDefs=randoop.sequence.*$',
+		'-AonlyDefs=randoop.compile.*$',
 		// '-AonlyDefs=randoop.util.StringEscapeUtils',
 		// '-AonlyDefs=IdentityMultiMap',
 		'-AsuppressWarnings=invalid.type.on.conditional',

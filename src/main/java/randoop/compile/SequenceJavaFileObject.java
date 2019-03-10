@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.tools.SimpleJavaFileObject;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A {@code JavaFileObject} for source code in memory.
@@ -40,7 +41,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
    * @param classFileName the name of the class
    * @param sequenceClass the class source
    */
-  SequenceJavaFileObject(String classFileName, String sequenceClass) {
+  SequenceJavaFileObject(String classFileName, @Det String sequenceClass) {
     super(toURI(classFileName), Kind.SOURCE);
     this.source = sequenceClass;
   }

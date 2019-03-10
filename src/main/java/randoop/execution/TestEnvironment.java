@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
@@ -31,7 +32,7 @@ public class TestEnvironment {
    *
    * @param testClasspath the class path for running the tests
    */
-  public TestEnvironment(String testClasspath) {
+  public TestEnvironment(@Det String testClasspath) {
     this.testClasspath = testClasspath;
   }
 
@@ -42,7 +43,7 @@ public class TestEnvironment {
    * @param agentPath the path to the Javaagent jar file
    * @param agentArgumentString the argument string for the agent
    */
-  public void addAgent(Path agentPath, String agentArgumentString) {
+  public void addAgent(@Det Path agentPath, @Det String agentArgumentString) {
     agentMap.put(agentPath, agentArgumentString);
   }
 
@@ -53,7 +54,7 @@ public class TestEnvironment {
    * @param agentPath the path for the replacecall agent
    * @param agentArgs the arguments for running the agent
    */
-  public void setReplaceCallAgent(Path agentPath, String agentArgs) {
+  public void setReplaceCallAgent(@Det Path agentPath, @Det String agentArgs) {
     replaceCallAgentPath = agentPath;
     replaceCallAgentArgs = agentArgs;
   }
@@ -63,7 +64,7 @@ public class TestEnvironment {
    *
    * @param timeout the time in milliseconds that a test is allowed to run before being terminated
    */
-  public void setTimeout(long timeout) {
+  public void setTimeout(@Det long timeout) {
     this.timeout = timeout;
   }
 
@@ -75,9 +76,10 @@ public class TestEnvironment {
    * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws CommandException if there is an error running the test command
    */
-  public RunCommand.Status runTest(String testClassName, Path workingDirectory)
+  public RunCommand.Status runTest(
+      @Det TestEnvironment this, @Det String testClassName, @Det Path workingDirectory)
       throws CommandException {
-    List<String> command = commandPrefix();
+    @Det List<String> command = commandPrefix();
     command.add(testClassName);
     return RunCommand.run(command, workingDirectory, timeout);
   }
@@ -88,8 +90,8 @@ public class TestEnvironment {
    *
    * @return the base command to run JUnit tests in this environment, without a test class name
    */
-  private List<String> commandPrefix() {
-    List<String> command = new ArrayList<>();
+  private List<String> commandPrefix(@Det TestEnvironment this) {
+    @Det List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
 

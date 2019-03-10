@@ -11,6 +11,7 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A {@code ForwardingJavaFileManager} to maintain class files in memory.
@@ -34,7 +35,7 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    * @param fileManager the file manager to which calls are forwarded
    * @param classLoader the class loader to which loaded classes are added
    */
-  SequenceJavaFileManager(JavaFileManager fileManager, SequenceClassLoader classLoader) {
+  SequenceJavaFileManager(@Det JavaFileManager fileManager, @Det SequenceClassLoader classLoader) {
     super(fileManager);
     this.classLoader = classLoader;
     this.fileObjects = new HashMap<>();
@@ -77,6 +78,7 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
       Location location, String qualifiedName, Kind kind, FileObject outputFile)
       throws IOException {
     JavaFileObject file = new SequenceJavaFileObject(qualifiedName, kind);
+    // TODO: Figure out what to do when we can't override.
     classLoader.add(qualifiedName, file);
     return file;
   }
@@ -90,10 +92,11 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    * @param source the source file object
    */
   void putFileForInput(
-      StandardLocation sourcePath,
-      String packageName,
-      String classFileName,
-      JavaFileObject source) {
+      @Det SequenceJavaFileManager this,
+      @Det StandardLocation sourcePath,
+      @Det String packageName,
+      @Det String classFileName,
+      @Det JavaFileObject source) {
     fileObjects.put(uri(sourcePath, packageName, classFileName), source);
   }
 

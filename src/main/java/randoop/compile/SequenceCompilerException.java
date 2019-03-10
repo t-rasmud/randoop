@@ -2,6 +2,7 @@ package randoop.compile;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Exception for compilation of Java classes given as {@code String}. */
 public class SequenceCompilerException extends Throwable {
@@ -23,7 +24,9 @@ public class SequenceCompilerException extends Throwable {
    * @param diagnostics the compiler diagnostics
    */
   SequenceCompilerException(
-      String message, String sourceText, DiagnosticCollector<JavaFileObject> diagnostics) {
+      String message,
+      @Det String sourceText,
+      @Det DiagnosticCollector<JavaFileObject> diagnostics) {
     super(message);
     this.sourceText = sourceText;
     this.diagnostics = diagnostics;
@@ -41,8 +44,8 @@ public class SequenceCompilerException extends Throwable {
   SequenceCompilerException(
       String message,
       Throwable cause,
-      String sourceText,
-      DiagnosticCollector<JavaFileObject> diagnostics) {
+      @Det String sourceText,
+      @Det DiagnosticCollector<JavaFileObject> diagnostics) {
     super(message, cause);
     this.sourceText = sourceText;
     this.diagnostics = diagnostics;

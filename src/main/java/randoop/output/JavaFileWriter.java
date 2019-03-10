@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * A {@link CodeWriter} that writes JUnit4 test class source text to a {@code .java} file with
@@ -22,7 +24,7 @@ public class JavaFileWriter implements CodeWriter {
    *
    * @param junitDirName directory where files are to be written
    */
-  public JavaFileWriter(String junitDirName) {
+  public JavaFileWriter(@Det String junitDirName) {
     this.dirName = junitDirName;
   }
 
@@ -36,7 +38,11 @@ public class JavaFileWriter implements CodeWriter {
    * @return the Path object for generated java file
    */
   @Override
-  public Path writeClassCode(String packageName, String className, String classCode)
+  public Path writeClassCode(
+      @Det JavaFileWriter this,
+      @Det String packageName,
+      @Det String className,
+      @Det String classCode)
       throws RandoopOutputException {
     Path dir = createOutputDir(packageName);
     Path file = new java.io.File(dir.toFile(), className + ".java").toPath();
@@ -52,7 +58,11 @@ public class JavaFileWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+  public Path writeUnmodifiedClassCode(
+      @Det JavaFileWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String classCode)
       throws RandoopOutputException {
     return writeClassCode(packageName, classname, classCode);
   }
@@ -82,9 +92,13 @@ public class JavaFileWriter implements CodeWriter {
    * @return the {@code Path} for the directory corresponding to the package name
    */
   private Path getDir(String packageName) {
-    Path dir;
+    @PolyDet Path dir;
     if (dirName == null || dirName.length() == 0) {
-      dir = Paths.get(System.getProperty("user.dir"));
+      @SuppressWarnings("determinism") // the user home directory will be the same through runs on
+      // the same machine
+      @Det
+      String tmp = System.getProperty("user.dir");
+      dir = Paths.get(tmp);
     } else {
       dir = Paths.get(dirName);
     }

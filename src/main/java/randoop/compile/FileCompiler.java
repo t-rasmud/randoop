@@ -10,6 +10,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Compiler for Java source code files. */
 public class FileCompiler {
@@ -32,7 +33,7 @@ public class FileCompiler {
    *     href="https://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html">command-line</a>
    *     arguments for the {@code JavaCompiler}
    */
-  public FileCompiler(List<String> options) {
+  public FileCompiler(@Det List<String> options) {
     this.options = options;
     this.compiler = ToolProvider.getSystemJavaCompiler();
   }
@@ -44,9 +45,10 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
+  public void compile(@Det List<File> sourceFiles, @Det Path destinationDir)
+      throws FileCompilerException {
     // Set the destination directory for the compiler
-    List<String> compileOptions = new ArrayList<>(options);
+    @Det List<String> compileOptions = new ArrayList<>(options);
     compileOptions.add("-d");
     compileOptions.add(destinationDir.toString());
 
@@ -72,7 +74,7 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(Path sourceFile, Path destinationDir) throws FileCompilerException {
+  public void compile(@Det Path sourceFile, @Det Path destinationDir) throws FileCompilerException {
     compile(Collections.singletonList(sourceFile.toFile()), destinationDir);
   }
 
@@ -101,9 +103,9 @@ public class FileCompiler {
      */
     FileCompilerException(
         String message,
-        List<File> sourceFiles,
-        List<String> options,
-        DiagnosticCollector<JavaFileObject> diagnostics) {
+        @Det List<File> sourceFiles,
+        @Det List<String> options,
+        @Det DiagnosticCollector<JavaFileObject> diagnostics) {
       super(message);
       this.sourceFiles = sourceFiles;
       this.options = options;
