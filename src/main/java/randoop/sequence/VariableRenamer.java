@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -22,7 +23,7 @@ class VariableRenamer {
   /** Maximum depth to concatenate parameterized type names. */
   private static final int VAR_NAME_MAX_DEPTH = 2;
 
-  public VariableRenamer(Sequence sequence) {
+  public VariableRenamer(@Det Sequence sequence) {
     assert sequence != null : "The given sequence to rename cannot be null";
     this.sequence = sequence;
   }
@@ -43,7 +44,7 @@ class VariableRenamer {
    * @return a variable name based on its type, with the first character lowercase and the final
    *     character not a digit
    */
-  static String getVariableName(Type type) {
+  static String getVariableName(@Det Type type) {
     String varName = getVariableName(type, VAR_NAME_MAX_DEPTH);
 
     // Preserve camel case.
@@ -68,7 +69,7 @@ class VariableRenamer {
    * @return a variable name based on its type and is camel cased. The first character may be
    *     uppercase.
    */
-  private static String getVariableName(Type type, int depth) {
+  private static String getVariableName(@Det Type type, @Det int depth) {
     // Special cases.
     if (type.isVoid()) {
       return "void";
@@ -120,7 +121,7 @@ class VariableRenamer {
         varName = "collection";
       }
 
-      List<TypeArgument> arglist = ((ClassOrInterfaceType) type).getTypeArguments();
+      @Det List<TypeArgument> arglist = ((ClassOrInterfaceType) type).getTypeArguments();
       // TODO: This test seems like a hack.  Shouldn't the arglist always be empty
       /// for a parameterized type?
       if (!arglist.isEmpty()) {

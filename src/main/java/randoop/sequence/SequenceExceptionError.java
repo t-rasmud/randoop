@@ -1,5 +1,7 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 /**
  * Exception representing occurrence of a "flaky" test sequence where an exception was thrown by a
  * statement other than the last of the sequence. Occurs when a statement in an input sequence, that
@@ -29,7 +31,7 @@ public class SequenceExceptionError extends Error {
    * @param exception the exception
    */
   public SequenceExceptionError(
-      ExecutableSequence testSequence, int position, Throwable exception) {
+      @Det ExecutableSequence testSequence, @Det int position, @Det Throwable exception) {
     super("Exception thrown before end of sequence", exception);
     this.testSequence = testSequence;
     this.position = position;

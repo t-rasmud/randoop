@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.Type;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -53,7 +54,7 @@ public final class TupleSequence {
    * @param variables one index per sequence in {@code sequences}, defining the outputs of the
    *     TupleSequence
    */
-  public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
+  public TupleSequence(@Det List<Sequence> sequences, @Det List<Integer> variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
     outputIndices = new ArrayList<>();
@@ -82,9 +83,9 @@ public final class TupleSequence {
    * @return a sequence with subsequences that create element values for a collection
    */
   public static TupleSequence createElementsSequence(
-      SimpleList<Sequence> candidates, int length, Type elementType) {
-    List<Sequence> sequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
+      @Det SimpleList<Sequence> candidates, @Det int length, @Det Type elementType) {
+    @Det List<Sequence> sequences = new ArrayList<>();
+    @Det List<Integer> variables = new ArrayList<>();
     for (int i = 0; i < length; i++) {
       Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);

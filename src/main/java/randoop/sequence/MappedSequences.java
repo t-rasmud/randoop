@@ -30,7 +30,7 @@ public class MappedSequences<T> {
    * @param key the key value
    * @param seq the sequence
    */
-  public void addSequence(T key, Sequence seq) {
+  public void addSequence(T key, @Det Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
     SequenceCollection c = map.get(key);
@@ -49,7 +49,8 @@ public class MappedSequences<T> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(T key, Type desiredType) {
+  public @Det SimpleList<Sequence> getSequences(
+      @Det MappedSequences<T> this, T key, @Det Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }

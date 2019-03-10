@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
 
@@ -26,7 +28,7 @@ public final class Execution {
    *
    * @param owner the executed sequence
    */
-  public Execution(Sequence owner) {
+  public Execution(@Det Sequence owner) {
     this.outcomes = new ArrayList<>(owner.size());
     for (int i = 0; i < owner.size(); i++) {
       outcomes.add(NotExecuted.create());
@@ -50,10 +52,14 @@ public final class Execution {
    * @return the outcome of the ith statement
    */
   public ExecutionOutcome get(int i) {
-    return outcomes.get(i);
+    @SuppressWarnings("determinism") // this is @PolyDet("up"), which can't happen because i can't
+    // be @OrderNonDet.
+    @PolyDet
+    ExecutionOutcome result = outcomes.get(i);
+    return result;
   }
 
-  void addCoveredClass(Class<?> c) {
+  void addCoveredClass(@Det Class<?> c) {
     coveredClasses.add(c);
   }
 

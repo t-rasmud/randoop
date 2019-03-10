@@ -3,6 +3,7 @@ package randoop.sequence;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedOperation;
@@ -22,7 +23,7 @@ public class Value {
    *     primitive type, a String, or null.
    * @return a string representing code for the given value
    */
-  public static String toCodeString(Object value) {
+  public static String toCodeString(@Det Object value) {
 
     if (value == null) {
       return "null";
@@ -150,7 +151,7 @@ public class Value {
    * @return true if the string length is reasonable for generated tests, false otherwise
    * @see GenInputsAbstract
    */
-  public static boolean stringLengthOK(String s) {
+  public static boolean stringLengthOK(@Det String s) {
     if (s == null) {
       throw new IllegalArgumentException("s is null");
     }
@@ -173,7 +174,7 @@ public class Value {
    * @param s the {@code String} to test
    * @return true if the string length meets criterion for generated tests, false otherwise
    */
-  private static boolean isOKLength(String s) {
+  private static boolean isOKLength(@Det String s) {
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.

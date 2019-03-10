@@ -2,6 +2,8 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
@@ -36,7 +38,7 @@ public final class Statement {
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
    */
-  public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
+  public Statement(@Det TypedOperation operation, @Det List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
   }
@@ -46,7 +48,7 @@ public final class Statement {
    *
    * @param operation the operation for action of this statement
    */
-  public Statement(TypedOperation operation) {
+  public Statement(@Det TypedOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
   }
 
@@ -79,7 +81,7 @@ public final class Statement {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return java.util.Objects.hash(operation, inputs);
   }
 

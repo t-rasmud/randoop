@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.Type;
 
 /** A dummy variable, to ensure that parameter lists are the expected length. */
@@ -42,7 +43,7 @@ public class DummyVariable extends Variable {
   }
 
   @Override
-  public String getName() {
+  public @Det String getName() {
     return "dummy";
   }
 

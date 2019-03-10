@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -78,7 +80,7 @@ public class ExecutableSequence {
    * How long it took to execute this sequence in nanoseconds. Is -1 until the sequence completes
    * execution.
    */
-  public long exectime = -1;
+  public @NonDet long exectime = -1;
 
   /**
    * Flag to record whether execution of sequence has a null input.
@@ -209,7 +211,7 @@ public class ExecutableSequence {
    * @param i the statement index
    * @return the string representation of the statement
    */
-  public String statementToCodeString(int i) {
+  public String statementToCodeString(@Det int i) {
     StringBuilder oneStatement = new StringBuilder();
     sequence.appendCode(oneStatement, i);
     return oneStatement.toString();
@@ -222,7 +224,8 @@ public class ExecutableSequence {
    * @param visitor the {@link ExecutionVisitor} that collects checks from results
    * @param gen the check generator for tests
    */
-  public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
+  public void execute(
+      @Det ExecutableSequence this, @Det ExecutionVisitor visitor, @Det TestCheckGenerator gen) {
     // TODO: Setting the third argument to false would mask fewer errors.  Doing so causes 3 Randoop
     // system tests to fail (because some sequence throws an exception before the last statement).
     // One is innocuous:  java.lang.OutOfMemoryError due to creation of a very large object --
@@ -270,7 +273,11 @@ public class ExecutableSequence {
    *     ignoreException==false}
    */
   @SuppressWarnings("SameParameterValue")
-  private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
+  private void execute(
+      @Det ExecutableSequence this,
+      @Det ExecutionVisitor visitor,
+      @Det TestCheckGenerator gen,
+      @Det boolean ignoreException) {
 
     long startTime = System.nanoTime();
     try { // try statement for timing
@@ -282,7 +289,9 @@ public class ExecutableSequence {
       for (int i = 0; i < this.sequence.size(); i++) {
 
         // Collect the input values to i-th statement.
-        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @Det
+        Object @Det [] inputValues =
+            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -341,12 +350,13 @@ public class ExecutableSequence {
     }
   }
 
-  public Object[] getRuntimeInputs(List<Variable> inputs) {
+  public Object[] getRuntimeInputs(@Det List<Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
-  private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
-    Object[] ros = getRuntimeValuesForVars(inputs, outcome);
+  private Object[] getRuntimeInputs(
+      @Det List<ExecutionOutcome> outcome, @Det List<Variable> inputs) {
+    @Det Object @Det [] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
@@ -363,13 +373,13 @@ public class ExecutableSequence {
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
-  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+  public static Object[] getRuntimeValuesForVars(@Det List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
   private static Object[] getRuntimeValuesForVars(
-      List<Variable> vars, List<ExecutionOutcome> execution) {
-    Object[] runtimeObjects = new Object[vars.size()];
+      @Det List<Variable> vars, @Det List<ExecutionOutcome> execution) {
+    @Det Object @Det [] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
       assert execution.get(creatingStatementIdx) instanceof NormalExecution
@@ -383,7 +393,10 @@ public class ExecutableSequence {
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+      @Det Sequence s,
+      @Det List<ExecutionOutcome> outcome,
+      @Det int index,
+      @Det Object @Det [] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
@@ -461,8 +474,8 @@ public class ExecutableSequence {
    *
    * @return the list of values created and used by the last statement of this sequence
    */
-  public List<ReferenceValue> getLastStatementValues() {
-    Set<ReferenceValue> values = new LinkedHashSet<>();
+  public List<ReferenceValue> getLastStatementValues(@Det ExecutableSequence this) {
+    @Det Set<ReferenceValue> values = new LinkedHashSet<>();
 
     Object outputValue = getValue(sequence.size() - 1);
     Variable outputVariable = sequence.getLastVariable();
@@ -484,7 +497,8 @@ public class ExecutableSequence {
    * @param value the Java value to use as a key in variableMap
    * @param refValues the set of all reference values; is side-effected by this method
    */
-  private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
+  private void addReferenceValue(
+      @Det Variable variable, @Det Object value, Set<ReferenceValue> refValues) {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
@@ -500,13 +514,13 @@ public class ExecutableSequence {
    *
    * @return the list of input values used to compute values in last statement
    */
-  public List<ReferenceValue> getInputValues() {
-    Set<Integer> skipSet = new HashSet<>();
+  public List<ReferenceValue> getInputValues(@Det ExecutableSequence this) {
+    @OrderNonDet Set<Integer> skipSet = new HashSet<>();
     for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
       skipSet.add(inputVariable.index);
     }
 
-    Set<ReferenceValue> values = new LinkedHashSet<>();
+    @Det Set<ReferenceValue> values = new LinkedHashSet<>();
     for (int i = 0; i < sequence.size() - 1; i++) {
       if (!skipSet.contains(i)) {
         Object value = getValue(i);
@@ -524,8 +538,8 @@ public class ExecutableSequence {
    * @param value the value
    * @return the set of variables that have the given value, or null if none
    */
-  public List<Variable> getVariables(Object value) {
-    Set<Variable> variables = variableMap.get(value);
+  public List<Variable> getVariables(@Det Object value) {
+    @Det Set<Variable> variables = variableMap.get(value);
     if (variables == null) {
       return null;
     } else {
@@ -539,7 +553,7 @@ public class ExecutableSequence {
    * @param value the value
    * @return a variable that has the given value
    */
-  public Variable getVariable(Object value) {
+  public Variable getVariable(@Det Object value) {
     return variableMap.get(value).iterator().next();
   }
 
@@ -623,7 +637,7 @@ public class ExecutableSequence {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
@@ -668,7 +682,7 @@ public class ExecutableSequence {
    *
    * @param c the class covered by the execution of this sequence
    */
-  public void addCoveredClass(Class<?> c) {
+  public void addCoveredClass(@Det Class<?> c) {
     executionResults.addCoveredClass(c);
   }
 

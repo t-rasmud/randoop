@@ -1,5 +1,8 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.Type;
 
 /** Represents the result of a statement call in a sequence. */
@@ -11,7 +14,7 @@ public class Variable implements Comparable<Variable> {
   // The sequence that creates this value.
   public final Sequence sequence;
 
-  public Variable(Sequence owner, int i) {
+  public Variable(@Det Sequence owner, @Det int i) {
     if (owner == null) throw new IllegalArgumentException("missing owner");
     if (i < 0) {
       throw new IllegalArgumentException("negative index: " + i);
@@ -28,7 +31,11 @@ public class Variable implements Comparable<Variable> {
 
   @Override
   public String toString() {
-    return this.getName();
+    @SuppressWarnings("determinism") // getName requires @Det, but only @Det instances are
+    // constructed so this won't cause nondeterminism.
+    @PolyDet
+    String name = this.getName();
+    return name;
   }
 
   @Override
@@ -47,7 +54,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return this.index * this.sequence.hashCode();
   }
 
@@ -97,7 +104,7 @@ public class Variable implements Comparable<Variable> {
    *
    * @return the name of this variable as a string
    */
-  public String getName() {
+  public String getName(@Det Variable this) {
     return getName(classToVariableName(getType()), index);
   }
 
@@ -127,7 +134,7 @@ public class Variable implements Comparable<Variable> {
    * @param type the type
    * @return the variable name as a string
    */
-  static String classToVariableName(Type type) {
+  static String classToVariableName(@Det Type type) {
     return VariableRenamer.getVariableName(type);
   }
 
