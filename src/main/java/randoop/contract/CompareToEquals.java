@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -22,7 +23,7 @@ public class CompareToEquals extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluate(@Det Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
 

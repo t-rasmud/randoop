@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
@@ -71,7 +73,9 @@ public class OperationSignature {
    * @param parameterTypes the list of fully-qualified raw parameter type names
    */
   private OperationSignature(
-      @ClassGetName String classname, String name, List<@ClassGetName String> parameterTypes) {
+      @ClassGetName @Det String classname,
+      @Det String name,
+      @Det List<@ClassGetName String> parameterTypes) {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
@@ -87,9 +91,9 @@ public class OperationSignature {
    *     parameter types
    */
   public static OperationSignature forConstructorName(
-      @ClassGetName String classname,
-      String simpleName,
-      List<@ClassGetName String> parameterTypes) {
+      @ClassGetName @Det String classname,
+      @Det String simpleName,
+      @Det List<@ClassGetName String> parameterTypes) {
     return new OperationSignature(classname, simpleName, parameterTypes);
   }
 
@@ -104,7 +108,9 @@ public class OperationSignature {
    *     parameter types
    */
   public static OperationSignature forMethodName(
-      @ClassGetName String classname, String name, List<@ClassGetName String> parameterTypes) {
+      @ClassGetName @Det String classname,
+      @Det String name,
+      @Det List<@ClassGetName String> parameterTypes) {
     return new OperationSignature(classname, name, parameterTypes);
   }
 
@@ -132,7 +138,7 @@ public class OperationSignature {
    * @return the {@link OperationSignature} with the class and parameter types of {@code
    *     constructor}
    */
-  public static OperationSignature of(Constructor<?> constructor) {
+  public static OperationSignature of(@Det Constructor<?> constructor) {
     return new OperationSignature(
         // Class.getName returns JVML format for arrays, but this isn't an array, so the call is OK.
         constructor.getDeclaringClass().getName(),
@@ -147,7 +153,7 @@ public class OperationSignature {
    * @param op the method or constructor
    * @return an {@link OperationSignature} if {@code op} is a constructor or method, null if field
    */
-  public static OperationSignature of(AccessibleObject op) {
+  public static OperationSignature of(@Det AccessibleObject op) {
     if (op instanceof Field) {
       return null;
     } else if (op instanceof Method) {
@@ -217,8 +223,8 @@ public class OperationSignature {
    * @param classes the array of {@code Class<?>} objects
    * @return the list of fully-qualified type names for the objects in {@code classes}
    */
-  private static List<@ClassGetName String> getTypeNames(Class<?>[] classes) {
-    List<@ClassGetName String> parameterTypes = new ArrayList<>();
+  private static @Det List<@ClassGetName String> getTypeNames(@Det Class<?> @Det [] classes) {
+    @Det List<@ClassGetName String> parameterTypes = new ArrayList<>();
     for (Class<?> aClass : classes) {
       parameterTypes.add(aClass.getName());
     }
@@ -237,7 +243,7 @@ public class OperationSignature {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.classname, this.name, this.parameterTypes);
   }
 

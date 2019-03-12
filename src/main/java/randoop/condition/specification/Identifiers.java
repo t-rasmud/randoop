@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -49,7 +52,8 @@ public class Identifiers {
    * @param parameters the list of identifiers for the operation formal parameters
    * @param returnName the return name
    */
-  public Identifiers(String receiverName, List<String> parameters, String returnName) {
+  public Identifiers(
+      @Det String receiverName, @Det List<String> parameters, @Det String returnName) {
     this.receiverName = receiverName;
     this.parameters = parameters;
     this.returnName = returnName;
@@ -61,7 +65,7 @@ public class Identifiers {
    *
    * @param parameters the list of identifiers for the operation parameters
    */
-  public Identifiers(List<String> parameters) {
+  public Identifiers(@Det List<String> parameters) {
     this("receiver", parameters, "result");
   }
 
@@ -107,7 +111,7 @@ public class Identifiers {
    * @return a name occurs more than once, or null if there are no duplicate names
    */
   public String duplicateName() {
-    Set<String> names = new HashSet<>();
+    @OrderNonDet Set<String> names = new HashSet<>();
     for (String name : parameters) {
       if (!names.add(name)) {
         return name;
@@ -134,7 +138,7 @@ public class Identifiers {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.receiverName, this.parameters, this.returnName);
   }
 

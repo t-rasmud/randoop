@@ -2,6 +2,8 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.Globals;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Value;
@@ -45,11 +47,11 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(observer, value);
   }
 
-  public ObserverEqValue(TypedOperation observer, Object value) {
+  public ObserverEqValue(@Det TypedOperation observer, @Det Object value) {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
@@ -65,7 +67,7 @@ public final class ObserverEqValue extends ObjectContract {
    * @param value the value to be tested
    * @return true if the argument can be written as a literal in Java source code
    */
-  public static boolean isLiteralValue(Object value) {
+  public static boolean isLiteralValue(@Det Object value) {
     if (value == null) {
       return false;
     }

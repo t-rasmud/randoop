@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
@@ -54,7 +57,8 @@ public class ExecutableBooleanExpression {
    * @param contractSource the source code for this expression (see {@link #getContractSource()} for
    *     format details)
    */
-  ExecutableBooleanExpression(Method expressionMethod, String comment, String contractSource) {
+  ExecutableBooleanExpression(
+      @Det Method expressionMethod, @Det String comment, @Det String contractSource) {
     this.expressionMethod = expressionMethod;
     this.comment = comment;
     this.contractSource = contractSource;
@@ -78,12 +82,12 @@ public class ExecutableBooleanExpression {
    * @param compiler the compiler to used to compile the expression method
    */
   ExecutableBooleanExpression(
-      RawSignature signature,
-      String declarations,
-      String expressionSource,
-      String contractSource,
-      String comment,
-      SequenceCompiler compiler) {
+      @Det RawSignature signature,
+      @Det String declarations,
+      @Det String expressionSource,
+      @Det String contractSource,
+      @Det String comment,
+      @Det SequenceCompiler compiler) {
     this(
         createMethod(signature, declarations, expressionSource, compiler), comment, contractSource);
   }
@@ -113,7 +117,7 @@ public class ExecutableBooleanExpression {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(expressionMethod, comment, contractSource);
   }
 
@@ -200,9 +204,9 @@ public class ExecutableBooleanExpression {
    */
   // package-private to enable test code to call it
   static Method createMethod(
-      RawSignature signature,
-      String parameterDeclaration,
-      String expressionSource,
+      @Det RawSignature signature,
+      @Det String parameterDeclaration,
+      @Det String expressionSource,
       SequenceCompiler compiler) {
     String packageName = signature.getPackageName();
     String classname = classNameGenerator.next(); // ignore the class name in the signature
@@ -252,7 +256,7 @@ public class ExecutableBooleanExpression {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
     return UtilPlume.join(
-        new String[] {
+        new @PolyDet String @PolyDet [] {
           packageDeclaration + "public class " + expressionClassName + " {",
           "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
           "    return " + expressionText + ";",

@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -22,7 +23,11 @@ public final class EqualsHashcode extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    @SuppressWarnings("determinism") // The hash codes themselves are deterministic but comparing
+    // them with two Objects who properly follow the hashCode contract will be deterministic.
+    @Det
+    boolean result = !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    return result;
   }
 
   @Override

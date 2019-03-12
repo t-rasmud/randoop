@@ -1,6 +1,8 @@
 package randoop.condition;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.types.ClassOrInterfaceType;
 
 /** Represents an expected exception in a throws-condition. */
@@ -18,7 +20,7 @@ public class ThrowsClause {
    * @param exceptionType the type of the expected exception
    * @param comment the text description of the throws clause
    */
-  ThrowsClause(ClassOrInterfaceType exceptionType, String comment) {
+  ThrowsClause(@Det ClassOrInterfaceType exceptionType, @Det String comment) {
     this.exceptionType = exceptionType;
     this.comment = comment;
   }
@@ -51,7 +53,7 @@ public class ThrowsClause {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(exceptionType, comment);
   }
 

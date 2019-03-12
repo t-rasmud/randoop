@@ -3,6 +3,7 @@ package randoop.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
@@ -29,7 +30,7 @@ public class AccessibleField {
    * @param field the field
    * @param declaringType the type for the declaring class of this field
    */
-  public AccessibleField(Field field, ClassOrInterfaceType declaringType) {
+  public @Det AccessibleField(@Det Field field, @Det ClassOrInterfaceType declaringType) {
     this.field = field;
     this.field.setAccessible(true);
     int mods = field.getModifiers() & Modifier.fieldModifiers();
@@ -54,7 +55,7 @@ public class AccessibleField {
    * @param inputVars list of input variables
    * @return string representing code representation of field
    */
-  public String toCode(Type declaringType, List<Variable> inputVars) {
+  public String toCode(@Det Type declaringType, @Det List<Variable> inputVars) {
     StringBuilder sb = new StringBuilder();
     if (isStatic) {
       sb.append(declaringType.getCanonicalName());
@@ -71,7 +72,7 @@ public class AccessibleField {
    * @param declaringType the declaring class type for this field
    * @return a String for type-field pair describing field
    */
-  public String toParsableString(Type declaringType) {
+  public String toParsableString(@Det Type declaringType) {
     return declaringType.getName() + "." + field.getName();
   }
 

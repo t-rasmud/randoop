@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -43,11 +45,11 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(checkRepMethod);
   }
 
-  public CheckRepContract(Method checkRepMethod) {
+  public CheckRepContract(@Det Method checkRepMethod) {
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("check-rep method cannot be null.");
     }
@@ -68,7 +70,7 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) throws Throwable {
+  public boolean evaluate(@Det Object... objects) throws Throwable {
     assert objects.length == 1;
     assert objects[0] != null;
     if (declaringClass.equals(objects[0].getClass())) {

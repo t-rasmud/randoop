@@ -26,6 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
@@ -57,7 +59,7 @@ public class SpecificationCollection {
   private final MultiMap<OperationSignature, Method> signatureToMethods;
 
   /** Map from reflection object to all the methods it overrides (that have a specification). */
-  private final Map<AccessibleObject, Set<Method>> overridden;
+  private final Map<AccessibleObject, @OrderNonDet Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
   private final SequenceCompiler compiler;
@@ -74,15 +76,15 @@ public class SpecificationCollection {
    *     specification
    */
   SpecificationCollection(
-      Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureToMethods,
-      Map<AccessibleObject, Set<Method>> overridden) {
+      @Det Map<AccessibleObject, OperationSpecification> specificationMap,
+      @Det MultiMap<OperationSignature, Method> signatureToMethods,
+      @Det Map<AccessibleObject, @OrderNonDet Set<Method>> overridden) {
     this.specificationMap = specificationMap;
     this.signatureToMethods = signatureToMethods;
     this.overridden = overridden;
     this.getExecutableSpecificationCache = new HashMap<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
+    @Det List<String> options = new ArrayList<>();
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
   }
 
@@ -93,7 +95,7 @@ public class SpecificationCollection {
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
    */
-  public static SpecificationCollection create(List<Path> specificationFiles) {
+  public static SpecificationCollection create(@Det List<Path> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
@@ -102,7 +104,9 @@ public class SpecificationCollection {
     for (Path specificationFile : specificationFiles) {
       readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
-    Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
+    @Det
+    Map<AccessibleObject, @OrderNonDet Set<Method>> overridden =
+        buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
   }
 
@@ -113,15 +117,15 @@ public class SpecificationCollection {
    *     signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
-  private static Map<AccessibleObject, Set<Method>> buildOverridingMap(
-      MultiMap<OperationSignature, Method> signatureToMethods) {
-    Map<AccessibleObject, Set<Method>> overridden = new HashMap<>();
+  private static Map<AccessibleObject, @OrderNonDet Set<Method>> buildOverridingMap(
+      @Det MultiMap<OperationSignature, Method> signatureToMethods) {
+    Map<AccessibleObject, @OrderNonDet Set<Method>> overridden = new HashMap<>();
     for (OperationSignature signature : signatureToMethods.keySet()) {
       // This lookup is required because MultiMap does not have an entrySet() method.
-      Set<Method> methods = signatureToMethods.getValues(signature);
+      @Det Set<Method> methods = signatureToMethods.getValues(signature);
       for (Method method : methods) {
         Class<?> declaringClass = method.getDeclaringClass();
-        Set<Method> parents = findOverridden(declaringClass, methods);
+        @OrderNonDet Set<Method> parents = findOverridden(declaringClass, methods);
         overridden.put(method, parents);
       }
     }
@@ -138,8 +142,9 @@ public class SpecificationCollection {
    * @return the elements of {@code methods} that are declared in a strict supertype of {@code
    *     classType}
    */
-  private static Set<Method> findOverridden(Class<?> classType, Set<Method> methods) {
-    Set<Method> parents = new HashSet<>();
+  private static @OrderNonDet Set<Method> findOverridden(
+      @Det Class<?> classType, @Det Set<Method> methods) {
+    @OrderNonDet Set<Method> parents = new HashSet<>();
     for (Method method : methods) {
       Class<?> declaringClass = method.getDeclaringClass();
       if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
@@ -155,10 +160,10 @@ public class SpecificationCollection {
    * @param operation the {@link OperationSignature}
    * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
    */
-  private static AccessibleObject getAccessibleObject(OperationSignature operation) {
+  private static AccessibleObject getAccessibleObject(@Det OperationSignature operation) {
     if (operation.isValid()) {
-      List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
-      Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
+      @Det List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
+      @Det Class<?> @Det [] argTypes = new Class<?>[paramTypeNames.size()];
       try {
         for (int i = 0; i < argTypes.length; i++) {
           argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
@@ -192,9 +197,9 @@ public class SpecificationCollection {
    */
   @SuppressWarnings("unchecked")
   private static void readSpecificationFile(
-      Path specificationFile,
-      Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureToMethods) {
+      @Det Path specificationFile,
+      @Det Map<AccessibleObject, OperationSpecification> specificationMap,
+      @Det MultiMap<OperationSignature, Method> signatureToMethods) {
     if (specificationFile.toString().toLowerCase().endsWith(".zip")) {
       readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
       return;
@@ -202,10 +207,11 @@ public class SpecificationCollection {
 
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     try (BufferedReader reader = Files.newBufferedReader(specificationFile, UTF_8)) {
+      @Det
       List<OperationSpecification> specificationList =
           gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType());
 
-      for (OperationSpecification specification : specificationList) {
+      for (@Det OperationSpecification specification : specificationList) {
         OperationSignature operation = specification.getOperation();
 
         // Check for bad input
@@ -305,7 +311,8 @@ public class SpecificationCollection {
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public ExecutableSpecification getExecutableSpecification(Executable executable) {
+  public ExecutableSpecification getExecutableSpecification(
+      @Det SpecificationCollection this, @Det Executable executable) {
 
     // Check if executable already has an ExecutableSpecification object
     ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);
@@ -325,10 +332,10 @@ public class SpecificationCollection {
 
     if (executable instanceof Method) {
       Method method = (Method) executable;
-      Set<Method> parents = overridden.get(executable);
+      @OrderNonDet Set<Method> parents = overridden.get(executable);
       // Parents is null in some tests.  Is it ever null other than that?
       if (parents == null) {
-        Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
+        @Det Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
         if (sigSet != null) {
           // Todo: why isn't this added to the `parents` map?
           parents = findOverridden(method.getDeclaringClass(), sigSet);

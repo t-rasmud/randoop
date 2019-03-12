@@ -1,6 +1,7 @@
 package randoop.condition;
 
 import java.nio.file.Path;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Indicates a problem creating {@link ExecutableBooleanExpression} (usually a syntax error in the
@@ -39,7 +40,7 @@ public class RandoopSpecificationError extends Error {
    *
    * @param file the file
    */
-  public void setFile(Path file) {
+  public void setFile(@Det Path file) {
     this.file = file;
   }
 
@@ -48,7 +49,7 @@ public class RandoopSpecificationError extends Error {
    *
    * @param message the string to use as the local message for this Error
    */
-  public void setThisMessage(String message) {
+  public void setThisMessage(@Det String message) {
     thisMessage = message;
   }
 

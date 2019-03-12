@@ -2,6 +2,8 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -60,9 +62,9 @@ public class ExecutableSpecification {
    * @param guardThrowsPairs the operation throws-specifications
    */
   public ExecutableSpecification(
-      List<ExecutableBooleanExpression> preExpressions,
-      List<GuardPropertyPair> guardPropertyPairs,
-      List<GuardThrowsPair> guardThrowsPairs) {
+      @Det List<ExecutableBooleanExpression> preExpressions,
+      @Det List<GuardPropertyPair> guardPropertyPairs,
+      @Det List<GuardThrowsPair> guardThrowsPairs) {
     this.preExpressions = preExpressions;
     this.guardPropertyPairs = guardPropertyPairs;
     this.guardThrowsPairs = guardThrowsPairs;
@@ -77,7 +79,8 @@ public class ExecutableSpecification {
    * @return the table with entries for this operation
    * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] args) {
+  public ExpectedOutcomeTable checkPrestate(
+      @Det ExecutableSpecification this, @Det Object @Det [] args) {
     ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.checkPrestate(args, table);
     for (ExecutableSpecification execSpec : parentList) {
@@ -102,9 +105,10 @@ public class ExecutableSpecification {
    * @param args the argument values; always includes a receiver (null for static methods)
    * @param table the table to which the created entry is to be added
    */
-  private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
+  private void checkPrestate(
+      @Det ExecutableSpecification this, @Det Object @Det [] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreExpressions(args);
-    List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
+    @PolyDet List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
     ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
     table.add(preconditionCheck, postCondition, throwsClauses);
   }
@@ -134,7 +138,7 @@ public class ExecutableSpecification {
    * @return the set of exceptions for which the guard expression evaluated to true
    */
   private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
-    List<ThrowsClause> throwsClauses = new ArrayList<>();
+    @PolyDet List<ThrowsClause> throwsClauses = new ArrayList<>();
     for (GuardThrowsPair pair : guardThrowsPairs) {
       ExecutableBooleanExpression guard = pair.guard;
       if (guard.check(args)) {
@@ -168,7 +172,7 @@ public class ExecutableSpecification {
    *
    * @param parentExecSpec the {@link ExecutableSpecification} to which to link
    */
-  void addParent(ExecutableSpecification parentExecSpec) {
+  void addParent(@Det ExecutableSpecification parentExecSpec) {
     parentList.add(parentExecSpec);
   }
 

@@ -3,6 +3,8 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -64,7 +66,7 @@ public abstract class ObjectContract {
    * @return false if the contract is violated, true otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
-  public abstract boolean evaluate(Object... objects) throws Throwable;
+  public abstract boolean evaluate(@Det Object... objects) throws Throwable;
 
   /**
    * A string that will be inserted as a comment in the test before the code corresponding to this
@@ -105,7 +107,8 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
-  public final Check checkContract(ExecutableSequence eseq, Object[] values) {
+  public final Check checkContract(
+      @Det ObjectContract this, @Det ExecutableSequence eseq, @Det Object @Det [] values) {
 
     ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
 
@@ -191,8 +194,8 @@ public abstract class ObjectContract {
    * @param values the input values
    * @return an ObjectCheck indicating that a contract failed
    */
-  ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
-    Variable[] varArray = new Variable[values.length];
+  ObjectCheck failedContract(@Det ExecutableSequence eseq, @Det Object @Det [] values) {
+    @Det Variable @Det [] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);
       // Note: the following alternative to the above line slightly improves coverage
@@ -210,7 +213,7 @@ public abstract class ObjectContract {
   }
 
   // The toString() of class Buggy throws an exception.
-  static String toStringHandleExceptions(Object o) {
+  static @NonDet String toStringHandleExceptions(Object o) {
     try {
       return o.toString();
     } catch (Throwable t) {

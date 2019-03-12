@@ -2,6 +2,8 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
@@ -50,7 +52,8 @@ public class ThrowsCondition extends SpecificationClause {
    * @param guard the guard for the specification
    * @param exceptionType the expected exception type
    */
-  public ThrowsCondition(String description, Guard guard, @ClassGetName String exceptionType) {
+  public ThrowsCondition(
+      @Det String description, @Det Guard guard, @ClassGetName @Det String exceptionType) {
     super(description, guard);
     this.exceptionType = exceptionType;
   }
@@ -74,7 +77,7 @@ public class ThrowsCondition extends SpecificationClause {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(super.hashCode(), exceptionType);
   }
 

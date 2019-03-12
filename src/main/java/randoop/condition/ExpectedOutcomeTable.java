@@ -2,6 +2,7 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.InvalidCheckGenerator;
@@ -91,8 +92,8 @@ public class ExpectedOutcomeTable {
    */
   void add(
       boolean guardIsSatisfied,
-      ExecutableBooleanExpression postcondition,
-      List<ThrowsClause> throwsClauses) {
+      @Det ExecutableBooleanExpression postcondition,
+      @Det List<ThrowsClause> throwsClauses) {
     // An empty table cannot represent a pre-state for which the call is invalid, so setting isEmpty
     // to false is necessary even if the entry has !guardIsSatisfied and no postcondition or
     // throwsClauses.

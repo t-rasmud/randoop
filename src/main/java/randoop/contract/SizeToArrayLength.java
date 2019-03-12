@@ -2,6 +2,7 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -21,8 +22,11 @@ public final class SizeToArrayLength extends ObjectContract {
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
-    if (o instanceof Collection) {
-      Collection<?> c = (Collection<?>) o;
+    @SuppressWarnings("determinism") // Collection is an invalid type to write because it must have
+    // a @Det component type but doesn't apply to the instanceof operator.
+    boolean tmp = o instanceof Collection;
+    if (tmp) {
+      Collection<?> c = (@Det Collection<?>) o;
       assert c != null;
       return c.size() == c.toArray().length;
     }

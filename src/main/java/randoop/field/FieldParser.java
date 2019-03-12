@@ -1,6 +1,7 @@
 package randoop.field;
 
 import java.lang.reflect.Field;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.OperationParseException;
 import randoop.types.ClassOrInterfaceType;
@@ -28,7 +29,7 @@ public class FieldParser {
    * @throws OperationParseException if either name is malformed or incorrect
    */
   public static AccessibleField parse(
-      String descr, @ClassGetName String classname, String fieldname)
+      @Det String descr, @ClassGetName @Det String classname, @Det String fieldname)
       throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";
     ClassOrInterfaceType classType;

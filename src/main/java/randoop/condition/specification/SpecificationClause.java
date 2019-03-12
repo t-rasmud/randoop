@@ -1,6 +1,8 @@
 package randoop.condition.specification;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Abstract class for representations of conditions that can be attached to methods and
@@ -32,7 +34,7 @@ public abstract class SpecificationClause {
    * @param description the description of the created specification
    * @param guard the {@link Guard} for the created specification
    */
-  public SpecificationClause(String description, Guard guard) {
+  public SpecificationClause(@Det String description, @Det Guard guard) {
     this.description = description;
     this.guard = guard;
   }
@@ -67,7 +69,7 @@ public abstract class SpecificationClause {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hashCode(description);
   }
 }

@@ -2,6 +2,8 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Abstract class representing boolean expressions that occur in {@link SpecificationClause}
@@ -36,7 +38,7 @@ public abstract class AbstractBooleanExpression {
    * @param description the description of this boolean condition
    * @param conditionSource the text of the Java code for the created condition
    */
-  AbstractBooleanExpression(String description, String conditionSource) {
+  AbstractBooleanExpression(@Det String description, @Det String conditionSource) {
     this.description = description;
     this.conditionSource = conditionSource;
   }
@@ -70,7 +72,7 @@ public abstract class AbstractBooleanExpression {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.description, this.conditionSource);
   }
 

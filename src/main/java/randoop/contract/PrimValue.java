@@ -2,6 +2,8 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.Globals;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
@@ -47,7 +49,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(value);
   }
 
@@ -55,7 +57,7 @@ public final class PrimValue extends ObjectContract {
    * @param value the value for the expression. Must be a primitive value or string
    * @param printMode the print mode in which the check is written as an assertion
    */
-  public PrimValue(Object value, PrintMode printMode) {
+  public PrimValue(@Det Object value, @Det PrintMode printMode) {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
@@ -69,7 +71,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) throws Throwable {
+  public boolean evaluate(@Det Object... objects) throws Throwable {
     assert objects.length == 1;
     return value.equals(objects[0]);
   }

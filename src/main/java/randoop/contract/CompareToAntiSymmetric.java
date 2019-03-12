@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -44,7 +45,7 @@ public class CompareToAntiSymmetric extends ObjectContract {
   }
 
   static TypeTuple inputTypes =
-      new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
+      new TypeTuple(Arrays.<@Det Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

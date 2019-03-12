@@ -2,6 +2,8 @@ package randoop.contract;
 
 import java.util.Collections;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -14,7 +16,7 @@ public final class EnumValue extends ObjectContract {
   public final Enum<?> value;
   private final Type type;
 
-  public EnumValue(Enum<?> value) {
+  public EnumValue(@Det Enum<?> value) {
     this.value = value;
     this.type = Type.forClass(value.getDeclaringClass());
   }
@@ -29,7 +31,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(value);
   }
 

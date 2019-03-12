@@ -1,5 +1,6 @@
 package randoop.contract;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
 import randoop.util.ObjectContractReflectionCode;
@@ -20,7 +21,7 @@ public class ObjectContractUtils {
    * @param objs the list of values to substitute for variables
    * @return the outcome from the execution
    */
-  public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
+  public static ExecutionOutcome execute(final @Det ObjectContract c, final @Det Object... objs) {
     ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
     return ReflectionExecutor.executeReflectionCode(refl);
   }
@@ -32,7 +33,7 @@ public class ObjectContractUtils {
    * @param vars list of {@link randoop.sequence.Variable Variable} objects
    * @return the contract code with actual variable names substituted for dummy names
    */
-  public static String localizeContractCode(String str, Variable... vars) {
+  public static String localizeContractCode(@Det String str, @Det Variable... vars) {
     for (int i = 0; i < vars.length; i++) {
       // See documentation for ObjectContract.toCommentString().
       String pattern = "\\bx" + i + "\\b";

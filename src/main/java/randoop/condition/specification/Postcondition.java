@@ -1,6 +1,8 @@
 package randoop.condition.specification;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * A {@link Postcondition} is a specification clause of a contract on the outcome of the invocation
@@ -50,7 +52,7 @@ public class Postcondition extends SpecificationClause {
    * @param guard the {@link Guard} for the constructed specification
    * @param property the {@link Property} for the constructed specification
    */
-  public Postcondition(String description, Guard guard, Property property) {
+  public Postcondition(@Det String description, @Det Guard guard, @Det Property property) {
     super(description, guard);
     this.property = property;
   }
@@ -78,7 +80,7 @@ public class Postcondition extends SpecificationClause {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(super.hashCode(), this.property);
   }
 

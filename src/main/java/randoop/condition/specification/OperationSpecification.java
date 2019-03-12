@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
@@ -89,7 +91,7 @@ public class OperationSpecification {
    * @param operation the {@link OperationSignature} object, must be non-null
    * @param identifiers the {@link Identifiers} object, must be non-null
    */
-  public OperationSpecification(OperationSignature operation, Identifiers identifiers) {
+  public OperationSpecification(@Det OperationSignature operation, @Det Identifiers identifiers) {
     this(
         operation,
         identifiers,
@@ -109,11 +111,11 @@ public class OperationSpecification {
    * @param throwsSpecifications the list of specifications for the operation
    */
   public OperationSpecification(
-      OperationSignature operation,
-      Identifiers identifiers,
-      List<Precondition> preSpecifications,
-      List<Postcondition> postSpecifications,
-      List<ThrowsCondition> throwsSpecifications) {
+      @Det OperationSignature operation,
+      @Det Identifiers identifiers,
+      @Det List<Precondition> preSpecifications,
+      @Det List<Postcondition> postSpecifications,
+      @Det List<ThrowsCondition> throwsSpecifications) {
     this.operation = operation;
     this.identifiers = identifiers;
     this.preSpecifications = preSpecifications;
@@ -171,7 +173,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link Precondition} objects
    */
-  public void addParamSpecifications(List<Precondition> specifications) {
+  public void addParamSpecifications(@Det List<Precondition> specifications) {
     preSpecifications.addAll(specifications);
   }
 
@@ -180,7 +182,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link Postcondition} objects
    */
-  public void addReturnSpecifications(List<Postcondition> specifications) {
+  public void addReturnSpecifications(@Det List<Postcondition> specifications) {
     postSpecifications.addAll(specifications);
   }
 
@@ -189,7 +191,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link ThrowsCondition} objects
    */
-  public void addThrowsConditions(List<ThrowsCondition> specifications) {
+  public void addThrowsConditions(@Det List<ThrowsCondition> specifications) {
     throwsSpecifications.addAll(specifications);
   }
 
@@ -219,7 +221,7 @@ public class OperationSpecification {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(
         this.operation,
         this.identifiers,
