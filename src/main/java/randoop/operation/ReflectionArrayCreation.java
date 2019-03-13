@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -17,13 +18,13 @@ public class ReflectionArrayCreation extends CallableOperation {
   private final Type elementType;
   private final int length;
 
-  public ReflectionArrayCreation(ArrayType arrayType, int length) {
+  public ReflectionArrayCreation(@Det ArrayType arrayType, @Det int length) {
     this.elementType = arrayType.getComponentType();
     this.length = length;
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
     long startTime = System.currentTimeMillis();
     assert input.length == 0;
     Object arrayObject = Array.newInstance(this.elementType.getRuntimeClass(), this.length);

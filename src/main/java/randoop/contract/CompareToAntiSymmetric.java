@@ -23,7 +23,7 @@ public class CompareToAntiSymmetric extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluate(@Det Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
@@ -44,8 +44,9 @@ public class CompareToAntiSymmetric extends ObjectContract {
     return 2;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes =
-      new TypeTuple(Arrays.<@Det Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
+      new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

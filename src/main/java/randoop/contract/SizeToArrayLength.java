@@ -19,14 +19,14 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluate(@Det Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     @SuppressWarnings("determinism") // Collection is an invalid type to write because it must have
     // a @Det component type but doesn't apply to the instanceof operator.
     boolean tmp = o instanceof Collection;
     if (tmp) {
-      Collection<?> c = (@Det Collection<?>) o;
+      @Det Collection<? extends @Det Object> c = (Collection<? extends @Det Object>) o;
       assert c != null;
       return c.size() == c.toArray().length;
     }
@@ -38,6 +38,7 @@ public final class SizeToArrayLength extends ObjectContract {
     return 1;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.COLLECTION_TYPE));
 
   @Override

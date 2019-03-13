@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -22,7 +23,7 @@ class UncheckedCast extends CallableOperation {
    *
    * @param type the cast type
    */
-  UncheckedCast(Type type) {
+  UncheckedCast(@Det Type type) {
     this.type = type;
   }
 
@@ -35,7 +36,7 @@ class UncheckedCast extends CallableOperation {
    * @return the value cast to the type of this cast
    */
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
     assert input.length == 1 : "cast only takes one input";
     return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);
   }
@@ -57,7 +58,7 @@ class UncheckedCast extends CallableOperation {
       Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
     b.append("(").append(type.getName()).append(")");
     int i = 0;

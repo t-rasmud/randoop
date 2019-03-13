@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -17,7 +18,7 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluate(@Det Object... objects) {
 
     Object o1 = objects[0];
     Object o2 = objects[1];
@@ -30,6 +31,7 @@ public final class EqualsSymmetric extends ObjectContract {
     return 2;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes =
       new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 

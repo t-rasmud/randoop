@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -33,7 +34,7 @@ public class FieldSet extends CallableOperation {
    * @param field the field object to be set by setter statements
    * @throws IllegalArgumentException if field is static final
    */
-  public FieldSet(AccessibleField field) {
+  public FieldSet(@Det AccessibleField field) {
     if (field.isFinal()) {
       throw new IllegalArgumentException("Field may not be final for FieldSet");
     }
@@ -54,7 +55,7 @@ public class FieldSet extends CallableOperation {
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] statementInput) {
 
     Object instance = null;
     Object input = statementInput[0];
@@ -93,10 +94,10 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
+      @Det Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
@@ -114,7 +115,7 @@ public class FieldSet extends CallableOperation {
    * @return the parsable string descriptor for this setter
    */
   @Override
-  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
+  public String toParsableString(@Det Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 
@@ -127,7 +128,7 @@ public class FieldSet extends CallableOperation {
    * @throws OperationParseException if descr does not have expected form
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedOperation parse(String descr) throws OperationParseException {
+  public static TypedOperation parse(@Det String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -156,7 +157,7 @@ public class FieldSet extends CallableOperation {
       throw new OperationParseException(
           "Cannot create setter for final field " + classname + "." + opname);
     }
-    List<Type> setInputTypeList = new ArrayList<>();
+    @Det List<Type> setInputTypeList = new ArrayList<>();
     if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }

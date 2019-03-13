@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.sequence.Variable;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -20,29 +21,32 @@ class TypedTermOperation extends TypedOperation {
    * @param inputTypes the input types
    * @param outputType the output type
    */
-  TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
+  TypedTermOperation(
+      @Det CallableOperation operation, @Det TypeTuple inputTypes, @Det Type outputType) {
     super(operation, inputTypes, outputType);
   }
 
   @Override
-  public boolean hasWildcardTypes() {
+  public @Det boolean hasWildcardTypes() {
     return false;
   }
 
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      @Det TypedTermOperation this, @Det List<Variable> inputVars, StringBuilder b) {
     this.getOperation().appendCode(null, getInputTypes(), getOutputType(), inputVars, b);
   }
 
   @Override
-  public TypedTermOperation apply(Substitution<ReferenceType> substitution) {
+  public TypedTermOperation apply(
+      @Det TypedTermOperation this, @Det Substitution<ReferenceType> substitution) {
     TypeTuple inputTypes = this.getInputTypes().apply(substitution);
     Type outputType = this.getOutputType().apply(substitution);
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
   }
 
   @Override
-  public TypedOperation applyCaptureConversion() {
+  public TypedOperation applyCaptureConversion(@Det TypedTermOperation this) {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
     Type outputType = this.getOutputType().applyCaptureConversion();
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);

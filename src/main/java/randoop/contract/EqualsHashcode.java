@@ -35,6 +35,7 @@ public final class EqualsHashcode extends ObjectContract {
     return 2;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes =
       new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 

@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -20,7 +21,7 @@ public class EnumConstant extends CallableOperation {
 
   private Enum<?> value;
 
-  public EnumConstant(Enum<?> value) {
+  public EnumConstant(@Det Enum<?> value) {
     if (value == null) {
       throw new IllegalArgumentException("enum constant cannot be null");
     }
@@ -62,7 +63,7 @@ public class EnumConstant extends CallableOperation {
    * @return a {@link NormalExecution} object holding the value of the enum constant
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
   }
@@ -74,7 +75,7 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
+      @Det Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
       List<Variable> inputVars,
@@ -91,7 +92,7 @@ public class EnumConstant extends CallableOperation {
    * @see EnumConstant#parse(String)
    */
   @Override
-  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
+  public String toParsableString(@Det Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ":" + value.name();
   }
 
@@ -107,7 +108,7 @@ public class EnumConstant extends CallableOperation {
    * @throws OperationParseException if desc does not match expected form
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedClassOperation parse(String desc) throws OperationParseException {
+  public static TypedClassOperation parse(@Det String desc) throws OperationParseException {
     if (desc == null) {
       throw new IllegalArgumentException("desc cannot be null");
     }
@@ -208,7 +209,7 @@ public class EnumConstant extends CallableOperation {
    * @param valueName name for value that may be a constant of the enum
    * @return reference to actual constant value, or null if none exists in type
    */
-  private static Enum<?> valueOf(Class<?> type, String valueName) {
+  private static Enum<?> valueOf(@Det Class<?> type, @Det String valueName) {
     for (Object obj : type.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
       if (e.name().equals(valueName)) {

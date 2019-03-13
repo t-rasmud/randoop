@@ -5,6 +5,8 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -53,7 +55,7 @@ public final class MethodCall extends CallableOperation {
    *
    * @param method the reflective method object
    */
-  public MethodCall(Method method) {
+  public MethodCall(@Det Method method) {
     if (method == null) {
       throw new IllegalArgumentException("method should not be null.");
     }
@@ -83,10 +85,10 @@ public final class MethodCall extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
@@ -139,7 +141,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(method);
   }
 
@@ -150,7 +152,7 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det [] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
@@ -163,7 +165,7 @@ public final class MethodCall extends CallableOperation {
       paramsStartIndex = 1;
     }
 
-    Object[] params = new Object[paramsLength];
+    @Det Object @Det [] params = new Object @Det [paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
@@ -202,7 +204,7 @@ public final class MethodCall extends CallableOperation {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
-    Class<?>[] params = method.getParameterTypes();
+    @Det Class<?> @Det [] params = method.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
@@ -218,7 +220,7 @@ public final class MethodCall extends CallableOperation {
    * @see OperationParser#parse(String)
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedClassOperation parse(String signature) throws OperationParseException {
+  public static TypedClassOperation parse(@Det String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -243,7 +245,7 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    Class<?>[] typeArguments;
+    @Det Class<?> @Det [] typeArguments;
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {

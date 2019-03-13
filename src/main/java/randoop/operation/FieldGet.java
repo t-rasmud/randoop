@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -30,7 +31,7 @@ public class FieldGet extends CallableOperation {
    *
    * @param field the {@link AccessibleField} object from which to get values
    */
-  public FieldGet(AccessibleField field) {
+  public FieldGet(@Det AccessibleField field) {
     this.field = field;
   }
 
@@ -46,7 +47,7 @@ public class FieldGet extends CallableOperation {
    * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] statementInput) {
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -71,17 +72,17 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
+      @Det Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
   /** Returns string descriptor for field that can be parsed by PublicFieldParser. */
   @Override
-  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
+  public String toParsableString(@Det Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
@@ -119,7 +120,7 @@ public class FieldGet extends CallableOperation {
    * @throws OperationParseException if any error in descriptor string
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedOperation parse(String descr) throws OperationParseException {
+  public static TypedOperation parse(@Det String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -147,7 +148,7 @@ public class FieldGet extends CallableOperation {
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     Type fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
-    List<Type> getInputTypeList = new ArrayList<>();
+    @Det List<Type> getInputTypeList = new ArrayList<>();
     if (!accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }

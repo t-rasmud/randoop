@@ -3,6 +3,8 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -37,7 +39,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @param length number of objects allowed in the array
    * @param arrayType the type of array this operation creates
    */
-  InitializedArrayCreation(ArrayType arrayType, int length) {
+  InitializedArrayCreation(@Det ArrayType arrayType, @Det int length) {
     assert length >= 0 : "array length may not be negative: " + length;
 
     this.elementType = arrayType.getComponentType();
@@ -59,7 +61,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @return {@link NormalExecution} object containing constructed array
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] statementInput) {
     if (statementInput.length > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + statementInput.length + ", capacity: " + length);
@@ -85,7 +87,7 @@ public final class InitializedArrayCreation extends CallableOperation {
       Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
     if (inputVars.size() > length) {
       throw new IllegalArgumentException(
@@ -107,7 +109,7 @@ public final class InitializedArrayCreation extends CallableOperation {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(elementType, length);
   }
 
@@ -154,7 +156,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @see OperationParser#parse(String)
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedOperation parse(String str) throws OperationParseException {
+  public static TypedOperation parse(@Det String str) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
     String elementTypeName = str.substring(0, openBr);

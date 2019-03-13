@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -18,12 +19,12 @@ class ArrayElementSet extends CallableOperation {
 
   private final Type elementType;
 
-  ArrayElementSet(Type elementType) {
+  ArrayElementSet(@Det Type elementType) {
     this.elementType = elementType;
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
     assert input.length == 3
         : "array element assignment must have array, index and value as arguments";
     Object array = input[ARRAY];
@@ -43,7 +44,7 @@ class ArrayElementSet extends CallableOperation {
       Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
 
     b.append(inputVars.get(ARRAY).getName()).append("[");

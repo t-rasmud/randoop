@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -73,7 +74,7 @@ public abstract class CallableOperation implements Operation {
    * @param input array containing appropriate inputs to operation
    * @return results of executing this statement
    */
-  public abstract ExecutionOutcome execute(Object[] input);
+  public abstract ExecutionOutcome execute(@Det CallableOperation this, @Det Object @Det [] input);
 
   /**
    * Produces a Java source code representation of this statement and appends it to the given
@@ -86,10 +87,11 @@ public abstract class CallableOperation implements Operation {
    * @param b the {@link StringBuilder} to which code is added
    */
   public abstract void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<Variable> inputVars,
+      @Det CallableOperation this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<Variable> inputVars,
       StringBuilder b);
 
   /**
@@ -101,7 +103,7 @@ public abstract class CallableOperation implements Operation {
    * @param variable the variable for which the argument string is constructed
    * @return the argument string for the variable
    */
-  String getArgumentString(Variable variable) {
+  String getArgumentString(@Det Variable variable) {
     String index = variable.getName();
     if (variable.shouldInlineLiterals()) {
       String shortIndex = variable.getDeclaringStatement().getInlinedForm();
@@ -124,7 +126,7 @@ public abstract class CallableOperation implements Operation {
    * @return a string representation of this operation
    */
   public abstract String toParsableString(
-      Type declaringType, TypeTuple inputTypes, Type outputType);
+      @Det Type declaringType, TypeTuple inputTypes, Type outputType);
 
   public AccessibleObject getReflectionObject() {
     return null;

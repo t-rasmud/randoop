@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -16,15 +17,16 @@ import randoop.types.TypeTuple;
  */
 public class TypedClassOperationWithCast extends TypedClassOperation {
   TypedClassOperationWithCast(
-      CallableOperation op,
-      ClassOrInterfaceType declaringType,
-      TypeTuple inputTypes,
-      Type outputType) {
+      @Det CallableOperation op,
+      @Det ClassOrInterfaceType declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType) {
     super(op, declaringType, inputTypes, outputType);
   }
 
   @Override
-  public TypedClassOperationWithCast apply(Substitution<ReferenceType> substitution) {
+  public TypedClassOperationWithCast apply(
+      @Det TypedClassOperationWithCast this, @Det Substitution<ReferenceType> substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
@@ -36,7 +38,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
   }
 
   @Override
-  public TypedClassOperationWithCast applyCaptureConversion() {
+  public TypedClassOperationWithCast applyCaptureConversion(@Det TypedClassOperationWithCast this) {
     return new TypedClassOperationWithCast(
         this.getOperation(),
         this.getDeclaringType(),
@@ -51,7 +53,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * that would be thrown in JVM execution is also thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public ExecutionOutcome execute(
+      @Det TypedClassOperationWithCast this, @Det Object @Det [] input) {
     ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       NormalExecution execution = (NormalExecution) outcome;

@@ -82,7 +82,7 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @return the execution result
    */
-  public static @NonDet ExecutionOutcome executeReflectionCode(@Det ReflectionCode code) {
+  public static @Det ExecutionOutcome executeReflectionCode(@Det ReflectionCode code) {
     long start = System.nanoTime();
     if (usethreads) {
       try {

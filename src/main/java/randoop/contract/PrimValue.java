@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
@@ -71,9 +72,12 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(@Det Object... objects) throws Throwable {
+  public @PolyDet("up") boolean evaluate(@Det Object... objects) throws Throwable {
     assert objects.length == 1;
-    return value.equals(objects[0]);
+    // Temporary necessary because of https://github.com/t-rasmud/checker-framework/issues/48
+    @PolyDet("up")
+    Object tmp = objects[0];
+    return value.equals(tmp);
   }
 
   @Override
@@ -81,6 +85,7 @@ public final class PrimValue extends ObjectContract {
     return 1;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
 
   @Override

@@ -2,6 +2,9 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -40,7 +43,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param type the type of the term
    * @param value the value of the term
    */
-  public NonreceiverTerm(Type type, Object value) {
+  public NonreceiverTerm(@Det Type type, @Det Object value) {
     if (type == null) {
       throw new IllegalArgumentException("type should not be null.");
     }
@@ -88,10 +91,15 @@ public final class NonreceiverTerm extends CallableOperation {
    *     otherwise
    */
   public static boolean isNonreceiverType(Class<?> c) {
-    return c.isPrimitive()
-        || c.equals(String.class)
-        || PrimitiveTypes.isBoxedPrimitive(c)
-        || c.equals(Class.class);
+    @SuppressWarnings("determinism") // Class cannot be @OrderNonDet, so @PolyDet("up") is the same
+    // as @PolyDet
+    @PolyDet
+    boolean tmp1 = c.equals(String.class);
+    @SuppressWarnings("determinism") // Class cannot be @OrderNonDet, so @PolyDet("up") is the same
+    // as @PolyDet
+    @PolyDet
+    boolean tmp2 = c.equals(Class.class);
+    return c.isPrimitive() || tmp1 || PrimitiveTypes.isBoxedPrimitive(c) || tmp2;
   }
 
   /** Indicates whether this object is equal to o. */
@@ -110,7 +118,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
   /** Returns a hash code value for this NonreceiverTerm. */
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return this.type.hashCode() + (this.value == null ? 0 : this.value.hashCode());
   }
 
@@ -120,7 +128,12 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
-    return Objects.toString(value);
+    @SuppressWarnings("determinism") // It's given in the comment for the class that value is null
+    // or of type String or a boxed primitive. No such type has a @NonDet toString so this
+    // toString call will be @Det
+    @Det
+    String result = Objects.toString(value);
+    return result;
   }
 
   @Override
@@ -134,7 +147,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
   }
@@ -150,6 +163,7 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   @Override
   public void appendCode(
+      @Det NonreceiverTerm this,
       Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
@@ -181,7 +195,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param type the type of value desired
    * @return a {@link NonreceiverTerm} with a canonical representative of the given type
    */
-  static NonreceiverTerm createNullOrZeroTerm(Type type) {
+  static NonreceiverTerm createNullOrZeroTerm(@Det Type type) {
     if (type.isBoxedPrimitive()) {
       type = ((NonParameterizedType) type).toPrimitive();
     }
@@ -234,18 +248,28 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
 
-    String valStr;
+    @Det String valStr;
     if (value == null) {
       valStr = "null";
     } else {
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
+        @SuppressWarnings("determinism") // It's given in the comment for the class that value is
+        // null or of type String or a boxed primitive. No such type has a @NonDet toString so this
+        // toString call will be @PolyDet
+        @Det
+        String tmp = value.toString();
+        valStr = "\"" + StringEscapeUtils.escapeJava(tmp) + "\"";
       } else if (type.equals(JavaTypes.CHAR_TYPE)) {
         valStr = Integer.toHexString((Character) value);
       } else if (type.equals(JavaTypes.CLASS_TYPE)) {
         valStr = ((Class<?>) value).getName() + ".class";
       } else {
-        valStr = value.toString();
+        @SuppressWarnings("determinism") // It's given in the comment for the class that value is
+        // null or of type String or a boxed primitive. No such type has a @NonDet toString so this
+        // toString call will be @PolyDet
+        @Det
+        String tmp = value.toString();
+        valStr = tmp;
       }
     }
 
@@ -261,7 +285,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @throws OperationParseException if string does not represent valid object
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedOperation parse(String s) throws OperationParseException {
+  public static TypedOperation parse(@Det String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {

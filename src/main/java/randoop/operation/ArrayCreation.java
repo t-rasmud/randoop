@@ -3,6 +3,8 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -30,7 +32,7 @@ public class ArrayCreation extends CallableOperation {
    *
    * @param arrayType the type of the created array
    */
-  ArrayCreation(ArrayType arrayType) {
+  ArrayCreation(@Det ArrayType arrayType) {
     this.elementType = arrayType.getElementType();
     this.componentType = arrayType.getComponentType();
     this.dimensions = arrayType.getDimensions();
@@ -50,7 +52,7 @@ public class ArrayCreation extends CallableOperation {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(elementType, dimensions);
   }
 
@@ -64,7 +66,7 @@ public class ArrayCreation extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
     assert input.length == 1 : "requires array dimension as input";
     int length = Integer.parseInt(input[0].toString());
     long startTime = System.currentTimeMillis();
@@ -78,7 +80,7 @@ public class ArrayCreation extends CallableOperation {
       Type declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
     Variable inputVar = inputVars.get(0);
     b.append("new").append(" ").append(this.elementType.getName());

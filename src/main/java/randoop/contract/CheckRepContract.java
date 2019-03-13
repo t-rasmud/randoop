@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -70,15 +71,21 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(@Det Object... objects) throws Throwable {
+  public @PolyDet("up") boolean evaluate(@Det Object... objects) throws Throwable {
     assert objects.length == 1;
     assert objects[0] != null;
     if (declaringClass.equals(objects[0].getClass())) {
       try {
         if (returnsBoolean) {
-          return (Boolean) checkRepMethod.invoke(objects[0]);
+          // Temporary necessary because of https://github.com/t-rasmud/checker-framework/issues/48
+          @PolyDet("up")
+          Object tmp = objects[0];
+          return (Boolean) checkRepMethod.invoke(tmp);
         } else {
-          checkRepMethod.invoke(objects[0]);
+          // Temporary necessary because of https://github.com/t-rasmud/checker-framework/issues/48
+          @PolyDet("up")
+          Object tmp = objects[0];
+          checkRepMethod.invoke(tmp);
           return true;
         }
       } catch (IllegalArgumentException e) {

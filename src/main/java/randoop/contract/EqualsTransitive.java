@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -20,7 +21,7 @@ public class EqualsTransitive extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluate(@Det Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
     Object o3 = objects[2];
@@ -33,6 +34,7 @@ public class EqualsTransitive extends ObjectContract {
     return 3;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes =
       new TypeTuple(
           Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));

@@ -43,6 +43,7 @@ public final class IsNull extends ObjectContract {
     return 1;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
 
   @Override

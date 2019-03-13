@@ -1,6 +1,7 @@
 package randoop;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Means that the statement that this result represents completed normally.
@@ -24,7 +25,7 @@ public class NormalExecution extends ExecutionOutcome {
    * @param result the return value
    * @param executionTime the execution time, in nanoseconds
    */
-  public NormalExecution(Object result, long executionTime) {
+  public NormalExecution(Object result, @NonDet long executionTime) {
     super(executionTime);
     this.result = result;
   }

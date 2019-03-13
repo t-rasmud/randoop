@@ -5,6 +5,7 @@ package randoop.contract;
 
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -66,7 +67,7 @@ public abstract class ObjectContract {
    * @return false if the contract is violated, true otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
-  public abstract boolean evaluate(@Det Object... objects) throws Throwable;
+  public abstract @PolyDet("up") boolean evaluate(@Det Object... objects) throws Throwable;
 
   /**
    * A string that will be inserted as a comment in the test before the code corresponding to this

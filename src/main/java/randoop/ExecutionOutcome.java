@@ -1,5 +1,7 @@
 package randoop;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+
 /**
  * Represents the outcome of executing one statement in a sequence, including:
  *
@@ -12,7 +14,7 @@ package randoop;
 public abstract class ExecutionOutcome {
 
   /** The execution time, in nanoseconds. */
-  private final long executionTime;
+  private final @NonDet long executionTime;
 
   /**
    * The standard output and error output of executing the sequence. Only populated if {@link
@@ -21,7 +23,7 @@ public abstract class ExecutionOutcome {
   String output = null;
 
   /** @param executionTime the execution time, in nanoseconds */
-  public ExecutionOutcome(long executionTime) {
+  public ExecutionOutcome(@NonDet long executionTime) {
     this.executionTime = executionTime;
   }
 
@@ -30,7 +32,7 @@ public abstract class ExecutionOutcome {
    *
    * @return the execution time for the statement, in nanoseconds
    */
-  public long getExecutionTime() {
+  public @NonDet long getExecutionTime() {
     return executionTime;
   }
 

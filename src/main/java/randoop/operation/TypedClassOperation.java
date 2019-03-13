@@ -5,6 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
@@ -36,16 +39,16 @@ public class TypedClassOperation extends TypedOperation {
    * @param outputType the output types for the operation
    */
   public TypedClassOperation(
-      CallableOperation operation,
-      ClassOrInterfaceType declaringType,
-      TypeTuple inputTypes,
-      Type outputType) {
+      @Det CallableOperation operation,
+      @Det ClassOrInterfaceType declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType) {
     super(operation, inputTypes, outputType);
     this.declaringType = declaringType;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public @PolyDet("up") boolean equals(Object obj) {
     if (!(obj instanceof TypedClassOperation)) {
       return false;
     }
@@ -54,7 +57,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(super.hashCode(), declaringType);
   }
 
@@ -73,7 +76,8 @@ public class TypedClassOperation extends TypedOperation {
    * <p>Applies the substitution to the declaring type, all input types, and the output type.
    */
   @Override
-  public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
+  public TypedClassOperation apply(
+      @Det TypedClassOperation this, @Det Substitution<ReferenceType> substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
@@ -84,7 +88,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  public TypedClassOperation applyCaptureConversion() {
+  public TypedClassOperation applyCaptureConversion(@Det TypedClassOperation this) {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
     Type outputType = this.getOutputType();
     return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
@@ -98,7 +102,8 @@ public class TypedClassOperation extends TypedOperation {
    * @param b the {@link StringBuilder} to which code is added
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      @Det TypedClassOperation this, @Det List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size()
         : "number of inputs doesn't match on operation appendCode";
     this.getOperation().appendCode(declaringType, getInputTypes(), getOutputType(), inputVars, b);
@@ -120,6 +125,9 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
+      @SuppressWarnings("determinism") // getTypeParameters requires @Det but all instances
+      // constructed will be @Det and this won't cause nondeterminism.
+      @PolyDet
       String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
       return b + super.toString();
     } else {
@@ -142,15 +150,15 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  public boolean hasWildcardTypes() {
+  public boolean hasWildcardTypes(@Det TypedClassOperation this) {
     return getInputTypes().hasWildcard()
         || (getOutputType().isParameterized()
             && ((ClassOrInterfaceType) getOutputType()).hasWildcard());
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+  public List<TypeVariable> getTypeParameters(@Det TypedClassOperation this) {
+    @Det Set<TypeVariable> paramSet = new LinkedHashSet<>();
     paramSet.addAll(getInputTypes().getTypeParameters());
     if (getOutputType().isReferenceType()) {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
@@ -164,7 +172,7 @@ public class TypedClassOperation extends TypedOperation {
    * @return the {@link RawSignature} of this method or constructor operation, null if this is
    *     another kind of operation
    */
-  public RawSignature getRawSignature() {
+  public RawSignature getRawSignature(@Det TypedClassOperation this) {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
     // both
     if (!this.isConstructorCall() && !this.isMethodCall()) {
@@ -177,7 +185,8 @@ public class TypedClassOperation extends TypedOperation {
       String name =
           this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
 
-      Class<?>[] parameterTypes =
+      @Det
+      Class<?> @Det [] parameterTypes =
           this.isMethodCall()
               ? ((MethodCall) getOperation()).getMethod().getParameterTypes()
               : ((ConstructorCall) getOperation()).getConstructor().getParameterTypes();
@@ -198,7 +207,8 @@ public class TypedClassOperation extends TypedOperation {
    * @return a new operation with {@code type} substituted for the declaring type of this operation.
    *     This object will be invalid if {@code type} does not have the method.
    */
-  public TypedClassOperation getOperationForType(ClassOrInterfaceType type) {
+  public TypedClassOperation getOperationForType(
+      @Det TypedClassOperation this, @Det ClassOrInterfaceType type) {
     return new TypedClassOperation(
         this.getOperation(), type, this.getInputTypes(), this.getOutputType());
   }

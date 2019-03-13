@@ -48,6 +48,7 @@ public class CompareToTransitive extends ObjectContract {
     return 3;
   }
 
+  @SuppressWarnings("determinism") // Issue with Arrays.asList
   static TypeTuple inputTypes =
       new TypeTuple(
           Arrays.<Type>asList(

@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
@@ -38,7 +39,7 @@ public final class ConstructorCall extends CallableOperation {
    *
    * @param constructor reflective object for a constructor
    */
-  public ConstructorCall(Constructor<?> constructor) {
+  public ConstructorCall(@Det Constructor<?> constructor) {
     if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
     this.constructor.setAccessible(true);
@@ -84,10 +85,10 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
       Type outputType,
-      List<Variable> inputVars,
+      @Det List<Variable> inputVars,
       StringBuilder b) {
     assert declaringType instanceof ClassOrInterfaceType : "constructor must be member of class";
 
@@ -165,7 +166,7 @@ public final class ConstructorCall extends CallableOperation {
    * @see TypedOperation#execute(Object[])
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] statementInput) {
 
     // if this is a constructor from a non-static inner class, then first argument must
     // be a superclass object that is non-null.  If null, then code should throw NPE, but
@@ -204,7 +205,7 @@ public final class ConstructorCall extends CallableOperation {
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(constructor.getName()).append(".<init>(");
-    Class<?>[] params = constructor.getParameterTypes();
+    @Det Class<?> @Det [] params = constructor.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
@@ -221,7 +222,7 @@ public final class ConstructorCall extends CallableOperation {
    * @see OperationParser#parse(String)
    */
   @SuppressWarnings("signature") // parsing
-  public static TypedClassOperation parse(String signature) throws OperationParseException {
+  public static TypedClassOperation parse(@Det String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -247,7 +248,7 @@ public final class ConstructorCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    Class<?>[] typeArguments;
+    @Det Class<?> @Det [] typeArguments;
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
