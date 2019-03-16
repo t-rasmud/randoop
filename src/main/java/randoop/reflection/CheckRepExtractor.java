@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.CheckRep;
 import randoop.contract.CheckRepContract;
 import randoop.main.GenInputsAbstract;
@@ -22,7 +23,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
    *
    * @param contracts the set of contracts
    */
-  CheckRepExtractor(ContractSet contracts) {
+  CheckRepExtractor(@Det ContractSet contracts) {
     this.contracts = contracts;
   }
 
@@ -36,7 +37,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
    * @param m the method
    */
   @Override
-  public void visit(Method m) {
+  public void visit(@Det Method m) {
     if (m.getAnnotation(CheckRep.class) != null) {
       if (Modifier.isStatic(m.getModifiers())) {
         String msg =

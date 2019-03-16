@@ -57,10 +57,12 @@ compileJava {
         // '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
         '-processor',
 		'org.checkerframework.checker.determinism.DeterminismChecker',
-		'-AonlyDefs=randoop.operation.*$',
+		'-AonlyDefs=randoop.reflection.OperationModel$',
+		// '-AonlyDefs=randoop.reflection.ClassLiteralExtractor$',
 		// '-AonlyDefs=randoop.util.StringEscapeUtils',
 		// '-AonlyDefs=IdentityMultiMap',
 		'-AsuppressWarnings=invalid.type.on.conditional',
+		'-AskipDefs=randoop.test',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
         // '-Awarns',      // -Awarns turns Checker Framework errors into warnings

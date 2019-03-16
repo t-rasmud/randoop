@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import org.checkerframework.checker.determinism.qual.Det;
 
 public class EverythingAllowedPredicate implements ReflectionPredicate {
 
@@ -12,7 +13,7 @@ public class EverythingAllowedPredicate implements ReflectionPredicate {
   }
 
   @Override
-  public boolean test(Method m) {
+  public @Det boolean test(Method m) {
     return true;
   }
 

@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
@@ -61,7 +62,7 @@ public class LiteralFileReader {
    * @return the map from types to literal values
    */
   @SuppressWarnings("signature") // parsing
-  public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {
+  public static MultiMap<ClassOrInterfaceType, Sequence> parse(@Det String inFile) {
 
     final MultiMap<ClassOrInterfaceType, Sequence> map = new MultiMap<>();
 

@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * ClassVisitor defines the interface for a visitor class that uses reflection to collect
@@ -28,42 +29,42 @@ public interface ClassVisitor {
    * @param c the member class
    * @param reflectionManager the {@link ReflectionManager} that called this visitor
    */
-  void visit(Class<?> c, ReflectionManager reflectionManager);
+  void visit(@Det Class<?> c, ReflectionManager reflectionManager);
 
   /**
    * Perform action on a constructor.
    *
    * @param c the constructor
    */
-  void visit(Constructor<?> c);
+  void visit(@Det ClassVisitor this, @Det Constructor<?> c);
 
   /**
    * Perform an action on a method.
    *
    * @param m the method
    */
-  void visit(Method m);
+  void visit(@Det ClassVisitor this, @Det Method m);
 
   /**
    * Perform an action on a field.
    *
    * @param f the field
    */
-  void visit(Field f);
+  void visit(@Det ClassVisitor this, @Det Field f);
 
   /**
    * Perform an action on an enum value.
    *
    * @param e the enum value
    */
-  void visit(Enum<?> e);
+  void visit(@Det Enum<?> e);
 
   /**
    * Perform an action on a class. Occurs before other visit methods are called.
    *
    * @param c the class to visit
    */
-  void visitBefore(Class<?> c);
+  void visitBefore(@Det Class<?> c);
 
   /**
    * Perform an action on a class. Called after other visit methods are called.

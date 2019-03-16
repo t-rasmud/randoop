@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -12,13 +13,14 @@ public class DeclarationExtractor extends DefaultClassVisitor {
   private ReflectionPredicate reflectionPredicate;
 
   public DeclarationExtractor(
-      Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate reflectionPredicate) {
+      @Det Set<ClassOrInterfaceType> classDeclarationTypes,
+      @Det ReflectionPredicate reflectionPredicate) {
     this.classDeclarationTypes = classDeclarationTypes;
     this.reflectionPredicate = reflectionPredicate;
   }
 
   @Override
-  public void visit(Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(@Det Class<?> c, ReflectionManager reflectionManager) {
     if (!reflectionPredicate.test(c)) {
       return;
     }
@@ -27,7 +29,7 @@ public class DeclarationExtractor extends DefaultClassVisitor {
   }
 
   @Override
-  public void visitBefore(Class<?> c) {
+  public void visitBefore(@Det Class<?> c) {
     if (!reflectionPredicate.test(c)) {
       return;
     }

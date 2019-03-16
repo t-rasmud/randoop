@@ -24,7 +24,7 @@ public final class Log {
    * @param fmt the format string
    * @param args arguments to the format string
    */
-  public static void logPrintf(@Det String fmt, @Det Object... args) {
+  public static void logPrintf(@Det String fmt, @Det Object @Det ... args) {
     if (!isLoggingOn()) {
       return;
     }

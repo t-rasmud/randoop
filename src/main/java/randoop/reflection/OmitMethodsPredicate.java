@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -35,7 +37,7 @@ public class OmitMethodsPredicate {
    * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
    *     least mean to do no omissions.
    */
-  public OmitMethodsPredicate(List<Pattern> omitPatterns) {
+  public OmitMethodsPredicate(@Det List<Pattern> omitPatterns) {
     if (omitPatterns == null) {
       this.omitPatterns = new ArrayList<>();
     } else {
@@ -52,7 +54,7 @@ public class OmitMethodsPredicate {
    * @param operation the operation to be matched against the omit patterns of this predicate
    * @return true if the signature matches an omit pattern, and false otherwise
    */
-  private boolean shouldOmitExact(TypedClassOperation operation) {
+  private boolean shouldOmitExact(@Det TypedClassOperation operation) {
     Log.logPrintf("shouldOmitExact(%s)%n", operation);
 
     // Nothing to do if there are no patterns.
@@ -86,7 +88,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature of the method in the current class or a superclass is matched by
    *     an omit pattern, false otherwise
    */
-  boolean shouldOmit(final TypedClassOperation operation) {
+  boolean shouldOmit(final @Det TypedClassOperation operation) {
     Log.logPrintf("shouldOmit: testing %s%n", operation);
 
     // Done if there are no patterns
@@ -99,8 +101,8 @@ public class OmitMethodsPredicate {
     /*
      * Search the type and its supertypes that have the method.
      */
-    Set<ClassOrInterfaceType> visited = new HashSet<>();
-    Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
+    @OrderNonDet Set<ClassOrInterfaceType> visited = new HashSet<>();
+    @Det Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
     typeQueue.add(operation.getDeclaringType());
     while (!typeQueue.isEmpty()) {
       ClassOrInterfaceType type = typeQueue.remove();

@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
 import randoop.main.RandoopBug;
@@ -66,11 +67,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    */
   public OperationExtractor(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      @Det ClassOrInterfaceType classType,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitPredicate,
+      @Det VisibilityPredicate visibilityPredicate,
+      @Det SpecificationCollection operationSpecifications) {
     this.classType = classType;
     this.operations = new TreeSet<>();
     this.reflectionPredicate = reflectionPredicate;
@@ -88,9 +89,9 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det ClassOrInterfaceType classType,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     this(
         classType,
         reflectionPredicate,
@@ -109,10 +110,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det ClassOrInterfaceType classType,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     this(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
   }
 
@@ -127,7 +128,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @throws RandoopBug if there is no substitution that unifies the declaring type with {@code
    *     classType} or a supertype
    */
-  private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
+  private TypedClassOperation instantiateTypes(@Det TypedClassOperation operation) {
     if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
       Substitution<ReferenceType> substitution =
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
@@ -156,7 +157,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     operation.getDeclaringType()}
    */
   // TODO: poor name
-  private void checkSubTypes(TypedClassOperation operation) {
+  private void checkSubTypes(@Det TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOf(declaringType)) {
       throw new RandoopBug(
@@ -172,7 +173,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param constructor a {@link Constructor} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Constructor<?> constructor) {
+  public void visit(@Det OperationExtractor this, @Det Constructor<?> constructor) {
     if (debug) {
       System.out.println("OperationExtractor.visit: constructor=" + constructor);
     }
@@ -216,7 +217,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param method a {@link Method} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Method method) {
+  public void visit(@Det OperationExtractor this, @Det Method method) {
     if (debug) {
       System.out.println("OperationExtractor.visit: method=" + method);
     }
@@ -267,7 +268,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param field a {@link Field} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Field field) {
+  public void visit(@Det OperationExtractor this, @Det Field field) {
     assert field.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
         : "classType "
             + classType
@@ -315,7 +316,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param e an {@link Enum} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Enum<?> e) {
+  public void visit(@Det Enum<?> e) {
     ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);

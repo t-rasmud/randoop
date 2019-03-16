@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Methods that indicate whether a class, method, constructor, or field should be used in Randoop's
@@ -24,7 +25,7 @@ public interface ReflectionPredicate {
    * @param m the method to test
    * @return true if the method meets the predicate criteria, false otherwise
    */
-  boolean test(Method m);
+  boolean test(@Det ReflectionPredicate this, @Det Method m);
 
   /**
    * Indicate whether Randoop should use a constructor.
@@ -40,5 +41,5 @@ public interface ReflectionPredicate {
    * @param f the field to test
    * @return true if the field meets the predicate criteria, false otherwise
    */
-  boolean test(Field f);
+  boolean test(@Det Field f);
 }

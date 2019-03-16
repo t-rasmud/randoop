@@ -7,6 +7,8 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import randoop.CheckRep;
 import randoop.util.Log;
 
@@ -24,7 +26,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * The set of fully-qualified field names to omit from generated tests. See {@link
    * randoop.main.GenInputsAbstract#omit_field}.
    */
-  private Set<String> omitFields;
+  private @OrderNonDet Set<String> omitFields;
 
   /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
@@ -37,7 +39,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitFields set of fully-qualified field names to omit
    */
-  public DefaultReflectionPredicate(Set<String> omitFields) {
+  public DefaultReflectionPredicate(@OrderNonDet Set<String> omitFields) {
     super();
     this.omitFields = omitFields;
   }
@@ -57,7 +59,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * <p>See the code for the full list.
    */
   @Override
-  public boolean test(Method m) {
+  public boolean test(@Det DefaultReflectionPredicate this, @Det Method m) {
 
     if (isRandoopInstrumentation(m)) {
       return false;
@@ -142,7 +144,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @param m the bridge method to test
    * @return true if the bridge method should be discarded, false otherwise
    */
-  private boolean discardBridge(Method m) {
+  private boolean discardBridge(@Det Method m) {
     if (!isVisibilityBridge(m)) {
       Log.logPrintf("Will not use bridge method: %s%n", m);
       return true;
@@ -299,7 +301,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if field name does not occur in omitFields pattern, and false if it does
    */
   @Override
-  public boolean test(Field f) {
+  public boolean test(@Det Field f) {
 
     if (isRandoopInstrumentation(f)) {
       return false;
