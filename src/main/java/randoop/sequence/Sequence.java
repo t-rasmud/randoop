@@ -355,8 +355,7 @@ public final class Sequence {
   public String toString() {
     @SuppressWarnings("determinism") // toCodeString requires @Det, but only @Det instances will be
     // constructed so this won't cause nondeterminism.
-    @PolyDet
-    String result = toCodeString();
+    @PolyDet String result = toCodeString();
     return result;
   }
 
@@ -573,12 +572,10 @@ public final class Sequence {
     Sequence other = (Sequence) o;
     @SuppressWarnings("determinism") // Only @Det instances will be constructed, so this never
     // causes nondeterminism
-    @Det
-    Sequence tmp1 = this;
+    @Det Sequence tmp1 = this;
     @SuppressWarnings("determinism") // Only @Det instances will be constructed, so this never
     // causes nondeterminism
-    @Det
-    Sequence tmp2 = other;
+    @Det Sequence tmp2 = other;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && tmp1.verifyFalse("size", tmp2);
     }

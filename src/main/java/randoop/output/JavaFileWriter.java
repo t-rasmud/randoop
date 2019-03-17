@@ -96,8 +96,7 @@ public class JavaFileWriter implements CodeWriter {
     if (dirName == null || dirName.length() == 0) {
       @SuppressWarnings("determinism") // the user home directory will be the same through runs on
       // the same machine
-      @Det
-      String tmp = System.getProperty("user.dir");
+      @Det String tmp = System.getProperty("user.dir");
       dir = Paths.get(tmp);
     } else {
       dir = Paths.get(dirName);

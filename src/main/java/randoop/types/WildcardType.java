@@ -88,14 +88,12 @@ class WildcardType extends ParameterType {
       }
       @SuppressWarnings("determinism") // toString returns @PolyDet("up"), but the Object we call it
       // on can't be @OrderNonDet so it's actually @PolyDet.
-      @PolyDet
-      String result = "? extends " + this.getUpperTypeBound().toString();
+      @PolyDet String result = "? extends " + this.getUpperTypeBound().toString();
       return result;
     }
     @SuppressWarnings("determinism") // toString returns @PolyDet("up"), but the Object we call it
     // on can't be @OrderNonDet so it's actually @PolyDet.
-    @PolyDet
-    String result = "? super " + this.getLowerTypeBound().toString();
+    @PolyDet String result = "? super " + this.getLowerTypeBound().toString();
     return result;
   }
 

@@ -150,8 +150,7 @@ public abstract class ParameterBound {
       for (java.lang.reflect.Type boundType : variable.getBounds()) {
         @SuppressWarnings("determinism") // variable is @OrderNonDet, but results are being compined
         // in an order-insensitive way.
-        @Det
-        boolean tmp = hasTypeVariable(boundType, recursiveSet);
+        @Det boolean tmp = hasTypeVariable(boundType, recursiveSet);
         if (tmp) {
           return true;
         }

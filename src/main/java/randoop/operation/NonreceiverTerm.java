@@ -93,12 +93,10 @@ public final class NonreceiverTerm extends CallableOperation {
   public static boolean isNonreceiverType(Class<?> c) {
     @SuppressWarnings("determinism") // Class cannot be @OrderNonDet, so @PolyDet("up") is the same
     // as @PolyDet
-    @PolyDet
-    boolean tmp1 = c.equals(String.class);
+    @PolyDet boolean tmp1 = c.equals(String.class);
     @SuppressWarnings("determinism") // Class cannot be @OrderNonDet, so @PolyDet("up") is the same
     // as @PolyDet
-    @PolyDet
-    boolean tmp2 = c.equals(Class.class);
+    @PolyDet boolean tmp2 = c.equals(Class.class);
     return c.isPrimitive() || tmp1 || PrimitiveTypes.isBoxedPrimitive(c) || tmp2;
   }
 
@@ -131,8 +129,7 @@ public final class NonreceiverTerm extends CallableOperation {
     @SuppressWarnings("determinism") // It's given in the comment for the class that value is null
     // or of type String or a boxed primitive. No such type has a @NonDet toString so this
     // toString call will be @Det
-    @Det
-    String result = Objects.toString(value);
+    @Det String result = Objects.toString(value);
     return result;
   }
 
@@ -256,8 +253,7 @@ public final class NonreceiverTerm extends CallableOperation {
         @SuppressWarnings("determinism") // It's given in the comment for the class that value is
         // null or of type String or a boxed primitive. No such type has a @NonDet toString so this
         // toString call will be @PolyDet
-        @Det
-        String tmp = value.toString();
+        @Det String tmp = value.toString();
         valStr = "\"" + StringEscapeUtils.escapeJava(tmp) + "\"";
       } else if (type.equals(JavaTypes.CHAR_TYPE)) {
         valStr = Integer.toHexString((Character) value);
@@ -267,8 +263,7 @@ public final class NonreceiverTerm extends CallableOperation {
         @SuppressWarnings("determinism") // It's given in the comment for the class that value is
         // null or of type String or a boxed primitive. No such type has a @NonDet toString so this
         // toString call will be @PolyDet
-        @Det
-        String tmp = value.toString();
+        @Det String tmp = value.toString();
         valStr = tmp;
       }
     }

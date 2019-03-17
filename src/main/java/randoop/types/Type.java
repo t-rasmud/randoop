@@ -185,8 +185,7 @@ public abstract class Type implements Comparable<Type> {
   public boolean runtimeClassIs(@Det Class<?> c) {
     @SuppressWarnings(
         "determinism") // The result is @PolyDet("up"), but that only applies to collections.
-    @PolyDet
-    boolean result = this.getRuntimeClass().equals(c);
+    @PolyDet boolean result = this.getRuntimeClass().equals(c);
     return result;
   }
 
@@ -216,8 +215,7 @@ public abstract class Type implements Comparable<Type> {
   public boolean isClass() {
     @SuppressWarnings(
         "determinism") // The result is @PolyDet("up"), but that only applies to collections.
-    @PolyDet
-    boolean result = this.equals(JavaTypes.CLASS_TYPE);
+    @PolyDet boolean result = this.equals(JavaTypes.CLASS_TYPE);
     return result;
   }
 
@@ -257,8 +255,7 @@ public abstract class Type implements Comparable<Type> {
   public boolean isObject() {
     @SuppressWarnings(
         "determinism") // The result is @PolyDet("up"), but that only applies to collections.
-    @PolyDet
-    boolean result = this.equals(JavaTypes.OBJECT_TYPE);
+    @PolyDet boolean result = this.equals(JavaTypes.OBJECT_TYPE);
     return result;
   }
 
@@ -270,8 +267,7 @@ public abstract class Type implements Comparable<Type> {
   public boolean isString() {
     @SuppressWarnings(
         "determinism") // The result is @PolyDet("up"), but that only applies to collections.
-    @PolyDet
-    boolean result = this.equals(JavaTypes.STRING_TYPE);
+    @PolyDet boolean result = this.equals(JavaTypes.STRING_TYPE);
     return result;
   }
 
@@ -283,8 +279,7 @@ public abstract class Type implements Comparable<Type> {
   public boolean isVoid() {
     @SuppressWarnings(
         "determinism") // The result is @PolyDet("up"), but that only applies to collections.
-    @PolyDet
-    boolean result = this.equals(JavaTypes.VOID_TYPE);
+    @PolyDet boolean result = this.equals(JavaTypes.VOID_TYPE);
     return result;
   }
 
@@ -464,17 +459,14 @@ public abstract class Type implements Comparable<Type> {
   public int compareTo(Type type) {
     @SuppressWarnings("determinism") // These really are @PolyDet, but can't pass them to
     // conditional.
-    @Det
-    String name1 = this.getCanonicalName();
+    @Det String name1 = this.getCanonicalName();
     @SuppressWarnings("determinism") // These really are @PolyDet, but can't pass them to
     // conditional.
-    @Det
-    String name2 = this.getCanonicalName();
+    @Det String name2 = this.getCanonicalName();
     if (name1 != null && name2 != null) {
       @SuppressWarnings("determinism") // getCanonicalName can only be called on @Det, but Type must
       // be @PolyDet to override
-      @PolyDet
-      int result = this.getCanonicalName().compareTo(type.getCanonicalName());
+      @PolyDet int result = this.getCanonicalName().compareTo(type.getCanonicalName());
       return result;
     }
     return this.getRuntimeClass().getName().compareTo(this.getRuntimeClass().getName());

@@ -286,8 +286,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  @Det
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  @Det boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     assert false : " not quite sure what to do with lazy type bound";
     return false;
   }

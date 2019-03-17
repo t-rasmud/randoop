@@ -104,8 +104,7 @@ public class SpecificationCollection {
     for (Path specificationFile : specificationFiles) {
       readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
-    @Det
-    Map<AccessibleObject, @OrderNonDet Set<Method>> overridden =
+    @Det Map<AccessibleObject, @OrderNonDet Set<Method>> overridden =
         buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
   }
@@ -207,8 +206,7 @@ public class SpecificationCollection {
 
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     try (BufferedReader reader = Files.newBufferedReader(specificationFile, UTF_8)) {
-      @Det
-      List<OperationSpecification> specificationList =
+      @Det List<OperationSpecification> specificationList =
           gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType());
 
       for (@Det OperationSpecification specification : specificationList) {

@@ -31,8 +31,7 @@ public class ListOfLists<T extends @Det Object> implements SimpleList<T>, Serial
   public ListOfLists(@Det SimpleList<T>... lists) {
     @SuppressWarnings("determinism") // can't declare lists @Det but its order is decided at compile
     // time anyway
-    @Det
-    int len = lists.length;
+    @Det int len = lists.length;
     this.lists = new ArrayList<>(len);
     for (SimpleList<T> sl : lists) {
       this.lists.add(sl);
@@ -117,8 +116,7 @@ public class ListOfLists<T extends @Det Object> implements SimpleList<T>, Serial
   @Override
   public String toString(ListOfLists<T> this) {
     @SuppressWarnings("determinism") // toJDKList requires @Det but it's clearly @PolyDet
-    @PolyDet
-    String result = toJDKList().toString();
+    @PolyDet String result = toJDKList().toString();
     return result;
   }
 }

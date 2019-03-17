@@ -114,8 +114,7 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  @Det
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  @Det boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     assert false : "isUpperBound(ParameterBound, Substitution<ReferenceType>) not implemented";
     return false;
   }

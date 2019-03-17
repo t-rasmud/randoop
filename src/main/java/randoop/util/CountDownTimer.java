@@ -25,8 +25,7 @@ public class CountDownTimer {
   public @NonDet long remainingTime() {
     // Need to use @NonDet in conditional
     @SuppressWarnings("determinism")
-    @Det
-    long remainingTime = totalTime - elapsedTime();
+    @Det long remainingTime = totalTime - elapsedTime();
     if (remainingTime < 0) {
       return 0;
     }
@@ -40,8 +39,7 @@ public class CountDownTimer {
   @Override
   public @PolyDet("up") String toString() {
     @SuppressWarnings("determinism") // this is @NonDet, but all instances will be @NonDet
-    @PolyDet("up")
-    String result = "elapsed: " + elapsedTime() + ", remaining: " + remainingTime();
+    @PolyDet("up") String result = "elapsed: " + elapsedTime() + ", remaining: " + remainingTime();
     return result;
   }
 }

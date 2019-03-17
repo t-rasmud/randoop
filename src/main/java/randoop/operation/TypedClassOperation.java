@@ -127,8 +127,7 @@ public class TypedClassOperation extends TypedOperation {
     if (this.isGeneric()) {
       @SuppressWarnings("determinism") // getTypeParameters requires @Det but all instances
       // constructed will be @Det and this won't cause nondeterminism.
-      @PolyDet
-      String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
+      @PolyDet String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
       return b + super.toString();
     } else {
       return super.toString();
@@ -185,8 +184,7 @@ public class TypedClassOperation extends TypedOperation {
       String name =
           this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
 
-      @Det
-      Class<?> @Det [] parameterTypes =
+      @Det Class<?> @Det [] parameterTypes =
           this.isMethodCall()
               ? ((MethodCall) getOperation()).getMethod().getParameterTypes()
               : ((ConstructorCall) getOperation()).getConstructor().getParameterTypes();

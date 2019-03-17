@@ -37,8 +37,7 @@ public final class Log {
       Class<?>[] argTypes = new Class<?>[args.length];
       @SuppressWarnings("determinism") // can't declare variable argument list @Det, but its order
       // is decided at compile time so it's @Det anyway.
-      @Det
-      int len = args.length;
+      @Det int len = args.length;
       for (int i = 0; i < len; i++) {
         argTypes[i] = args[i].getClass();
       }

@@ -119,8 +119,7 @@ public final class PrimitiveTypes {
     // check identity and primitive  widening
     @SuppressWarnings("determinism") // Return type of equals is @PolyDet("up"), but these will
     // never be collections
-    @PolyDet
-    boolean result = source.equals(target) || isSubtype(source, target);
+    @PolyDet boolean result = source.equals(target) || isSubtype(source, target);
     return result;
   }
 

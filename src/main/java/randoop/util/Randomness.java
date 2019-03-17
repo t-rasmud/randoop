@@ -298,8 +298,7 @@ public final class Randomness {
   private static String toString(@Det Object o) {
     if (o instanceof @NonDet Collection<?>) {
       @SuppressWarnings("determinism") // @NonDet is required for a valid type but o is still @Det.
-      @Det
-      Collection<?> coll = (@NonDet Collection<?>) o;
+      @Det Collection<?> coll = (@NonDet Collection<?>) o;
       switch (verbosity) {
         case 1:
           return coll.getClass() + " of size " + coll.size();

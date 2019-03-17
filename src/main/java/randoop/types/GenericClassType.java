@@ -62,8 +62,7 @@ public class GenericClassType extends ParameterizedType {
   public String toString(GenericClassType this) {
     @SuppressWarnings("determinism") // getName requires @Det but only @Det instances are
     // constructed so this won't cause nondeterminism.
-    @PolyDet
-    String name = this.getName();
+    @PolyDet String name = this.getName();
     return name;
   }
 

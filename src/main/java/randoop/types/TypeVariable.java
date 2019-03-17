@@ -110,8 +110,7 @@ public abstract class TypeVariable extends ParameterType {
     variableList.add(variable);
     @SuppressWarnings("determinism") // forArgs uses a variable length argument list, which the
     // checker doesn't handle correctly.
-    @Det
-    Substitution<ReferenceType> result = Substitution.forArgs(variableList, otherType);
+    @Det Substitution<ReferenceType> result = Substitution.forArgs(variableList, otherType);
     return result;
   }
 

@@ -13,8 +13,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
     this.c = c;
     @SuppressWarnings("determinism") // variable argument list can't be declared @Det, but its order
     // is decided at compile time so it's @Det anyway.
-    @Det
-    Object @Det [] tmp = objs;
+    @Det Object @Det [] tmp = objs;
     this.objs = tmp;
   }
 
@@ -30,8 +29,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   @Override
   public String toString() {
     @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
-    @Det
-    String status = status();
+    @Det String status = status();
     return "Check of ObjectContract " + c + " args: " + Arrays.toString(objs) + status;
   }
 }

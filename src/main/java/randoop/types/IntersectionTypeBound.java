@@ -200,8 +200,7 @@ class IntersectionTypeBound extends ParameterBound {
    *     bound
    */
   @Override
-  @Det
-  boolean isUpperBound(@Det ParameterBound bound, @Det Substitution<ReferenceType> substitution) {
+  @Det boolean isUpperBound(@Det ParameterBound bound, @Det Substitution<ReferenceType> substitution) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(bound, substitution)) {
         return false;

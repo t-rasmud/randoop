@@ -65,8 +65,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   public String toString() {
     @SuppressWarnings("determinism") // toString requires @PolyDet, and only @Det instances will be
     // constructed so this will never introduce nondeterminism.
-    @PolyDet
-    String name = this.getName();
+    @PolyDet String name = this.getName();
     return name;
   }
 

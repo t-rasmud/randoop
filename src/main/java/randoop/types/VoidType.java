@@ -36,8 +36,7 @@ public class VoidType extends Type {
   public String toString() {
     @SuppressWarnings("determinism") // getName requires @Det this, but only @Det instances will be
     // constructed so this never results in nondeterminism.
-    @PolyDet
-    String name = this.getName();
+    @PolyDet String name = this.getName();
     return name;
   }
 

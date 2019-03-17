@@ -64,8 +64,7 @@ public class InstantiatedType extends ParameterizedType {
   public String toString() {
     @SuppressWarnings("determinism") // getName requires @Det but only @Det instances will be
     // constructed so this won't cause nondeterminism.
-    @PolyDet
-    String name = this.getName();
+    @PolyDet String name = this.getName();
     return name;
   }
 

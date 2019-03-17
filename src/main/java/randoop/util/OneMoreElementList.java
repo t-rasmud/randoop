@@ -66,8 +66,7 @@ public final class OneMoreElementList<T extends @Det Object>
   public @PolyDet("up") String toString() {
     @SuppressWarnings(
         "determinism") // toJDKList requires @Det this but it's clearly a @PolyDet method.
-    @PolyDet
-    String result = toJDKList().toString();
+    @PolyDet String result = toJDKList().toString();
     return result;
   }
 }

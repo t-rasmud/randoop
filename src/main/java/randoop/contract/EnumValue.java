@@ -55,8 +55,7 @@ public final class EnumValue extends ObjectContract {
   public @PolyDet("up") boolean evaluate(@Det Object... objects) throws Throwable {
     assert objects.length == 1;
     // Temporary necessary because of https://github.com/t-rasmud/checker-framework/issues/48
-    @PolyDet("up")
-    Object tmp = objects[0];
+    @PolyDet("up") Object tmp = objects[0];
     return value.equals(tmp);
   }
 

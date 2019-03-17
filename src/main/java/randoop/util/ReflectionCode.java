@@ -71,8 +71,7 @@ public abstract class ReflectionCode {
       // Even though security may be @NonDet, it simply updates it. Doesn't cause any
       // non-deterministic behavior.
       @SuppressWarnings("determinism")
-      @Det
-      SecurityManager security = System.getSecurityManager();
+      @Det SecurityManager security = System.getSecurityManager();
       if (security instanceof RandoopSecurityManager) {
         randoopsecurity = (RandoopSecurityManager) security;
         oldStatus = randoopsecurity.status;

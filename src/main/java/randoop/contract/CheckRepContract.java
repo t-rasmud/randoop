@@ -78,13 +78,11 @@ public final class CheckRepContract extends ObjectContract {
       try {
         if (returnsBoolean) {
           // Temporary necessary because of https://github.com/t-rasmud/checker-framework/issues/48
-          @PolyDet("up")
-          Object tmp = objects[0];
+          @PolyDet("up") Object tmp = objects[0];
           return (Boolean) checkRepMethod.invoke(tmp);
         } else {
           // Temporary necessary because of https://github.com/t-rasmud/checker-framework/issues/48
-          @PolyDet("up")
-          Object tmp = objects[0];
+          @PolyDet("up") Object tmp = objects[0];
           checkRepMethod.invoke(tmp);
           return true;
         }

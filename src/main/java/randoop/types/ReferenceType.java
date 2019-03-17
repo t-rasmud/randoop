@@ -169,8 +169,7 @@ public abstract class ReferenceType extends Type {
       typeParameters.add(variable);
       @SuppressWarnings("determinism") // forArgs takes a variable length parameter list, which the
       // checker doesn't handle correctly
-      @Det
-      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
+      @Det Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
           && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
         return substitution;

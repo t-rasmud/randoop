@@ -25,8 +25,7 @@ public final class EqualsHashcode extends ObjectContract {
 
     @SuppressWarnings("determinism") // The hash codes themselves are deterministic but comparing
     // them with two Objects who properly follow the hashCode contract will be deterministic.
-    @Det
-    boolean result = !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    @Det boolean result = !o1.equals(o2) || o1.hashCode() == o2.hashCode();
     return result;
   }
 

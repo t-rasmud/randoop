@@ -54,8 +54,7 @@ public final class Execution {
   public ExecutionOutcome get(int i) {
     @SuppressWarnings("determinism") // this is @PolyDet("up"), which can't happen because i can't
     // be @OrderNonDet.
-    @PolyDet
-    ExecutionOutcome result = outcomes.get(i);
+    @PolyDet ExecutionOutcome result = outcomes.get(i);
     return result;
   }
 

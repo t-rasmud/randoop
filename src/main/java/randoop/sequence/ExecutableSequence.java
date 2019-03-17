@@ -289,8 +289,7 @@ public class ExecutableSequence {
       for (int i = 0; i < this.sequence.size(); i++) {
 
         // Collect the input values to i-th statement.
-        @Det
-        Object @Det [] inputValues =
+        @Det Object @Det [] inputValues =
             getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {

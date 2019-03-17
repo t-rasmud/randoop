@@ -38,8 +38,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     try {
       @SuppressWarnings("determinism") // Invoking a constructor could be non-deterministic, but
       // this can't be verified.
-      @Det
-      Object retval = this.constructor.newInstance(this.inputs);
+      @Det Object retval = this.constructor.newInstance(this.inputs);
       this.retval = retval;
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
@@ -53,8 +52,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public String toString() {
     @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
-    @Det
-    String status = status();
+    @Det String status = status();
     return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status;
   }
 }
