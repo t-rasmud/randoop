@@ -109,7 +109,11 @@ public class LiteralFileReader {
     return map;
   }
 
-  /** Throw an error with the given exception as its cause. */
+  /**
+   * Throw an error with the given exception as its cause.
+   *
+   * @param e the cause
+   */
   private static void throwRecordSyntaxError(Exception e) {
     throw new Error(e);
   }

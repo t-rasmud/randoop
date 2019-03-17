@@ -199,8 +199,7 @@ public class Substitution<T extends @Det Object> {
   /** Print the entries of this substitution to standard out. */
   public void print() {
     for (Entry<TypeVariable, T> entry : map.entrySet()) {
-      System.out.println(
-          entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+      System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
     }
   }
 
