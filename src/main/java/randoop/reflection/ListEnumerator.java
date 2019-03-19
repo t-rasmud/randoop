@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
@@ -22,7 +23,7 @@ import org.checkerframework.checker.determinism.qual.Det;
  *
  * by successive calls to {@link #next()}.
  */
-class ListEnumerator<T> implements @Det Iterator<List<T>> {
+class ListEnumerator<T extends @Det Object> implements Iterator<List<T>> {
 
   /** Lists of candidate values for each position in generated lists. */
   private final List<List<T>> candidates;
@@ -39,7 +40,7 @@ class ListEnumerator<T> implements @Det Iterator<List<T>> {
    *
    * @param candidates lists of candidate values for each position in generated lists
    */
-  ListEnumerator(List<List<T>> candidates) {
+  ListEnumerator(@Det List<List<T>> candidates) {
     this.candidates = candidates;
     this.iterators = new ArrayList<>(candidates.size());
     this.currentTypes = new ArrayList<>(candidates.size());
@@ -51,7 +52,7 @@ class ListEnumerator<T> implements @Det Iterator<List<T>> {
   }
 
   @Override
-  public boolean hasNext() {
+  public @PolyDet("down") boolean hasNext() {
     while (nextList >= 0 && !iterators.get(nextList).hasNext()) {
       iterators.set(nextList, candidates.get(nextList).iterator());
       nextList--;
