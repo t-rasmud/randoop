@@ -57,7 +57,7 @@ compileJava {
         // '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
         '-processor',
 		'org.checkerframework.checker.determinism.DeterminismChecker',
-		'-AonlyDefs=randoop.reflection.OperationModel$',
+		'-AonlyDefs=randoop.reflection.*$',
 		// '-AonlyDefs=randoop.reflection.ClassLiteralExtractor$',
 		// '-AonlyDefs=randoop.util.StringEscapeUtils',
 		// '-AonlyDefs=IdentityMultiMap',

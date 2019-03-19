@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
@@ -21,7 +22,7 @@ import java.util.NoSuchElementException;
  *
  * by successive calls to {@link #next()}.
  */
-class ListEnumerator<T> implements Iterator<List<T>> {
+class ListEnumerator<T> implements @Det Iterator<List<T>> {
 
   /** Lists of candidate values for each position in generated lists. */
   private final List<List<T>> candidates;

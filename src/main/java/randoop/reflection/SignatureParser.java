@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
 public class SignatureParser {
@@ -64,7 +65,9 @@ public class SignatureParser {
    */
   @SuppressWarnings("signature") // parsing
   public static AccessibleObject parse(
-      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
+      @Det String signature,
+      VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
     Matcher signatureMatcher = SIGNATURE_PATTERN.matcher(signature);
     if (!signatureMatcher.matches()) {
@@ -73,9 +76,9 @@ public class SignatureParser {
 
     String qualifiedName = signatureMatcher.group(1);
     String argString = signatureMatcher.group(2);
-    String[] arguments;
+    @Det String @Det [] arguments;
     if (argString.isEmpty()) {
-      arguments = new String[0];
+      arguments = new @Det String @Det [0];
     } else {
       arguments = argString.split("\\s*,\\s*");
     }
@@ -125,7 +128,7 @@ public class SignatureParser {
       return null;
     }
 
-    Class<?>[] argTypes = new Class<?>[arguments.length];
+    @Det Class<?> @Det [] argTypes = new Class<?> @Det [arguments.length];
     for (int i = 0; i < arguments.length; i++) {
       try {
         argTypes[i] = TypeNames.getTypeForName(arguments[i]);

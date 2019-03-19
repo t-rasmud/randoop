@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
@@ -136,15 +137,15 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitMethods,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassesGoalNames,
-      Set<String> methodSignatures,
-      ClassNameErrorHandler errorHandler,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det List<Pattern> omitMethods,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassesGoalNames,
+      @Det Set<String> methodSignatures,
+      @Det ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
-      SpecificationCollection operationSpecifications)
+      @Det SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -189,12 +190,12 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassnames,
-      Set<String> methodSignatures,
-      ClassNameErrorHandler errorHandler,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassnames,
+      @Det Set<String> methodSignatures,
+      @Det ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
@@ -228,13 +229,13 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitMethods,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassnames,
-      Set<String> methodSignatures,
-      ClassNameErrorHandler errorHandler,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det List<Pattern> omitMethods,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassnames,
+      @Det Set<String> methodSignatures,
+      @Det ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
@@ -258,7 +259,7 @@ public class OperationModel {
    * @param literalsLevel the level of literals to add
    */
   public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
+      ComponentManager compMgr, @Det List<String> literalsFile, ClassLiteralsMode literalsLevel) {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
@@ -303,7 +304,7 @@ public class OperationModel {
    * @return a map from each class type to the set of observer methods in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<Type, TypedOperation> getObservers(Set<String> observerSignatures)
+  public MultiMap<Type, TypedOperation> getObservers(@Det Set<String> observerSignatures)
       throws OperationParseException {
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     for (String sig : observerSignatures) {
@@ -452,11 +453,12 @@ public class OperationModel {
    * @param literalsFileList the list of literals file names
    */
   private void addClassTypes(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassesGoalNames,
-      ClassNameErrorHandler errorHandler,
+      @Det OperationModel this,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassesGoalNames,
+      @Det ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
@@ -468,7 +470,7 @@ public class OperationModel {
     }
 
     // Collect classes under test
-    Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
+    @Det Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
       Class<?> c = getClass(classname, errorHandler);
       // Note that c could be null if errorHandler just warns on bad names
@@ -552,11 +554,11 @@ public class OperationModel {
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
-      Set<ClassOrInterfaceType> classTypes,
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      SpecificationCollection operationSpecifications) {
+      @Det Set<ClassOrInterfaceType> classTypes,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitPredicate,
+      @Det SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
@@ -577,9 +579,9 @@ public class OperationModel {
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
-      Set<String> methodSignatures,
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
+      @Det Set<String> methodSignatures,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
     for (String sig : methodSignatures) {

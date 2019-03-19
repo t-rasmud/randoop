@@ -57,7 +57,7 @@ public class Substitution<T extends @Det Object> {
    */
   @SafeVarargs
   public static <T extends @Det Object> Substitution<T> forArgs(
-      @Det List<TypeVariable> parameters, T... arguments) {
+      @Det List<TypeVariable> parameters, T @Det ... arguments) {
     assert parameters.size() == arguments.length;
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {

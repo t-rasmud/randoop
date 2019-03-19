@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Interface for predicates that check whether a class or class member is considered visible. */
 public abstract class VisibilityPredicate {
@@ -127,7 +128,7 @@ public abstract class VisibilityPredicate {
      *
      * @param packageName the package to use for package accessibility test
      */
-    public PackageVisibilityPredicate(String packageName) {
+    public PackageVisibilityPredicate(@Det String packageName) {
       this.packageName = packageName;
     }
 

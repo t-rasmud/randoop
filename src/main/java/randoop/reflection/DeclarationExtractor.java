@@ -20,7 +20,8 @@ public class DeclarationExtractor extends DefaultClassVisitor {
   }
 
   @Override
-  public void visit(@Det Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(
+      @Det DeclarationExtractor this, @Det Class<?> c, ReflectionManager reflectionManager) {
     if (!reflectionPredicate.test(c)) {
       return;
     }

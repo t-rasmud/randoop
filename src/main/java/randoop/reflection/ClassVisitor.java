@@ -29,7 +29,7 @@ public interface ClassVisitor {
    * @param c the member class
    * @param reflectionManager the {@link ReflectionManager} that called this visitor
    */
-  void visit(@Det Class<?> c, ReflectionManager reflectionManager);
+  void visit(@Det ClassVisitor this, @Det Class<?> c, ReflectionManager reflectionManager);
 
   /**
    * Perform action on a constructor.

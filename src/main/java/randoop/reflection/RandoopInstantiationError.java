@@ -1,5 +1,7 @@
 package randoop.reflection;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 public class RandoopInstantiationError extends Error {
 
   private static final long serialVersionUID = 3611612630372756721L;
@@ -7,7 +9,7 @@ public class RandoopInstantiationError extends Error {
   private final String opName;
   private final Throwable exception;
 
-  public RandoopInstantiationError(String opName, Throwable exception) {
+  public RandoopInstantiationError(@Det String opName, @Det Throwable exception) {
     this.opName = opName;
     this.exception = exception;
   }

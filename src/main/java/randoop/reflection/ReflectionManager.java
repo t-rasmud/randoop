@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
@@ -62,7 +64,7 @@ public class ReflectionManager {
    *
    * @param predicate the predicate to indicate whether classes and class members should be visited
    */
-  public ReflectionManager(VisibilityPredicate predicate) {
+  public ReflectionManager(@Det VisibilityPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
   }
@@ -72,7 +74,7 @@ public class ReflectionManager {
    *
    * @param visitor the {@link ClassVisitor} object to add
    */
-  public void add(ClassVisitor visitor) {
+  public void add(@Det ClassVisitor visitor) {
     visitors.add(visitor);
   }
 
@@ -84,7 +86,7 @@ public class ReflectionManager {
    *
    * @param c the {@link Class} object to be visited
    */
-  public void apply(Class<?> c) {
+  public void apply(@Det Class<?> c) {
     for (ClassVisitor visitor : visitors) {
       apply(visitor, c);
     }
@@ -99,7 +101,7 @@ public class ReflectionManager {
    * @param visitor the {@link ClassVisitor} to apply to the class
    * @param c the class
    */
-  public void apply(ClassVisitor visitor, Class<?> c) {
+  public void apply(@Det ClassVisitor visitor, @Det Class<?> c) {
     if (predicate.isVisible(c)) {
       Log.logPrintf("Applying visitors to class %s%n", c.getName());
 
@@ -120,7 +122,7 @@ public class ReflectionManager {
         // getDeclaredMethods (which includes all methods declared by the class itself, but not
         // inherited ones).
 
-        Set<Method> methods = new HashSet<>();
+        @OrderNonDet Set<Method> methods = new HashSet<>();
         for (Method m : ClassDeterministic.getMethods(c)) {
           Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
           methods.add(m);
@@ -156,7 +158,7 @@ public class ReflectionManager {
         // Fields
         // The set of fields declared in class c is needed to ensure we don't
         // collect inherited fields that are shadowed by a local declaration.
-        Set<String> declaredNames = new TreeSet<>();
+        @Det Set<String> declaredNames = new TreeSet<>();
         for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
           declaredNames.add(f.getName());
           if (predicate.isVisible(f)) {
@@ -191,15 +193,17 @@ public class ReflectionManager {
    * @param c the enum class object from which constants and methods are extracted
    */
   @SuppressWarnings("GetClassOnEnum")
-  private void applyToEnum(ClassVisitor visitor, Class<?> c) {
+  private void applyToEnum(@Det ClassVisitor visitor, @Det Class<?> c) {
     // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
-      Enum<?> e = (Enum<?>) obj;
+      @SuppressWarnings("determinism") // if c itself is deterministic, then which class it
+      // represents will always be the same at runtime
+      Enum<? extends @Det Object> e = (Enum<? extends @Det Object>) obj;
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
-          Set<Method> methodSet = overrideMethods.get(m.getName());
+          @Det Set<Method> methodSet = overrideMethods.get(m.getName());
           if (methodSet == null) {
             methodSet = new LinkedHashSet<>();
           }
@@ -220,7 +224,7 @@ public class ReflectionManager {
     // constant
     for (Method m : ClassDeterministic.getMethods(c)) {
       if (isVisible(m)) {
-        Set<Method> methodSet = overrideMethods.get(m.getName());
+        @Det Set<Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {
           for (Method method : methodSet) {
             applyTo(visitor, method);
@@ -236,7 +240,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param f the field to be visited
    */
-  private void applyTo(ClassVisitor v, Field f) {
+  private void applyTo(@Det ClassVisitor v, @Det Field f) {
     Log.logPrintf("Visiting field %s%n", f.toGenericString());
     v.visit(f);
   }
@@ -251,7 +255,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param c the member class to be visited
    */
-  private void applyTo(ClassVisitor v, Class<?> c) {
+  private void applyTo(ClassVisitor v, @Det Class<?> c) {
     Log.logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
@@ -262,7 +266,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param co the constructor to be visited
    */
-  private void applyTo(ClassVisitor v, Constructor<?> co) {
+  private void applyTo(@Det ClassVisitor v, @Det Constructor<?> co) {
     Log.logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
@@ -273,7 +277,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param m the method to be visited
    */
-  private void applyTo(ClassVisitor v, Method m) {
+  private void applyTo(@Det ClassVisitor v, @Det Method m) {
     Log.logPrintf("Visiting method %s%n", m.toGenericString());
     v.visit(m);
   }
@@ -284,7 +288,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param e the enum value to be visited
    */
-  private void applyTo(ClassVisitor v, Enum<?> e) {
+  private void applyTo(@Det ClassVisitor v, @Det Enum<?> e) {
     Log.logPrintf("Visiting enum %s%n", e);
     v.visit(e);
   }
@@ -295,7 +299,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param c the class to be visited
    */
-  private void visitBefore(ClassVisitor v, Class<?> c) {
+  private void visitBefore(@Det ClassVisitor v, @Det Class<?> c) {
     v.visitBefore(c);
   }
 

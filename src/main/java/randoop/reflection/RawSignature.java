@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -39,7 +41,10 @@ public class RawSignature {
    * @param parameterTypes the method parameter types, including the receiver type if any
    */
   public RawSignature(
-      String packageName, String classname, String name, Class<?>[] parameterTypes) {
+      @Det String packageName,
+      @Det String classname,
+      @Det String name,
+      @Det Class<?> @Det [] parameterTypes) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classname = classname;
@@ -70,7 +75,7 @@ public class RawSignature {
    * @param executable the constructor from which signature is extracted
    * @return the {@link RawSignature} object for {@code executable}
    */
-  public static RawSignature of(Constructor<?> executable) {
+  public static RawSignature of(@Det Constructor<?> executable) {
     Package classPackage = executable.getDeclaringClass().getPackage();
     String packageName = (classPackage == null) ? null : classPackage.getName();
     String fullclassname = executable.getDeclaringClass().getName();
@@ -95,7 +100,7 @@ public class RawSignature {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(classname, name, Arrays.hashCode(parameterTypes));
   }
 
@@ -107,7 +112,7 @@ public class RawSignature {
    */
   @Override
   public String toString() {
-    List<String> typeNames = new ArrayList<>();
+    @Det List<String> typeNames = new ArrayList<>();
     for (Class<?> type : parameterTypes) {
       typeNames.add(type.getCanonicalName());
     }
@@ -155,7 +160,7 @@ public class RawSignature {
    *     same as the number of parameter types in this signature
    * @return the parameter declarations for this signature using the given parameter names
    */
-  public String getDeclarationArguments(List<String> parameterNames) {
+  public String getDeclarationArguments(@Det List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
           String.format(
@@ -167,7 +172,7 @@ public class RawSignature {
               this));
     }
 
-    List<String> paramDeclarations = new ArrayList<>();
+    @Det List<String> paramDeclarations = new ArrayList<>();
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }

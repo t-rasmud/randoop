@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ParameterizedType;
 import randoop.types.PrimitiveType;
@@ -29,13 +30,13 @@ class TypeExtractor extends DefaultClassVisitor {
    * @param inputTypes the set of concrete types
    * @param predicate the visibility predicate
    */
-  TypeExtractor(Set<Type> inputTypes, VisibilityPredicate predicate) {
+  TypeExtractor(@Det Set<Type> inputTypes, @Det VisibilityPredicate predicate) {
     this.inputTypes = inputTypes;
     this.predicate = predicate;
   }
 
   @Override
-  public void visit(Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(@Det TypeExtractor this, @Det Class<?> c, ReflectionManager reflectionManager) {
     addIfConcrete(ClassOrInterfaceType.forClass(c));
     reflectionManager.apply(this, c);
   }
@@ -47,7 +48,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * object.
    */
   @Override
-  public void visit(Constructor<?> c) {
+  public void visit(@Det Constructor<?> c) {
     for (java.lang.reflect.Type paramType : c.getGenericParameterTypes()) {
       addIfConcrete(Type.forType(paramType));
     }
@@ -77,7 +78,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * <p>Adds a concrete field type to the input types set of this object.
    */
   @Override
-  public void visit(Field f) {
+  public void visit(@Det Field f) {
     java.lang.reflect.Type fieldType = f.getGenericType();
     addIfConcrete(Type.forType(fieldType));
   }
@@ -88,7 +89,7 @@ class TypeExtractor extends DefaultClassVisitor {
    *
    * @param type the general type
    */
-  private void addIfConcrete(Type type) {
+  private void addIfConcrete(@Det Type type) {
     if (!type.isVoid()
         && !type.isGeneric()
         && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
@@ -109,7 +110,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * <p>Adds the class if it is concrete.
    */
   @Override
-  public void visitBefore(Class<?> c) {
+  public void visitBefore(@Det Class<?> c) {
     if (c.getTypeParameters().length == 0) {
       inputTypes.add(ClassOrInterfaceType.forClass(c));
     }

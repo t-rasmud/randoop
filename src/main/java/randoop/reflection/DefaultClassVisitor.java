@@ -9,7 +9,8 @@ import org.checkerframework.checker.determinism.qual.Det;
 public class DefaultClassVisitor implements ClassVisitor {
 
   @Override
-  public void visit(@Det Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(
+      @Det DefaultClassVisitor this, @Det Class<?> c, ReflectionManager reflectionManager) {
     // default is to do nothing
   }
 
