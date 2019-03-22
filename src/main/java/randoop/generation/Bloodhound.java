@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -49,21 +52,21 @@ public class Bloodhound implements TypedOperationSelector {
    * Map from methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
    */
-  private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
+  private final @OrderNonDet Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
    * Map from methods under test to the number of times they have been recently selected by the
    * {@link ForwardGenerator} to construct a new sequence. This map is cleared every time branch
    * coverage is recomputed.
    */
-  private final Map<TypedOperation, Integer> methodSelectionCounts = new HashMap<>();
+  private final @OrderNonDet Map<TypedOperation, Integer> methodSelectionCounts = new HashMap<>();
 
   /**
    * Map from methods under test to the total number of times they have ever been successfully
    * invoked by the {@link AbstractGenerator}. The integer value for a given method is
    * non-decreasing during a run of Randoop.
    */
-  private final Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
+  private final @OrderNonDet Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
 
   /**
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
@@ -90,7 +93,7 @@ public class Bloodhound implements TypedOperationSelector {
   private static final long t = 50000;
 
   /** {@code System.currentTimeMillis()} when branch coverage was last updated. */
-  private long lastUpdateTime = 0;
+  private @NonDet long lastUpdateTime = 0;
 
   /**
    * Branch coverage is recomputed after this many successful invocations (= this many new tests
@@ -121,7 +124,8 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operations list of operations under test
    * @param classesUnderTest set of classes under test
    */
-  public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
+  public Bloodhound(
+      @Det List<TypedOperation> operations, @Det Set<ClassOrInterfaceType> classesUnderTest) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
     this.coverageTracker = new CoverageTracker(classesUnderTest);
 
@@ -140,7 +144,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @return the chosen {@code TypedOperation} for the new sequence
    */
   @Override
-  public TypedOperation selectOperation() {
+  public TypedOperation selectOperation(@Det Bloodhound this) {
     // Periodically collect branch coverage and recompute weights for all methods under test.
     updateBranchCoverageMaybe();
 
@@ -170,7 +174,7 @@ public class Bloodhound implements TypedOperationSelector {
    *       branchCoverageInteral} successful invocations (of any method under test).
    * </ul>
    */
-  private void updateBranchCoverageMaybe() {
+  private void updateBranchCoverageMaybe(@Det Bloodhound this) {
     boolean shouldUpdateBranchCoverage;
 
     switch (GenInputsAbstract.bloodhound_update_mode) {
@@ -222,7 +226,10 @@ public class Bloodhound implements TypedOperationSelector {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
       for (TypedOperation typedOperation : methodWeights.keySet()) {
-        System.out.println(typedOperation.getName() + ": " + methodWeights.get(typedOperation));
+        @SuppressWarnings("determinism") // this output is nondeterministic, but it's for
+        // debugging
+        @Det String output = typedOperation.getName() + ": " + methodWeights.get(typedOperation);
+        System.out.println(output);
       }
       System.out.println("--------------------------");
     }
@@ -232,7 +239,7 @@ public class Bloodhound implements TypedOperationSelector {
    * Computes and updates weights in {@code methodWeights} map for all methods under test.
    * Recomputes the {@code totalWeightOfMethodsUnderTest} to avoid problems with round-off error.
    */
-  private void updateWeightsForAllOperations() {
+  private void updateWeightsForAllOperations(@Det Bloodhound this) {
     double totalWeight = 0;
     for (TypedOperation operation : operationSimpleList) {
       totalWeight += updateWeight(operation);
@@ -255,12 +262,12 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation method to compute weight for
    * @return the updated weight for the given operation
    */
-  private double updateWeight(TypedOperation operation) {
+  private double updateWeight(@Det Bloodhound this, @Det TypedOperation operation) {
     // Remove type arguments, because Jacoco does not include type arguments when naming a method.
     String methodName = operation.getName().replaceAll("<.*>\\.", ".");
 
     // Corresponds to uncovRatio(m) in the GRT paper.
-    Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
+    @Det Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
 
     if (uncovRatio == null) {
       // Default to 0.5 for methods with no coverage information. The GRT paper does not mention
@@ -322,7 +329,7 @@ public class Bloodhound implements TypedOperationSelector {
     double wmk;
     // In the GRT paper, "k" is the number of times this method was selected since the last update
     // of branch coverage. It is reset to zero every time branch coverage is recomputed.
-    Integer k = methodSelectionCounts.get(operation);
+    @Det Integer k = methodSelectionCounts.get(operation);
     if (k == null) {
       wmk = wm0;
     } else {
@@ -352,7 +359,7 @@ public class Bloodhound implements TypedOperationSelector {
    *
    * @param operation the method under test that was successfully invoked
    */
-  public void incrementSuccessfulInvocationCount(TypedOperation operation) {
+  public void incrementSuccessfulInvocationCount(@Det TypedOperation operation) {
     totalSuccessfulInvocations += 1;
     int numSuccessfulInvocations = CollectionsPlume.incrementMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
@@ -365,7 +372,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param sequence newly-created sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(Sequence sequence) {
+  public void newRegressionTestHook(@Det Sequence sequence) {
     incrementSuccessfulInvocationCount(sequence.getOperation());
   }
 }

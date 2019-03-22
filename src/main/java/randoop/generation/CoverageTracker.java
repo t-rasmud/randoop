@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -39,10 +41,10 @@ public class CoverageTracker {
    * where a method's total branches is zero, the uncovered branch ratio is NaN, and this map uses
    * zero instead.
    */
-  private final Map<String, Double> branchCoverageMap = new HashMap<>();
+  private final @OrderNonDet Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test. */
-  private final Set<String> classesUnderTest = new HashSet<>();
+  private final @OrderNonDet Set<String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
@@ -103,7 +105,7 @@ public class CoverageTracker {
    * sequences. Coverage data is now collected and the {@code branchCoverageMap} field is updated to
    * contain the updated coverage information of each method branch.
    */
-  public void updateBranchCoverageMap() {
+  public void updateBranchCoverageMap(@Det CoverageTracker this) {
     // Collect coverage information. This updates the executionData object and gives us updated
     // coverage information for all of the classes under test.
     collectCoverageInformation();
@@ -176,7 +178,7 @@ public class CoverageTracker {
    * @param methodName name of the method to examine
    * @return uncovered branch ratio associated with the method
    */
-  public Double getBranchCoverageForMethod(String methodName) {
+  public Double getBranchCoverageForMethod(@Det String methodName) {
     return this.branchCoverageMap.get(methodName);
   }
 

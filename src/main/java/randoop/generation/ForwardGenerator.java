@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -78,23 +79,23 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   public ForwardGenerator(
-      List<TypedOperation> operations,
-      Set<TypedOperation> observers,
-      GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
-      RandoopListenerManager listenerManager,
-      Set<ClassOrInterfaceType> classesUnderTest) {
+      @Det List<TypedOperation> operations,
+      @Det Set<TypedOperation> observers,
+      GenInputsAbstract.@Det Limits limits,
+      @Det ComponentManager componentManager,
+      @Det RandoopListenerManager listenerManager,
+      @Det Set<ClassOrInterfaceType> classesUnderTest) {
     this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
   }
 
   public ForwardGenerator(
-      List<TypedOperation> operations,
-      Set<TypedOperation> observers,
-      GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
-      IStopper stopper,
-      RandoopListenerManager listenerManager,
-      Set<ClassOrInterfaceType> classesUnderTest) {
+      @Det List<TypedOperation> operations,
+      @Det Set<TypedOperation> observers,
+      GenInputsAbstract.@Det Limits limits,
+      @Det ComponentManager componentManager,
+      @Det IStopper stopper,
+      @Det RandoopListenerManager listenerManager,
+      @Det Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -134,7 +135,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sequence the new sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(Sequence sequence) {
+  public void newRegressionTestHook(@Det Sequence sequence) {
     operationSelector.newRegressionTestHook(sequence);
   }
 
@@ -155,7 +156,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public ExecutableSequence step() {
+  public ExecutableSequence step(@Det ForwardGenerator this) {
 
     long startTime = System.nanoTime();
 
@@ -213,7 +214,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence
    */
-  private void determineActiveIndices(ExecutableSequence seq) {
+  private void determineActiveIndices(@Det ForwardGenerator this, @Det ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       Log.logPrintf("Sequence has non-executed statements: excluding from extension pool.%n");
@@ -271,7 +272,7 @@ public class ForwardGenerator extends AbstractGenerator {
       boolean isObserver = stmt.isMethodCall() && observers.contains(stmt.getOperation());
       Log.logPrintf("isObserver => %s for %s%n", isObserver, stmt);
       if (isObserver) {
-        List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
+        @Det List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
         for (Integer inputIndex : inputVars) {
           seq.sequence.clearActiveFlag(inputIndex);
         }
@@ -329,7 +330,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private ExecutableSequence createNewUniqueSequence(@Det ForwardGenerator this) {
 
     Log.logPrintf("-------------------------------------------%n");
 
@@ -347,7 +348,9 @@ public class ForwardGenerator extends AbstractGenerator {
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
-            String opName = operation.getOperation().getReflectionObject().toString();
+            @SuppressWarnings("determinism") // exceptions are non-reglar behavior so we don't
+            // make guarantees about determinism
+            @Det String opName = operation.getOperation().getReflectionObject().toString();
             throw new RandoopInstantiationError(opName, e);
           }
         } else {
@@ -389,7 +392,7 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence concatSeq = Sequence.concatenate(inputs.sequences);
 
     // Figure out input variables.
-    List<Variable> inputVars = new ArrayList<>();
+    @Det List<Variable> inputVars = new ArrayList<>();
     for (Integer inputIndex : inputs.indices) {
       Variable v = concatSeq.getVariable(inputIndex);
       inputVars.add(v);
@@ -454,10 +457,10 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
-  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
+  private Sequence repeat(@Det Sequence seq, @Det TypedOperation operation, @Det int times) {
     Sequence retval = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
-      List<Integer> vil = new ArrayList<>();
+      @Det List<Integer> vil = new ArrayList<>();
       for (Variable v : retval.getInputs(retval.size() - 1)) {
         if (v.getType().equals(JavaTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
@@ -469,7 +472,7 @@ public class ForwardGenerator extends AbstractGenerator {
           vil.add(v.getDeclIndex());
         }
       }
-      List<Variable> vl = new ArrayList<>();
+      @Det List<Variable> vl = new ArrayList<>();
       for (Integer vi : vil) {
         vl.add(retval.getVariable(vi));
       }
@@ -482,7 +485,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
-  private void randoopConsistencyTest2(Sequence newSequence) {
+  private void randoopConsistencyTest2(@Det Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -492,7 +495,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
-  private void randoopConsistencyTests(Sequence newSequence) {
+  private void randoopConsistencyTests(@Det Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();
@@ -552,7 +555,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return the selected sequences and indices
    */
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+  private InputsAndSuccessFlag selectInputs(@Det TypedOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
@@ -571,7 +574,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // a single concatenation of the subsequences in the end than repeatedly
     // extending S.)
 
-    List<Sequence> sequences = new ArrayList<>();
+    @Det List<Sequence> sequences = new ArrayList<>();
 
     // We store the total size of S in the following variable.
 
@@ -590,7 +593,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // of this method, variables will contain inputTypes.size() variables.
     // Note additionally that for every i in variables, 0 <= i < |S|.
 
-    List<Integer> variables = new ArrayList<>();
+    @Det List<Integer> variables = new ArrayList<>();
 
     // [Optimization]
     // The following two variables are used in the loop below only when
@@ -615,7 +618,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // candidateVars will store the indices that can serve as input to the
         // i-th input in st.
-        List<SimpleList<Integer>> candidateVars = new ArrayList<>();
+        @Det List<SimpleList<Integer>> candidateVars = new ArrayList<>();
 
         // For each type T in S compatible with inputTypes[i], add all the
         // indices in S of type T.
@@ -682,7 +685,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
-        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>();
+        @Det SimpleArrayList<Sequence> l2 = new SimpleArrayList<>();
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
         if (creationSequence != null) {
@@ -759,7 +762,7 @@ public class ForwardGenerator extends AbstractGenerator {
     final Variable var;
     final Sequence seq;
 
-    VarAndSeq(Variable var, Sequence seq) {
+    VarAndSeq(@Det Variable var, @Det Sequence seq) {
       this.var = var;
       this.seq = seq;
     }
@@ -773,7 +776,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
-  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  VarAndSeq randomVariable(
+      @Det SimpleList<Sequence> candidates, @Det Type inputType, @Det boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
@@ -831,7 +835,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
     assert isReceiver;
     // Try every element of the list, in order.
-    List<VarAndSeq> validResults = new ArrayList<>();
+    @Det List<VarAndSeq> validResults = new ArrayList<>();
     for (int i = 0; i < candidates.size(); i++) {
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);

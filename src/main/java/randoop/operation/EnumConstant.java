@@ -213,7 +213,7 @@ public class EnumConstant extends CallableOperation {
     for (Object obj : type.getEnumConstants()) {
       @SuppressWarnings("determinism") // if type itself is deterministic, then which class it
       // represents will always be the same at runtime
-      @Det Enum<? extends @Det Object> e = (Enum<? extends @Det Object>) obj;
+      @Det Enum<?> e = (Enum<?>) obj;
       if (e.name().equals(valueName)) {
         return e;
       }

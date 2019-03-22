@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.sequence.Sequence;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -19,6 +20,7 @@ public final class SeedSequences {
   }
 
   /** The initial pool of primitive values. */
+  @SuppressWarnings("determinism") // Issue with asList method.
   private static final List<Object> primitiveSeeds =
       Arrays.<Object>asList(
           (byte) -1,
@@ -66,12 +68,12 @@ public final class SeedSequences {
    * @return the default set of seed sequences
    */
   public static Set<Sequence> defaultSeeds() {
-    List<Object> seeds = new ArrayList<>(primitiveSeeds);
+    @Det List<Object> seeds = new ArrayList<>(primitiveSeeds);
     return SeedSequences.objectsToSeeds(seeds);
   }
 
-  public static Set<Sequence> objectsToSeeds(List<Object> seeds) {
-    Set<Sequence> seedSequences = new LinkedHashSet<>();
+  public static Set<Sequence> objectsToSeeds(@Det List<Object> seeds) {
+    @Det Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {
       if (seed == null) {
         seedSequences.add(Sequence.zero(JavaTypes.STRING_TYPE));
@@ -88,8 +90,8 @@ public final class SeedSequences {
    * @param type the type
    * @return the set of seed values with the given raw type
    */
-  static Set<Object> getSeeds(Type type) {
-    Set<Object> result = new LinkedHashSet<>();
+  static Set<Object> getSeeds(@Det Type type) {
+    @Det Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
       if (type.isAssignableFromTypeOf(seed)) {
         result.add(seed);

@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.operation.TypedOperation;
 
 /** Error class to signal generation errors that should stop Randoop execution. */
@@ -17,7 +19,7 @@ public class RandoopGenerationError extends Error {
    * @param operation the actual operation
    * @param exception the exception thrown during generation
    */
-  RandoopGenerationError(TypedOperation operation, Throwable exception) {
+  RandoopGenerationError(@Det TypedOperation operation, @Det Throwable exception) {
     this.operation = operation;
     this.exception = exception;
   }
@@ -28,7 +30,7 @@ public class RandoopGenerationError extends Error {
    *
    * @return the name of the reflection object for the operation
    */
-  public String getOperationName() {
+  public @NonDet String getOperationName() {
     return operation.getOperation().getReflectionObject().toString();
   }
 

@@ -5,6 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
@@ -55,14 +58,14 @@ public abstract class AbstractGenerator {
   public int invalidSequenceCount = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
-  private long startTime = -1;
+  private @NonDet long startTime = -1;
 
   /**
    * Elapsed time since the generator started.
    *
    * @return elapsed time since the generator started
    */
-  private long elapsedTime() {
+  private @NonDet long elapsedTime() {
     return System.currentTimeMillis() - startTime;
   }
 
@@ -139,11 +142,11 @@ public abstract class AbstractGenerator {
    *     Can be null.
    */
   public AbstractGenerator(
-      List<TypedOperation> operations,
-      GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
-      IStopper stopper,
-      RandoopListenerManager listenerManager) {
+      @Det List<TypedOperation> operations,
+      GenInputsAbstract.@Det Limits limits,
+      @Det ComponentManager componentManager,
+      @Det IStopper stopper,
+      @Det RandoopListenerManager listenerManager) {
     assert operations != null;
 
     this.limits = limits;
@@ -170,7 +173,7 @@ public abstract class AbstractGenerator {
    *
    * @param outputTest the predicate to be added to object
    */
-  public void setTestPredicate(Predicate<ExecutableSequence> outputTest) {
+  public void setTestPredicate(@Det Predicate<ExecutableSequence> outputTest) {
     if (outputTest == null) {
       throw new IllegalArgumentException("outputTest must be non-null");
     }
@@ -182,7 +185,7 @@ public abstract class AbstractGenerator {
    *
    * @param executionVisitor the visitor
    */
-  public void setExecutionVisitor(ExecutionVisitor executionVisitor) {
+  public void setExecutionVisitor(@Det ExecutionVisitor executionVisitor) {
     if (executionVisitor == null) {
       throw new IllegalArgumentException("executionVisitor must be non-null");
     }
@@ -195,7 +198,7 @@ public abstract class AbstractGenerator {
    *
    * @param visitors the list of visitors
    */
-  public void setExecutionVisitor(List<ExecutionVisitor> visitors) {
+  public void setExecutionVisitor(@Det List<ExecutionVisitor> visitors) {
     this.executionVisitor = MultiVisitor.createMultiVisitor(visitors);
   }
 
@@ -205,7 +208,7 @@ public abstract class AbstractGenerator {
    *
    * @param checkGenerator the check generating visitor
    */
-  public void setTestCheckGenerator(TestCheckGenerator checkGenerator) {
+  public void setTestCheckGenerator(@Det TestCheckGenerator checkGenerator) {
     if (checkGenerator == null) {
       throw new IllegalArgumentException("checkGenerator must be non-null");
     }
@@ -218,7 +221,11 @@ public abstract class AbstractGenerator {
    * @return true iff any stopping criterion is met
    */
   protected boolean shouldStop() {
-    return (limits.time_limit_millis != 0 && elapsedTime() >= limits.time_limit_millis)
+    @SuppressWarnings("determinism") // this is only nondeterministic if the time limits is not 0,
+    // but this will not happen with the --deterministic option.
+    @PolyDet boolean pastTimeLimit =
+        (limits.time_limit_millis != 0 && elapsedTime() >= limits.time_limit_millis);
+    return pastTimeLimit
         || (numAttemptedSequences() >= limits.attempted_limit)
         || (numGeneratedSequences() >= limits.generated_limit)
         || (numOutputSequences() >= limits.output_limit)
@@ -232,7 +239,7 @@ public abstract class AbstractGenerator {
    *
    * @return a test sequence, may be null
    */
-  public abstract ExecutableSequence step();
+  public abstract ExecutableSequence step(@Det AbstractGenerator this);
 
   /**
    * Returns the count of attempts to generate a sequence so far.
@@ -274,7 +281,7 @@ public abstract class AbstractGenerator {
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
-  public void createAndClassifySequences() {
+  public void createAndClassifySequences(@Det AbstractGenerator this) {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
@@ -354,12 +361,12 @@ public abstract class AbstractGenerator {
       System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
       System.out.println();
-      System.out.println(
-          "Average method execution time (normal termination):      "
-              + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
-      System.out.println(
-          "Average method execution time (exceptional termination): "
-              + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+      @SuppressWarnings("determinism") // progress display is expected nondeterminism
+      @Det String normalAvg = String.format("%.3g", ReflectionExecutor.normalExecAvgMillis());
+      @SuppressWarnings("determinism") // progress display is expected nondeterminism
+      @Det String exepAvg = String.format("%.3g", ReflectionExecutor.excepExecAvgMillis());
+      System.out.println("Average method execution time (normal termination):      " + normalAvg);
+      System.out.println("Average method execution time (exceptional termination): " + exepAvg);
     }
 
     // Notify listeners that exploration is ending.
@@ -394,8 +401,8 @@ public abstract class AbstractGenerator {
    */
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
-    List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
+    @PolyDet List<ExecutableSequence> unique_seqs = new ArrayList<>();
+    @PolyDet Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
     for (ExecutableSequence es : outRegressionSeqs) {
       if (!subsumed_seqs.contains(es.sequence)) {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
@@ -431,7 +438,7 @@ public abstract class AbstractGenerator {
    *
    * @param s the current sequence
    */
-  void setCurrentSequence(Sequence s) {
+  void setCurrentSequence(@Det Sequence s) {
     currSeq = s;
   }
 
@@ -440,7 +447,7 @@ public abstract class AbstractGenerator {
    *
    * @param logger the operation history logger to use for this generator
    */
-  public void setOperationHistoryLogger(OperationHistoryLogInterface logger) {
+  public void setOperationHistoryLogger(@Det OperationHistoryLogInterface logger) {
     operationHistory = logger;
   }
 
@@ -460,5 +467,5 @@ public abstract class AbstractGenerator {
    * @param sequence the new test sequence that was classified as a regression test, i.e., normal
    *     behavior
    */
-  public abstract void newRegressionTestHook(Sequence sequence);
+  public abstract void newRegressionTestHook(@Det Sequence sequence);
 }

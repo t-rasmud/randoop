@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -14,7 +15,7 @@ public class UniformRandomSequenceSelection implements InputSequenceSelector {
    * @return the chosen sequence
    */
   @Override
-  public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+  public @Det Sequence selectInputSequence(@Det SimpleList<Sequence> candidates) {
     return Randomness.randomMember(candidates);
   }
 }

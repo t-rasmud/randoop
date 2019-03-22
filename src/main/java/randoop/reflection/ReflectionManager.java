@@ -200,7 +200,7 @@ public class ReflectionManager {
       @SuppressWarnings("determinism") // if c itself is deterministic, then which class it
       // represents will always be the same at runtime
       // @Det Enum<? extends @Det Object> e = (Enum<? extends @Det Object>) obj;
-      @Det Enum<? extends @Det Object> e = (Enum<? extends @Det Object>) obj;
+      @Det Enum<?> e = (Enum<?>) obj;
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {

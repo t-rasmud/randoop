@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.sequence.ExecutableSequence;
 
 public class RandoopListenerManager {
@@ -15,7 +16,7 @@ public class RandoopListenerManager {
 
   // As of April 2018, this method is never called in Randoop, so the
   // RandoopListenerManager class does nothing in practice.
-  public void addListener(IEventListener listener) {
+  public void addListener(@Det IEventListener listener) {
     if (listener == null) {
       throw new IllegalArgumentException("listener is null");
     }

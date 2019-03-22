@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
@@ -8,11 +9,11 @@ public class ObjectCache {
 
   private StateMatcher sm;
 
-  public ObjectCache(StateMatcher sm) {
+  public ObjectCache(@Det StateMatcher sm) {
     this.sm = sm;
   }
 
-  public void setActiveFlags(ExecutableSequence sequence, int i) {
+  public void setActiveFlags(@Det ExecutableSequence sequence, @Det int i) {
 
     assert sequence.getResult(i) instanceof NormalExecution;
     NormalExecution e = (NormalExecution) sequence.getResult(i);

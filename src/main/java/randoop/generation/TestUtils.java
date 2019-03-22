@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
 
@@ -27,7 +28,9 @@ public class TestUtils {
 
   /** Uses the system property {@code randoop.log} to set {@link GenInputsAbstract#log}. */
   public static void setRandoopLog() {
-    String randoopLog = System.getProperty("randoop.log");
+    // TODO-jason: Is this deterministic?
+    @SuppressWarnings("determinism") // the log probably won't change between runs
+    @Det String randoopLog = System.getProperty("randoop.log");
     setRandoopLog(randoopLog);
   }
 
@@ -38,7 +41,7 @@ public class TestUtils {
    */
   @SuppressWarnings(
       "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
-  public static void setRandoopLog(String file) {
+  public static void setRandoopLog(@Det String file) {
     if (debug) {
       System.out.println("setRandoopLog(" + file + ")");
     }
@@ -58,7 +61,9 @@ public class TestUtils {
    * GenInputsAbstract#selection_log}.
    */
   public static void setSelectionLog() {
-    String selectionLog = System.getProperty("randoop.selection.log");
+    // TODO-jason: Is this deterministic?
+    @SuppressWarnings("determinism") // the log probably won't change between runs
+    @Det String selectionLog = System.getProperty("randoop.selection.log");
     setSelectionLog(selectionLog);
   }
 
@@ -68,7 +73,7 @@ public class TestUtils {
    * @param file the file to write the log to; does nothing if file is null
    */
   @SuppressWarnings("DefaultCharset") // TODO: should specify a charset
-  public static void setSelectionLog(String file) {
+  public static void setSelectionLog(@Det String file) {
     if (debug) {
       System.out.println("setSelectionLog(" + file + ")");
     }
@@ -86,7 +91,7 @@ public class TestUtils {
    *
    * @param fw the FileWriter to write the log to; does nothing if fw is null
    */
-  public static void setSelectionLog(FileWriterWithName fw) {
+  public static void setSelectionLog(@Det FileWriterWithName fw) {
     if (debug) {
       System.out.println("setSelectionLog(" + fw + ")");
     }
@@ -100,7 +105,10 @@ public class TestUtils {
    * @param generator the generator for which logger is to be set
    */
   public static void setOperationLog(AbstractGenerator generator) {
-    setOperationLog(System.getProperty("randoop.operation.history.log"), generator);
+    // TODO-jason: Is this deterministic?
+    @SuppressWarnings("determinism") // the log probably won't change between runs
+    @Det String tmp = System.getProperty("randoop.operation.history.log");
+    setOperationLog(tmp, generator);
   }
 
   /**
@@ -109,7 +117,7 @@ public class TestUtils {
    * @param file the file to write the log to; does nothing if file is null
    * @param generator the generator for which logger is to be set
    */
-  public static void setOperationLog(String file, AbstractGenerator generator) {
+  public static void setOperationLog(@Det String file, AbstractGenerator generator) {
     // This println statement causes system test runNoOutputTest to fail.
     if (debug) {
       System.out.println("setOperationLog(" + file + ")");
@@ -126,7 +134,7 @@ public class TestUtils {
    * @param pw the PrintWriter to write the log to; does nothing if pw is null
    * @param generator the generator for which logger is to be set
    */
-  public static void setOperationLog(PrintWriter pw, AbstractGenerator generator) {
+  public static void setOperationLog(@Det PrintWriter pw, AbstractGenerator generator) {
     // This println statement causes system test runNoOutputTest to fail.
     if (debug) {
       System.out.println("setOperationLog(" + pw + ")");

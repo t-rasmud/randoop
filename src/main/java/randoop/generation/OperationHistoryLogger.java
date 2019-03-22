@@ -7,6 +7,9 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.operation.TypedOperation;
 
 // TODO: It's weird to call this a "history log" when it is just a summary, printed at the end of
@@ -21,22 +24,24 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   private final PrintWriter writer;
 
   /** A sparse representation for the operation-outcome table. */
-  private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
+  private final @OrderNonDet Map<TypedOperation, @Det Map<OperationOutcome, Integer>> operationMap;
 
   /**
    * Creates an {@link OperationHistoryLogger} that will write to the given {@code PrintWriter}.
    *
    * @param writer the {@code PrintWriter} for writing the table from the created operation history
    */
-  public OperationHistoryLogger(PrintWriter writer) {
+  public OperationHistoryLogger(@Det PrintWriter writer) {
     this.writer = writer;
     this.operationMap = new HashMap<>();
   }
 
   @Override
-  public void add(TypedOperation operation, OperationOutcome outcome) {
-    Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
-    int count = 0;
+  public void add(@Det TypedOperation operation, @Det OperationOutcome outcome) {
+    // TODO-jason: Remove this after "get()" fix.
+    @SuppressWarnings("determinism") // get doesn't handle collection values correctly, will soon.
+    @Det Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
+    @Det int count = 0;
     if (outcomeMap == null) {
       outcomeMap = new EnumMap<OperationOutcome, Integer>(OperationOutcome.class);
     } else {
@@ -51,15 +56,17 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   }
 
   @Override
-  public void outputTable() {
+  public void outputTable(@Det OperationHistoryLogger this) {
     writer.format("%nOperation History:%n");
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
-      int nameLength = operation.getSignatureString().length();
+      @SuppressWarnings("determinism") // Iterating over ordernondeterministic key set, but values
+      // are combined in an order-insensitive way.
+      @Det int nameLength = operation.getSignatureString().length();
       maxNameLength = Math.max(nameLength, maxNameLength);
     }
-    Map<OperationOutcome, String> formatMap = printHeader(maxNameLength);
-    List<TypedOperation> keys = new ArrayList<>(operationMap.keySet());
+    @Det Map<OperationOutcome, String> formatMap = printHeader(maxNameLength);
+    @OrderNonDet List<TypedOperation> keys = new ArrayList<>(operationMap.keySet());
     Collections.sort(keys);
     for (TypedOperation key : keys) {
       printRow(maxNameLength, formatMap, key, operationMap.get(key));
@@ -75,7 +82,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap =
+    @PolyDet Map<OperationOutcome, String> formatMap =
         new EnumMap<OperationOutcome, String>(OperationOutcome.class);
     writer.format("%-" + firstColumnLength + "s", "Operation");
     for (OperationOutcome outcome : OperationOutcome.values()) {

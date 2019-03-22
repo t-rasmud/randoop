@@ -2,13 +2,14 @@ package randoop.generation;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 
 public class EqualsMethodMatcher implements StateMatcher {
 
   private final Set<Object> cache = new LinkedHashSet<>();
 
   @Override
-  public boolean add(Object object) {
+  public boolean add(@Det Object object) {
     try {
       return this.cache.add(object);
     } catch (Throwable e) {

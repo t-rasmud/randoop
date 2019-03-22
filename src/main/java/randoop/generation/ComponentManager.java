@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
@@ -85,8 +87,8 @@ public class ComponentManager {
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
    */
-  public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
+  public ComponentManager(@Det Collection<Sequence> generalSeeds) {
+    @Det Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
@@ -109,7 +111,7 @@ public class ComponentManager {
    * @param type the class literal to add for the sequence
    * @param seq the sequence
    */
-  public void addClassLevelLiteral(ClassOrInterfaceType type, Sequence seq) {
+  public void addClassLevelLiteral(@Det ClassOrInterfaceType type, @Det Sequence seq) {
     if (classLiterals == null) {
       classLiterals = new ClassLiterals();
     }
@@ -123,7 +125,7 @@ public class ComponentManager {
    * @param pkg the package to add for the sequence
    * @param seq the sequence
    */
-  public void addPackageLevelLiteral(Package pkg, Sequence seq) {
+  public void addPackageLevelLiteral(@Det Package pkg, @Det Sequence seq) {
     if (packageLiterals == null) {
       packageLiterals = new PackageLiterals();
     }
@@ -135,7 +137,7 @@ public class ComponentManager {
    *
    * @param sequence the sequence
    */
-  public void addGeneratedSequence(Sequence sequence) {
+  public void addGeneratedSequence(@Det Sequence sequence) {
     gralComponents.add(sequence);
   }
 
@@ -160,7 +162,7 @@ public class ComponentManager {
    * @param cls the query type
    * @return the sequences that create values of the given type
    */
-  SimpleList<Sequence> getSequencesForType(Type cls) {
+  SimpleList<Sequence> getSequencesForType(@Det Type cls) {
     return gralComponents.getSequencesForType(cls, false, false);
   }
 
@@ -175,7 +177,8 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+  SimpleList<Sequence> getSequencesForType(
+      @Det TypedOperation operation, @Det int i, @Det boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 
@@ -237,7 +240,7 @@ public class ComponentManager {
    */
   Set<Sequence> getAllPrimitiveSequences() {
 
-    Set<Sequence> result = new LinkedHashSet<>();
+    @PolyDet Set<Sequence> result = new LinkedHashSet<>();
     if (classLiterals != null) {
       result.addAll(classLiterals.getAllSequences());
     }
