@@ -53,7 +53,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return referenceType.toString();
   }
 

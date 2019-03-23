@@ -19,7 +19,7 @@ public class SimpleArrayList<E extends @Det Object> extends ArrayList<E>
     super();
   }
 
-  public SimpleArrayList(int initialCapacity) {
+  public SimpleArrayList(@Det int initialCapacity) {
     super(initialCapacity);
   }
 

@@ -36,7 +36,7 @@ public class TestCoverageInfo {
     StringBuilder b = new StringBuilder();
     int totalBranchesCovered = 0;
     int totalBranches = 0;
-    for (Map.Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {
+    for (Map.@Det Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {
       String methodSignature = entry.getKey();
       BranchCov covAndTot = getCoverageInfo(methodSignature);
       int branchesCovered = covAndTot.covered;
@@ -68,8 +68,8 @@ public class TestCoverageInfo {
     return b.toString();
   }
 
-  private BranchCov getCoverageInfo(String methodSignature) {
-    Set<Integer> indices = methodToIndices.get(methodSignature);
+  private BranchCov getCoverageInfo(@Det String methodSignature) {
+    @Det Set<Integer> indices = methodToIndices.get(methodSignature);
     int totalBranches = indices.size() * 2;
     int branchesCovered = 0;
     for (Integer i : indices) {

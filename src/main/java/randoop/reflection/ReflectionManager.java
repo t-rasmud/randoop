@@ -195,7 +195,7 @@ public class ReflectionManager {
   @SuppressWarnings("GetClassOnEnum")
   private void applyToEnum(@Det ClassVisitor visitor, @Det Class<?> c) {
     // Maps from a name to a set of methods.
-    Map<String, Set<Method>> overrideMethods = new HashMap<>();
+    @OrderNonDet Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
       @SuppressWarnings("determinism") // if c itself is deterministic, then which class it
       // represents will always be the same at runtime
@@ -204,6 +204,7 @@ public class ReflectionManager {
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
+          // TODO-jason: getDeclaredMethods is not annotated in our JDK so is this nondeterministic.
           @Det Set<Method> methodSet = overrideMethods.get(m.getName());
           if (methodSet == null) {
             methodSet = new LinkedHashSet<>();
@@ -256,7 +257,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param c the member class to be visited
    */
-  private void applyTo(ClassVisitor v, @Det Class<?> c) {
+  private void applyTo(@Det ClassVisitor v, @Det Class<?> c) {
     Log.logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
@@ -346,7 +347,7 @@ public class ReflectionManager {
    * @param c the constructor
    * @return true if the constructor and each parameter type are visible; false, otherwise
    */
-  private boolean isVisible(Constructor<?> c) {
+  private boolean isVisible(@Det Constructor<?> c) {
     if (!predicate.isVisible(c)) {
       Log.logPrintf("Will not use non-visible constructor: %s%n", c.toGenericString());
       return false;

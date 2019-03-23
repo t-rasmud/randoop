@@ -12,6 +12,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * A {@code ForwardingJavaFileManager} to maintain class files in memory.
@@ -26,7 +27,7 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
   private final SequenceClassLoader classLoader;
 
   /** The map from the location of a class file to the class object. */
-  private final HashMap<URI, JavaFileObject> fileObjects;
+  private final @OrderNonDet HashMap<URI, JavaFileObject> fileObjects;
 
   /**
    * Create a {@link SequenceJavaFileManager} that manages class files in memory. When searching for
@@ -53,7 +54,11 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    *     reopened
    */
   @Override
-  public FileObject getFileForInput(Location location, String packageName, String relativeName)
+  public FileObject getFileForInput(
+      @Det SequenceJavaFileManager this,
+      @Det Location location,
+      @Det String packageName,
+      @Det String relativeName)
       throws IOException {
     FileObject obj = fileObjects.get(uri(location, packageName, relativeName));
     if (obj != null) {
@@ -75,7 +80,7 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    */
   @Override
   public JavaFileObject getJavaFileForOutput(
-      Location location, String qualifiedName, Kind kind, FileObject outputFile)
+      Location location, @Det String qualifiedName, Kind kind, FileObject outputFile)
       throws IOException {
     JavaFileObject file = new SequenceJavaFileObject(qualifiedName, kind);
     // TODO: Figure out what to do when we can't override.

@@ -60,7 +60,7 @@ public final class CollectionsExt {
    * @return the concatenated string of object strings
    */
   private static List<String> toStringLines(@Det Collection<? extends @Det Object> c) {
-    List<String> lines = new ArrayList<>(c.size());
+    @Det List<String> lines = new ArrayList<>(c.size());
     for (Object each : c) {
       lines.add(String.valueOf(each));
     }
@@ -85,7 +85,7 @@ public final class CollectionsExt {
     }
     int numberOfFullSublists = list.size() / maxLength;
 
-    List<List<T>> result = new ArrayList<>(numberOfFullSublists + 1);
+    @Det List<List<T>> result = new ArrayList<>(numberOfFullSublists + 1);
     for (int i = 0; i < numberOfFullSublists; i++) {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
       if (subList.size() != maxLength) {

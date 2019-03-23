@@ -101,7 +101,7 @@ public final class Statement {
    * @param b the {@code StringBuilder} to which code text is appended
    * @see Sequence#appendCode(StringBuilder, int)
    */
-  public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
+  public void appendCode(Variable variable, @Det List<Variable> inputs, StringBuilder b) {
     Type type = operation.getOutputType();
     if (!type.isVoid()) {
       if (operation.isUncheckedCast()) {
@@ -161,7 +161,7 @@ public final class Statement {
    * @param inputs list of objects to use as inputs to execution
    * @return object representing outcome of computation
    */
-  public ExecutionOutcome execute(Object[] inputs) {
+  public ExecutionOutcome execute(@Det Object @Det [] inputs) {
     return operation.execute(inputs);
   }
 

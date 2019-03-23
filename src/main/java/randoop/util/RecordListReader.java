@@ -85,7 +85,7 @@ public class RecordListReader {
       while (line != null) {
         line = line.trim();
         if (line.startsWith(startMarker)) {
-          List<String> oneRecord = readOneRecord(reader);
+          @Det List<String> oneRecord = readOneRecord(reader);
           processor.processRecord(oneRecord);
         } else {
           throw new IllegalArgumentException("Expected \"" + startMarker + "\" but got " + line);
@@ -99,7 +99,7 @@ public class RecordListReader {
 
   private @Det List<String> readOneRecord(@Det RecordListReader this, @Det BufferedReader reader)
       throws IOException {
-    List<String> ret = new ArrayList<>();
+    @Det List<String> ret = new ArrayList<>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
       if (line.length() == 0 || line.charAt(0) == '#') continue;

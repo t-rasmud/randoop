@@ -63,6 +63,10 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
@@ -148,7 +152,7 @@ public class Minimize extends CommandHandler {
    * System class path, a part of the classpath that is used to compile and run the input test
    * suite.
    */
-  private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
+  private static final @NonDet String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
 
   /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
@@ -162,9 +166,9 @@ public class Minimize extends CommandHandler {
    * @return true if the command was handled successfully
    */
   @Override
-  public boolean handle(String[] args) {
+  public @Det boolean handle(@Det String @Det [] args) {
     try {
-      String[] nonargs = foptions.parse(args);
+      @Det String @Det [] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
         throw new RandoopCommandError("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
@@ -259,7 +263,8 @@ public class Minimize extends CommandHandler {
    * @throws IOException if write to file fails
    */
   public static boolean mainMinimize(
-      Path file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
+      @Det Path file, @Det String classPath, @Det int timeoutLimit, boolean verboseOutput)
+      throws IOException {
     System.out.println("Minimizing: " + file + ".");
 
     if (verboseOutput) {
@@ -317,7 +322,7 @@ public class Minimize extends CommandHandler {
     // expectedOutput is a map from method name to failure stack trace with
     // line numbers removed.
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
-    Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
+    @OrderNonDet Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
     // Minimize the Java test suite.
     minimizeTestSuite(
@@ -357,12 +362,12 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
-      CompilationUnit compilationUnit,
-      String packageName,
-      Path file,
-      String classpath,
-      Map<String, String> expectedOutput,
-      int timeoutLimit)
+      @Det CompilationUnit compilationUnit,
+      @Det String packageName,
+      @Det Path file,
+      @Det String classpath,
+      @OrderNonDet Map<String, String> expectedOutput,
+      @Det int timeoutLimit)
       throws IOException {
     System.out.println("Minimizing test suite.");
 
@@ -423,22 +428,22 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if write to file fails
    */
   private static void minimizeMethod(
-      MethodDeclaration method,
+      @Det MethodDeclaration method,
       CompilationUnit compilationUnit,
-      String packageName,
-      Path file,
-      String classpath,
-      Map<String, String> expectedOutput,
-      int timeoutLimit)
+      @Det String packageName,
+      @Det Path file,
+      @Det String classpath,
+      @OrderNonDet Map<String, String> expectedOutput,
+      @Det int timeoutLimit)
       throws IOException {
-    List<Statement> statements = method.getBody().getStmts();
+    @Det List<Statement> statements = method.getBody().getStmts();
 
     // Map from primitive variable name to the variable's value extracted
     // from a passing assertion.
-    Map<String, String> primitiveValues = new HashMap<>();
+    @OrderNonDet Map<String, String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
-    Set<String> primitiveAndWrappedTypes = new HashSet<>();
+    @OrderNonDet Set<String> primitiveAndWrappedTypes = new HashSet<>();
     new PrimitiveAndWrappedTypeVarNameCollector().visit(compilationUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
@@ -450,7 +455,7 @@ public class Minimize extends CommandHandler {
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
-      List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
+      @Det List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
@@ -498,7 +503,7 @@ public class Minimize extends CommandHandler {
    *     variables
    */
   private static void storeValueFromAssertion(
-      Statement currStmt,
+      @Det Statement currStmt,
       Map<String, String> primitiveValues,
       Set<String> primitiveAndWrappedTypeVars) {
     // Check if the statement is an assertion regarding a value that can be
@@ -509,7 +514,7 @@ public class Minimize extends CommandHandler {
         MethodCallExpr mCall = (MethodCallExpr) exp;
         // Check that the method call is an assertTrue statement.
         if (mCall.getName().equals("assertTrue")) {
-          List<Expression> mArgs = mCall.getArgs();
+          @Det List<Expression> mArgs = mCall.getArgs();
           // The condition expression from the assert statement.
           Expression mExp;
           if (mArgs.size() == 1) {
@@ -571,8 +576,8 @@ public class Minimize extends CommandHandler {
    * @return list of statements, where each is a possible simplification of {@code currStmt}
    */
   private static List<Statement> getStatementReplacements(
-      Statement currStmt, Map<String, String> primitiveValues) {
-    List<Statement> replacements = new ArrayList<>();
+      @Det Statement currStmt, @OrderNonDet Map<String, String> primitiveValues) {
+    @Det List<Statement> replacements = new ArrayList<>();
 
     // Null represents removal of the statement.
     replacements.add(null);
@@ -612,8 +617,8 @@ public class Minimize extends CommandHandler {
    * @return a list of {@code Statement} objects representing the simplified variable declaration
    *     expression
    */
-  private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    List<Statement> resultList = new ArrayList<>();
+  private static List<Statement> rhsAssignZeroValue(@Det VariableDeclarationExpr vdExpr) {
+    @Det List<Statement> resultList = new ArrayList<>();
 
     if (vdExpr.getVars().size() != 1) {
       // Number of variables declared in this expression is not 1.
@@ -656,7 +661,7 @@ public class Minimize extends CommandHandler {
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignValueFromPassingAssertion(
-      VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
+      @Det VariableDeclarationExpr vdExpr, @OrderNonDet Map<String, String> primitiveValues) {
     if (vdExpr.getVars().size() != 1) {
       // Number of variables declared in this expression is not one.
       return null;
@@ -771,7 +776,7 @@ public class Minimize extends CommandHandler {
    *     Returns {@code null} if more than one variable is declared in the {@code
    *     VariableDeclarationExpr}.
    */
-  private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
+  private static Statement removeLeftHandSideSimplification(@Det VariableDeclarationExpr vdExpr) {
     if (vdExpr.getVars().size() > 1) {
       // More than 1 variable declared in this expression.
       return null;
@@ -780,7 +785,7 @@ public class Minimize extends CommandHandler {
     // Create the resulting expression, a copy of the original expression
     // which will be modified and returned.
     VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
-    List<VariableDeclarator> vars = resultExpr.getVars();
+    @Det List<VariableDeclarator> vars = resultExpr.getVars();
     VariableDeclarator vd = vars.get(0);
 
     // Return a new statement with only the right hand side.
@@ -806,12 +811,12 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if write to file fails
    */
   private static CompilationUnit simplifyTypeNames(
-      CompilationUnit compilationUnit,
-      String packageName,
-      Path file,
-      String classpath,
-      Map<String, String> expectedOutput,
-      int timeoutLimit,
+      @Det CompilationUnit compilationUnit,
+      @Det String packageName,
+      @Det Path file,
+      @Det String classpath,
+      @OrderNonDet Map<String, String> expectedOutput,
+      @Det int timeoutLimit,
       boolean verboseOutput)
       throws IOException {
     if (verboseOutput) {
@@ -819,7 +824,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames =
+    @Det Set<ClassOrInterfaceType> fullyQualifiedNames =
         new TreeSet<>(
             new Comparator<ClassOrInterfaceType>() {
               @Override
@@ -873,12 +878,12 @@ public class Minimize extends CommandHandler {
    * @return true if there are no compilation and no run-time errors and the output is equal to the
    *     expected output
    */
-  private static boolean checkCorrectlyMinimized(
-      Path file,
-      String classpath,
-      String packageName,
-      Map<String, String> expectedOutput,
-      int timeoutLimit) {
+  private static @PolyDet("up") boolean checkCorrectlyMinimized(
+      @Det Path file,
+      @Det String classpath,
+      @Det String packageName,
+      @OrderNonDet Map<String, String> expectedOutput,
+      @Det int timeoutLimit) {
 
     // Zero exit status means success.
     if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
@@ -889,7 +894,11 @@ public class Minimize extends CommandHandler {
     String runResult = runJavaFile(file, classpath, packageName, timeoutLimit);
 
     // Compare the standard output with the expected output.
-    return expectedOutput.equals(normalizeJUnitOutput(runResult));
+    // TODO-jason: Implement sames rules for equals for Map as for Set.
+    @SuppressWarnings("determinism") // Map equals is the same as Set equals, which is deterministic
+    // even if one operand is ordernondeterministic.
+    @Det boolean result = expectedOutput.equals(normalizeJUnitOutput(runResult));
+    return result;
   }
 
   /**
@@ -902,12 +911,14 @@ public class Minimize extends CommandHandler {
    * @return exit value of compiling the Java file
    */
   private static int compileJavaFile(
-      Path file, String classpath, String packageName, int timeoutLimit) {
+      @Det Path file, @Det String classpath, @Det String packageName, @Det int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
+    // TODO-jason: Is the system path deterministic?
+    @SuppressWarnings("determinism") // we expect the system path to be consistent between runs
+    @Det String command = "javac -classpath " + SYSTEM_CLASS_PATH;
     // Add current directory to class path.
     command += PATH_SEPARATOR + ".";
     if (classpath != null) {
@@ -931,7 +942,7 @@ public class Minimize extends CommandHandler {
    * @return standard output from running the Java file
    */
   private static String runJavaFile(
-      Path file, String userClassPath, String packageName, int timeoutLimit) {
+      @Det Path file, @Det String userClassPath, @Det String packageName, @Det int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
@@ -942,7 +953,9 @@ public class Minimize extends CommandHandler {
     }
 
     // Classpath for running the Java file.
-    String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
+    // TODO-jason: Is the system path deterministic?
+    @SuppressWarnings("determinism") // we expect the system path to be consistent between runs
+    @Det String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
     if (userClassPath != null) {
       classpath += PATH_SEPARATOR + userClassPath;
     }
@@ -1000,13 +1013,13 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  private static Outputs runProcess(@Det String command, Path executionDir, @Det int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
     }
 
-    String[] args = command.split(" ");
+    @Det String @Det [] args = command.split(" ");
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
@@ -1074,11 +1087,11 @@ public class Minimize extends CommandHandler {
    * @return a map from method name to the method's failure stack trace. The stack trace will not
    *     contain any line numbers.
    */
-  private static Map<String, String> normalizeJUnitOutput(String input) {
+  private static @OrderNonDet Map<String, String> normalizeJUnitOutput(String input) {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
 
     String methodName = null;
-    Map<String, String> resultMap = new HashMap<>();
+    @OrderNonDet Map<String, String> resultMap = new HashMap<>();
 
     StringBuilder result = new StringBuilder();
     // JUnit output starts with index 1 for first failure.
@@ -1147,7 +1160,7 @@ public class Minimize extends CommandHandler {
    * @param compilationUnit compilation unit to add import to
    * @param importName the name of the import
    */
-  private static void addImport(CompilationUnit compilationUnit, String importName) {
+  private static void addImport(@Det CompilationUnit compilationUnit, @Det String importName) {
     String importStr = "import " + importName + ";";
     ImportDeclaration importDeclaration;
 
@@ -1159,7 +1172,7 @@ public class Minimize extends CommandHandler {
       return;
     }
 
-    List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
+    @Det List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
@@ -1193,8 +1206,8 @@ public class Minimize extends CommandHandler {
    *
    * @param compilationUnit the compilation unit whose imports will be sorted by name
    */
-  private static void sortImports(CompilationUnit compilationUnit) {
-    List<ImportDeclaration> imports = compilationUnit.getImports();
+  private static void sortImports(@Det CompilationUnit compilationUnit) {
+    @Det List<ImportDeclaration> imports = compilationUnit.getImports();
 
     Collections.sort(
         imports,
@@ -1226,7 +1239,7 @@ public class Minimize extends CommandHandler {
      * @param errout error output
      * @param exitValue exit value of process
      */
-    Outputs(String stdout, String errout, int exitValue) {
+    Outputs(@Det String stdout, @Det String errout, @Det int exitValue) {
       this.stdout = stdout;
       this.errout = errout;
       this.exitValue = exitValue;
@@ -1305,7 +1318,8 @@ public class Minimize extends CommandHandler {
    * @param totalTests the total number of tests in the input test suite
    * @param testName the current test method being minimized
    */
-  private static void printProgress(int currentTestIndex, int totalTests, String testName) {
+  private static void printProgress(
+      @Det int currentTestIndex, @Det int totalTests, @Det String testName) {
     System.out.println(
         currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
   }

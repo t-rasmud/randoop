@@ -927,7 +927,7 @@ public final class Sequence {
    */
   public static Sequence parse(@Det List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<>();
+    @Det Map<String, Integer> valueMap = new LinkedHashMap<>();
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {

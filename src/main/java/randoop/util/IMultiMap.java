@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /** A multimap, which maps each key to a set of values. */
 public interface IMultiMap<T1 extends @Det Object, T2 extends @Det Object> {
@@ -50,5 +51,5 @@ public interface IMultiMap<T1 extends @Det Object, T2 extends @Det Object> {
    * @return a String representation of this map
    */
   @Override
-  String toString();
+  @NonDet String toString();
 }

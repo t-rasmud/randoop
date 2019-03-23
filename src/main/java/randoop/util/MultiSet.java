@@ -39,7 +39,7 @@ public class MultiSet<T extends @Det Object> {
     return frequencyMap.isEmpty();
   }
 
-  public void removeAllInstances(@Det MultiSet<T> this, Set<T> values) {
+  public void removeAllInstances(@Det MultiSet<T> this, @Det Set<T> values) {
     for (T value : values) {
       frequencyMap.remove(value);
     }

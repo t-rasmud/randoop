@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import javax.tools.JavaFileObject;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 
 /**
@@ -17,7 +18,7 @@ import org.checkerframework.checker.signature.qual.BinaryName;
 public final class SequenceClassLoader extends ClassLoader {
 
   /** The map from fully-qualified class name to the class object. */
-  private final HashMap<String, JavaFileObject> classes;
+  private final @OrderNonDet HashMap<String, JavaFileObject> classes;
 
   /**
    * Creates a {@link SequenceClassLoader} that forwards to the parent loader.
@@ -37,7 +38,7 @@ public final class SequenceClassLoader extends ClassLoader {
    * @throws ClassNotFoundException if the class is not found
    */
   @Override
-  protected Class<?> findClass(final @BinaryName String qualifiedClassName)
+  protected Class<?> findClass(final @BinaryName @Det String qualifiedClassName)
       throws ClassNotFoundException {
     JavaFileObject file = classes.get(qualifiedClassName);
     if (file != null) {

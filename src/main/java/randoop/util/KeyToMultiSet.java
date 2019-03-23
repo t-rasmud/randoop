@@ -17,7 +17,7 @@ public class KeyToMultiSet<T1 extends @Det Object, T2 extends @Det Object> {
     map = new LinkedHashMap<>();
   }
 
-  public void addAll(@Det KeyToMultiSet<T1, T2> this, Map<? extends T1, ? extends T2> m) {
+  public void addAll(@Det KeyToMultiSet<T1, T2> this, @Det Map<? extends T1, ? extends T2> m) {
     for (@Det T1 t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
@@ -77,7 +77,9 @@ public class KeyToMultiSet<T1 extends @Det Object, T2 extends @Det Object> {
 
   // Removes all keys with an empty set
   public void clean(@Det KeyToMultiSet<T1, T2> this) {
-    for (Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+    // TODO-jason: why does entrySet().iterator() create an error?
+    for (@Det Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator();
+        iter.hasNext(); ) {
       Entry<T1, MultiSet<T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();
@@ -85,7 +87,7 @@ public class KeyToMultiSet<T1 extends @Det Object, T2 extends @Det Object> {
     }
   }
 
-  public void removeAllInstances(@Det KeyToMultiSet<T1, T2> this, Set<T2> values) {
+  public void removeAllInstances(@Det KeyToMultiSet<T1, T2> this, @Det Set<T2> values) {
     for (MultiSet<T2> multiSet : map.values()) {
       multiSet.removeAllInstances(values);
     }

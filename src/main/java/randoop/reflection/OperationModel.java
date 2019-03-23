@@ -529,7 +529,7 @@ public class OperationModel {
    *     warns on bad names.
    */
   private static @Nullable Class<?> getClass(
-      @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
+      @ClassGetName @Det String classname, ClassNameErrorHandler errorHandler) {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {

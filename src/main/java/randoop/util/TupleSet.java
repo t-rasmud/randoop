@@ -50,7 +50,7 @@ public class TupleSet<E extends @Det Object> {
    * @return a tuple set formed by extending the tuples with the elements of the given list
    */
   public TupleSet<E> extend(@Det TupleSet<E> this, @Det List<E> elements) {
-    List<List<E>> tupleList = new ArrayList<>(tuples.size() * elements.size());
+    @Det List<List<E>> tupleList = new ArrayList<>(tuples.size() * elements.size());
     for (@Det List<E> tuple : tuples) {
       for (@Det E e : elements) {
         List<E> extTuple = extendTuple(tuple, e);
@@ -76,7 +76,7 @@ public class TupleSet<E extends @Det Object> {
    * @return a tuple set formed by inserting elements of the given list into the tuples of this set
    */
   public TupleSet<E> exhaustivelyExtend(@Det TupleSet<E> this, @Det List<E> elements) {
-    List<List<E>> tupleList = new ArrayList<>(tuples.size() * (tupleLength + 1));
+    @Det List<List<E>> tupleList = new ArrayList<>(tuples.size() * (tupleLength + 1));
     for (@Det List<E> tuple : tuples) {
       for (@Det E e : elements) {
         for (int i = 0; i <= tuple.size(); i++) {

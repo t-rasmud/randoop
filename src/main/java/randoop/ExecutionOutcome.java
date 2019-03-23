@@ -1,5 +1,6 @@
 package randoop;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
@@ -41,7 +42,7 @@ public abstract class ExecutionOutcome {
    *
    * @param output the statement output
    */
-  public void set_output(String output) {
+  public void set_output(@Det String output) {
     this.output = output;
   }
 

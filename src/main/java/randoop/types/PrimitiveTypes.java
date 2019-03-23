@@ -69,7 +69,8 @@ public final class PrimitiveTypes {
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section
    * 5.1.2</a>.
    */
-  private static final Map<Class<?>, @OrderNonDet Set<Class<?>>> wideningTable = new HashMap<>();
+  private static final @OrderNonDet Map<Class<?>, @OrderNonDet Set<Class<?>>> wideningTable =
+      new HashMap<>();
 
   static {
     // build transitive widening table for primitive types

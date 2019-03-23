@@ -2,6 +2,7 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
@@ -32,19 +33,19 @@ public class Main {
   }
 
   // The real entry point of Main.
-  public void nonStaticMain(String[] args) {
+  public void nonStaticMain(@Det String @Det [] args) {
 
-    if (args.length == 0) args = new String[] {"help"};
+    if (args.length == 0) args = new @Det String @Det [] {"help"};
 
     String command = args[0];
-    String[] args2 = new String[args.length - 1];
+    @Det String @Det [] args2 = new String @Det [args.length - 1];
     for (int i = 1; i < args.length; i++) {
       args2[i - 1] = args[i];
     }
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;
-    List<CommandHandler> allHandlers = new ArrayList<>();
+    @Det List<CommandHandler> allHandlers = new ArrayList<>();
     allHandlers.addAll(handlers);
     for (CommandHandler h : allHandlers) {
       if (h.handles(command)) {
@@ -118,7 +119,7 @@ public class Main {
           System.out.println("No sequences generated.");
         } else {
           System.out.println("Last sequence under execution: ");
-          String[] lines = lastSequence.toString().split(Globals.lineSep);
+          @Det String @Det [] lines = lastSequence.toString().split(Globals.lineSep);
           for (String line : lines) {
             System.out.println(line);
           }

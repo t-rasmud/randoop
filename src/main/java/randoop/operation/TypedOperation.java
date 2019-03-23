@@ -249,7 +249,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det ReflectionPredicate reflectionPredicate) {
     return operation.satisfies(reflectionPredicate);
   }
 

@@ -63,7 +63,7 @@ public abstract class CallableOperation implements Operation {
    * @return false as there is no object to check
    */
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det ReflectionPredicate reflectionPredicate) {
     return false;
   }
 

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
@@ -194,7 +195,7 @@ public class CheckpointingMultiMap<T1 extends @Det Object, T2 extends @Det Objec
    * @see randoop.util.IMultiMap#toString()
    */
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return map.toString();
   }
 }

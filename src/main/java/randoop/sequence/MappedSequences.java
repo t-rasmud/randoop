@@ -16,7 +16,7 @@ import randoop.util.SimpleList;
  * should only be used in specific contexts, for example sequences that should only be used as
  * components when testing a specific class.
  */
-public class MappedSequences<T> {
+public class MappedSequences<T extends @Det Object> {
 
   private Map<T, SequenceCollection> map;
 
@@ -76,7 +76,7 @@ public class MappedSequences<T> {
    */
   public @Det Set<Sequence> getAllSequences() {
     @Det Set<Sequence> result = new LinkedHashSet<>();
-    for (SequenceCollection c : map.values()) {
+    for (@Det SequenceCollection c : map.values()) {
       result.addAll(c.getAllSequences());
     }
     return result;

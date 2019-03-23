@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
@@ -28,9 +29,9 @@ public class Help extends CommandHandler {
   }
 
   @Override
-  public boolean handle(String[] argsWithOptions) {
+  public @Det boolean handle(@Det String @Det [] argsWithOptions) {
 
-    String[] args = null;
+    @Det String @Det [] args = null;
     try {
       args = foptions.parse(argsWithOptions);
       if (args.length > 1) {
@@ -76,7 +77,7 @@ public class Help extends CommandHandler {
       String command = args[0];
 
       // User wants help on a specific command.
-      List<CommandHandler> allHandlers = new ArrayList<>();
+      @Det List<CommandHandler> allHandlers = new ArrayList<>();
       allHandlers.addAll(Main.handlers);
 
       for (CommandHandler h : allHandlers) {

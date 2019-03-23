@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
@@ -53,7 +54,10 @@ public class RunCommand {
 
     Log.logPrintf("RunCommand.run():%n");
     Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
-    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
+    // TODO-jason: Is this actually expected?
+    @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+    @Det Map<String, String> env = System.getenv();
+    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, env);
 
     try {
       executor.execute(cmdLine, resultHandler);

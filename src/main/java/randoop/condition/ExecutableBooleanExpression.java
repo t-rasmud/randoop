@@ -255,15 +255,22 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return UtilPlume.join(
-        new @PolyDet String @PolyDet [] {
-          packageDeclaration + "public class " + expressionClassName + " {",
-          "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
-          "    return " + expressionText + ";",
-          "  }",
-          "}" + Globals.lineSep
-        },
-        Globals.lineSep);
+    @SuppressWarnings("determinism") // this returns @PolyDet("up"), but no parameter can be
+    // ordernondeterministic so this will never be an issue.
+    @PolyDet String result =
+        UtilPlume.join(
+            new @PolyDet String @PolyDet [] {
+              packageDeclaration + "public class " + expressionClassName + " {",
+              "  public static boolean "
+                  + methodName
+                  + parameterDeclarations
+                  + " throws Throwable {",
+              "    return " + expressionText + ";",
+              "  }",
+              "}" + Globals.lineSep
+            },
+            Globals.lineSep);
+    return result;
   }
 
   /**

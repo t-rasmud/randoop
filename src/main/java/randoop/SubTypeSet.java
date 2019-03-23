@@ -3,6 +3,7 @@ package randoop;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.Type;
 import randoop.util.CheckpointingMultiMap;
 import randoop.util.CheckpointingSet;
@@ -64,7 +65,7 @@ public class SubTypeSet {
    *
    * @param c the type to be added
    */
-  public void add(Type c) {
+  public void add(@Det Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
     if (types.contains(c)) {
       return;
@@ -79,14 +80,14 @@ public class SubTypeSet {
     }
   }
 
-  private void addQueryType(Type type) {
+  private void addQueryType(@Det Type type) {
     if (type == null) throw new IllegalArgumentException("c cannot be null.");
-    Set<Type> keySet = subTypes.keySet();
+    @Det Set<Type> keySet = subTypes.keySet();
     if (keySet.contains(type)) {
       return;
     }
 
-    Set<Type> compatibleTypes = new LinkedHashSet<>();
+    @Det Set<Type> compatibleTypes = new LinkedHashSet<>();
     for (Type t : types.getElements()) {
       if (type.isAssignableFrom(t)) {
         compatibleTypes.add(t);
@@ -105,7 +106,7 @@ public class SubTypeSet {
    * @param type the query type
    * @return the set of types that can be used in place of the query type
    */
-  public Set<Type> getMatches(Type type) {
+  public Set<Type> getMatches(@Det Type type) {
     if (!subTypes.keySet().contains(type)) {
       addQueryType(type);
     }

@@ -1,5 +1,7 @@
 package randoop.main;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 /**
  * ThrowClassNameError is used to handle a class name error by throwing an {@code Error} with the
  * message.
@@ -7,12 +9,12 @@ package randoop.main;
 public class ThrowClassNameError implements ClassNameErrorHandler {
 
   @Override
-  public void handle(String className) {
+  public void handle(@Det String className) {
     handle(className, null);
   }
 
   @Override
-  public void handle(String className, Throwable e) {
+  public void handle(@Det String className, @Det Throwable e) {
     if (e != null) {
       throw new RandoopClassNameError(
           className, "Unable to load class \"" + className + "\" due to exception: " + e);

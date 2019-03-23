@@ -1,6 +1,7 @@
 package randoop;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
@@ -25,7 +26,7 @@ public class NormalExecution extends ExecutionOutcome {
    * @param result the return value
    * @param executionTime the execution time, in nanoseconds
    */
-  public NormalExecution(Object result, @NonDet long executionTime) {
+  public NormalExecution(@Det Object result, @NonDet long executionTime) {
     super(executionTime);
     this.result = result;
   }
@@ -46,6 +47,7 @@ public class NormalExecution extends ExecutionOutcome {
     } catch (Throwable t) {
       value = "???";
     }
+    // TODO-jason: Is this deterministic?
     return String.format(
         "[NormalExecution %s%s]",
         value, (result == null ? "" : (" [of class " + result.getClass().getName() + "]")));

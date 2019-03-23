@@ -1,6 +1,7 @@
 package randoop.output;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -13,7 +14,7 @@ abstract class SourceBuilder {
    * @param toks the tokens to include on the line
    * @return the {@code String} constructed from the tokens
    */
-  String createLine(String... toks) {
+  @PolyDet("up") String createLine(String... toks) {
     return UtilPlume.join(toks, " ");
   }
 

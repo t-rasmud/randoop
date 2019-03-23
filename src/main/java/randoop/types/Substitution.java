@@ -110,8 +110,8 @@ public class Substitution<T extends @Det Object> {
    * @return a string representation of the substitution
    */
   @Override
-  public String toString() {
-    @PolyDet List<String> pairs = new ArrayList<>();
+  public @NonDet String toString() {
+    List<String> pairs = new @NonDet ArrayList<>();
     for (Entry<TypeVariable, T> p : map.entrySet()) {
       pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
     }
@@ -151,7 +151,7 @@ public class Substitution<T extends @Det Object> {
    */
   public Substitution<T> extend(@Det Substitution<T> this, @Det Substitution<T> substitution) {
     Substitution<T> result = new Substitution<>(this);
-    for (Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
+    for (@Det Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
       if (result.map.containsKey(entry.getKey())
           && !result.get(entry.getKey()).equals(entry.getValue())) {
         throw new IllegalArgumentException(
@@ -159,7 +159,7 @@ public class Substitution<T extends @Det Object> {
       }
       result.map.put(entry.getKey(), entry.getValue());
     }
-    for (Entry<java.lang.reflect.Type, T> entry : substitution.rawMap.entrySet()) {
+    for (@Det Entry<java.lang.reflect.Type, T> entry : substitution.rawMap.entrySet()) {
       if (result.rawMap.containsKey(entry.getKey())
           && !result.get(entry.getKey()).equals(entry.getValue())) {
         throw new IllegalArgumentException(
@@ -178,7 +178,7 @@ public class Substitution<T extends @Det Object> {
    * @return the concrete type mapped from the variable in this substitution, or null if there is no
    *     type for the variable
    */
-  public T get(TypeVariable parameter) {
+  public @PolyDet T get(TypeVariable parameter) {
     return map.get(parameter);
   }
 
@@ -188,7 +188,7 @@ public class Substitution<T extends @Det Object> {
    * @param parameter the type variable
    * @return the value for the type variable, or null if there is none
    */
-  public T get(Type parameter) {
+  public @PolyDet T get(Type parameter) {
     return rawMap.get(parameter);
   }
 
@@ -197,6 +197,7 @@ public class Substitution<T extends @Det Object> {
   }
 
   /** Print the entries of this substitution to standard out. */
+  // TODO-jason: Find where this method is called because it's nondeterministic.
   public void print() {
     for (Entry<TypeVariable, T> entry : map.entrySet()) {
       System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());

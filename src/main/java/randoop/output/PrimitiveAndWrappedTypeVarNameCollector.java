@@ -7,12 +7,15 @@ import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 
 /**
  * Visit every variable declaration. Adds to a set of strings for all the names of variables that
  * are either primitive or wrapped types.
  */
-public class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<Set<String>> {
+public class PrimitiveAndWrappedTypeVarNameCollector
+    extends VoidVisitorAdapter<@OrderNonDet Set<String>> {
   /**
    * Visit every variable declaration.
    *
@@ -21,7 +24,7 @@ public class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<
    */
   @SuppressWarnings("unchecked")
   @Override
-  public void visit(VariableDeclarationExpr n, Set<String> variableNames) {
+  public void visit(@Det VariableDeclarationExpr n, @OrderNonDet Set<String> variableNames) {
 
     ClassOrInterfaceType classType = null;
     if (n.getType() instanceof ReferenceType) {

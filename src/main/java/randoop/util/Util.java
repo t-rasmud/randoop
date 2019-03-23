@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -175,7 +176,8 @@ public final class Util {
    * @param replacements the map of replacements to perform
    * @return the text modified by replacing original names with replacement names
    */
-  public static String replaceWords(@Det String text, @Det Map<String, String> replacements) {
+  public static String replaceWords(
+      @Det String text, @OrderNonDet Map<String, String> replacements) {
     Pattern namesPattern =
         Pattern.compile("\\b(" + UtilPlume.join(replacements.keySet().toArray(), "|") + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);

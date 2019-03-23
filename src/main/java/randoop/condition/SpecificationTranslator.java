@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -51,7 +52,7 @@ public class SpecificationTranslator {
   private final String poststateExpressionDeclarations;
 
   /** The map of expression identifiers to dummy variables. */
-  private final Map<String, String> replacementMap;
+  private final @OrderNonDet Map<String, String> replacementMap;
 
   /** The {@link SequenceCompiler} for compiling expression methods. */
   private final SequenceCompiler compiler;
@@ -74,7 +75,7 @@ public class SpecificationTranslator {
       @Det String prestateExpressionDeclaration,
       @Det RawSignature poststateExpressionSignature,
       @Det String poststateExpressionDeclaration,
-      @Det Map<String, String> replacementMap,
+      @OrderNonDet Map<String, String> replacementMap,
       @Det SequenceCompiler compiler) {
     this.prestateExpressionSignature = prestateExpressionSignature;
     this.prestateExpressionDeclaration = prestateExpressionDeclaration;
@@ -119,7 +120,7 @@ public class SpecificationTranslator {
     String poststateExpressionDeclarations =
         poststateExpressionSignature.getDeclarationArguments(parameterNames);
 
-    Map<String, String> replacementMap = createReplacementMap(parameterNames);
+    @OrderNonDet Map<String, String> replacementMap = createReplacementMap(parameterNames);
     return new SpecificationTranslator(
         prestateExpressionSignature,
         prestateExpressionDeclarations,
@@ -231,8 +232,9 @@ public class SpecificationTranslator {
    * @param parameterNames the parameter names of the expression methods
    * @return the map from the parameter names to dummy variables
    */
-  private static Map<String, String> createReplacementMap(@Det List<String> parameterNames) {
-    Map<String, String> replacementMap = new HashMap<>();
+  private static @OrderNonDet Map<String, String> createReplacementMap(
+      @Det List<String> parameterNames) {
+    @OrderNonDet Map<String, String> replacementMap = new HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
@@ -455,7 +457,7 @@ public class SpecificationTranslator {
    *
    * @return the replacement map for the identifiers in the expression
    */
-  Map<String, String> getReplacementMap() {
+  @OrderNonDet Map<String, String> getReplacementMap() {
     return replacementMap;
   }
 }

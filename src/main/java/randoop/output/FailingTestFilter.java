@@ -475,7 +475,10 @@ public class FailingTestFilter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      @Det String packageName, @Det String classname, @Det String classSource, Path destinationDir)
+      @Det String packageName,
+      @Det String classname,
+      @Det String classSource,
+      @Det Path destinationDir)
       throws FileCompiler.FileCompilerException {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.

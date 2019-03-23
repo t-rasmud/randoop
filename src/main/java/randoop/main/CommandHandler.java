@@ -3,6 +3,7 @@ package randoop.main;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.util.Util;
@@ -39,16 +40,16 @@ public abstract class CommandHandler {
    * @param options the command line arguments
    */
   public CommandHandler(
-      String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
-      Options options) {
+      @Det String command,
+      @Det String pitch,
+      @Det String commandGrammar,
+      @Det String where,
+      @Det String summary,
+      @Det List<String> notes,
+      @Det String input,
+      @Det String output,
+      @Det String example,
+      @Det Options options) {
 
     if ((command == null)) {
       throw new IllegalArgumentException("command cannot be null.");
@@ -70,7 +71,7 @@ public abstract class CommandHandler {
     return command != null && command.toUpperCase().equals(fcommand.toUpperCase());
   }
 
-  public abstract boolean handle(String[] args);
+  public abstract boolean handle(@Det CommandHandler this, @Det String @Det [] args);
 
   /**
    * Prints out formatted text in (google code) Wiki format.

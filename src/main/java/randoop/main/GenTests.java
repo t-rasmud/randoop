@@ -28,6 +28,7 @@ import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
@@ -164,10 +165,10 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(String[] args) {
+  public boolean handle(@Det GenTests this, @Det String @Det [] args) {
 
     try {
-      String[] nonargs = options.parse(args);
+      @Det String @Det [] nonargs = options.parse(args);
       if (nonargs.length > 0) {
         throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
       }
@@ -207,15 +208,15 @@ public class GenTests extends GenInputsAbstract {
      * Setup model of classes under test
      */
     // Get names of classes under test
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    @Det Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
     // Get names of classes that must be covered by output tests
     @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
-    Set<@ClassGetName String> coveredClassnames =
+    @Det Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
 
     // Get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
+    @Det Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
     VisibilityPredicate visibility;
@@ -246,7 +247,7 @@ public class GenTests extends GenInputsAbstract {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
-    Set<String> methodSignatures =
+    @Det Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
 
     String classpath = Globals.getClassPath();
@@ -316,8 +317,8 @@ public class GenTests extends GenInputsAbstract {
     }
     assert operationModel != null;
 
-    List<TypedOperation> operations = operationModel.getOperations();
-    Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
+    @Det List<TypedOperation> operations = operationModel.getOperations();
+    @Det Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
      * Stop if there is only 1 operation. This will be Object().
@@ -338,7 +339,7 @@ public class GenTests extends GenInputsAbstract {
      *   <li>Add any values for TestValue annotated static fields in operationModel
      * </ul>
      */
-    Set<Sequence> components = new LinkedHashSet<>();
+    @Det Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
 
@@ -348,7 +349,7 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> observerSignatures =
+    @Det Set<String> observerSignatures =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
 
@@ -360,7 +361,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
       throw new Error("dead code");
     }
-    Set<TypedOperation> observers = new LinkedHashSet<>();
+    @Det Set<TypedOperation> observers = new LinkedHashSet<>();
     for (Type keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
     }
@@ -407,7 +408,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    @Det Set<Sequence> excludeSet = new LinkedHashSet<>();
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output
@@ -422,7 +423,7 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup visitors
      */
-    List<ExecutionVisitor> visitors = new ArrayList<>();
+    @Det List<ExecutionVisitor> visitors = new ArrayList<>();
     // instrumentation visitor
     if (GenInputsAbstract.require_covered_classes != null) {
       visitors.add(new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
@@ -543,10 +544,10 @@ public class GenTests extends GenInputsAbstract {
    * @param classpath the classpath to replace
    * @return a version of classpath with relative paths replaced by absolute paths
    */
-  private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(java.io.File.pathSeparator);
+  private String convertClasspathToAbsolute(@Det String classpath) {
+    @Det String @Det [] relpaths = classpath.split(java.io.File.pathSeparator);
     int length = relpaths.length;
-    String[] abspaths = new String[length];
+    @Det String @Det [] abspaths = new String @Det [length];
     for (int i = 0; i < length; i++) {
       String rel = relpaths[i];
       String abs;
@@ -575,11 +576,12 @@ public class GenTests extends GenInputsAbstract {
    * @param testKind a {@code String} indicating the kind of tests for logging and error messages
    */
   private void writeTestFiles(
-      JUnitCreator junitCreator,
-      List<ExecutableSequence> testSequences,
-      CodeWriter codeWriter,
-      String basename,
-      String testKind) {
+      @Det GenTests this,
+      @Det JUnitCreator junitCreator,
+      @Det List<ExecutableSequence> testSequences,
+      @Det CodeWriter codeWriter,
+      @Det String basename,
+      @Det String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output%n");
@@ -592,10 +594,10 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Writing JUnit tests...%n");
     }
     try {
-      List<Path> testFiles = new ArrayList<>();
+      @Det List<Path> testFiles = new ArrayList<>();
 
       // Create and write test classes.
-      LinkedHashMap<String, CompilationUnit> testMap =
+      @Det LinkedHashMap<String, CompilationUnit> testMap =
           getTestASTMap(basename, testSequences, junitCreator);
       for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
         String classname = entry.getKey();
@@ -679,8 +681,8 @@ public class GenTests extends GenInputsAbstract {
    * @param file the file to read from, may be null
    * @return contents of the file, as a set of Patterns
    */
-  private List<Pattern> readOmitMethods(Path file) {
-    List<Pattern> result = new ArrayList<>();
+  private List<Pattern> readOmitMethods(@Det Path file) {
+    @Det List<Pattern> result = new ArrayList<>();
     // Read method omissions from user-provided file
     if (file != null) {
       try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
@@ -707,8 +709,9 @@ public class GenTests extends GenInputsAbstract {
    * @param signatures the list of signature strings
    * @return the list of patterns for the signature strings
    */
-  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
-    List<Pattern> patterns = new ArrayList<>();
+  private List<Pattern> createPatternsFromSignatures(
+      @Det GenTests this, @Det List<String> signatures) {
+    @Det List<Pattern> patterns = new ArrayList<>();
     for (String signatureString : signatures) {
       patterns.add(signatureToPattern(signatureString));
     }
@@ -744,7 +747,8 @@ public class GenTests extends GenInputsAbstract {
    * @param explorer the test generator
    * @param e the sequence exception
    */
-  private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
+  private void printSequenceExceptionError(
+      @Det AbstractGenerator explorer, @Det SequenceExceptionError e) {
 
     StringJoiner msg = new StringJoiner(Globals.lineSep);
     msg.add("");
@@ -780,7 +784,7 @@ public class GenTests extends GenInputsAbstract {
       /*
        * Get the set of operations executed since the first execution of the flaky subsequence
        */
-      List<String> executedOperationTrace = new ArrayList<>();
+      @Det List<String> executedOperationTrace = new ArrayList<>();
       boolean flakySequenceFound = false;
       for (Sequence sequence : explorer.getAllSequences()) {
         // Look for occurrence of flaky sequence
@@ -790,6 +794,7 @@ public class GenTests extends GenInputsAbstract {
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
           for (int i = 0; i < sequence.statements.size(); i++) {
+            // TODO-jason: Check whether TypedOperation is deterministic or not.
             Operation operation = sequence.statements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
@@ -878,13 +883,15 @@ public class GenTests extends GenInputsAbstract {
    * @return mapping from a class name to the abstract syntax tree for the class
    */
   private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
+      @Det String classNamePrefix,
+      @Det List<ExecutableSequence> sequences,
+      @Det JUnitCreator junitCreator) {
 
-    LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
+    @Det LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
 
     NameGenerator methodNameGenerator =
         new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, sequences.size());
-    List<List<ExecutableSequence>> sequencePartition =
+    @Det List<List<ExecutableSequence>> sequencePartition =
         CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
     for (int i = 0; i < sequencePartition.size(); i++) {
       String testClassName = classNamePrefix + i;
@@ -955,7 +962,7 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file to read
    * @return the contents of {@code filename}, as a list of strings
    */
-  private static List<String> getFileText(String filename) {
+  private static List<String> getFileText(@Det String filename) {
     if (filename == null) {
       return null;
     }
@@ -976,8 +983,8 @@ public class GenTests extends GenInputsAbstract {
    * @throws randoop.main.RandoopBug if there is an error locating the specification files
    * @return the list of JDK specification files
    */
-  private Collection<? extends Path> getJDKSpecificationFiles() {
-    List<Path> fileList = new ArrayList<>();
+  private Collection<? extends Path> getJDKSpecificationFiles(@Det GenTests this) {
+    @Det List<Path> fileList = new ArrayList<>();
     final String specificationDirectory = "/specifications/jdk/";
     Path directoryPath = getResourceDirectoryPath(specificationDirectory);
 

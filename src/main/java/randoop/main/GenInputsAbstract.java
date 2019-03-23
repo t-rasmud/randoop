@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Option;
@@ -24,16 +25,16 @@ import randoop.util.ReflectionExecutor;
 public abstract class GenInputsAbstract extends CommandHandler {
 
   public GenInputsAbstract(
-      String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
-      Options options) {
+      @Det String command,
+      @Det String pitch,
+      @Det String commandGrammar,
+      @Det String where,
+      @Det String summary,
+      @Det List<String> notes,
+      @Det String input,
+      @Det String output,
+      @Det String example,
+      @Det Options options) {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
 
@@ -435,7 +436,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
      * @param generated_limit the maximum number of sequences to output. Must be non-negative.
      * @param output_limit the maximum number of sequences to generate. Must be non-negative.
      */
-    public Limits(int time_limit, int attempted_limit, int generated_limit, int output_limit) {
+    public Limits(
+        @Det int time_limit,
+        @Det int attempted_limit,
+        @Det int generated_limit,
+        @Det int output_limit) {
       this.time_limit_millis = time_limit * 1000;
       this.attempted_limit = attempted_limit;
       this.generated_limit = generated_limit;
@@ -865,7 +870,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
   public static Set<@ClassGetName String> getClassnamesFromArgs() {
-    Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");
+    @Det Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");
     classnames.addAll(testclass);
     return classnames;
   }
@@ -878,7 +883,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param fileDescription string used in error messages
    * @return the lines in the file, or null if listFile is null
    */
-  public static Set<String> getStringSetFromFile(Path listFile, String fileDescription) {
+  public static Set<String> getStringSetFromFile(@Det Path listFile, @Det String fileDescription) {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
@@ -893,8 +898,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      @Nullable Path listFile, String fileDescription, String commentRegex, String includeRegex) {
-    Set<String> elementSet = new LinkedHashSet<>();
+      @Nullable @Det Path listFile,
+      @Det String fileDescription,
+      @Det String commentRegex,
+      @Det String includeRegex) {
+    @Det Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
         for (String line : er) {

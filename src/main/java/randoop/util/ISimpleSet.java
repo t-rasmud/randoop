@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 public interface ISimpleSet<T extends @Det Object> {
 
@@ -51,5 +52,5 @@ public interface ISimpleSet<T extends @Det Object> {
    * @return a String representation of this set
    */
   @Override
-  String toString();
+  @NonDet String toString();
 }

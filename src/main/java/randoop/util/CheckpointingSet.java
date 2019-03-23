@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
@@ -62,7 +63,7 @@ public class CheckpointingSet<T extends @Det Object> implements ISimpleSet<T> {
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return map.keySet().toString();
   }
 }

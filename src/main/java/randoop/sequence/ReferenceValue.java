@@ -50,7 +50,7 @@ public final class ReferenceValue {
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return value.toString();
   }
 

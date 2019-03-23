@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
 public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements IMultiMap<T1, T2> {
@@ -17,7 +18,7 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
     map = new LinkedHashMap<>();
   }
 
-  public MultiMap(int initialCapacity) {
+  public MultiMap(@Det int initialCapacity) {
     map = new LinkedHashMap<>(initialCapacity);
   }
 
@@ -38,8 +39,8 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
     }
   }
 
-  public void addAll(@Det MultiMap<T1, T2> this, MultiMap<T1, T2> mmap) {
-    for (Map.Entry<T1, Set<T2>> entry : mmap.map.entrySet()) {
+  public void addAll(@Det MultiMap<T1, T2> this, @Det MultiMap<T1, T2> mmap) {
+    for (Map.@Det Entry<T1, Set<T2>> entry : mmap.map.entrySet()) {
       addAll(entry.getKey(), entry.getValue());
     }
   }
@@ -108,7 +109,7 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return map.toString();
   }
 }

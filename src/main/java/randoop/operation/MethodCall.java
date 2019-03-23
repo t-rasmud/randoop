@@ -313,7 +313,7 @@ public final class MethodCall extends CallableOperation {
    * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(method);
   }
 }

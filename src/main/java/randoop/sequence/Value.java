@@ -23,6 +23,9 @@ public class Value {
    *     primitive type, a String, or null.
    * @return a string representing code for the given value
    */
+  @SuppressWarnings("determinism") // in this method toString is called, which is typed as
+  // nondeterministic, but each is called in a check that ensures its toString will behave
+  // deterministically.
   public static String toCodeString(@Det Object value) {
 
     if (value == null) {

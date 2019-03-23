@@ -295,7 +295,7 @@ public final class Randomness {
    * @return a printed representation of the argument
    * @see #verbosity
    */
-  private static String toString(@Det Object o) {
+  private static @NonDet String toString(@Det Object o) {
     if (o instanceof @NonDet Collection<?>) {
       @SuppressWarnings("determinism") // @NonDet is required for a valid type but o is still @Det.
       @Det Collection<?> coll = (@NonDet Collection<?>) o;

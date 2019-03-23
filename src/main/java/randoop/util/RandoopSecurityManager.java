@@ -325,7 +325,7 @@ public class RandoopSecurityManager extends SecurityManager {
   }
 
   @Override
-  public @PolyDet("up") String toString() {
+  public @NonDet String toString() {
     return super.toString();
   }
 }

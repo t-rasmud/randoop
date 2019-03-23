@@ -59,7 +59,7 @@ public class SpecificationCollection {
   private final MultiMap<OperationSignature, Method> signatureToMethods;
 
   /** Map from reflection object to all the methods it overrides (that have a specification). */
-  private final Map<AccessibleObject, @OrderNonDet Set<Method>> overridden;
+  private final @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
   private final SequenceCompiler compiler;
@@ -78,7 +78,7 @@ public class SpecificationCollection {
   SpecificationCollection(
       @Det Map<AccessibleObject, OperationSpecification> specificationMap,
       @Det MultiMap<OperationSignature, Method> signatureToMethods,
-      @Det Map<AccessibleObject, @OrderNonDet Set<Method>> overridden) {
+      @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> overridden) {
     this.specificationMap = specificationMap;
     this.signatureToMethods = signatureToMethods;
     this.overridden = overridden;
@@ -100,11 +100,11 @@ public class SpecificationCollection {
       return null;
     }
     MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
-    Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
+    @Det Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
     for (Path specificationFile : specificationFiles) {
       readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
-    @Det Map<AccessibleObject, @OrderNonDet Set<Method>> overridden =
+    @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> overridden =
         buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
   }
@@ -116,9 +116,9 @@ public class SpecificationCollection {
    *     signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
-  private static Map<AccessibleObject, @OrderNonDet Set<Method>> buildOverridingMap(
+  private static @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> buildOverridingMap(
       @Det MultiMap<OperationSignature, Method> signatureToMethods) {
-    Map<AccessibleObject, @OrderNonDet Set<Method>> overridden = new HashMap<>();
+    @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> overridden = new HashMap<>();
     for (OperationSignature signature : signatureToMethods.keySet()) {
       // This lookup is required because MultiMap does not have an entrySet() method.
       @Det Set<Method> methods = signatureToMethods.getValues(signature);
@@ -254,7 +254,7 @@ public class SpecificationCollection {
       Path specificationZipFile,
       final Map<AccessibleObject, OperationSpecification> specificationMap,
       final MultiMap<OperationSignature, Method> signatureToMethods) {
-    Map<String, ?> myEmptyMap = Collections.emptyMap();
+    @Det Map<String, ? extends @Det Object> myEmptyMap = Collections.emptyMap();
     FileSystem zipFS;
     try {
       URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
@@ -288,7 +288,8 @@ public class SpecificationCollection {
   }
 
   /** Cache for {@link #getExecutableSpecification}. */
-  private Map<AccessibleObject, ExecutableSpecification> getExecutableSpecificationCache;
+  private @OrderNonDet Map<AccessibleObject, ExecutableSpecification>
+      getExecutableSpecificationCache;
 
   /**
    * Creates an {@link ExecutableSpecification} object for the given constructor or method, from its
@@ -343,6 +344,7 @@ public class SpecificationCollection {
         throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
+        // TODO-jason: this looks like a bug, is this nondeterminism
         for (Method parent : parents) {
           ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
           execSpec.addParent(parentExecSpec);

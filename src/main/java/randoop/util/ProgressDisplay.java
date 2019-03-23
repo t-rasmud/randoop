@@ -145,11 +145,14 @@ public class ProgressDisplay extends Thread {
   }
 
   private void printAllStackTraces() {
-    for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
+    for (Map.@Det Entry<Thread, StackTraceElement[]> trace :
+        Thread.getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
-      System.out.println("Thread " + trace.getKey().toString());
+      @SuppressWarnings("determinism") // progress display output is expected nondeterminism
+      @Det String key = trace.getKey().toString();
+      System.out.println("Thread " + key);
       System.out.println("Stack trace:");
-      StackTraceElement[] elts = trace.getValue();
+      @Det StackTraceElement @Det [] elts = trace.getValue();
       for (StackTraceElement elt : elts) {
         System.out.println(elt);
       }

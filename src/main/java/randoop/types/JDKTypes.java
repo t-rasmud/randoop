@@ -189,53 +189,81 @@ public class JDKTypes {
       GenericClassType.forClass(ConcurrentSkipListSet.class);
 
   /** The {@link GenericClassType} for {@code Map} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType MAP_TYPE = GenericClassType.forClass(Map.class);
 
   /** The {@link GenericClassType} for {@code SortedMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType SORTED_MAP_TYPE = GenericClassType.forClass(SortedMap.class);
 
   /** The {@link GenericClassType} for {@code TreeMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType TREE_MAP_TYPE = GenericClassType.forClass(TreeMap.class);
 
   /** The {@link GenericClassType} for {@code HashMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType HASH_MAP_TYPE = GenericClassType.forClass(HashMap.class);
 
   /** The {@link GenericClassType} for {@code Hashtable} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType HASH_TABLE_TYPE = GenericClassType.forClass(Hashtable.class);
 
   /** The {@link GenericClassType} for {@code LinkedHashMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType LINKED_HASH_MAP_TYPE =
       GenericClassType.forClass(LinkedHashMap.class);
 
   /** The {@link GenericClassType} for {@code NavigableMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(NavigableMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_MAP_TYPE =
       GenericClassType.forClass(ConcurrentMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentNavigableMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(ConcurrentNavigableMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentHashMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_HASH_MAP_TYPE =
       GenericClassType.forClass(ConcurrentHashMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentSkipListMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_SKIP_LIST_MAP_TYPE =
       GenericClassType.forClass(ConcurrentSkipListMap.class);
 
   /** The {@link GenericClassType} for {@code IdentityHashMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType IDENTITY_HASH_MAP_TYPE =
       GenericClassType.forClass(IdentityHashMap.class);
 
   /** The {@link GenericClassType} for {@code WeakHashMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType WEAK_HASH_MAP_TYPE =
       GenericClassType.forClass(WeakHashMap.class);
 
   /** The {@link GenericClassType} for {@code EnumMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType ENUM_MAP_TYPE = GenericClassType.forClass(EnumMap.class);
 
   /** The {@link GenericClassType} for {@code AbstractCollection} */
@@ -269,6 +297,8 @@ public class JDKTypes {
       GenericClassType.forClass(AbstractQueue.class);
 
   /** The {@link GenericClassType} for {@code AbstractMap} */
+  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
+  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType ABSTRACT_MAP_TYPE =
       GenericClassType.forClass(AbstractMap.class);
 
