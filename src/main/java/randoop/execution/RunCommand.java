@@ -54,7 +54,6 @@ public class RunCommand {
 
     Log.logPrintf("RunCommand.run():%n");
     Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
-    // TODO-jason: Is this actually expected?
     @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
     @Det Map<String, String> env = System.getenv();
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, env);

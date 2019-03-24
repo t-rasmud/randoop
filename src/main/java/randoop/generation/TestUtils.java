@@ -28,8 +28,6 @@ public class TestUtils {
 
   /** Uses the system property {@code randoop.log} to set {@link GenInputsAbstract#log}. */
   public static void setRandoopLog() {
-    // TODO-jason: Is this deterministic?
-    @SuppressWarnings("determinism") // the log probably won't change between runs
     @Det String randoopLog = System.getProperty("randoop.log");
     setRandoopLog(randoopLog);
   }
@@ -61,7 +59,6 @@ public class TestUtils {
    * GenInputsAbstract#selection_log}.
    */
   public static void setSelectionLog() {
-    // TODO-jason: Is this deterministic?
     @SuppressWarnings("determinism") // the log probably won't change between runs
     @Det String selectionLog = System.getProperty("randoop.selection.log");
     setSelectionLog(selectionLog);
@@ -105,8 +102,6 @@ public class TestUtils {
    * @param generator the generator for which logger is to be set
    */
   public static void setOperationLog(AbstractGenerator generator) {
-    // TODO-jason: Is this deterministic?
-    @SuppressWarnings("determinism") // the log probably won't change between runs
     @Det String tmp = System.getProperty("randoop.operation.history.log");
     setOperationLog(tmp, generator);
   }

@@ -344,7 +344,6 @@ public class SpecificationCollection {
         throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
-        // TODO-jason: this looks like a bug, is this nondeterminism
         for (Method parent : parents) {
           ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
           execSpec.addParent(parentExecSpec);

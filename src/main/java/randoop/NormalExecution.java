@@ -40,14 +40,13 @@ public class NormalExecution extends ExecutionOutcome {
    * use this method in randoop.test.SequenceTests.
    */
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     String value;
     try {
       value = Objects.toString(result);
     } catch (Throwable t) {
       value = "???";
     }
-    // TODO-jason: Is this deterministic?
     return String.format(
         "[NormalExecution %s%s]",
         value, (result == null ? "" : (" [of class " + result.getClass().getName() + "]")));

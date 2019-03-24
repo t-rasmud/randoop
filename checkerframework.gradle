@@ -56,18 +56,15 @@ compileJava {
         // '-processor', 'org.checkerframework.checker.nullness.NullnessChecker,org.checkerframework.checker.signature.SignatureChecker',
         // '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
         '-processor',
-		'org.checkerframework.checker.determinism.DeterminismChecker',
-		'-AonlyDefs=randoop.*$',
-		// '-AonlyDefs=randoop.reflection.ClassLiteralExtractor$',
-		// '-AonlyDefs=randoop.util.StringEscapeUtils',
-		// '-AonlyDefs=IdentityMultiMap',
-		'-Astubs=GenericVisitor.astub',
-		'-AsuppressWarnings=invalid.type.on.conditional',
-		'-AskipDefs=randoop.test',
+        'org.checkerframework.checker.determinism.DeterminismChecker',
+        '-AonlyDefs=randoop.*$',
+        '-Astubs=javaparser.astub',
+        '-AsuppressWarnings=invalid.type.on.conditional',
+        '-AskipDefs=randoop.test',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
         // '-Awarns',      // -Awarns turns Checker Framework errors into warnings
-	// '-AcheckPurityAnnotations',
+        // '-AcheckPurityAnnotations',
         "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}"
     ]
   }

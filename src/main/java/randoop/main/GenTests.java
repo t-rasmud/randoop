@@ -794,10 +794,14 @@ public class GenTests extends GenInputsAbstract {
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
           for (int i = 0; i < sequence.statements.size(); i++) {
-            // TODO-jason: Check whether TypedOperation is deterministic or not.
             Operation operation = sequence.statements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
-              executedOperationTrace.add(operation.toString());
+              @SuppressWarnings(
+                  "determinism") // If you look at the type of getOperation, it returns
+              // a TypedOperation which actually has a deterministic toString(), so calling
+              // operation.toString() is deterministic
+              @Det String operationString = operation.toString();
+              executedOperationTrace.add(operationString);
             }
           }
         }

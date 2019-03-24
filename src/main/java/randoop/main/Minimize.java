@@ -916,8 +916,6 @@ public class Minimize extends CommandHandler {
     Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    // TODO-jason: Is the system path deterministic?
-    @SuppressWarnings("determinism") // we expect the system path to be consistent between runs
     @Det String command = "javac -classpath " + SYSTEM_CLASS_PATH;
     // Add current directory to class path.
     command += PATH_SEPARATOR + ".";
@@ -953,8 +951,6 @@ public class Minimize extends CommandHandler {
     }
 
     // Classpath for running the Java file.
-    // TODO-jason: Is the system path deterministic?
-    @SuppressWarnings("determinism") // we expect the system path to be consistent between runs
     @Det String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
     if (userClassPath != null) {
       classpath += PATH_SEPARATOR + userClassPath;

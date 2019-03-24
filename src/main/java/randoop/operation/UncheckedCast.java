@@ -38,7 +38,10 @@ class UncheckedCast extends CallableOperation {
   @Override
   public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
     assert input.length == 1 : "cast only takes one input";
-    return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);
+    @SuppressWarnings("determinism") // getRuntimeClass returns a @Det Class<?>, so casting one of
+    // the deterministic Objects in input will have a deterministic a result.
+    @Det NormalExecution result = new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);
+    return result;
   }
 
   /**

@@ -197,10 +197,13 @@ public class Substitution<T extends @Det Object> {
   }
 
   /** Print the entries of this substitution to standard out. */
-  // TODO-jason: Find where this method is called because it's nondeterministic.
+  // Note for case study, this method is never called.
   public void print() {
-    for (Entry<TypeVariable, T> entry : map.entrySet()) {
-      System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
+    for (@Det Entry<TypeVariable, T> entry : map.entrySet()) {
+      @SuppressWarnings("determinism") // Since the value type can be anything, its toString may be
+      // nondeterministic. However, this method is never called so this is never a problem.
+      @Det String valueString = entry.getValue().toString();
+      System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + valueString);
     }
   }
 

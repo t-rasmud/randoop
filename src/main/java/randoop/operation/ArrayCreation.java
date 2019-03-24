@@ -70,8 +70,7 @@ public class ArrayCreation extends CallableOperation {
     assert input.length == 1 : "requires array dimension as input";
     int length = Integer.parseInt(input[0].toString());
     long startTime = System.currentTimeMillis();
-    // TODO-jason: why is this nondeterministic
-    Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
+    @Det Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
     long totalTime = System.currentTimeMillis() - startTime;
     return new NormalExecution(theArray, totalTime);
   }

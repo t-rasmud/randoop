@@ -199,12 +199,15 @@ public class ReflectionManager {
     for (Object obj : c.getEnumConstants()) {
       @SuppressWarnings("determinism") // if c itself is deterministic, then which class it
       // represents will always be the same at runtime
-      // @Det Enum<? extends @Det Object> e = (Enum<? extends @Det Object>) obj;
       @Det Enum<?> e = (Enum<?>) obj;
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
-          // TODO-jason: getDeclaredMethods is not annotated in our JDK so is this nondeterministic.
+          // TODO-jason: this was fixed in a new version of the Determinism Checker, come back and
+          // remove @SuppressWarnings
+          @SuppressWarnings("determinism") // Because the map is @OrderNonDet and get returns
+          // @PolyDet, this is imprecisely set to @OrderNonDet, which we can ignore. This was fixed
+          // in a new version of the Determinism Checker.
           @Det Set<Method> methodSet = overrideMethods.get(m.getName());
           if (methodSet == null) {
             methodSet = new LinkedHashSet<>();
@@ -226,6 +229,11 @@ public class ReflectionManager {
     // constant
     for (Method m : ClassDeterministic.getMethods(c)) {
       if (isVisible(m)) {
+        // TODO-jason: this was fixed in a new version of the Determinism Checker, come back and
+        // remove @SuppressWarnings
+        @SuppressWarnings("determinism") // Because the map is @OrderNonDet and get returns
+        // @PolyDet, this is imprecisely set to @OrderNonDet, which we can ignore. This was fixed
+        // in a new version of the Determinism Checker.
         @Det Set<Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {
           for (Method method : methodSet) {
