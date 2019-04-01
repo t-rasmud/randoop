@@ -57,7 +57,6 @@ compileJava {
         // '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
         '-processor',
         'org.checkerframework.checker.determinism.DeterminismChecker',
-        '-AonlyDefs=randoop.*$',
         '-Astubs=javaparser.astub',
         '-AsuppressWarnings=invalid.type.on.conditional',
         '-AskipDefs=randoop.test',
