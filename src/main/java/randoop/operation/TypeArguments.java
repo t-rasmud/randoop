@@ -2,7 +2,7 @@ package randoop.operation;
 
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.reflection.TypeNames;
+import randoop.types.Type;
 
 /**
  * TypeArguments provides static methods for creating and recognizing strings representing the type
@@ -36,7 +36,7 @@ class TypeArguments {
         @ClassGetName String typeName = argsStrs[i].trim();
 
         try {
-          argTypes[i] = TypeNames.getTypeForName(typeName);
+          argTypes[i] = Type.forFullyQualifiedName(typeName);
         } catch (ClassNotFoundException e) {
           throw new OperationParseException("Class " + typeName + " is not on classpath");
         }

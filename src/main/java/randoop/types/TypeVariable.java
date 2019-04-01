@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -105,13 +106,9 @@ public abstract class TypeVariable extends ParameterType {
    * @return a substitution that replaces {@code variable} with {@code otherType}
    */
   private static Substitution<ReferenceType> getSubstitution(
-      @Det TypeVariable variable, @Det ReferenceType otherType) {
-    @Det List<TypeVariable> variableList = new ArrayList<>();
-    variableList.add(variable);
-    @SuppressWarnings("determinism") // forArgs uses a variable length argument list, which the
-    // checker doesn't handle correctly.
-    @Det Substitution<ReferenceType> result = Substitution.forArgs(variableList, otherType);
-    return result;
+      TypeVariable variable, ReferenceType otherType) {
+    List<TypeVariable> variableList = Collections.singletonList(variable);
+    return Substitution.forArgs(variableList, otherType);
   }
 
   @Override

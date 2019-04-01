@@ -2,8 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import java.util.Collections;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -28,8 +27,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    @PolyDet Collection<ClassFileConstants.ConstantSet> constList = new ArrayList<>();
-    constList.add(ClassFileConstants.getConstants(c.getName()));
+    Collection<ClassFileConstants.ConstantSet> constList =
+        Collections.singletonList(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
       ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);

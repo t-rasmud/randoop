@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -647,7 +648,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
         Log.logPrintf("null-ratio option given. Randomly decided to use null as input.%n");
         TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-        Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+        Sequence seq = new Sequence().extend(st, Collections.emptyList());
         variables.add(totStatements);
         sequences.add(seq);
         assert seq.size() == 1;
@@ -717,7 +718,7 @@ public class ForwardGenerator extends AbstractGenerator {
           Log.logPrintf(
               "Found no sequences of required type; will use null as " + i + "-th input%n");
           TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+          Sequence seq = new Sequence().extend(st, Collections.emptyList());
           variables.add(totStatements);
           sequences.add(seq);
           assert seq.size() == 1;

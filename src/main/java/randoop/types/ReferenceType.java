@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
 
@@ -165,11 +166,8 @@ public abstract class ReferenceType extends Type {
     }
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
-      @Det List<TypeVariable> typeParameters = new ArrayList<>();
-      typeParameters.add(variable);
-      @SuppressWarnings("determinism") // forArgs takes a variable length parameter list, which the
-      // checker doesn't handle correctly
-      @Det Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
+      List<TypeVariable> typeParameters = Collections.singletonList(variable);
+      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
           && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
         return substitution;
