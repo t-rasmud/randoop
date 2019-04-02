@@ -3,6 +3,7 @@ package randoop.condition;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.InvalidCheckGenerator;
@@ -70,13 +71,13 @@ public class ExpectedOutcomeTable {
   private boolean hasSatisfiedPrecondition = false;
 
   /** The list of post-conditions whose guard expression was satisfied. */
-  private final List<ExecutableBooleanExpression> postConditions = new ArrayList<>();
+  private final @OrderNonDet List<ExecutableBooleanExpression> postConditions = new ArrayList<>();
 
   /**
    * The list of lists of throws clauses for which the guard expression was satisfied. Each list of
    * throwsclauses represents one specification, and each such list must be satisfied.
    */
-  private final List<List<ThrowsClause>> exceptionSets = new ArrayList<>();
+  private final @OrderNonDet List<List<ThrowsClause>> exceptionSets = new ArrayList<>();
 
   /** Creates an empty {@link ExpectedOutcomeTable}. */
   public ExpectedOutcomeTable() {}

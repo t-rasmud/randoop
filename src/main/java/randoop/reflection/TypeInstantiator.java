@@ -101,7 +101,7 @@ public class TypeInstantiator {
     assert operation.isConstructorCall() : "only call with constructors of SortedSet subtype";
 
     TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
-    List<TypeVariable> parameters = Collections.singletonList(parameter);
+    @Det List<TypeVariable> parameters = Collections.singletonList(parameter);
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
@@ -482,8 +482,9 @@ public class TypeInstantiator {
    *     has no candidates
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
-    List<List<ReferenceType>> candidateTypes = new ArrayList<>();
+  private List<List<ReferenceType>> getCandidateTypeLists(
+      @Det TypeInstantiator this, @Det List<TypeVariable> parameters) {
+    @Det List<List<ReferenceType>> candidateTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       @Det List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
@@ -507,8 +508,8 @@ public class TypeInstantiator {
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
-    List<TypeVariable> typeVariableList = Collections.singletonList(argument);
-    List<ReferenceType> typeList = new ArrayList<>();
+    @Det List<TypeVariable> typeVariableList = Collections.singletonList(argument);
+    @Det List<ReferenceType> typeList = new ArrayList<>();
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;

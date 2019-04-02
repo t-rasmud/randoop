@@ -3,6 +3,7 @@ package randoop.condition;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -42,7 +43,7 @@ public class ExecutableSpecification {
    * local specification for method declaration m, the {@code parentList} contains one element for
    * each method that m overrides or implements (and has specifications).
    */
-  private List<ExecutableSpecification> parentList = new ArrayList<>();
+  private @OrderNonDet List<ExecutableSpecification> parentList = new ArrayList<>();
 
   /** Creates an empty {@link ExecutableSpecification} object. */
   public ExecutableSpecification() {
@@ -84,7 +85,11 @@ public class ExecutableSpecification {
     ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.checkPrestate(args, table);
     for (ExecutableSpecification execSpec : parentList) {
-      execSpec.checkPrestate(args, table);
+      @SuppressWarnings("determinism") // We are iterating over a @OrderNonDet List and calling a
+      // method which basically adds its information to another @OrderNonDet List. Thus, in this
+      // loop we can consider execSpec to be @Det
+      @Det ExecutableSpecification tmp = execSpec;
+      tmp.checkPrestate(args, table);
     }
     return table;
   }

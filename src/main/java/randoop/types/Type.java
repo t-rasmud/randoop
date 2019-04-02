@@ -84,7 +84,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type getTypeforFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+  public static Type getTypeforFullyQualifiedName(@Det @ClassGetName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> className = forFullyQualifiedName(fullyQualifiedName);
     return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
@@ -100,16 +100,16 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Class<?> forFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+  public static Class<?> forFullyQualifiedName(@ClassGetName @Det String fullyQualifiedName)
       throws ClassNotFoundException {
-    String[] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
+    @Det String @Det [] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
     int arrayDimension = fullyQualifiedArrayParsedName.length - 1;
     Class<?> fullyQualifiedBaseType =
         forFullyQualifiedNameNonArray(fullyQualifiedArrayParsedName[0]);
 
     if (arrayDimension > 0) {
       // Make each dimension size zero, since it is ignored by getClass().
-      int[] dimensions = new int[arrayDimension];
+      @Det int @Det [] dimensions = new int @Det [arrayDimension];
       return Array.newInstance(fullyQualifiedBaseType, dimensions).getClass();
     } else {
       return fullyQualifiedBaseType;

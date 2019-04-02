@@ -400,7 +400,7 @@ class HelperSequenceCreator {
       throw new RandoopBug("Can't find \"noneOf\" method for EnumSet: ", e);
     }
     MethodCall op = new MethodCall(method);
-    List<Type> paramTypes = Collections.singletonList(JavaTypes.CLASS_TYPE);
+    @Det List<Type> paramTypes = Collections.singletonList(JavaTypes.CLASS_TYPE);
     return new TypedClassOperation(op, creationType, new TypeTuple(paramTypes), creationType);
   }
 

@@ -64,7 +64,6 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
@@ -160,7 +159,7 @@ public class Minimize extends CommandHandler {
    * @return true if the command was handled successfully
    */
   @Override
-  public @Det boolean handle(@Det String @Det [] args) {
+  public @Det boolean handle(@Det Minimize this, @Det String @Det [] args) {
     try {
       @Det String @Det [] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
@@ -197,7 +196,7 @@ public class Minimize extends CommandHandler {
         executor.submit(
             new Callable<Boolean>() {
               @Override
-              public Boolean call() throws IOException {
+              public @Det Boolean call() throws IOException {
                 return mainMinimize(
                     originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
               }
@@ -908,7 +907,7 @@ public class Minimize extends CommandHandler {
    * @return the result of compilation (includes status and output)
    */
   private static Outputs compileJavaFile(
-      Path file, String classpath, String packageName, int timeoutLimit) {
+      @Det Path file, @Det String classpath, @Det String packageName, @Det int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
@@ -1004,7 +1003,7 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  public static Outputs runProcess(@Det String command, Path executionDir, @Det int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
@@ -1234,7 +1233,7 @@ public class Minimize extends CommandHandler {
      * @param stdout standard output
      * @param errout error output
      */
-    Outputs(String command, int exitValue, String stdout, String errout) {
+    Outputs(@Det String command, @Det int exitValue, @Det String stdout, @Det String errout) {
       this.command = command;
       this.exitValue = exitValue;
       this.stdout = stdout;
@@ -1249,7 +1248,7 @@ public class Minimize extends CommandHandler {
      * @param stdout standard output
      * @param errout error output
      */
-    Outputs(CommandLine command, int exitValue, String stdout, String errout) {
+    Outputs(@Det CommandLine command, @Det int exitValue, @Det String stdout, @Det String errout) {
       this(command.toString(), exitValue, stdout, errout);
     }
 
@@ -1259,7 +1258,7 @@ public class Minimize extends CommandHandler {
      * @param command the command that was run
      * @param errout error output
      */
-    static Outputs failure(CommandLine command, String errout) {
+    static Outputs failure(@Det CommandLine command, @Det String errout) {
       return new Outputs(command.toString(), 1, "", errout);
     }
 

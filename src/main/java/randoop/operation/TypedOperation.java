@@ -298,7 +298,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   public abstract TypedOperation applyCaptureConversion(@Det TypedOperation this);
 
   // Implementation note: clients mutate the list, so don't use Collections.emptyList.
-  public List<TypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters(@Det TypedOperation this) {
     return new ArrayList<>();
   }
 
@@ -537,8 +537,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param arrayType the desired array type
    * @return an operation to create an array of the given type
    */
-  public static TypedOperation createArrayCreation(ArrayType arrayType) {
-    List<Type> typeList = Collections.singletonList(JavaTypes.INT_TYPE);
+  public static TypedOperation createArrayCreation(@Det ArrayType arrayType) {
+    @Det List<Type> typeList = Collections.singletonList(JavaTypes.INT_TYPE);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType), inputTypes, arrayType);
   }
@@ -550,8 +550,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param toType the resulting type
    * @return an operation that casts the input type to the result type
    */
-  public static TypedOperation createCast(Type fromType, Type toType) {
-    List<Type> typeList = Collections.singletonList(fromType);
+  public static TypedOperation createCast(@Det Type fromType, @Det Type toType) {
+    @Det List<Type> typeList = Collections.singletonList(fromType);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new UncheckedCast(toType), inputTypes, toType);
   }

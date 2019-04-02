@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -27,7 +28,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    Collection<ClassFileConstants.ConstantSet> constList =
+    @Det Collection<ClassFileConstants.ConstantSet> constList =
         Collections.singletonList(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {

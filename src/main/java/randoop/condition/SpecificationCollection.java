@@ -344,8 +344,13 @@ public class SpecificationCollection {
         throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
-        for (@Det Method parent : parents) {
-          ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
+        for (Method parent : parents) {
+          @SuppressWarnings(
+              "determinism") // We are iterating over a @OrderNonDet List and calling a
+          // method which basically adds its information to another @OrderNonDet List. Thus, in this
+          // loop we can consider execSpec to be @Det
+          @Det Method tmp = parent;
+          ExecutableSpecification parentExecSpec = getExecutableSpecification(tmp);
           execSpec.addParent(parentExecSpec);
         }
       }

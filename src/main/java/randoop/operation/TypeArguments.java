@@ -1,6 +1,6 @@
 package randoop.operation;
 
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.types.Type;
 
@@ -26,11 +26,11 @@ class TypeArguments {
    * @return the array of {@link Class} objects for the type arguments in argStr
    * @throws OperationParseException if a type name in the string is not a valid type
    */
-  static Class<?>[] getTypeArgumentsForString(String argStr) throws OperationParseException {
-    @PolyDet Class<?> @PolyDet [] argTypes = new Class<?> @PolyDet [0];
+  static Class<?>[] getTypeArgumentsForString(@Det String argStr) throws OperationParseException {
+    @Det Class<?> @Det [] argTypes = new Class<?> @Det [0];
     if (argStr.trim().length() > 0) {
-      @PolyDet String @PolyDet [] argsStrs = argStr.split(",");
-      argTypes = new Class<?> @PolyDet [argsStrs.length];
+      @Det String @Det [] argsStrs = argStr.split(",");
+      argTypes = new Class<?> @Det [argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {
         @SuppressWarnings("signature") // uncheckable string manipulation
         @ClassGetName String typeName = argsStrs[i].trim();

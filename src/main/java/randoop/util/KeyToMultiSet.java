@@ -23,7 +23,8 @@ public class KeyToMultiSet<T1 extends @Det Object, T2 extends @Det Object> {
     }
   }
 
-  public void addAll(@Det KeyToMultiSet<T1, T2> this, T1 key, Collection<? extends T2> values) {
+  public void addAll(
+      @Det KeyToMultiSet<T1, T2> this, T1 key, @Det Collection<? extends T2> values) {
     for (@Det T2 t2 : values) {
       add(key, t2);
     }
