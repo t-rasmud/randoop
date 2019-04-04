@@ -54,8 +54,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // getName require @Det this, but @PolyDet is required to
-    // override toString. All constructors are @Det so this will never introduce nondeterminism
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
     @PolyDet String name = this.getName();
     return name;
   }

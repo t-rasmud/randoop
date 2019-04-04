@@ -23,9 +23,7 @@ public class CountDownTimer {
   }
 
   public @NonDet long remainingTime() {
-    // Need to use @NonDet in conditional
-    @SuppressWarnings("determinism")
-    @Det long remainingTime = totalTime - elapsedTime();
+    long remainingTime = totalTime - elapsedTime();
     if (remainingTime < 0) {
       return 0;
     }
@@ -38,7 +36,10 @@ public class CountDownTimer {
 
   @Override
   public @PolyDet("up") String toString() {
-    @SuppressWarnings("determinism") // this is @NonDet, but all instances will be @NonDet
+    @SuppressWarnings(
+        "determinism") // constructors guarantee all instances of this class are @NonDet:
+    // the return of this method is always @NonDet, but that's fine because it agrees with
+    // @PolyDet("up") when called with a @NonDet receiver, which will always be the case.
     @PolyDet("up") String result = "elapsed: " + elapsedTime() + ", remaining: " + remainingTime();
     return result;
   }

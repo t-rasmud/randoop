@@ -78,9 +78,6 @@ public class KeyToMultiSet<T1 extends @Det Object, T2 extends @Det Object> {
 
   // Removes all keys with an empty set
   public void clean(@Det KeyToMultiSet<T1, T2> this) {
-    // TODO-jason: why does entrySet().iterator() create an error?
-    @SuppressWarnings("determinism") // there seems to a bug where the result of iterator is @NonDet
-    // even when the entry set is clearly deterministic
     @Det Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator();
     for (; iter.hasNext(); ) {
       Entry<T1, MultiSet<T2>> element = iter.next();

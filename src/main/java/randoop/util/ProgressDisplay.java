@@ -73,18 +73,24 @@ public class ProgressDisplay extends Thread {
    */
   public boolean shouldStop = false;
 
-  @SuppressWarnings("determinism") // Running this thread is inherintly non-deterministic because it
-  // uses the system time. This is expected.
   @Override
   public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
     while (true) {
       if (shouldStop) {
-        clear();
+        @SuppressWarnings(
+            "determinism") // constructors guarantee all instances of this class are @Det:
+        // it's safe to call this method that requires a @Det receiver
+        @Det ProgressDisplay tmp = this;
+        tmp.clear();
         return;
       }
       if (progressInterval > 0) {
-        displayWithTime();
+        @SuppressWarnings(
+            "determinism") // constructors guarantee all instances of this class are @Det:
+        // it's safe to call this method that requires a @Det receiver
+        @Det ProgressDisplay tmp = this;
+        tmp.displayWithTime();
       }
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
@@ -148,8 +154,7 @@ public class ProgressDisplay extends Thread {
     for (Map.@Det Entry<Thread, StackTraceElement[]> trace :
         Thread.getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
-      @SuppressWarnings("determinism") // progress display output is expected nondeterminism
-      @Det String key = trace.getKey().toString();
+      String key = trace.getKey().toString();
       System.out.println("Thread " + key);
       System.out.println("Stack trace:");
       @Det StackTraceElement @Det [] elts = trace.getValue();

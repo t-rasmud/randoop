@@ -211,8 +211,9 @@ public class EnumConstant extends CallableOperation {
    */
   private static Enum<?> valueOf(@Det Class<?> type, @Det String valueName) {
     for (Object obj : type.getEnumConstants()) {
-      @SuppressWarnings("determinism") // if type itself is deterministic, then which class it
-      // represents will always be the same at runtime
+      @SuppressWarnings("determinism") // enum classes of a @Det Class<?> are @Det, but the checker
+      // can't tell because the "? extends @NonDet Object" is also in the return type of
+      // getEnumConstants.
       @Det Enum<?> e = (Enum<?>) obj;
       if (e.name().equals(valueName)) {
         return e;

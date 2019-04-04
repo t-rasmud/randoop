@@ -890,9 +890,7 @@ public class Minimize extends CommandHandler {
     String runResult = runJavaFile(file, classpath, packageName, timeoutLimit);
 
     // Compare the standard output with the expected output.
-    // TODO-jason: Implement sames rules for equals for Map as for Set.
-    @SuppressWarnings("determinism") // Map equals is the same as Set equals, which is deterministic
-    // even if one operand is ordernondeterministic.
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/94
     @Det boolean result = expectedOutput.equals(normalizeJUnitOutput(runResult));
     return result;
   }

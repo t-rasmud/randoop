@@ -188,8 +188,8 @@ public final class Sequence {
    * @param inputs the input variables for the operation
    * @return the sequence formed by appending the given operation to this sequence
    */
-  @SuppressWarnings("determinism") // variable length arguments aren't handled correctly
-  public final Sequence extend(@Det TypedOperation operation, @Det Variable... inputs) {
+  public final Sequence extend(
+      @Det Sequence this, @Det TypedOperation operation, @Det Variable @Det ... inputs) {
     return extend(operation, Arrays.asList(inputs));
   }
 
@@ -353,8 +353,8 @@ public final class Sequence {
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // toCodeString requires @Det, but only @Det instances will be
-    // constructed so this won't cause nondeterminism.
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method even though it requires a @Det receiver
     @PolyDet String result = toCodeString();
     return result;
   }
@@ -570,11 +570,9 @@ public final class Sequence {
       return true;
     }
     Sequence other = (Sequence) o;
-    @SuppressWarnings("determinism") // Only @Det instances will be constructed, so this never
-    // causes nondeterminism
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det
     @Det Sequence tmp1 = this;
-    @SuppressWarnings("determinism") // Only @Det instances will be constructed, so this never
-    // causes nondeterminism
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det
     @Det Sequence tmp2 = other;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && tmp1.verifyFalse("size", tmp2);

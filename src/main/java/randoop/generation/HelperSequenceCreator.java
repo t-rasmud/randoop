@@ -124,8 +124,8 @@ class HelperSequenceCreator {
         : String.format(
             "Collection type %s should have one type argument, has %d",
             collectionType, argumentList.size());
-    @SuppressWarnings("determinism") // the above asserts means this list will have exactly one
-    // element, so accessing it is @PolyDet rather than @PolyDet("up")
+    @SuppressWarnings("determinism") // assert guarantees this is deterministic: since there's only
+    // one element, @PolyDet("up") is the same as @PolyDet.
     @PolyDet TypeArgument argumentType = argumentList.get(0);
     assert argumentType instanceof ReferenceArgument
         : "Type argument " + argumentType + " should be a reference type";
@@ -438,9 +438,7 @@ class HelperSequenceCreator {
     Class<?> collectionsClass = Collections.class;
     Method method;
     try {
-      @SuppressWarnings("determinism") // getClass on a valid array type causes an invalid array
-      // type error, which can safely be ignored,
-      // https://github.com/t-rasmud/checker-framework/issues/89
+      @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/89
       Class<?> arrClass = (new Object[] {}).getClass();
       method =
           collectionsClass.getMethod(

@@ -60,7 +60,7 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return argumentType.toString();
   }
 

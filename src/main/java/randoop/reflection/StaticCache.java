@@ -28,8 +28,6 @@ public class StaticCache {
   }
 
   /** Prints the fields and their values to standard output. */
-  @SuppressWarnings("determinism") // valueMap is a LinkedHashSet so its entrySet has a
-  // deterministic order.
   public void printCache() {
     for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
       System.out.println(

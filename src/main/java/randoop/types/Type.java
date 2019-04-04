@@ -260,8 +260,8 @@ public abstract class Type implements Comparable<Type> {
    * @return true if {@code c} is the runtime {@code Class<?>} of this type, false otherwise
    */
   public boolean runtimeClassIs(@Det Class<?> c) {
-    @SuppressWarnings(
-        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean result = this.getRuntimeClass().equals(c);
     return result;
   }
@@ -290,8 +290,8 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is the Class type, and false otherwise
    */
   public boolean isClass() {
-    @SuppressWarnings(
-        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean result = this.equals(JavaTypes.CLASS_TYPE);
     return result;
   }
@@ -330,8 +330,8 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this is the {@code Object} type, false otherwise
    */
   public boolean isObject() {
-    @SuppressWarnings(
-        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean result = this.equals(JavaTypes.OBJECT_TYPE);
     return result;
   }
@@ -342,8 +342,8 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is the String type, and false otherwise
    */
   public boolean isString() {
-    @SuppressWarnings(
-        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean result = this.equals(JavaTypes.STRING_TYPE);
     return result;
   }
@@ -354,8 +354,8 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is void, false otherwise
    */
   public boolean isVoid() {
-    @SuppressWarnings(
-        "determinism") // The result is @PolyDet("up"), but that only applies to collections.
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean result = this.equals(JavaTypes.VOID_TYPE);
     return result;
   }
@@ -534,18 +534,22 @@ public abstract class Type implements Comparable<Type> {
    */
   @Override
   public int compareTo(Type type) {
-    @SuppressWarnings("determinism") // These really are @PolyDet, but can't pass them to
-    // conditional.
-    @Det String name1 = this.getCanonicalName();
-    @SuppressWarnings("determinism") // These really are @PolyDet, but can't pass them to
-    // conditional.
-    @Det String name2 = this.getCanonicalName();
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
+    String name1 = this.getCanonicalName();
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
+    String name2 = this.getCanonicalName();
     if (name1 != null && name2 != null) {
-      @SuppressWarnings("determinism") // getCanonicalName can only be called on @Det, but Type must
-      // be @PolyDet to override
+      @SuppressWarnings(
+          "determinism") // constructors guarantee all instances of this class are @Det:
+      // it's safe to call this method that requires a @Det receiver
       @PolyDet int result = this.getCanonicalName().compareTo(type.getCanonicalName());
       return result;
     }
     return this.getRuntimeClass().getName().compareTo(this.getRuntimeClass().getName());
   }
+
+  @Override
+  public abstract String toString();
 }

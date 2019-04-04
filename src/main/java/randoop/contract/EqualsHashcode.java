@@ -23,8 +23,8 @@ public final class EqualsHashcode extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    @SuppressWarnings("determinism") // The hash codes themselves are deterministic but comparing
-    // them with two Objects who properly follow the hashCode contract will be deterministic.
+    @SuppressWarnings("determinism") // comparing hash codes is deterministic, even if the codes
+    // aren't
     @Det boolean result = !o1.equals(o2) || o1.hashCode() == o2.hashCode();
     return result;
   }
@@ -34,7 +34,7 @@ public final class EqualsHashcode extends ObjectContract {
     return 2;
   }
 
-  @SuppressWarnings("determinism") // Issue with Arrays.asList
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   static TypeTuple inputTypes =
       new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 

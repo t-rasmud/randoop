@@ -580,8 +580,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
    */
   public static boolean isNonreceiverType(Type type) {
-    @SuppressWarnings("determinism") // Class cannot be @OrderNonDet so @PolyDet("up") is the same
-    // as @PolyDet
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean tmp = type.getRuntimeClass().equals(Class.class);
     return type.isPrimitive() || type.isBoxedPrimitive() || type.isString() || tmp;
   }

@@ -60,9 +60,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
       NormalExecution execution = (NormalExecution) outcome;
       @Det Object result = null;
       try {
-        @SuppressWarnings(
-            "determinism") // getRuntimeClass returns a @Det Class<?>, so casting one of
-        // the deterministic Objects in input will have a deterministic a result.
+        @SuppressWarnings("determinism") // getRuntimeClass returns a @Det Class<?>, so casting one
+        // of the deterministic Objects in input will have a deterministic a result.
         @Det Object tmp = getOutputType().getRuntimeClass().cast(execution.getRuntimeValue());
         result = tmp;
       } catch (ClassCastException e) {

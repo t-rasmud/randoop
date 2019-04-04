@@ -200,8 +200,8 @@ public class Substitution<T extends @Det Object> {
   // Note for case study, this method is never called.
   public void print() {
     for (@Det Entry<TypeVariable, T> entry : map.entrySet()) {
-      @SuppressWarnings("determinism") // Since the value type can be anything, its toString may be
-      // nondeterministic. However, this method is never called so this is never a problem.
+      @SuppressWarnings("determinism") // expected nondeterminism: this is only run for debugging:
+      // the toString of the key type may be nondeterministic but this method is never called
       @Det String valueString = entry.getValue().toString();
       System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + valueString);
     }

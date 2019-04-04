@@ -43,7 +43,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public @NonDet String toString() {
+  public String toString() {
     return boundType.toString();
   }
 

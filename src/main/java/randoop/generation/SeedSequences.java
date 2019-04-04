@@ -20,7 +20,7 @@ public final class SeedSequences {
   }
 
   /** The initial pool of primitive values. */
-  @SuppressWarnings("determinism") // Issue with asList method.
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   private static final List<Object> primitiveSeeds =
       Arrays.<Object>asList(
           (byte) -1,

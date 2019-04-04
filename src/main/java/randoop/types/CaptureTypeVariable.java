@@ -83,8 +83,8 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // getName requires @Det, but only @Det instances will be
-    // constructed.
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
     @PolyDet String name = getName() + " of " + wildcard;
     return name;
   }

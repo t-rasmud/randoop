@@ -45,7 +45,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public @NonDet String toString() {
+  public String toString() {
     return "ParameterType [ " + lowerBound + ", " + upperBound + " ]";
   }
 

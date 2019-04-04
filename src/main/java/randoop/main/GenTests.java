@@ -796,10 +796,8 @@ public class GenTests extends GenInputsAbstract {
           for (int i = 0; i < sequence.statements.size(); i++) {
             Operation operation = sequence.statements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
-              @SuppressWarnings(
-                  "determinism") // If you look at the type of getOperation, it returns
-              // a TypedOperation which actually has a deterministic toString(), so calling
-              // operation.toString() is deterministic
+              @SuppressWarnings("determinism") // actual type toString returns @PolyDet: the actual
+              // type of operation is TypedOperation which has a @PolyDet toString
               @Det String operationString = operation.toString();
               executedOperationTrace.add(operationString);
             }

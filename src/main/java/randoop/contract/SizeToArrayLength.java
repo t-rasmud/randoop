@@ -22,8 +22,7 @@ public final class SizeToArrayLength extends ObjectContract {
   public boolean evaluate(@Det Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
-    @SuppressWarnings("determinism") // Collection is an invalid type to write because it must have
-    // a @Det component type but doesn't apply to the instanceof operator.
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
     boolean tmp = o instanceof Collection;
     if (tmp) {
       @Det Collection<? extends @Det Object> c = (Collection<? extends @Det Object>) o;
@@ -38,7 +37,7 @@ public final class SizeToArrayLength extends ObjectContract {
     return 1;
   }
 
-  @SuppressWarnings("determinism") // Issue with Arrays.asList
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.COLLECTION_TYPE));
 
   @Override

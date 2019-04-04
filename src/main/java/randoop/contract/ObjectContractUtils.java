@@ -21,7 +21,8 @@ public class ObjectContractUtils {
    * @param objs the list of values to substitute for variables
    * @return the outcome from the execution
    */
-  public static ExecutionOutcome execute(final @Det ObjectContract c, final @Det Object... objs) {
+  public static ExecutionOutcome execute(
+      final @Det ObjectContract c, final @Det Object @Det ... objs) {
     ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
     return ReflectionExecutor.executeReflectionCode(refl);
   }

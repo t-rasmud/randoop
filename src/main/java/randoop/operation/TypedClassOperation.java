@@ -125,8 +125,9 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      @SuppressWarnings("determinism") // getTypeParameters requires @Det but all instances
-      // constructed will be @Det and this won't cause nondeterminism.
+      @SuppressWarnings(
+          "determinism") // constructors guarantee all instances of this class are @Det:
+      // we can safely treat @PolyDet("up") as @PolyDet.
       @PolyDet String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
       return b + super.toString();
     } else {

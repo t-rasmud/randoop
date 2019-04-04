@@ -94,10 +94,7 @@ public class JavaFileWriter implements CodeWriter {
   private Path getDir(String packageName) {
     @PolyDet Path dir;
     if (dirName == null || dirName.length() == 0) {
-      @SuppressWarnings("determinism") // the user home directory will be the same through runs on
-      // the same machine
-      @Det String tmp = System.getProperty("user.dir");
-      dir = Paths.get(tmp);
+      dir = Paths.get(System.getProperty("user.dir"));
     } else {
       dir = Paths.get(dirName);
     }

@@ -38,9 +38,9 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
   @Override
   public void add(@Det TypedOperation operation, @Det OperationOutcome outcome) {
-    // TODO-jason: Remove this after "get()" fix.
-    @SuppressWarnings("determinism") // get doesn't handle collection values correctly, will soon.
     @Det Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
+    // TODO-jason: The @Det here should be unnecessary, but the checker thinks it's @NonDet unless I
+    // put this here. Why?
     @Det int count = 0;
     if (outcomeMap == null) {
       outcomeMap = new EnumMap<OperationOutcome, Integer>(OperationOutcome.class);
@@ -60,8 +60,8 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     writer.format("%nOperation History:%n");
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
-      @SuppressWarnings("determinism") // Iterating over ordernondeterministic key set, but values
-      // are combined in an order-insensitive way.
+      @SuppressWarnings(
+          "determinism") // combining elements of @OrderNonDet collection for @Det result
       @Det int nameLength = operation.getSignatureString().length();
       maxNameLength = Math.max(nameLength, maxNameLength);
     }

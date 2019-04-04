@@ -67,7 +67,6 @@ public class RandoopSecurityManager extends SecurityManager {
     // allow this operation by tested code");
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkDelete(@Det String file) {
     if (status == Status.OFF) return;
@@ -76,7 +75,6 @@ public class RandoopSecurityManager extends SecurityManager {
         "checkDelete: Randoop does not allow this operation by tested code");
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkExec(@Det String cmd) {
     if (status == Status.OFF) return;
@@ -134,7 +132,6 @@ public class RandoopSecurityManager extends SecurityManager {
     // super.checkPackageDefinition(pkg);
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkPermission(@Det Permission perm, @Det Object context) {
     if (status == Status.OFF) return;
@@ -145,7 +142,6 @@ public class RandoopSecurityManager extends SecurityManager {
     super.checkPermission(perm, context);
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkPermission(@Det Permission perm) {
     if (status == Status.OFF) return;
@@ -174,7 +170,6 @@ public class RandoopSecurityManager extends SecurityManager {
     // super.checkPropertyAccess(key);
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkRead(@Det FileDescriptor fd) {
     if (status == Status.OFF) return;
@@ -182,7 +177,6 @@ public class RandoopSecurityManager extends SecurityManager {
     throw new SecurityException("checkRead: Randoop does not allow this operation by tested code");
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkRead(@Det String file, @Det Object context) {
     if (status == Status.OFF) return;
@@ -191,7 +185,6 @@ public class RandoopSecurityManager extends SecurityManager {
         "checkRead(String,Object): Randoop does not allow this operation by tested code");
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkRead(@Det String file) {
     if (status == Status.OFF) return;
@@ -219,10 +212,7 @@ public class RandoopSecurityManager extends SecurityManager {
     // super.checkSystemClipboardAccess();
   }
 
-  @SuppressWarnings({
-    "deprecation",
-    "determinism"
-  }) // Superclass method takes @PolyDet, can't override
+  @SuppressWarnings("deprecation")
   @Override
   public boolean checkTopLevelWindow(Object window) {
     if (status == Status.OFF) {
@@ -234,7 +224,6 @@ public class RandoopSecurityManager extends SecurityManager {
     // return super.checkTopLevelWindow(window);
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkWrite(@Det FileDescriptor fd) {
     if (status == Status.OFF) return;
@@ -243,7 +232,6 @@ public class RandoopSecurityManager extends SecurityManager {
         "checkWrite(FileDescriptor): Randoop does not allow this operation by tested code");
   }
 
-  @SuppressWarnings("determinism") // Superclass method takes @PolyDet, can't override
   @Override
   public void checkWrite(@Det String file) {
     if (status == Status.OFF) return;

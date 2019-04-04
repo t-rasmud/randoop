@@ -85,9 +85,9 @@ public class ExecutableSpecification {
     ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.checkPrestate(args, table);
     for (ExecutableSpecification execSpec : parentList) {
-      @SuppressWarnings("determinism") // We are iterating over a @OrderNonDet List and calling a
-      // method which basically adds its information to another @OrderNonDet List. Thus, in this
-      // loop we can consider execSpec to be @Det
+      @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another:
+      // the checkPrestate method essentially adds information about execSpec to another
+      // @OrderNonDet List.
       @Det ExecutableSpecification tmp = execSpec;
       tmp.checkPrestate(args, table);
     }

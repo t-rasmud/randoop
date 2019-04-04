@@ -35,9 +35,7 @@ public final class Log {
     } catch (Throwable t) {
       logPrintf("A user-defined toString() method failed.%n");
       @Det Class<?> @Det [] argTypes = new Class<?> @Det [args.length];
-      @SuppressWarnings("determinism") // can't declare variable argument list @Det, but its order
-      // is decided at compile time so it's @Det anyway.
-      @Det int len = args.length;
+      int len = args.length;
       for (int i = 0; i < len; i++) {
         argTypes[i] = args[i].getClass();
       }

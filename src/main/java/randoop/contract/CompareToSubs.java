@@ -46,7 +46,7 @@ public class CompareToSubs extends ObjectContract {
     return 3;
   }
 
-  @SuppressWarnings("determinism") // Issue with Arrays.asList
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   static TypeTuple inputTypes =
       new TypeTuple(
           Arrays.<Type>asList(

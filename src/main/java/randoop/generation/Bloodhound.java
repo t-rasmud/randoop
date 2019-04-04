@@ -226,8 +226,7 @@ public class Bloodhound implements TypedOperationSelector {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
       for (TypedOperation typedOperation : methodWeights.keySet()) {
-        @SuppressWarnings("determinism") // this output is nondeterministic, but it's for
-        // debugging
+        @SuppressWarnings("determinism") // expected nondeterminism: this is only run for debugging
         @Det String output = typedOperation.getName() + ": " + methodWeights.get(typedOperation);
         System.out.println(output);
       }

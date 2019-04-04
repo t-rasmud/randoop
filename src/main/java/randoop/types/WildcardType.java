@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
@@ -86,14 +85,12 @@ class WildcardType extends ParameterType {
       if (this.getUpperTypeBound().isObject()) {
         return "?";
       }
-      @SuppressWarnings("determinism") // toString returns @PolyDet("up"), but the Object we call it
-      // on can't be @OrderNonDet so it's actually @PolyDet.
-      @PolyDet String result = "? extends " + this.getUpperTypeBound().toString();
+      String result = "? extends " + this.getUpperTypeBound().toString();
       return result;
     }
-    @SuppressWarnings("determinism") // toString returns @PolyDet("up"), but the Object we call it
-    // on can't be @OrderNonDet so it's actually @PolyDet.
-    @PolyDet String result = "? super " + this.getLowerTypeBound().toString();
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
+    String result = "? super " + this.getLowerTypeBound().toString();
     return result;
   }
 

@@ -61,8 +61,7 @@ import randoop.main.RandoopBug;
  */
 public class JDKTypes {
   /** The {@link GenericClassType} for {@code Collection} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on Collection.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType COLLECTION_TYPE =
       GenericClassType.forClass(Collection.class);
 
@@ -73,37 +72,31 @@ public class JDKTypes {
   public static final GenericClassType DEQUE_TYPE = GenericClassType.forClass(Deque.class);
 
   /** The {@link GenericClassType} for {@code List} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on List.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LIST_TYPE = GenericClassType.forClass(List.class);
 
   /** The {@link GenericClassType} for {@code Set} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on Set.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType SET_TYPE = GenericClassType.forClass(Set.class);
 
   /** The {@link GenericClassType} for {@code SortedSet} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on SortedSet.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType SORTED_SET_TYPE = GenericClassType.forClass(SortedSet.class);
 
   /** The {@link GenericClassType} for {@code Queue} */
   public static final GenericClassType QUEUE_TYPE = GenericClassType.forClass(Queue.class);
 
   /** The {@link GenericClassType} for {@code ArrayList} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on ArrayList.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ARRAY_LIST_TYPE = GenericClassType.forClass(ArrayList.class);
 
   /** The {@link GenericClassType} for {@code LinkedList} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on LinkedList.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LINKED_LIST_TYPE =
       GenericClassType.forClass(LinkedList.class);
 
   /** The {@link GenericClassType} for {@code LinkedHashSet} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on LinkedHashSet.class,
-  // but it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LINKED_HASH_SET_TYPE =
       GenericClassType.forClass(LinkedHashSet.class);
 
@@ -115,24 +108,21 @@ public class JDKTypes {
       GenericClassType.forClass(ArrayDeque.class);
 
   /** The {@link GenericClassType} for {@code TreeSet} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on TreeSet.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType TREE_SET_TYPE = GenericClassType.forClass(TreeSet.class);
 
   /** The {@link GenericClassType} for {@code EnumSet} */
   public static final GenericClassType ENUM_SET_TYPE = GenericClassType.forClass(EnumSet.class);
 
   /** The {@link GenericClassType} for {@code HashSet} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on HashSet.class, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType HASH_SET_TYPE = GenericClassType.forClass(HashSet.class);
 
   /** The {@link GenericClassType} for {@code Vector} */
   public static final GenericClassType VECTOR_TYPE = GenericClassType.forClass(Vector.class);
 
   /** The {@link GenericClassType} for {@code NavigableSet} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on NavigableSet.class,
-  // but it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType NAVIGABLE_SET_TYPE =
       GenericClassType.forClass(NavigableSet.class);
 
@@ -189,106 +179,81 @@ public class JDKTypes {
       GenericClassType.forClass(ConcurrentSkipListSet.class);
 
   /** The {@link GenericClassType} for {@code Map} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType MAP_TYPE = GenericClassType.forClass(Map.class);
 
   /** The {@link GenericClassType} for {@code SortedMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType SORTED_MAP_TYPE = GenericClassType.forClass(SortedMap.class);
 
   /** The {@link GenericClassType} for {@code TreeMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType TREE_MAP_TYPE = GenericClassType.forClass(TreeMap.class);
 
   /** The {@link GenericClassType} for {@code HashMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType HASH_MAP_TYPE = GenericClassType.forClass(HashMap.class);
 
   /** The {@link GenericClassType} for {@code Hashtable} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType HASH_TABLE_TYPE = GenericClassType.forClass(Hashtable.class);
 
   /** The {@link GenericClassType} for {@code LinkedHashMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LINKED_HASH_MAP_TYPE =
       GenericClassType.forClass(LinkedHashMap.class);
 
   /** The {@link GenericClassType} for {@code NavigableMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(NavigableMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_MAP_TYPE =
       GenericClassType.forClass(ConcurrentMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentNavigableMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(ConcurrentNavigableMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentHashMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_HASH_MAP_TYPE =
       GenericClassType.forClass(ConcurrentHashMap.class);
 
   /** The {@link GenericClassType} for {@code ConcurrentSkipListMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
   public static final GenericClassType CONCURRENT_SKIP_LIST_MAP_TYPE =
       GenericClassType.forClass(ConcurrentSkipListMap.class);
 
   /** The {@link GenericClassType} for {@code IdentityHashMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType IDENTITY_HASH_MAP_TYPE =
       GenericClassType.forClass(IdentityHashMap.class);
 
   /** The {@link GenericClassType} for {@code WeakHashMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType WEAK_HASH_MAP_TYPE =
       GenericClassType.forClass(WeakHashMap.class);
 
   /** The {@link GenericClassType} for {@code EnumMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ENUM_MAP_TYPE = GenericClassType.forClass(EnumMap.class);
 
   /** The {@link GenericClassType} for {@code AbstractCollection} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on
-  // AbstractCollection.class, but it's not being used as a type in code so it shouldn't affect
-  // behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_COLLECTION_TYPE =
       GenericClassType.forClass(AbstractCollection.class);
 
   /** The {@link GenericClassType} for {@code AbstractSet} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on AbstractSet.class,
-  // but it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_SET_TYPE =
       GenericClassType.forClass(AbstractSet.class);
 
   /** The {@link GenericClassType} for {@code AbstractList} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on AbstractList.class,
-  // but it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_LIST_TYPE =
       GenericClassType.forClass(AbstractList.class);
 
   /** The {@link GenericClassType} for {@code AbstractSequentialList} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on
-  // AbstractSequentialList.class, but it's not being used as a type in code so it shouldn't affect
-  // behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_SEQUENTIAL_LIST_TYPE =
       GenericClassType.forClass(AbstractSequentialList.class);
 
@@ -297,8 +262,7 @@ public class JDKTypes {
       GenericClassType.forClass(AbstractQueue.class);
 
   /** The {@link GenericClassType} for {@code AbstractMap} */
-  @SuppressWarnings("determinism") // there's an invalid element type error on this line, but
-  // it's not being used as a type in code so it shouldn't affect behavior
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_MAP_TYPE =
       GenericClassType.forClass(AbstractMap.class);
 

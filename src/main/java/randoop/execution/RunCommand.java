@@ -54,7 +54,8 @@ public class RunCommand {
 
     Log.logPrintf("RunCommand.run():%n");
     Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
-    @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+    @SuppressWarnings("determinism") // expected nondeterminism: logging the environment is
+    // nondeterministic but helps find nondeterminism.
     @Det Map<String, String> env = System.getenv();
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, env);
 

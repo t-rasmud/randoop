@@ -44,7 +44,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public @NonDet String toString() {
+  public String toString() {
     return variable.toString();
   }
 

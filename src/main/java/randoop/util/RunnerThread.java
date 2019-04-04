@@ -42,7 +42,8 @@ public class RunnerThread extends Thread {
   public final void run() {
     if (state != NextCallMustBe.RUN) throw new IllegalStateException();
     runFinished = false;
-    @SuppressWarnings("determinism") // requires @Det, but all instances are guaranteed to be @Det
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
     @Det RunnerThread runner = this;
     runner.executeReflectionCode();
     runFinished = true;

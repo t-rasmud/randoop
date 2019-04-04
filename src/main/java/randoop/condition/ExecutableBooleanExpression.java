@@ -245,7 +245,7 @@ public class ExecutableBooleanExpression {
    * @param expressionClassName the name of the expression class
    * @return the Java source code for the expression class
    */
-  private static String createConditionClassSource(
+  private static @PolyDet("up") String createConditionClassSource(
       String methodName,
       String expressionText,
       String parameterDeclarations,
@@ -255,9 +255,7 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    @SuppressWarnings("determinism") // this returns @PolyDet("up"), but no parameter can be
-    // ordernondeterministic so this will never be an issue.
-    @PolyDet String result =
+    String result =
         UtilPlume.join(
             new @PolyDet String @PolyDet [] {
               packageDeclaration + "public class " + expressionClassName + " {",

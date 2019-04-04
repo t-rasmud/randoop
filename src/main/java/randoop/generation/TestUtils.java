@@ -60,7 +60,7 @@ public class TestUtils {
    * GenInputsAbstract#selection_log}.
    */
   public static void setSelectionLog() {
-    @SuppressWarnings("determinism") // the log probably won't change between runs
+    @SuppressWarnings("determinism") // program specific properties are considered deterministic
     @Det String selectionLog = System.getProperty("randoop.selection.log");
     setSelectionLog(selectionLog);
   }

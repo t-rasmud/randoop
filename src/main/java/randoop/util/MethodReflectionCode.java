@@ -76,7 +76,8 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
     @Det String status = status();
     return "Call to "
         + method

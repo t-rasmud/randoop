@@ -346,9 +346,8 @@ public class SpecificationCollection {
       if (parents != null) {
         for (Method parent : parents) {
           @SuppressWarnings(
-              "determinism") // We are iterating over a @OrderNonDet List and calling a
-          // method which basically adds its information to another @OrderNonDet List. Thus, in this
-          // loop we can consider execSpec to be @Det
+              "determinism") // iterating over @OrderNonDet collection to modify another:
+          // addParent essentially just adds parentExecSpec to an @OrderNonDet List.
           @Det Method tmp = parent;
           ExecutableSpecification parentExecSpec = getExecutableSpecification(tmp);
           execSpec.addParent(parentExecSpec);

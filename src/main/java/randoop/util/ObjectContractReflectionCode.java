@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.contract.ObjectContract;
 
 public final class ObjectContractReflectionCode extends ReflectionCode {
@@ -9,12 +10,10 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   final ObjectContract c;
   final Object[] objs;
 
-  public ObjectContractReflectionCode(final @Det ObjectContract c, final @Det Object... objs) {
+  public ObjectContractReflectionCode(
+      final @Det ObjectContract c, final @Det Object @Det ... objs) {
     this.c = c;
-    @SuppressWarnings("determinism") // variable argument list can't be declared @Det, but its order
-    // is decided at compile time so it's @Det anyway.
-    @Det Object @Det [] tmp = objs;
-    this.objs = tmp;
+    this.objs = objs;
   }
 
   @Override
@@ -27,9 +26,10 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   }
 
   @Override
-  public String toString() {
-    @SuppressWarnings("determinism") // For some reason, calling status() is @NonDet no matter what.
-    @Det String status = status();
+  public @NonDet String toString() {
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
+    String status = status();
     return "Check of ObjectContract " + c + " args: " + Arrays.toString(objs) + status;
   }
 }

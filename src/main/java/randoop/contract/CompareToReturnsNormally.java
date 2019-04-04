@@ -38,7 +38,7 @@ public class CompareToReturnsNormally extends ObjectContract {
     return 1;
   }
 
-  @SuppressWarnings("determinism") // Issue with Arrays.asList
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE));
 
   @Override

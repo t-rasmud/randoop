@@ -221,8 +221,7 @@ public abstract class AbstractGenerator {
    * @return true iff any stopping criterion is met
    */
   protected boolean shouldStop() {
-    @SuppressWarnings("determinism") // this is only nondeterministic if the time limits is not 0,
-    // but this will not happen with the --deterministic option.
+    @SuppressWarnings("determinism") // "--deterministic" option ensures this is deterministic
     @PolyDet boolean pastTimeLimit =
         (limits.time_limit_millis != 0 && elapsedTime() >= limits.time_limit_millis);
     return pastTimeLimit
@@ -361,9 +360,9 @@ public abstract class AbstractGenerator {
       System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
       System.out.println();
-      @SuppressWarnings("determinism") // progress display is expected nondeterminism
+      @SuppressWarnings("determinism") // expected nondeterminism: printing incremental progress
       @Det String normalAvg = String.format("%.3g", ReflectionExecutor.normalExecAvgMillis());
-      @SuppressWarnings("determinism") // progress display is expected nondeterminism
+      @SuppressWarnings("determinism") // expected nondeterminism: printing incremental progress
       @Det String exepAvg = String.format("%.3g", ReflectionExecutor.excepExecAvgMillis());
       System.out.println("Average method execution time (normal termination):      " + normalAvg);
       System.out.println("Average method execution time (exceptional termination): " + exepAvg);

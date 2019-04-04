@@ -3,7 +3,6 @@ package randoop;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /** Various general global variables used throughout Randoop. */
 public class Globals {
@@ -45,7 +44,7 @@ public class Globals {
    *
    * @return the Java classpath
    */
-  public static @NonDet String getClassPath() {
+  public static String getClassPath() {
     return System.getProperty("java.class.path");
   }
 

@@ -91,11 +91,11 @@ public final class NonreceiverTerm extends CallableOperation {
    *     otherwise
    */
   public static boolean isNonreceiverType(Class<?> c) {
-    @SuppressWarnings("determinism") // Class cannot be @OrderNonDet, so @PolyDet("up") is the same
-    // as @PolyDet
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean tmp1 = c.equals(String.class);
-    @SuppressWarnings("determinism") // Class cannot be @OrderNonDet, so @PolyDet("up") is the same
-    // as @PolyDet
+    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
+    // same as @PolyDet
     @PolyDet boolean tmp2 = c.equals(Class.class);
     return c.isPrimitive() || tmp1 || PrimitiveTypes.isBoxedPrimitive(c) || tmp2;
   }
@@ -126,9 +126,8 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
-    @SuppressWarnings("determinism") // It's given in the comment for the class that value is null
-    // or of type String or a boxed primitive. No such type has a @NonDet toString so this
-    // toString call will be @Det
+    @SuppressWarnings("determinism") // actual type toString returns @PolyDet: it's guaranteed value
+    // is either of type String or a boxed primitive so calling toString here is @Det
     @Det String result = Objects.toString(value);
     return result;
   }
@@ -250,9 +249,8 @@ public final class NonreceiverTerm extends CallableOperation {
       valStr = "null";
     } else {
       if (type.isString()) {
-        @SuppressWarnings("determinism") // It's given in the comment for the class that value is
-        // null or of type String or a boxed primitive. No such type has a @NonDet toString so this
-        // toString call will be @PolyDet
+        @SuppressWarnings("determinism") // actual type toString returns @PolyDet: it's guaranteed
+        // value is either of type String or a boxed primitive so calling toString here is @Det
         @Det String tmp = value.toString();
         valStr = "\"" + StringEscapeUtils.escapeJava(tmp) + "\"";
       } else if (type.equals(JavaTypes.CHAR_TYPE)) {
@@ -260,9 +258,8 @@ public final class NonreceiverTerm extends CallableOperation {
       } else if (type.equals(JavaTypes.CLASS_TYPE)) {
         valStr = ((Class<?>) value).getName() + ".class";
       } else {
-        @SuppressWarnings("determinism") // It's given in the comment for the class that value is
-        // null or of type String or a boxed primitive. No such type has a @NonDet toString so this
-        // toString call will be @PolyDet
+        @SuppressWarnings("determinism") // actual type toString returns @PolyDet: it's guaranteed
+        // value is either of type String or a boxed primitive so calling toString here is @Det
         @Det String tmp = value.toString();
         valStr = tmp;
       }

@@ -31,8 +31,8 @@ public class Variable implements Comparable<Variable> {
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // getName requires @Det, but only @Det instances are
-    // constructed so this won't cause nondeterminism.
+    @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
+    // it's safe to call this method that requires a @Det receiver
     @PolyDet String name = this.getName();
     return name;
   }
