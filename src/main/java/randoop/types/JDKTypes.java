@@ -61,7 +61,6 @@ import randoop.main.RandoopBug;
  */
 public class JDKTypes {
   /** The {@link GenericClassType} for {@code Collection} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType COLLECTION_TYPE =
       GenericClassType.forClass(Collection.class);
 
@@ -72,31 +71,25 @@ public class JDKTypes {
   public static final GenericClassType DEQUE_TYPE = GenericClassType.forClass(Deque.class);
 
   /** The {@link GenericClassType} for {@code List} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LIST_TYPE = GenericClassType.forClass(List.class);
 
   /** The {@link GenericClassType} for {@code Set} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType SET_TYPE = GenericClassType.forClass(Set.class);
 
   /** The {@link GenericClassType} for {@code SortedSet} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType SORTED_SET_TYPE = GenericClassType.forClass(SortedSet.class);
 
   /** The {@link GenericClassType} for {@code Queue} */
   public static final GenericClassType QUEUE_TYPE = GenericClassType.forClass(Queue.class);
 
   /** The {@link GenericClassType} for {@code ArrayList} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ARRAY_LIST_TYPE = GenericClassType.forClass(ArrayList.class);
 
   /** The {@link GenericClassType} for {@code LinkedList} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LINKED_LIST_TYPE =
       GenericClassType.forClass(LinkedList.class);
 
   /** The {@link GenericClassType} for {@code LinkedHashSet} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LINKED_HASH_SET_TYPE =
       GenericClassType.forClass(LinkedHashSet.class);
 
@@ -108,21 +101,18 @@ public class JDKTypes {
       GenericClassType.forClass(ArrayDeque.class);
 
   /** The {@link GenericClassType} for {@code TreeSet} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType TREE_SET_TYPE = GenericClassType.forClass(TreeSet.class);
 
   /** The {@link GenericClassType} for {@code EnumSet} */
   public static final GenericClassType ENUM_SET_TYPE = GenericClassType.forClass(EnumSet.class);
 
   /** The {@link GenericClassType} for {@code HashSet} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType HASH_SET_TYPE = GenericClassType.forClass(HashSet.class);
 
   /** The {@link GenericClassType} for {@code Vector} */
   public static final GenericClassType VECTOR_TYPE = GenericClassType.forClass(Vector.class);
 
   /** The {@link GenericClassType} for {@code NavigableSet} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType NAVIGABLE_SET_TYPE =
       GenericClassType.forClass(NavigableSet.class);
 
@@ -179,31 +169,25 @@ public class JDKTypes {
       GenericClassType.forClass(ConcurrentSkipListSet.class);
 
   /** The {@link GenericClassType} for {@code Map} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType MAP_TYPE = GenericClassType.forClass(Map.class);
 
   /** The {@link GenericClassType} for {@code SortedMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType SORTED_MAP_TYPE = GenericClassType.forClass(SortedMap.class);
 
   /** The {@link GenericClassType} for {@code TreeMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType TREE_MAP_TYPE = GenericClassType.forClass(TreeMap.class);
 
   /** The {@link GenericClassType} for {@code HashMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType HASH_MAP_TYPE = GenericClassType.forClass(HashMap.class);
 
   /** The {@link GenericClassType} for {@code Hashtable} */
   public static final GenericClassType HASH_TABLE_TYPE = GenericClassType.forClass(Hashtable.class);
 
   /** The {@link GenericClassType} for {@code LinkedHashMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType LINKED_HASH_MAP_TYPE =
       GenericClassType.forClass(LinkedHashMap.class);
 
   /** The {@link GenericClassType} for {@code NavigableMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(NavigableMap.class);
 
@@ -224,36 +208,29 @@ public class JDKTypes {
       GenericClassType.forClass(ConcurrentSkipListMap.class);
 
   /** The {@link GenericClassType} for {@code IdentityHashMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType IDENTITY_HASH_MAP_TYPE =
       GenericClassType.forClass(IdentityHashMap.class);
 
   /** The {@link GenericClassType} for {@code WeakHashMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType WEAK_HASH_MAP_TYPE =
       GenericClassType.forClass(WeakHashMap.class);
 
   /** The {@link GenericClassType} for {@code EnumMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ENUM_MAP_TYPE = GenericClassType.forClass(EnumMap.class);
 
   /** The {@link GenericClassType} for {@code AbstractCollection} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_COLLECTION_TYPE =
       GenericClassType.forClass(AbstractCollection.class);
 
   /** The {@link GenericClassType} for {@code AbstractSet} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_SET_TYPE =
       GenericClassType.forClass(AbstractSet.class);
 
   /** The {@link GenericClassType} for {@code AbstractList} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_LIST_TYPE =
       GenericClassType.forClass(AbstractList.class);
 
   /** The {@link GenericClassType} for {@code AbstractSequentialList} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_SEQUENTIAL_LIST_TYPE =
       GenericClassType.forClass(AbstractSequentialList.class);
 
@@ -262,7 +239,6 @@ public class JDKTypes {
       GenericClassType.forClass(AbstractQueue.class);
 
   /** The {@link GenericClassType} for {@code AbstractMap} */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final GenericClassType ABSTRACT_MAP_TYPE =
       GenericClassType.forClass(AbstractMap.class);
 
