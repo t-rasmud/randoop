@@ -349,8 +349,6 @@ public class ForwardGenerator extends AbstractGenerator {
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
-            @SuppressWarnings("determinism") // expected nondeterminism: the checker makes no
-            // guarantees for Exceptions
             @Det String opName = operation.getOperation().getReflectionObject().toString();
             throw new RandoopInstantiationError(opName, e);
           }

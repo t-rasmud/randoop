@@ -52,9 +52,7 @@ public final class Execution {
    * @return the outcome of the ith statement
    */
   public ExecutionOutcome get(int i) {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet: specifically, outcomes is always @Det, so @PolyDet("up") doesn't make
-    // sense.
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet ExecutionOutcome result = outcomes.get(i);
     return result;
   }

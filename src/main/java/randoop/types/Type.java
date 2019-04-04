@@ -260,8 +260,7 @@ public abstract class Type implements Comparable<Type> {
    * @return true if {@code c} is the runtime {@code Class<?>} of this type, false otherwise
    */
   public boolean runtimeClassIs(@Det Class<?> c) {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean result = this.getRuntimeClass().equals(c);
     return result;
   }
@@ -290,8 +289,7 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is the Class type, and false otherwise
    */
   public boolean isClass() {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean result = this.equals(JavaTypes.CLASS_TYPE);
     return result;
   }
@@ -330,8 +328,7 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this is the {@code Object} type, false otherwise
    */
   public boolean isObject() {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean result = this.equals(JavaTypes.OBJECT_TYPE);
     return result;
   }
@@ -342,8 +339,7 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is the String type, and false otherwise
    */
   public boolean isString() {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean result = this.equals(JavaTypes.STRING_TYPE);
     return result;
   }
@@ -354,8 +350,7 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type is void, false otherwise
    */
   public boolean isVoid() {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean result = this.equals(JavaTypes.VOID_TYPE);
     return result;
   }

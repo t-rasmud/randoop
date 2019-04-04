@@ -36,8 +36,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw(@Det ConstructorReflectionCode this) {
     try {
-      @Det Object retval = this.constructor.newInstance(this.inputs);
-      this.retval = retval;
+      this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();

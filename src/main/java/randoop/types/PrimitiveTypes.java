@@ -118,8 +118,7 @@ public final class PrimitiveTypes {
     }
 
     // check identity and primitive  widening
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean result = source.equals(target) || isSubtype(source, target);
     return result;
   }

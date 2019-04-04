@@ -91,11 +91,9 @@ public final class NonreceiverTerm extends CallableOperation {
    *     otherwise
    */
   public static boolean isNonreceiverType(Class<?> c) {
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean tmp1 = c.equals(String.class);
-    @SuppressWarnings("determinism") // this type can't be @OrderNonDet: @PolyDet("up") is the
-    // same as @PolyDet
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/96
     @PolyDet boolean tmp2 = c.equals(Class.class);
     return c.isPrimitive() || tmp1 || PrimitiveTypes.isBoxedPrimitive(c) || tmp2;
   }
