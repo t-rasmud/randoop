@@ -22,9 +22,7 @@ public final class SizeToArrayLength extends ObjectContract {
   public boolean evaluate(@Det Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
-    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
-    boolean tmp = o instanceof Collection;
-    if (tmp) {
+    if (o instanceof Collection) {
       @Det Collection<? extends @Det Object> c = (Collection<? extends @Det Object>) o;
       assert c != null;
       return c.size() == c.toArray().length;
