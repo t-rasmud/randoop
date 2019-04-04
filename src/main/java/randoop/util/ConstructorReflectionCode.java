@@ -36,7 +36,10 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw(@Det ConstructorReflectionCode this) {
     try {
-      this.retval = this.constructor.newInstance(this.inputs);
+      @SuppressWarnings("determinism") // this is code randoop is run on: we assume the code randoop
+      // is generating tests for is deterinistic.
+      @Det Object tmp = this.constructor.newInstance(this.inputs);
+      this.retval = tmp;
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();
