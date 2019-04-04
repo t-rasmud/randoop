@@ -58,7 +58,6 @@ public class JavaTypes {
   public static final ClassOrInterfaceType STRING_TYPE = new NonParameterizedType(String.class);
 
   /** The {@code java.util.Collection} type. */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/84
   public static final ClassOrInterfaceType COLLECTION_TYPE =
       new NonParameterizedType(Collection.class);
 
