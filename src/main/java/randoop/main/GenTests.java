@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.EntryReader;
@@ -93,6 +94,7 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
+@DefaultQualifier(Det.class)
 public class GenTests extends GenInputsAbstract {
 
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
@@ -165,7 +167,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(@Det GenTests this, @Det String @Det [] args) {
+  public boolean handle(String @Det [] args) {
 
     try {
       @Det String @Det [] nonargs = options.parse(args);
@@ -190,7 +192,7 @@ public class GenTests extends GenInputsAbstract {
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
-      String[] pa = prop.split("=", 2);
+      @Det String @Det [] pa = prop.split("=", 2);
       if (pa.length != 2) {
         usage("invalid property definition: %s%n", prop);
       }
@@ -544,7 +546,7 @@ public class GenTests extends GenInputsAbstract {
    * @param classpath the classpath to replace
    * @return a version of classpath with relative paths replaced by absolute paths
    */
-  private String convertClasspathToAbsolute(@Det String classpath) {
+  private String convertClasspathToAbsolute(String classpath) {
     @Det String @Det [] relpaths = classpath.split(java.io.File.pathSeparator);
     int length = relpaths.length;
     @Det String @Det [] abspaths = new String @Det [length];
@@ -576,12 +578,11 @@ public class GenTests extends GenInputsAbstract {
    * @param testKind a {@code String} indicating the kind of tests for logging and error messages
    */
   private void writeTestFiles(
-      @Det GenTests this,
-      @Det JUnitCreator junitCreator,
-      @Det List<ExecutableSequence> testSequences,
-      @Det CodeWriter codeWriter,
-      @Det String basename,
-      @Det String testKind) {
+      JUnitCreator junitCreator,
+      List<ExecutableSequence> testSequences,
+      CodeWriter codeWriter,
+      String basename,
+      String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output%n");
@@ -681,7 +682,7 @@ public class GenTests extends GenInputsAbstract {
    * @param file the file to read from, may be null
    * @return contents of the file, as a set of Patterns
    */
-  private List<Pattern> readOmitMethods(@Det Path file) {
+  private List<Pattern> readOmitMethods(Path file) {
     @Det List<Pattern> result = new ArrayList<>();
     // Read method omissions from user-provided file
     if (file != null) {
@@ -709,8 +710,7 @@ public class GenTests extends GenInputsAbstract {
    * @param signatures the list of signature strings
    * @return the list of patterns for the signature strings
    */
-  private List<Pattern> createPatternsFromSignatures(
-      @Det GenTests this, @Det List<String> signatures) {
+  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
     @Det List<Pattern> patterns = new ArrayList<>();
     for (String signatureString : signatures) {
       patterns.add(signatureToPattern(signatureString));
@@ -747,8 +747,7 @@ public class GenTests extends GenInputsAbstract {
    * @param explorer the test generator
    * @param e the sequence exception
    */
-  private void printSequenceExceptionError(
-      @Det AbstractGenerator explorer, @Det SequenceExceptionError e) {
+  private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
     StringJoiner msg = new StringJoiner(Globals.lineSep);
     msg.add("");
@@ -885,9 +884,7 @@ public class GenTests extends GenInputsAbstract {
    * @return mapping from a class name to the abstract syntax tree for the class
    */
   private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      @Det String classNamePrefix,
-      @Det List<ExecutableSequence> sequences,
-      @Det JUnitCreator junitCreator) {
+      String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
 
     @Det LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
 
@@ -949,7 +946,7 @@ public class GenTests extends GenInputsAbstract {
    * @param format the string format
    * @param args the arguments
    */
-  private static void usage(String format, Object... args) {
+  private static void usage(String format, @Det Object... args) {
     System.out.print("ERROR: ");
     System.out.printf(format, args);
     System.out.println();
@@ -964,7 +961,7 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file to read
    * @return the contents of {@code filename}, as a list of strings
    */
-  private static List<String> getFileText(@Det String filename) {
+  private static List<String> getFileText(String filename) {
     if (filename == null) {
       return null;
     }
@@ -985,7 +982,7 @@ public class GenTests extends GenInputsAbstract {
    * @throws randoop.main.RandoopBug if there is an error locating the specification files
    * @return the list of JDK specification files
    */
-  private Collection<? extends Path> getJDKSpecificationFiles(@Det GenTests this) {
+  private Collection<? extends Path> getJDKSpecificationFiles() {
     @Det List<Path> fileList = new ArrayList<>();
     final String specificationDirectory = "/specifications/jdk/";
     Path directoryPath = getResourceDirectoryPath(specificationDirectory);

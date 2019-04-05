@@ -102,11 +102,11 @@ public class JUnitCreator {
   private static final String AFTER_EACH_METHOD = "teardown";
 
   public static JUnitCreator getTestCreator(
-      @Det String junit_package_name,
-      @Det BlockStmt beforeAllBody,
-      @Det BlockStmt afterAllBody,
-      @Det BlockStmt beforeEachBody,
-      @Det BlockStmt afterEachBody) {
+      String junit_package_name,
+      BlockStmt beforeAllBody,
+      BlockStmt afterAllBody,
+      BlockStmt beforeEachBody,
+      BlockStmt afterEachBody) {
     assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
@@ -135,7 +135,7 @@ public class JUnitCreator {
    *
    * @param body the (Java) text for method
    */
-  private void addBeforeAll(@Det BlockStmt body) {
+  private void addBeforeAll(BlockStmt body) {
     this.beforeAllBody = body;
   }
 
@@ -144,7 +144,7 @@ public class JUnitCreator {
    *
    * @param body the (Java) text for method
    */
-  private void addAfterAll(@Det BlockStmt body) {
+  private void addAfterAll(BlockStmt body) {
     this.afterAllBody = body;
   }
 
@@ -153,7 +153,7 @@ public class JUnitCreator {
    *
    * @param body the (Java) text for method
    */
-  private void addBeforeEach(@Det BlockStmt body) {
+  private void addBeforeEach(BlockStmt body) {
     this.beforeEachBody = body;
   }
 
@@ -162,7 +162,7 @@ public class JUnitCreator {
    *
    * @param text the (Java) text for method
    */
-  private void addAfterEach(@Det BlockStmt text) {
+  private void addAfterEach(BlockStmt text) {
     this.afterEachBody = text;
   }
 
@@ -175,10 +175,7 @@ public class JUnitCreator {
    * @return the CompilationUnit for a test class
    */
   public CompilationUnit createTestClass(
-      @Det JUnitCreator this,
-      @Det String testClassName,
-      @Det NameGenerator methodNameGen,
-      @Det List<ExecutableSequence> sequences) {
+      String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
@@ -278,7 +275,7 @@ public class JUnitCreator {
    * @return the {@code String} for the test method
    */
   private MethodDeclaration createTestMethod(
-      @Det String className, @Det String methodName, @Det ExecutableSequence testSequence) {
+      String className, String methodName, ExecutableSequence testSequence) {
     MethodDeclaration method = new MethodDeclaration(Modifier.PUBLIC, new VoidType(), methodName);
     @Det List<AnnotationExpr> annotations =
         Collections.singletonList(new MarkerAnnotationExpr(new NameExpr("Test")));
@@ -332,7 +329,7 @@ public class JUnitCreator {
    * @return the fixture method as a {@code String}
    */
   private MethodDeclaration createFixture(
-      @Det String annotation, @Det int modifiers, @Det String methodName, @Det BlockStmt body) {
+      String annotation, int modifiers, String methodName, BlockStmt body) {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
     @Det List<AnnotationExpr> annotations =
         Collections.singletonList(new MarkerAnnotationExpr(new NameExpr(annotation)));
@@ -348,7 +345,7 @@ public class JUnitCreator {
    * @param testClassNames the names of the test classes in the suite
    * @return the {@code String} with the declaration for the suite class
    */
-  public String createTestSuite(@Det String suiteClassName, @Det Set<String> testClassNames) {
+  public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
@@ -390,8 +387,7 @@ public class JUnitCreator {
    * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
-  public String createTestDriver(
-      @Det String driverName, @Det Set<String> testClassNames, @Det int numMethods) {
+  public String createTestDriver(String driverName, Set<String> testClassNames, int numMethods) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));

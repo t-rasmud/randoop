@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
 /**
  * Represents a type bound on a type variable or wildcard occurring as a type parameter of a generic
@@ -36,6 +38,7 @@ import org.checkerframework.checker.determinism.qual.OrderNonDet;
  * @see IntersectionTypeBound
  * @see LazyParameterBound
  */
+@DefaultQualifier(Det.class)
 public abstract class ParameterBound {
 
   /**
@@ -44,7 +47,7 @@ public abstract class ParameterBound {
    * @param type the {@link ReferenceType}
    * @return a {@link EagerReferenceBound} with the given type
    */
-  public static ParameterBound forType(@Det ReferenceType type) {
+  public static ParameterBound forType(ReferenceType type) {
     return new EagerReferenceBound(type);
   }
 
@@ -61,7 +64,7 @@ public abstract class ParameterBound {
    */
   static ParameterBound forTypes(
       @OrderNonDet Set<java.lang.reflect.TypeVariable<?>> variableSet,
-      java.lang.reflect.@Det Type @Det [] bounds) {
+      java.lang.reflect.Type @Det [] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non-null");
     }
@@ -70,7 +73,7 @@ public abstract class ParameterBound {
       return ParameterBound.forType(variableSet, bounds[0]);
     } else {
       @Det List<ParameterBound> boundList = new ArrayList<>();
-      for (java.lang.reflect.Type type : bounds) {
+      for (java.lang.reflect.@Det Type type : bounds) {
         boundList.add(ParameterBound.forType(variableSet, type));
       }
       return new IntersectionTypeBound(boundList);
@@ -88,7 +91,7 @@ public abstract class ParameterBound {
    */
   static ParameterBound forType(
       @OrderNonDet Set<java.lang.reflect.TypeVariable<?>> variableSet,
-      java.lang.reflect.@Det Type type) {
+      java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type, variableSet)) {
         return new EagerReferenceBound(ParameterizedType.forType(type));
@@ -111,8 +114,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
    */
-  public abstract ParameterBound apply(
-      @Det ParameterBound this, @Det Substitution<ReferenceType> substitution);
+  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 
   /**
    * Applies a capture conversion to any wildcard arguments in the type of this bound.
@@ -120,14 +122,14 @@ public abstract class ParameterBound {
    * @return this type with any wildcards replaced by capture conversion
    * @see ReferenceType#applyCaptureConversion()
    */
-  public abstract ParameterBound applyCaptureConversion(@Det ParameterBound this);
+  public abstract ParameterBound applyCaptureConversion();
 
   /**
    * Returns any type parameters in the type of this bound.
    *
    * @return the list of {@code TypeVariable} objects in this bound
    */
-  public abstract List<TypeVariable> getTypeParameters(@Det ParameterBound this);
+  public abstract List<TypeVariable> getTypeParameters();
 
   /**
    * Indicates whether the given (reflection) type reference represents a type in which a type
@@ -138,7 +140,7 @@ public abstract class ParameterBound {
    * @return true if the type has a type variable, and false otherwise
    */
   private static boolean hasTypeVariable(
-      java.lang.reflect.@Det Type type,
+      java.lang.reflect.Type type,
       @OrderNonDet Set<java.lang.reflect.TypeVariable<?>> variableSet) {
     if (isTypeVariable(type)) {
       java.lang.reflect.TypeVariable<?> variable = (java.lang.reflect.TypeVariable) type;
@@ -159,7 +161,7 @@ public abstract class ParameterBound {
     // @Det required from https://github.com/typetools/checker-framework/issues/2172
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
-      for (java.lang.reflect.@Det Type argType : pt.getActualTypeArguments()) {
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
@@ -168,13 +170,13 @@ public abstract class ParameterBound {
     // @Det required from https://github.com/typetools/checker-framework/issues/2172
     if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
-      for (java.lang.reflect.@Det Type boundType : wt.getUpperBounds()) {
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
         if (hasTypeVariable(boundType, variableSet)) {
           return true;
         }
       }
       // @Det required from https://github.com/typetools/checker-framework/issues/2172
-      for (java.lang.reflect.@Det Type boundType : wt.getLowerBounds()) {
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
         if (hasTypeVariable(boundType, variableSet)) {
           return true;
         }
@@ -189,7 +191,7 @@ public abstract class ParameterBound {
    * @param type the type to test
    * @return true if the type is a type variable, false otherwise
    */
-  static boolean isTypeVariable(java.lang.reflect.Type type) {
+  static boolean isTypeVariable(java.lang.reflect.@PolyDet Type type) {
     return type instanceof java.lang.reflect.TypeVariable;
   }
 
@@ -198,14 +200,14 @@ public abstract class ParameterBound {
    *
    * @return true, if this bound has a wildcard argument, and false otherwise
    */
-  abstract boolean hasWildcard();
+  abstract @PolyDet boolean hasWildcard(@PolyDet ParameterBound this);
 
   /**
    * Indicates whether the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise
    */
-  public abstract boolean isGeneric();
+  public abstract @PolyDet boolean isGeneric(@PolyDet ParameterBound this);
 
   /**
    * Indicates whether this bound is a lower bound of the given argument type.
@@ -214,8 +216,7 @@ public abstract class ParameterBound {
    * @param subst the substitution
    * @return true if this bound is a subtype of the given type
    */
-  public abstract boolean isLowerBound(
-      @Det ParameterBound this, @Det Type argType, @Det Substitution<ReferenceType> subst);
+  public abstract boolean isLowerBound(Type argType, Substitution<ReferenceType> subst);
 
   /**
    * Tests whether this is a lower bound on the type of a given bound with respect to a type
@@ -226,10 +227,8 @@ public abstract class ParameterBound {
    * @return true, if this bound is a lower bound on the type of the given bound, and false
    *     otherwise
    */
-  boolean isLowerBound(
-      @Det ParameterBound this,
-      @Det ParameterBound bound,
-      @Det Substitution<ReferenceType> substitution) {
+  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+
     return false;
   }
 
@@ -238,7 +237,7 @@ public abstract class ParameterBound {
    *
    * @return true if this bound is {@code Object}, false otherwise
    */
-  public abstract boolean isObject();
+  public abstract @PolyDet boolean isObject(@PolyDet ParameterBound this);
 
   /**
    * Indicates whether the type of this bound is a subtype of the type of the given bound.
@@ -246,7 +245,7 @@ public abstract class ParameterBound {
    * @param boundType the other bound
    * @return true if this type is a subtype of the other bound, false otherwise
    */
-  public abstract boolean isSubtypeOf(@Det ParameterBound this, @Det ParameterBound boundType);
+  public abstract boolean isSubtypeOf(ParameterBound boundType);
 
   /**
    * Determines if this bound is an upper bound for the argument type.
@@ -256,8 +255,7 @@ public abstract class ParameterBound {
    * @return true if this bound is satisfied by the concrete type when the substitution is used on
    *     the bound, false otherwise
    */
-  public abstract boolean isUpperBound(
-      @Det ParameterBound this, @Det Type argType, @Det Substitution<ReferenceType> subst);
+  public abstract boolean isUpperBound(Type argType, Substitution<ReferenceType> subst);
 
   /**
    * Indicates whether this bound is an upper bound on the type of the given bound with respect to
@@ -267,20 +265,17 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
    */
-  abstract boolean isUpperBound(
-      @Det ParameterBound this,
-      @Det ParameterBound bound,
-      @Det Substitution<ReferenceType> substitution);
+  abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
 
   /**
    * Indicates whether this bound is a type variable.
    *
    * @return true if this bound is a type variable, false otherwise
    */
-  public boolean isVariable() {
+  public @PolyDet boolean isVariable(@PolyDet ParameterBound this) {
     return false;
   }
 
   @Override
-  public abstract String toString();
+  public abstract @PolyDet String toString(@PolyDet ParameterBound this);
 }

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
@@ -40,6 +41,7 @@ import randoop.util.SimpleList;
  * <p>The only two methods that are currently externally used are {@link #createArraySequence} and
  * {@link #createCollection}.
  */
+@DefaultQualifier(Det.class)
 class HelperSequenceCreator {
 
   private HelperSequenceCreator() {
@@ -57,7 +59,7 @@ class HelperSequenceCreator {
    * @return the singleton list containing the compatible sequence
    */
   static SimpleList<Sequence> createArraySequence(
-      @Det ComponentManager components, @Det Type collectionType) {
+      ComponentManager components, Type collectionType) {
 
     final int MAX_LENGTH = 7;
 
@@ -140,7 +142,7 @@ class HelperSequenceCreator {
    * @return a sequence that creates a collection of type {@code collectionType}
    */
   static Sequence createCollection(
-      @Det ComponentManager componentManager, @Det InstantiatedType collectionType) {
+      ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);
 
@@ -189,8 +191,7 @@ class HelperSequenceCreator {
       SequenceExtender addExtender =
           new SequenceExtender() {
             @Override
-            public Sequence extend(
-                @Det Sequence addSequence, @Det int creationIndex, @Det Integer index, int i) {
+            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
               @Det List<Variable> inputs = new ArrayList<>();
               inputs.add(addSequence.getVariable(creationIndex));
               inputs.add(addSequence.getVariable(index));
@@ -202,8 +203,7 @@ class HelperSequenceCreator {
   }
 
   private interface SequenceExtender {
-    Sequence extend(
-        @Det Sequence addSequence, @Det int creationIndex, @Det Integer index, @Det int i);
+    Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i);
   }
 
   /**
@@ -219,9 +219,9 @@ class HelperSequenceCreator {
    *     elementsSequence
    */
   private static Sequence buildAddSequence(
-      @Det Sequence creationSequence,
-      @Det TupleSequence elementsSequence,
-      @Det SequenceExtender addSequenceExtender) {
+      Sequence creationSequence,
+      TupleSequence elementsSequence,
+      SequenceExtender addSequenceExtender) {
     @Det List<Sequence> inputSequences = new ArrayList<>();
     inputSequences.add(elementsSequence.sequence);
     inputSequences.add(creationSequence);
@@ -243,7 +243,7 @@ class HelperSequenceCreator {
    * @return a {@link Sequence} that creates a collection of {@code implementingType}
    */
   private static Sequence createCollectionCreationSequence(
-      @Det InstantiatedType implementingType, @Det ReferenceType elementType) {
+      InstantiatedType implementingType, ReferenceType elementType) {
     Sequence creationSequence = new Sequence();
     @Det List<Variable> creationInputs = new ArrayList<>();
     TypedOperation creationOperation;
@@ -276,7 +276,7 @@ class HelperSequenceCreator {
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(
-      @Det TupleSequence elementsSequence, @Det Type elementType, @Det int length) {
+      TupleSequence elementsSequence, Type elementType, int length) {
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()
@@ -291,8 +291,7 @@ class HelperSequenceCreator {
       SequenceExtender addExtender =
           new SequenceExtender() {
             @Override
-            public Sequence extend(
-                @Det Sequence addSequence, @Det int creationIndex, @Det Integer index, @Det int i) {
+            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
               addSequence =
                   addSequence.extend(
                       TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
@@ -316,8 +315,7 @@ class HelperSequenceCreator {
    * @param length the length of the array to be created
    * @return the sequence to create an array with the given element type and length
    */
-  private static Sequence createGenericArrayCreationSequence(
-      @Det ArrayType arrayType, @Det int length) {
+  private static Sequence createGenericArrayCreationSequence(ArrayType arrayType, int length) {
 
     ArrayType rawArrayType = arrayType.getRawTypeArray();
 
@@ -369,7 +367,7 @@ class HelperSequenceCreator {
    * @param elementType the type
    * @return a non-abstract subtype of the given type, or the original type
    */
-  private static InstantiatedType getImplementingType(@Det InstantiatedType elementType) {
+  private static InstantiatedType getImplementingType(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
     if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
@@ -391,7 +389,7 @@ class HelperSequenceCreator {
    * @param creationType the EnumSet type
    * @return the empty EnumSet with the given type
    */
-  private static TypedOperation getEnumSetCreation(@Det ParameterizedType creationType) {
+  private static TypedOperation getEnumSetCreation(ParameterizedType creationType) {
     Class<?> enumsetClass = JDKTypes.ENUM_SET_TYPE.getRuntimeClass();
     Method method;
     try {
@@ -412,7 +410,7 @@ class HelperSequenceCreator {
    * @return return an operation to add elements to the collection type
    */
   private static TypedOperation getAddOperation(
-      @Det ParameterizedType collectionType, @Det ReferenceType elementType) {
+      ParameterizedType collectionType, ReferenceType elementType) {
     Method addMethod;
     try {
       addMethod = collectionType.getRuntimeClass().getMethod("add", Object.class);
@@ -434,7 +432,7 @@ class HelperSequenceCreator {
    * @param elementType the element type of the collection
    * @return the operation to initialize a collection from an array
    */
-  private static TypedOperation getCollectionAddAllOperation(@Det ReferenceType elementType) {
+  private static TypedOperation getCollectionAddAllOperation(ReferenceType elementType) {
     Class<?> collectionsClass = Collections.class;
     Method method;
     try {
