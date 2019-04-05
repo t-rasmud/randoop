@@ -12,6 +12,7 @@ import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -35,6 +36,7 @@ import randoop.util.SimpleList;
  * contain any information about the runtime behavior of the sequence. The class
  * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
+@DefaultQualifier(Det.class)
 public final class Sequence {
 
   /** The list of statements. */
@@ -96,7 +98,7 @@ public final class Sequence {
    * @param c the type for initialized variable
    * @return the sequence consisting of the initialization
    */
-  public static Sequence zero(@Det Type c) {
+  public static Sequence zero(Type c) {
     return new Sequence()
         .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
@@ -107,9 +109,9 @@ public final class Sequence {
    * @param value non-null reference to a primitive or String value
    * @return a {@link Sequence} consisting of a statement created with the object
    */
-  public static Sequence createSequenceForPrimitive(@Det Object value) {
+  public static Sequence createSequenceForPrimitive(Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");
-    @Det Type type = Type.forValue(value);
+    Type type = Type.forValue(value);
 
     if (!TypedOperation.isNonreceiverType(type)) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
@@ -136,20 +138,17 @@ public final class Sequence {
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
-      @Det TypedOperation operation,
-      @Det List<Sequence> inputSequences,
-      @Det List<Integer> indexes) {
+      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
     @Det List<Variable> inputs = new ArrayList<>();
     for (Integer inputIndex : indexes) {
-      @Det Variable v = inputSequence.getVariable(inputIndex);
+      Variable v = inputSequence.getVariable(inputIndex);
       inputs.add(v);
     }
     return inputSequence.extend(operation, inputs);
   }
 
-  public static Sequence createSequence(
-      @Det TypedOperation operation, @Det TupleSequence elementsSequence) {
+  public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     @Det List<Variable> inputs = new ArrayList<>();
     for (int index : elementsSequence.getOutputIndices()) {
       inputs.add(elementsSequence.sequence.getVariable(index));
@@ -165,8 +164,7 @@ public final class Sequence {
    * @param inputVariables the input variables
    * @return the sequence formed by appending the given operation to this sequence
    */
-  public final Sequence extend(
-      @Det Sequence this, @Det TypedOperation operation, @Det List<Variable> inputVariables) {
+  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
     @Det List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
     for (Variable v : inputVariables) {
@@ -188,8 +186,7 @@ public final class Sequence {
    * @param inputs the input variables for the operation
    * @return the sequence formed by appending the given operation to this sequence
    */
-  public final Sequence extend(
-      @Det Sequence this, @Det TypedOperation operation, @Det Variable @Det ... inputs) {
+  public final Sequence extend(TypedOperation operation, Variable @Det ... inputs) {
     return extend(operation, Arrays.asList(inputs));
   }
 
@@ -202,8 +199,7 @@ public final class Sequence {
    * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(TypedOperation, List)
    */
-  public final Sequence extend(
-      @Det Sequence this, @Det Statement statement, @Det List<Variable> inputs) {
+  public final Sequence extend(Statement statement, List<Variable> inputs) {
     return extend(statement.getOperation(), inputs);
   }
 
@@ -213,7 +209,7 @@ public final class Sequence {
    * @param sequences the list of sequences to concatenate
    * @return the concatenation of the sequences in the list
    */
-  public static Sequence concatenate(@Det List<Sequence> sequences) {
+  public static Sequence concatenate(List<Sequence> sequences) {
     @Det List<SimpleList<Statement>> statements1 = new ArrayList<>();
     @NonDet int newHashCode = 0;
     int newNetSize = 0;
@@ -231,7 +227,7 @@ public final class Sequence {
    * @param index the index of the statement position in this sequence
    * @return the statement at the given position
    */
-  public final Statement getStatement(@Det int index) {
+  public final Statement getStatement(int index) {
     return getStatementWithInputs(index);
   }
 
@@ -250,7 +246,7 @@ public final class Sequence {
    * @param i the statement index
    * @return the variable created by the statement at the given index
    */
-  public Variable getVariable(@Det Sequence this, @Det int i) {
+  public Variable getVariable(int i) {
     checkIndex(i);
     return new Variable(this, i);
   }
@@ -280,7 +276,7 @@ public final class Sequence {
    *
    * @return the variable assigned to by the last statement of this sequence
    */
-  public Variable getLastVariable(@Det Sequence this) {
+  public Variable getLastVariable() {
     return new Variable(this, this.statements.size() - 1);
   }
 
@@ -302,7 +298,7 @@ public final class Sequence {
    * @param statementIndex the index for the statement
    * @return the list of variables for the statement at the given index
    */
-  public List<Variable> getInputs(@Det Sequence this, @Det int statementIndex) {
+  public List<Variable> getInputs(int statementIndex) {
     @Det List<Variable> inputsAsVariables = new ArrayList<>();
     for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
       inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
@@ -318,7 +314,7 @@ public final class Sequence {
    * @return a string containing Java code for this sequence
    */
   @SideEffectFree
-  public String toCodeString(@Det Sequence this) {
+  public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       // Don't dump primitive initializations, if using literals.
@@ -342,7 +338,7 @@ public final class Sequence {
    *
    * @return a string containing Java code for this sequence
    */
-  private String toFullCodeString(@Det Sequence this) {
+  private String toFullCodeString() {
     // XXX can we do this so that substitutions don't happen?
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -352,7 +348,7 @@ public final class Sequence {
   }
 
   @Override
-  public String toString() {
+  public String toString(@PolyDet Sequence this) {
     @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det:
     // it's safe to call this method even though it requires a @Det receiver
     @PolyDet String result = toCodeString();
@@ -399,7 +395,7 @@ public final class Sequence {
    * @return the relative negative index computed from the position and variable
    */
   private static RelativeNegativeIndex getRelativeIndexForVariable(
-      @Det int statementPosition, @Det Variable v) {
+      int statementPosition, Variable v) {
     if (v.index >= statementPosition) throw new IllegalArgumentException();
     return new RelativeNegativeIndex(-(statementPosition - v.index));
   }
@@ -412,8 +408,7 @@ public final class Sequence {
    * @param input relative index of the input variable
    * @return the variable at the relative index from the given statement position
    */
-  private Variable getVariableForInput(
-      @Det Sequence this, @Det int statementPosition, RelativeNegativeIndex input) {
+  private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
     int absoluteIndex = statementPosition + input.index;
     if (absoluteIndex < 0) {
       throw new IllegalArgumentException("index should be non-negative: " + absoluteIndex);
@@ -430,7 +425,7 @@ public final class Sequence {
    * @return the sum of the hash codes of the statements in the sequence
    */
   private static @NonDet int computeHashcode(SimpleList<Statement> statements) {
-    int hashCode = 0;
+    @NonDet int hashCode = 0;
     for (int i = 0; i < statements.size(); i++) {
       Statement s = statements.get(i);
       hashCode += s.hashCode();
@@ -456,7 +451,7 @@ public final class Sequence {
   }
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
-  private void computeLastStatementInfo(@Det Sequence this) {
+  private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
 
@@ -562,14 +557,14 @@ public final class Sequence {
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
   @SuppressWarnings("ReferenceEquality")
   @Override
-  public final boolean equals(Object o) {
+  public final boolean equals(@PolyDet Sequence this, @PolyDet Object o) {
     if (!(o instanceof Sequence)) {
       return false;
     }
     if (o == this) {
       return true;
     }
-    Sequence other = (Sequence) o;
+    @PolyDet Sequence other = (Sequence) o;
     @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det
     @Det Sequence tmp1 = this;
     @SuppressWarnings("determinism") // constructors guarantee all instances of this class are @Det
@@ -592,7 +587,7 @@ public final class Sequence {
   }
 
   // Debugging helper for equals method.
-  private boolean verifyFalse(@Det Sequence this, String message, @Det Sequence other) {
+  private boolean verifyFalse(String message, Sequence other) {
     if (this.toParsableString().equals(other.toParsableString())) {
       throw new IllegalStateException(message + " : " + this.toString());
     }
@@ -607,7 +602,7 @@ public final class Sequence {
 
   // See comment at computeHashCode method for notes on hashCode.
   @Override
-  public final @NonDet int hashCode() {
+  public final @NonDet int hashCode(@PolyDet Sequence this) {
     return savedHashCode;
   }
 
@@ -626,7 +621,7 @@ public final class Sequence {
    *
    * @return the list of all statements in this sequence
    */
-  private SimpleList<Statement> getStatementsWithInputs() {
+  private SimpleList<Statement> getStatementsWithInputs(@PolyDet Sequence this) {
     // The list is constructed unmodifiable so we can just return it.
     return this.statements;
   }
@@ -637,7 +632,7 @@ public final class Sequence {
    * @param index the statement position
    * @return the {@link Statement} at the given index
    */
-  private Statement getStatementWithInputs(@Det int index) {
+  private Statement getStatementWithInputs(int index) {
     if (!isValidIndex(index)) {
       throw new IllegalArgumentException("Index " + index + " not valid for sequence " + this);
     }
@@ -657,8 +652,7 @@ public final class Sequence {
    *     call receiver
    * @return a variable used in the last statement of the given type
    */
-  public List<Variable> allVariablesForTypeLastStatement(
-      @Det Type type, @Det boolean onlyReceivers) {
+  public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
     @Det List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
     for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
@@ -680,8 +674,7 @@ public final class Sequence {
    *     call receiver
    * @return a variable used in the last statement of the given type
    */
-  public Variable randomVariableForTypeLastStatement(
-      @Det Sequence this, @Det Type type, @Det boolean onlyReceivers) {
+  public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     @Det List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
       // Statement lastStatement = this.statements.get(this.statements.size() - 1);
@@ -706,8 +699,7 @@ public final class Sequence {
    *     call receiver
    * @return a variable of the given type
    */
-  public Variable randomVariableForType(
-      @Det Sequence this, @Det Type type, @Det boolean onlyReceivers) {
+  public Variable randomVariableForType(Type type, boolean onlyReceivers) {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
@@ -745,7 +737,7 @@ public final class Sequence {
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
   @SuppressWarnings("ReferenceEquality")
-  private void checkInputs(@Det TypedOperation operation, @Det List<Variable> inputVariables) {
+  private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
           "statement.getInputTypes().size():"
@@ -821,7 +813,7 @@ public final class Sequence {
    * @param i the statement index
    * @return the absolute indices for the input variables in the given statement
    */
-  public List<Integer> getInputsAsAbsoluteIndices(@Det Sequence this, @Det int i) {
+  public List<Integer> getInputsAsAbsoluteIndices(int i) {
     @Det List<Integer> inputsAsVariables = new ArrayList<>();
     for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
       inputsAsVariables.add(getVariableForInput(i, relIndex).index);
@@ -835,7 +827,7 @@ public final class Sequence {
    * @param b the {@link StringBuilder} to which the code is appended
    * @param index the position of the statement to print in this {@code Sequence}
    */
-  public void appendCode(@Det Sequence this, @Det StringBuilder b, @Det int index) {
+  public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
     getStatement(index).appendCode(getVariable(index), getInputs(index), b);
@@ -853,7 +845,7 @@ public final class Sequence {
    *
    * @return parsable string description of sequence
    */
-  public String toParsableString(@Det Sequence this) {
+  public String toParsableString() {
     return toParsableString(Globals.lineSep);
   }
 
@@ -864,7 +856,7 @@ public final class Sequence {
    * @param statementSep the statement separator
    * @return the string representation of this sequence
    */
-  private String toParsableString(@Det Sequence this, @Det String statementSep) {
+  private String toParsableString(String statementSep) {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -923,7 +915,7 @@ public final class Sequence {
    * @return the sequence constructed from the list of strings
    * @throws SequenceParseException if any statement cannot be parsed
    */
-  public static Sequence parse(@Det List<String> statements) throws SequenceParseException {
+  public static Sequence parse(List<String> statements) throws SequenceParseException {
 
     @Det Map<String, Integer> valueMap = new LinkedHashMap<>();
     Sequence sequence = new Sequence();
@@ -1070,7 +1062,7 @@ public final class Sequence {
    * @return the sequence constructed by parsing the input string
    * @throws SequenceParseException if string is not valid sequence
    */
-  public static Sequence parse(@Det String string) throws SequenceParseException {
+  public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
 
@@ -1110,12 +1102,12 @@ public final class Sequence {
    * @param index the statement position in this sequence
    * @return the sequence containing the index position
    */
-  Sequence getSubsequence(@Det int index) {
+  Sequence getSubsequence(int index) {
     return new Sequence(statements.getSublist(index));
   }
 
   /** Write this sequence to the Randoop log. */
-  public void log(@Det Sequence this) {
+  public void log() {
     if (!Log.isLoggingOn()) {
       return;
     }
@@ -1250,17 +1242,17 @@ public final class Sequence {
     }
 
     @Override
-    public String toString() {
+    public String toString(@PolyDet RelativeNegativeIndex this) {
       return Integer.toString(index);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@PolyDet RelativeNegativeIndex this, @PolyDet Object o) {
       return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode(@PolyDet RelativeNegativeIndex this) {
       return this.index;
     }
   }

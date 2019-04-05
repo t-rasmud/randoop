@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -26,6 +27,7 @@ import randoop.util.Log;
 import randoop.util.Randomness;
 
 /** Function object to instantiate type parameters from a set of input types. */
+@DefaultQualifier(Det.class)
 public class TypeInstantiator {
 
   /** The set of input types for this model. */
@@ -41,8 +43,7 @@ public class TypeInstantiator {
     this.inputTypes = inputTypes;
   }
 
-  public TypedClassOperation instantiate(
-      @Det TypeInstantiator this, @Det TypedClassOperation operation) {
+  public TypedClassOperation instantiate(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation must be generic or have wildcards";
 
@@ -96,8 +97,7 @@ public class TypeInstantiator {
    * @param operation the constructor for the {@code SortedSet} subtype to be instantiated
    * @return the substitution to instantiate the element type of the {@code SortedSet} type
    */
-  private Substitution<ReferenceType> instantiateSortedSetType(
-      @Det TypeInstantiator this, @Det TypedClassOperation operation) {
+  private Substitution<ReferenceType> instantiateSortedSetType(TypedClassOperation operation) {
     assert operation.isConstructorCall() : "only call with constructors of SortedSet subtype";
 
     TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
@@ -133,9 +133,7 @@ public class TypeInstantiator {
   }
 
   private Substitution<ReferenceType> getSearchTypeSubstitution(
-      @Det TypeInstantiator this,
-      @Det GenericClassType searchType,
-      @Det List<TypeVariable> parameters) {
+      GenericClassType searchType, List<TypeVariable> parameters) {
     Substitution<ReferenceType> substitution = selectMatch(searchType);
     if (substitution == null) {
       return null;
@@ -155,7 +153,7 @@ public class TypeInstantiator {
    * @return a substitution instantiating the given type; null if none is found
    */
   private Substitution<ReferenceType> instantiateDeclaringClass(
-      @Det TypeInstantiator this, @Det ClassOrInterfaceType declaringType) {
+      ClassOrInterfaceType declaringType) {
     if (Randomness.weightedCoinFlip(0.5)) {
       Substitution<ReferenceType> substitution = selectMatch(declaringType);
       if (substitution != null) {
@@ -191,7 +189,7 @@ public class TypeInstantiator {
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
   private Substitution<ReferenceType> selectMatch(
-      @Det ClassOrInterfaceType declaringType, @Det ClassOrInterfaceType patternType) {
+      ClassOrInterfaceType declaringType, ClassOrInterfaceType patternType) {
     @Det List<InstantiatedType> matches = new ArrayList<>();
     for (Type type : inputTypes) {
       if (type.isParameterized() && ((InstantiatedType) type).isInstantiationOf(patternType)) {
@@ -215,7 +213,7 @@ public class TypeInstantiator {
    * @param declaringType the generic type for which instantiation is to be found
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
-  private Substitution<ReferenceType> selectMatch(@Det ClassOrInterfaceType declaringType) {
+  private Substitution<ReferenceType> selectMatch(ClassOrInterfaceType declaringType) {
     return selectMatch(declaringType, declaringType);
   }
 
@@ -226,8 +224,7 @@ public class TypeInstantiator {
    * @param operation the operation
    * @return the operation with generic types instantiated
    */
-  private TypedClassOperation instantiateOperationTypes(
-      @Det TypeInstantiator this, @Det TypedClassOperation operation) {
+  private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
     @Det Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution<ReferenceType> substitution = new Substitution<>();
@@ -280,8 +277,7 @@ public class TypeInstantiator {
    *     instantiating types
    * @see #selectSubstitution(List, Substitution)
    */
-  private Substitution<ReferenceType> selectSubstitution(
-      @Det TypeInstantiator this, @Det List<TypeVariable> typeParameters) {
+  private Substitution<ReferenceType> selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution<ReferenceType> substitution = new Substitution<>();
     return selectSubstitution(typeParameters, substitution);
   }
@@ -298,9 +294,7 @@ public class TypeInstantiator {
    *     instantiating types
    */
   private Substitution<ReferenceType> selectSubstitution(
-      @Det TypeInstantiator this,
-      @Det List<TypeVariable> typeParameters,
-      @Det Substitution<ReferenceType> substitution) {
+      List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
     @Det List<Substitution<ReferenceType>> substitutionList =
         collectSubstitutions(typeParameters, substitution);
     if (substitutionList.isEmpty()) {
@@ -319,9 +313,7 @@ public class TypeInstantiator {
    */
   @SuppressWarnings("MixedMutabilityReturnType")
   private List<Substitution<ReferenceType>> collectSubstitutions(
-      @Det TypeInstantiator this,
-      @Det List<TypeVariable> typeParameters,
-      @Det Substitution<ReferenceType> substitution) {
+      List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
     /*
      * partition parameters based on whether might have independent bounds:
      * - parameters with generic bounds may be dependent on other parameters
@@ -423,9 +415,7 @@ public class TypeInstantiator {
    *     are no candidate types for any parameter
    */
   private Substitution<ReferenceType> selectAndExtend(
-      @Det TypeInstantiator this,
-      @Det List<TypeVariable> parameters,
-      @Det Substitution<ReferenceType> substitution) {
+      List<TypeVariable> parameters, Substitution<ReferenceType> substitution) {
     @Det List<ReferenceType> selectedTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       @Det List<ReferenceType> candidates = selectCandidates(typeArgument);
@@ -450,9 +440,8 @@ public class TypeInstantiator {
    * @return the list of instantiating substitutions
    */
   private List<Substitution<ReferenceType>> getInstantiations(
-      @Det TypeInstantiator this,
-      @Det List<TypeVariable> parameters,
-      @Det Substitution<ReferenceType> initialSubstitution,
+      List<TypeVariable> parameters,
+      Substitution<ReferenceType> initialSubstitution,
       TypeCheck typeCheck) {
     @Det List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
     @Det List<List<ReferenceType>> candidateTypes = getCandidateTypeLists(parameters);
@@ -482,8 +471,7 @@ public class TypeInstantiator {
    *     has no candidates
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<List<ReferenceType>> getCandidateTypeLists(
-      @Det TypeInstantiator this, @Det List<TypeVariable> parameters) {
+  private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
     @Det List<List<ReferenceType>> candidateTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       @Det List<ReferenceType> candidates = selectCandidates(typeArgument);
@@ -503,8 +491,7 @@ public class TypeInstantiator {
    * @param argument the type arguments
    * @return the list of candidate types to include in tested tuples
    */
-  private List<ReferenceType> selectCandidates(
-      @Det TypeInstantiator this, @Det TypeVariable argument) {
+  private List<ReferenceType> selectCandidates(TypeVariable argument) {
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
@@ -533,7 +520,7 @@ public class TypeInstantiator {
    * @return the upperbound of the argument if no other type parameter is needed, the {@code Object}
    *     bound otherwise
    */
-  private ParameterBound selectUpperBound(@Det TypeVariable argument) {
+  private ParameterBound selectUpperBound(TypeVariable argument) {
     ParameterBound upperBound = argument.getUpperTypeBound();
     @Det List<TypeVariable> parameters = upperBound.getTypeParameters();
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
@@ -551,7 +538,7 @@ public class TypeInstantiator {
    * @return the lower bound of the argument if no other type parameter is needed, the {@link
    *     JavaTypes#NULL_TYPE} otherwise
    */
-  private ParameterBound selectLowerBound(@Det TypeVariable argument) {
+  private ParameterBound selectLowerBound(TypeVariable argument) {
     ParameterBound lowerBound = argument.getLowerTypeBound();
     @Det List<TypeVariable> parameters = lowerBound.getTypeParameters();
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
