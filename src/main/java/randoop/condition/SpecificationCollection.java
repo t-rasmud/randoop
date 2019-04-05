@@ -99,7 +99,7 @@ public class SpecificationCollection {
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
    */
-  public static SpecificationCollection create(@Det List<Path> specificationFiles) {
+  public static SpecificationCollection create(List<Path> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
@@ -121,7 +121,7 @@ public class SpecificationCollection {
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
   private static @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> buildOverridingMap(
-      @Det MultiMap<OperationSignature, Method> signatureToMethods) {
+      MultiMap<OperationSignature, Method> signatureToMethods) {
     @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> overridden = new HashMap<>();
     for (OperationSignature signature : signatureToMethods.keySet()) {
       // This lookup is required because MultiMap does not have an entrySet() method.
@@ -145,8 +145,7 @@ public class SpecificationCollection {
    * @return the elements of {@code methods} that are declared in a strict supertype of {@code
    *     classType}
    */
-  private static @OrderNonDet Set<Method> findOverridden(
-      @Det Class<?> classType, @Det Set<Method> methods) {
+  private static @OrderNonDet Set<Method> findOverridden(Class<?> classType, Set<Method> methods) {
     @OrderNonDet Set<Method> parents = new HashSet<>();
     for (Method method : methods) {
       Class<?> declaringClass = method.getDeclaringClass();
@@ -163,7 +162,7 @@ public class SpecificationCollection {
    * @param operation the {@link OperationSignature}
    * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
    */
-  private static AccessibleObject getAccessibleObject(@Det OperationSignature operation) {
+  private static AccessibleObject getAccessibleObject(OperationSignature operation) {
     if (operation.isValid()) {
       @Det List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
       @Det Class<?> @Det [] argTypes = new Class<?>[paramTypeNames.size()];
@@ -200,9 +199,9 @@ public class SpecificationCollection {
    */
   @SuppressWarnings("unchecked")
   private static void readSpecificationFile(
-      @Det Path specificationFile,
-      @Det Map<AccessibleObject, OperationSpecification> specificationMap,
-      @Det MultiMap<OperationSignature, Method> signatureToMethods) {
+      Path specificationFile,
+      Map<AccessibleObject, OperationSpecification> specificationMap,
+      MultiMap<OperationSignature, Method> signatureToMethods) {
     if (specificationFile.toString().toLowerCase().endsWith(".zip")) {
       readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
       return;
@@ -256,8 +255,8 @@ public class SpecificationCollection {
    */
   private static void readSpecificationZipFile(
       Path specificationZipFile,
-      final @Det Map<AccessibleObject, OperationSpecification> specificationMap,
-      final @Det MultiMap<OperationSignature, Method> signatureToMethods) {
+      final Map<AccessibleObject, OperationSpecification> specificationMap,
+      final MultiMap<OperationSignature, Method> signatureToMethods) {
     @Det Map<String, ? extends @Det Object> myEmptyMap = Collections.emptyMap();
     FileSystem zipFS;
     try {
@@ -318,8 +317,7 @@ public class SpecificationCollection {
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public ExecutableSpecification getExecutableSpecification(
-      @Det SpecificationCollection this, @Det Executable executable) {
+  public ExecutableSpecification getExecutableSpecification(Executable executable) {
 
     // Check if executable already has an ExecutableSpecification object
     ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);

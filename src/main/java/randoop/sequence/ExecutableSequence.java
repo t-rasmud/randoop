@@ -11,6 +11,8 @@ import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -55,6 +57,7 @@ import randoop.util.ProgressDisplay;
  * ExecutableSequence. One way of doing this is by implementing an {@link ExecutionVisitor} and
  * passing it as an argument to the {@code execute} method.
  */
+@DefaultQualifier(Det.class)
 public class ExecutableSequence {
 
   /** The underlying sequence. */
@@ -119,7 +122,7 @@ public class ExecutableSequence {
   }
 
   @Override
-  public String toString() {
+  public String toString(@PolyDet ExecutableSequence this) {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < sequence.size(); i++) {
       sequence.appendCode(b, i);
@@ -279,7 +282,7 @@ public class ExecutableSequence {
       @Det TestCheckGenerator gen,
       @Det boolean ignoreException) {
 
-    long startTime = System.nanoTime();
+    @NonDet long startTime = System.nanoTime();
     try { // try statement for timing
 
       visitor.initialize(this);
@@ -349,11 +352,11 @@ public class ExecutableSequence {
     }
   }
 
-  public Object[] getRuntimeInputs(@Det List<Variable> inputs) {
+  public @Det Object[] getRuntimeInputs(@Det List<Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
-  private Object[] getRuntimeInputs(
+  private @Det Object[] getRuntimeInputs(
       @Det List<ExecutionOutcome> outcome, @Det List<Variable> inputs) {
     @Det Object @Det [] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {
@@ -372,7 +375,8 @@ public class ExecutableSequence {
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
-  public static Object[] getRuntimeValuesForVars(@Det List<Variable> vars, Execution execution) {
+  public static @Det Object[] getRuntimeValuesForVars(
+      @Det List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
@@ -636,16 +640,16 @@ public class ExecutableSequence {
   }
 
   @Override
-  public @NonDet int hashCode() {
+  public @NonDet int hashCode(@PolyDet ExecutableSequence this) {
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@PolyDet ExecutableSequence this, @PolyDet Object obj) {
     if (!(obj instanceof ExecutableSequence)) {
       return false;
     }
-    ExecutableSequence that = (ExecutableSequence) obj;
+    @PolyDet ExecutableSequence that = (ExecutableSequence) obj;
     return this.sequence.equals(that.sequence) && Objects.equals(this.checks, that.checks);
   }
 
@@ -654,7 +658,7 @@ public class ExecutableSequence {
    *
    * @return true if there is a null input value in this sequence, false otherwise
    */
-  public boolean hasNullInput() {
+  public boolean hasNullInput(@PolyDet ExecutableSequence this) {
     return hasNullInput;
   }
 
@@ -681,7 +685,7 @@ public class ExecutableSequence {
    *
    * @param c the class covered by the execution of this sequence
    */
-  public void addCoveredClass(@Det Class<?> c) {
+  public void addCoveredClass(@PolyDet ExecutableSequence this, @Det Class<?> c) {
     executionResults.addCoveredClass(c);
   }
 

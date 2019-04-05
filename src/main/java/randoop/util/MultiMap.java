@@ -8,8 +8,11 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
+@DefaultQualifier(Det.class)
 public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements IMultiMap<T1, T2> {
 
   private final Map<T1, Set<T2>> map;
@@ -22,31 +25,31 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
     map = new LinkedHashMap<>(initialCapacity);
   }
 
-  public void put(@Det MultiMap<T1, T2> this, @Det T1 key, @Det Collection<? extends T2> values) {
+  public void put(T1 key, Collection<? extends T2> values) {
     if (contains(key)) remove(key);
     map.put(key, new LinkedHashSet<T2>(values));
   }
 
-  public void addAll(@Det MultiMap<T1, T2> this, @Det Map<? extends T1, ? extends T2> m) {
+  public void addAll(Map<? extends T1, ? extends T2> m) {
     for (T1 t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
-  public void addAll(@Det MultiMap<T1, T2> this, T1 key, @Det Collection<? extends T2> values) {
+  public void addAll(T1 key, Collection<? extends T2> values) {
     for (T2 t2 : values) {
       add(key, t2);
     }
   }
 
-  public void addAll(@Det MultiMap<T1, T2> this, @Det MultiMap<T1, T2> mmap) {
-    for (Map.@Det Entry<T1, Set<T2>> entry : mmap.map.entrySet()) {
+  public void addAll(MultiMap<T1, T2> mmap) {
+    for (Map.Entry<T1, Set<T2>> entry : mmap.map.entrySet()) {
       addAll(entry.getKey(), entry.getValue());
     }
   }
 
   @Override
-  public void add(@Det MultiMap<T1, T2> this, T1 key, T2 value) {
+  public void add(T1 key, T2 value) {
     Set<T2> values = map.get(key);
     if (values == null) {
       values = new LinkedHashSet<>(1);
@@ -56,7 +59,7 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
   }
 
   @Override
-  public void remove(@Det MultiMap<T1, T2> this, T1 key, T2 value) {
+  public void remove(T1 key, T2 value) {
     Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
@@ -68,7 +71,7 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
     values.remove(value);
   }
 
-  public void remove(@Det MultiMap<T1, T2> this, T1 key) {
+  public void remove(T1 key) {
     Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
@@ -78,7 +81,7 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
   }
 
   @Override
-  public Set<T2> getValues(T1 key) {
+  public Set<T2> getValues(@PolyDet MultiMap<T1, T2> this, T1 key) {
     Set<T2> values = map.get(key);
     if (values == null) {
       return Collections.emptySet();
@@ -87,7 +90,7 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
   }
 
   @Override
-  public Set<T1> keySet() {
+  public Set<T1> keySet(@PolyDet MultiMap<T1, T2> this) {
     return map.keySet();
   }
 
@@ -95,21 +98,21 @@ public class MultiMap<T1 extends @Det Object, T2 extends @Det Object> implements
     return map.containsKey(obj);
   }
 
-  public void clear(@Det MultiMap<T1, T2> this) {
+  public void clear() {
     map.clear();
   }
 
   @Override
-  public int size() {
+  public int size(@PolyDet MultiMap<T1, T2> this) {
     return map.size();
   }
 
-  public boolean isEmpty() {
+  public boolean isEmpty(@PolyDet MultiMap<T1, T2> this) {
     return map.isEmpty();
   }
 
   @Override
-  public @NonDet String toString() {
+  public @NonDet String toString(@PolyDet MultiMap<T1, T2> this) {
     return map.toString();
   }
 }

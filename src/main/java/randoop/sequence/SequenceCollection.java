@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
@@ -34,6 +35,7 @@ import randoop.util.SimpleList;
 // To find all the sequences that create values of a given type, Randoop first uses the {@code
 // SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
 // (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
+@DefaultQualifier(Det.class)
 public class SequenceCollection {
 
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
@@ -107,7 +109,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(@Det Collection<Sequence> col) {
+  public void addAll(Collection<Sequence> col) {
     if (col == null) {
       throw new IllegalArgumentException("col is null");
     }
@@ -148,7 +150,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(@Det Sequence sequence) {
+  public void add(Sequence sequence) {
     @Det List<Type> formalTypes = sequence.getTypesForLastStatement();
     @Det List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -178,7 +180,7 @@ public class SequenceCollection {
    * @param sequence the sequence
    * @param type the {@link Type}
    */
-  private void updateCompatibleMap(@Det Sequence sequence, @Det Type type) {
+  private void updateCompatibleMap(Sequence sequence, Type type) {
     @Det SimpleArrayList<Sequence> set = this.sequenceMap.get(type);
     if (set == null) {
       set = new SimpleArrayList<>();
@@ -202,7 +204,7 @@ public class SequenceCollection {
    *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(
-      @Det Type type, @Det boolean exactMatch, @Det boolean onlyReceivers) {
+      Type type, boolean exactMatch, boolean onlyReceivers) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
