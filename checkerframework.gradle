@@ -61,7 +61,7 @@ compileJava {
         'org.checkerframework.checker.determinism.DeterminismChecker',
         '-Astubs=javaparser.astub:securitymanager.astub',
         '-AskipDefs=randoop.test',
-        '-AinputProperties=user.dir,java.class.path',
+        '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
         '-AsuppressWarnings=invalid.type.on.conditional',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
