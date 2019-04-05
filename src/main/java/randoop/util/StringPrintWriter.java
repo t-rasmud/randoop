@@ -18,7 +18,6 @@ package randoop.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * A PrintWriter that maintains a String as its backing store.
@@ -58,8 +57,9 @@ public class StringPrintWriter extends PrintWriter {
    *
    * @return the contents of the internal string buffer
    */
-  public @NonDet String getString(@Det StringPrintWriter this) {
+  public String getString(@Det StringPrintWriter this) {
     flush();
-    return this.out.toString();
+    StringWriter tmp = (StringWriter) this.out;
+    return tmp.toString();
   }
 }
