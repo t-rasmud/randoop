@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -28,6 +29,7 @@ import randoop.util.Util;
  * (which has preconditions, postconditions, and throws conditions) to its executable version,
  * {@link ExecutableSpecification}.
  */
+@DefaultQualifier(Det.class)
 public class SpecificationTranslator {
 
   /** The base name of dummy variables used by {@link randoop.contract.ObjectContract}. */
@@ -96,9 +98,7 @@ public class SpecificationTranslator {
    * @return the translator object to convert the specifications for {@code executable}
    */
   static SpecificationTranslator createTranslator(
-      @Det Executable executable,
-      @Det OperationSpecification specification,
-      @Det SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     Identifiers identifiers = specification.getIdentifiers();
 
     // Get expression method signatures.
@@ -147,8 +147,7 @@ public class SpecificationTranslator {
    * @param postState if true, include a variable for the return value in the signature
    * @return the {@link RawSignature} for a expression method of {@code executable}
    */
-  private static RawSignature getExpressionSignature(
-      @Det Executable executable, @Det boolean postState) {
+  private static RawSignature getExpressionSignature(Executable executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = executable.getDeclaringClass();
     // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
@@ -176,10 +175,10 @@ public class SpecificationTranslator {
    * @return the constructed post-expression method signature
    */
   private static RawSignature getRawSignature(
-      @Det String packageName,
-      @Det Class<?> receiverType,
-      @Det Class<?> @Det [] parameterTypes,
-      @Det Class<?> returnType) {
+      String packageName,
+      Class<?> receiverType,
+      Class<?> @Det [] parameterTypes,
+      Class<?> returnType) {
     final int shift = (receiverType != null) ? 1 : 0;
     final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
     @Det Class<?> @Det [] expressionParameterTypes = new Class<?>[length];
@@ -233,7 +232,7 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static @OrderNonDet Map<String, String> createReplacementMap(
-      @Det List<String> parameterNames) {
+      List<String> parameterNames) {
     @OrderNonDet Map<String, String> replacementMap = new HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
@@ -251,9 +250,7 @@ public class SpecificationTranslator {
    * @return the {@link ExecutableSpecification} for the given specification
    */
   public static ExecutableSpecification createExecutableSpecification(
-      @Det Executable executable,
-      @Det OperationSpecification specification,
-      @Det SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     SpecificationTranslator st = createTranslator(executable, specification, compiler);
     return new ExecutableSpecification(
         st.getGuardExpressions(specification.getPreconditions()),
@@ -270,8 +267,7 @@ public class SpecificationTranslator {
    * @return the list of {@link ExecutableBooleanExpression} objects obtained by converting each
    *     {@link Precondition}
    */
-  private List<ExecutableBooleanExpression> getGuardExpressions(
-      @Det SpecificationTranslator this, @Det List<Precondition> preconditions) {
+  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
     @Det List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>();
     for (Precondition precondition : preconditions) {
       try {
@@ -296,8 +292,7 @@ public class SpecificationTranslator {
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     Postcondition}
    */
-  private ArrayList<GuardPropertyPair> getReturnConditions(
-      @Det SpecificationTranslator this, @Det List<Postcondition> postconditions) {
+  private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
     @Det ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
     for (Postcondition postcondition : postconditions) {
       try {
@@ -325,8 +320,7 @@ public class SpecificationTranslator {
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     ThrowsCondition}
    */
-  private ArrayList<GuardThrowsPair> getThrowsConditions(
-      @Det SpecificationTranslator this, @Det List<ThrowsCondition> throwsConditions) {
+  private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
     @Det ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
     for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
@@ -373,7 +367,7 @@ public class SpecificationTranslator {
    *     converted
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
    */
-  private ExecutableBooleanExpression create(@Det Guard expression) {
+  private ExecutableBooleanExpression create(Guard expression) {
     String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         prestateExpressionSignature,
@@ -393,7 +387,7 @@ public class SpecificationTranslator {
    *     converted
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
    */
-  public ExecutableBooleanExpression create(@Det Property expression) {
+  public ExecutableBooleanExpression create(Property expression) {
     String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         poststateExpressionSignature,

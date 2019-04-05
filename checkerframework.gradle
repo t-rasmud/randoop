@@ -58,7 +58,7 @@ compileJava {
         '-processor',
         // 'org.checkerframework.common.util.count.AnnotationStatistics',
         // '-Aannotations',
-       'org.checkerframework.checker.determinism.DeterminismChecker',
+        'org.checkerframework.checker.determinism.DeterminismChecker',
         '-Astubs=javaparser.astub:securitymanager.astub',
         '-AskipDefs=randoop.test',
         '-AinputProperties=user.dir,java.class.path',

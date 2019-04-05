@@ -30,7 +30,6 @@ public final class EqualsSymmetric extends ObjectContract {
     return 2;
   }
 
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   static TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 

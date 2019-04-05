@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
@@ -37,6 +38,7 @@ import randoop.main.RandoopUsageError;
  * assertion. Creates a clean temporary directory for each compilation/run of a test class to avoid
  * state effects due to files in the working directory.
  */
+@DefaultQualifier(Det.class)
 public class FailingTestFilter implements CodeWriter {
 
   /**
@@ -79,11 +81,7 @@ public class FailingTestFilter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public Path writeClassCode(
-      @Det FailingTestFilter this,
-      @Det String packageName,
-      @Det String classname,
-      @Det String classSource)
+  public Path writeClassCode(String packageName, String classname, String classSource)
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
@@ -132,8 +130,7 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   @Override
-  public @Det Path writeUnmodifiedClassCode(
-      @Det String packageName, @Det String classname, @Det String javaCode)
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
@@ -164,10 +161,9 @@ public class FailingTestFilter implements CodeWriter {
    *     catch or try statement)
    */
   private String commentCatchStatements(
-      @Det FailingTestFilter this,
       String packageName,
-      @Det String javaCode,
-      @Det List<Diagnostic<? extends JavaFileObject>> diagnostics,
+      String javaCode,
+      List<Diagnostic<? extends JavaFileObject>> diagnostics,
       Path destinationDir,
       FileCompiler.FileCompilerException e) {
     assert !Objects.equals(packageName, "");
@@ -241,11 +237,7 @@ public class FailingTestFilter implements CodeWriter {
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      @Det FailingTestFilter this,
-      @Det String packageName,
-      @Det String classname,
-      @Det String javaCode,
-      @Det Status status) {
+      String packageName, String classname, String javaCode, Status status) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
@@ -353,10 +345,7 @@ public class FailingTestFilter implements CodeWriter {
    * @return the number of JUnit failures
    */
   private int numJunitFailures(
-      @Det Iterator<String> lineIterator,
-      Status status,
-      String qualifiedClassname,
-      String javaCode) {
+      Iterator<String> lineIterator, Status status, String qualifiedClassname, String javaCode) {
     Match failureCountMatch;
     try {
       failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
@@ -447,7 +436,7 @@ public class FailingTestFilter implements CodeWriter {
    * @return the pair containing the line and the text matching the first group
    * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
-  private Match readUntilMatch(@Det Iterator<String> lineIterator, @Det Pattern pattern) {
+  private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);
@@ -474,10 +463,7 @@ public class FailingTestFilter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      @Det String packageName,
-      @Det String classname,
-      @Det String classSource,
-      @Det Path destinationDir)
+      String packageName, String classname, String classSource, Path destinationDir)
       throws FileCompiler.FileCompilerException {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.

@@ -33,7 +33,6 @@ public class EqualsTransitive extends ObjectContract {
     return 3;
   }
 
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/93
   static TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
