@@ -49,7 +49,6 @@ import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
-import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.output.CodeWriter;
@@ -793,11 +792,9 @@ public class GenTests extends GenInputsAbstract {
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
           for (int i = 0; i < sequence.statements.size(); i++) {
-            Operation operation = sequence.statements.get(i).getOperation();
+            TypedOperation operation = sequence.statements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
-              @SuppressWarnings("determinism") // actual type toString returns @PolyDet: the actual
-              // type of operation is TypedOperation which has a @PolyDet toString
-              @Det String operationString = operation.toString();
+              String operationString = operation.toString();
               executedOperationTrace.add(operationString);
             }
           }
