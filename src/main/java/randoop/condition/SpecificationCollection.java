@@ -27,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
@@ -47,6 +50,7 @@ import randoop.util.MultiMap;
  * corresponding {@link ExecutableSpecification} on demand. This lazy strategy avoids building
  * condition methods for specifications that are not used.
  */
+@DefaultQualifier(Det.class)
 public class SpecificationCollection {
 
   /** Map from method or constructor to the corresponding {@link OperationSpecification}. */
@@ -264,7 +268,9 @@ public class SpecificationCollection {
             root,
             new SimpleFileVisitor<Path>() {
               @Override
-              public FileVisitResult visitFile(@Det Path file, BasicFileAttributes attrs)
+              @SuppressWarnings("determinism") // can't specify receiver for anonymous class: the
+              // receiver should be @PolyDet, but can't specify that here.
+              public FileVisitResult visitFile(@Det Path file, @PolyDet BasicFileAttributes attrs)
                   throws IOException {
                 // You can do anything you want with the path here
                 readSpecificationFile(file, specificationMap, signatureToMethods);
@@ -272,8 +278,10 @@ public class SpecificationCollection {
               }
 
               @Override
-              public FileVisitResult preVisitDirectory(@Det Path dir, BasicFileAttributes attrs)
-                  throws IOException {
+              @SuppressWarnings("determinism") // can't specify receiver for anonymous class: the
+              // receiver should be @PolyDet, but can't specify that here.
+              public FileVisitResult preVisitDirectory(
+                  @Det Path dir, @PolyDet BasicFileAttributes attrs) throws IOException {
                 if (dir.endsWith("__MACOSX")) {
                   return FileVisitResult.SKIP_SUBTREE;
                 }
@@ -344,7 +352,7 @@ public class SpecificationCollection {
         throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
-        for (Method parent : parents) {
+        for (@NonDet Method parent : parents) {
           @SuppressWarnings(
               "determinism") // iterating over @OrderNonDet collection to modify another:
           // addParent essentially just adds parentExecSpec to an @OrderNonDet List.

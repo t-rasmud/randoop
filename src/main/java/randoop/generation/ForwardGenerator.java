@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -39,6 +42,7 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
+@DefaultQualifier(Det.class)
 public class ForwardGenerator extends AbstractGenerator {
 
   /**
@@ -136,7 +140,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sequence the new sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(@Det Sequence sequence) {
+  public void newRegressionTestHook(@PolyDet ForwardGenerator this, Sequence sequence) {
     operationSelector.newRegressionTestHook(sequence);
   }
 
@@ -157,9 +161,9 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public ExecutableSequence step(@Det ForwardGenerator this) {
+  public ExecutableSequence step() {
 
-    long startTime = System.nanoTime();
+    @NonDet long startTime = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
@@ -178,7 +182,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long gentime1 = System.nanoTime() - startTime;
+    @NonDet long gentime1 = System.nanoTime() - startTime;
 
     eSeq.execute(executionVisitor, checkGenerator);
 
@@ -190,7 +194,7 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    long gentime2 = System.nanoTime() - startTime;
+    @NonDet long gentime2 = System.nanoTime() - startTime;
 
     eSeq.gentime = gentime1 + gentime2;
 
@@ -198,7 +202,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public LinkedHashSet<Sequence> getAllSequences() {
+  public LinkedHashSet<Sequence> getAllSequences(@PolyDet ForwardGenerator this) {
     return this.allSequences;
   }
 
@@ -215,7 +219,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence
    */
-  private void determineActiveIndices(@Det ForwardGenerator this, @Det ExecutableSequence seq) {
+  private void determineActiveIndices(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       Log.logPrintf("Sequence has non-executed statements: excluding from extension pool.%n");
@@ -331,7 +335,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence(@Det ForwardGenerator this) {
+  private ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
 
@@ -456,7 +460,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
-  private Sequence repeat(@Det Sequence seq, @Det TypedOperation operation, @Det int times) {
+  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
     Sequence retval = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       @Det List<Integer> vil = new ArrayList<>();
@@ -484,7 +488,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
-  private void randoopConsistencyTest2(@Det Sequence newSequence) {
+  private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -494,7 +498,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
-  private void randoopConsistencyTests(@Det Sequence newSequence) {
+  private void randoopConsistencyTests(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();
@@ -554,7 +558,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return the selected sequences and indices
    */
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(@Det TypedOperation operation) {
+  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
@@ -775,8 +779,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
-  VarAndSeq randomVariable(
-      @Det SimpleList<Sequence> candidates, @Det Type inputType, @Det boolean isReceiver) {
+  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
@@ -854,17 +857,17 @@ public class ForwardGenerator extends AbstractGenerator {
    * are subsumed by another sequence).
    */
   @Override
-  public Set<Sequence> getSubsumedSequences() {
+  public Set<Sequence> getSubsumedSequences(@PolyDet ForwardGenerator this) {
     return subsumed_sequences;
   }
 
   @Override
-  public int numGeneratedSequences() {
+  public int numGeneratedSequences(@PolyDet ForwardGenerator this) {
     return allSequences.size();
   }
 
   @Override
-  public String toString() {
+  public String toString(@PolyDet ForwardGenerator this) {
     return "randoop.generation.ForwardGenerator("
         + ("allSequences.size()=" + allSequences.size())
         + ","

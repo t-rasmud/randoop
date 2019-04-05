@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -16,6 +18,7 @@ import org.checkerframework.checker.determinism.qual.NonDet;
  * from this and other {@link java.lang.reflect.Type} interfaces is handled by {@link
  * Type#forType(java.lang.reflect.Type)}.
  */
+@DefaultQualifier(Det.class)
 public class InstantiatedType extends ParameterizedType {
 
   private final List<TypeArgument> argumentList;
@@ -46,21 +49,21 @@ public class InstantiatedType extends ParameterizedType {
    * equal if they have the same raw type and the same type arguments.
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@PolyDet InstantiatedType this, @PolyDet Object obj) {
     if (!(obj instanceof InstantiatedType)) {
       return false;
     }
-    InstantiatedType t = (InstantiatedType) obj;
+    @PolyDet InstantiatedType t = (InstantiatedType) obj;
     return instantiatedType.equals(t.instantiatedType) && argumentList.equals(t.argumentList);
   }
 
   @Override
-  public @NonDet int hashCode() {
+  public @NonDet int hashCode(@PolyDet InstantiatedType this) {
     return Objects.hash(instantiatedType, argumentList);
   }
 
   @Override
-  public String toString() {
+  public @PolyDet String toString(@PolyDet InstantiatedType this) {
     return getName();
   }
 
@@ -148,7 +151,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public GenericClassType getGenericClassType() {
+  public GenericClassType getGenericClassType(@PolyDet InstantiatedType this) {
     return instantiatedType.getGenericClassType();
   }
 
@@ -190,7 +193,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Class<?> getRuntimeClass() {
+  public Class<?> getRuntimeClass(@PolyDet InstantiatedType this) {
     return instantiatedType.getRuntimeClass();
   }
 
@@ -218,7 +221,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of type arguments
    */
   @Override
-  public List<TypeArgument> getTypeArguments() {
+  public List<TypeArgument> getTypeArguments(@PolyDet InstantiatedType this) {
     return argumentList;
   }
 
@@ -265,7 +268,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isAbstract() {
+  public boolean isAbstract(@PolyDet InstantiatedType this) {
     return instantiatedType.isAbstract();
   }
 
@@ -280,7 +283,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(@PolyDet InstantiatedType this) {
     if (super.isGeneric()) { // enclosing type is generic
       return true;
     }
@@ -358,12 +361,12 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isInterface() {
+  public boolean isInterface(@PolyDet InstantiatedType this) {
     return instantiatedType.isInterface();
   }
 
   @Override
-  public boolean isParameterized() {
+  public boolean isParameterized(@PolyDet InstantiatedType this) {
     return true;
   }
 
@@ -382,7 +385,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isStatic() {
+  public boolean isStatic(@PolyDet InstantiatedType this) {
     return instantiatedType.isStatic();
   }
 
@@ -444,7 +447,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public NonParameterizedType getRawtype() {
+  public NonParameterizedType getRawtype(@PolyDet InstantiatedType this) {
     return instantiatedType.getRawtype();
   }
 }
