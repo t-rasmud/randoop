@@ -54,11 +54,19 @@ compileJava {
   doFirst {
     options.compilerArgs = [
         // '-processor', 'org.checkerframework.checker.nullness.NullnessChecker,org.checkerframework.checker.signature.SignatureChecker',
-        '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
+        // '-processor', 'org.checkerframework.checker.signature.SignatureChecker',
+        '-processor',
+        // 'org.checkerframework.common.util.count.AnnotationStatistics',
+        // '-Aannotations',
+        'org.checkerframework.checker.determinism.DeterminismChecker',
+        '-Astubs=javaparser.astub:securitymanager.astub',
+        '-AskipDefs=randoop.test',
+        '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
+        '-AsuppressWarnings=invalid.type.on.conditional',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
         // '-Awarns',      // -Awarns turns Checker Framework errors into warnings
-	// '-AcheckPurityAnnotations',
+        // '-AcheckPurityAnnotations',
         "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}"
     ]
   }
