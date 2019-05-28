@@ -1,9 +1,10 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** A multimap, which maps each key to a set of values. */
-public interface IMultiMap<T1, T2> {
+public interface IMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object> {
 
   /**
    * Precondition: the mapping key&rarr;value is not already in the map.

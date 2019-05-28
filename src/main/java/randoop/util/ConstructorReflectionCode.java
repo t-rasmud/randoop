@@ -3,12 +3,16 @@ package randoop.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
+@HasQualifierParameter(NonDet.class)
 public final class ConstructorReflectionCode extends ReflectionCode {
-  private final Constructor<?> constructor;
+  private final @PolyDet Constructor<?> constructor;
   /** If an inner class has a receiver, it is the first element of this array. */
-  private final Object[] inputs;
+  private final @PolyDet Object @PolyDet [] inputs;
 
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
     if (constructor == null) {
@@ -46,7 +50,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   }
 
   @Override
-  public String toString() {
+  public @PolyDet("up") String toString() {
     return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
   }
 }

@@ -33,6 +33,8 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -54,13 +56,13 @@ public class ClassFileConstants {
 
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
-  static byte bb = 23;
-  static double d = 35.3;
-  static float f = 3.0f;
-  static int ii = 20;
-  static long ll = 200000;
-  static short s = 32000;
-  static char c = 'a';
+  static @Det byte bb = 23;
+  static @Det double d = 35.3;
+  static @Det float f = 3.0f;
+  static @Det int ii = 20;
+  static @Det long ll = 200000;
+  static @Det short s = 32000;
+  static @Det char c = 'a';
 
   public static class ConstantSet {
     public @ClassGetName String classname;
@@ -122,7 +124,7 @@ public class ClassFileConstants {
    * @see #getConstants(String,ConstantSet)
    */
   public static ConstantSet getConstants(String classname) {
-    ConstantSet result = new ConstantSet();
+    @PolyDet ConstantSet result = new ConstantSet();
     getConstants(classname, result);
     return result;
   }
@@ -137,8 +139,8 @@ public class ClassFileConstants {
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
 
-    ClassParser cp;
-    JavaClass jc;
+    @PolyDet ClassParser cp;
+    @PolyDet JavaClass jc;
     try {
       String classfileBase = classname.replace('.', '/');
       InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class");
@@ -148,7 +150,7 @@ public class ClassFileConstants {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
     @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
-    @ClassGetName String resultClassname = jc.getClassName();
+    @ClassGetName @PolyDet String resultClassname = jc.getClassName();
     result.classname = resultClassname;
 
     // Get all of the constants from the pool

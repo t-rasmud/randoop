@@ -1,0 +1,3 @@
+@SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+@SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
+@SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet

@@ -3,12 +3,16 @@ package randoop.util;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** A multi-map using key identity rather than equality. */
-public class IdentityMultiMap<K, V> {
+@HasQualifierParameter(NonDet.class)
+public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Object> {
 
   /** the underlying map */
-  private IdentityHashMap<K, Set<V>> map;
+  private @PolyDet IdentityHashMap<K, @PolyDet Set<V>> map;
 
   /** Creates an empty multi-map. */
   public IdentityMultiMap() {
@@ -22,9 +26,9 @@ public class IdentityMultiMap<K, V> {
    * @param value the value
    */
   public void put(K key, V value) {
-    Set<V> set = map.get(key);
+    @PolyDet Set<V> set = map.get(key);
     if (set == null) {
-      set = new LinkedHashSet<>();
+      set = new @PolyDet LinkedHashSet<>();
       map.put(key, set);
     }
     set.add(value);

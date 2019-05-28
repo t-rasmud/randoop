@@ -3,10 +3,14 @@ package randoop.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
-public class MultiSet<T> {
+@HasQualifierParameter(NonDet.class)
+public class MultiSet<T extends @PolyDet Object> {
 
-  private final Map<T, Integer> frequencyMap;
+  private final @PolyDet Map<T, Integer> frequencyMap;
 
   public MultiSet() {
     frequencyMap = new LinkedHashMap<>();

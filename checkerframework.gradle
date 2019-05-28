@@ -59,10 +59,11 @@ compileJava {
         // 'org.checkerframework.common.util.count.AnnotationStatistics',
         // '-Aannotations',
         'org.checkerframework.checker.determinism.DeterminismChecker',
-        '-Astubs=javaparser.astub:securitymanager.astub',
+        // '-Astubs=javaparser.astub:securitymanager.astub',
         '-AskipDefs=randoop.test',
+		'-AonlyDefs=randoop.util.CountDownTimer',
         '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
-        '-AsuppressWarnings=invalid.type.on.conditional',
+        '-AsuppressWarnings=invalid.type.on.conditional,throw.type.invalid',
         '-Xmaxerrs', '10000',
         '-Xmaxwarns', '10000',
         // '-Awarns',      // -Awarns turns Checker Framework errors into warnings

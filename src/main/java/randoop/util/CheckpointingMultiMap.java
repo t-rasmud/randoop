@@ -7,33 +7,39 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
+@HasQualifierParameter(NonDet.class)
+public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object>
+    implements IMultiMap<T1, T2> {
 
-  public static boolean verbose_log = false;
+  public static @PolyDet boolean verbose_log = false;
 
-  private final Map<T1, Set<T2>> map;
+  private final @PolyDet Map<T1, @PolyDet Set<T2>> map;
 
-  public final List<Integer> marks;
+  public final @PolyDet List<Integer> marks;
 
   private enum Ops {
     ADD,
     REMOVE
   }
 
-  private final List<OpKeyVal> ops;
+  private final @PolyDet List<OpKeyVal> ops;
 
-  private int steps;
+  private @PolyDet int steps;
 
   // A triple of an operation, a key, and a value
+  @HasQualifierParameter(NonDet.class)
   private class OpKeyVal {
-    final Ops op;
-    final T1 key;
-    final T2 val;
+    final @PolyDet Ops op;
+    final @PolyDet T1 key;
+    final @PolyDet T2 val;
 
     OpKeyVal(final Ops op, final T1 key, final T2 val) {
       this.op = op;
@@ -69,7 +75,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
       throw new IllegalArgumentException("args cannot be null.");
     }
 
-    Set<T2> values = map.get(key);
+    @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
       values = new LinkedHashSet<>(1);
       map.put(key, values);
@@ -127,7 +133,10 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
-    steps = marks.remove(marks.size() - 1);
+    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is
+    // the same as @PolyDet
+    @PolyDet int tmp = marks.remove(marks.size() - 1);
+    steps = tmp;
   }
 
   private void undoLastOp() {
@@ -192,7 +201,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
    * @see randoop.util.IMultiMap#toString()
    */
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return map.toString();
   }
 }
