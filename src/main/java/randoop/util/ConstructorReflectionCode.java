@@ -10,9 +10,9 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 @HasQualifierParameter(NonDet.class)
 public final class ConstructorReflectionCode extends ReflectionCode {
-  private final @PolyDet Constructor<?> constructor;
+  private final Constructor<?> constructor;
   /** If an inner class has a receiver, it is the first element of this array. */
-  private final @PolyDet Object @PolyDet [] inputs;
+  private final Object @PolyDet [] inputs;
 
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
     if (constructor == null) {
@@ -39,7 +39,9 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw() {
     try {
-      this.retval = this.constructor.newInstance(this.inputs);
+      @SuppressWarnings("determinism") // this is code randoop is run on
+      @PolyDet Object tmp = this.constructor.newInstance(this.inputs);
+      this.retval = tmp;
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();

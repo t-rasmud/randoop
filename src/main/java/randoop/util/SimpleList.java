@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Stores a sequence of items, much like a regular {@code List}. Subclasses exist that permit
@@ -30,7 +31,7 @@ import java.util.List;
  * the new statement in a {@code OneMoreElementList}, which takes up only 2 references in memory
  * (and constant creation time).
  */
-public interface SimpleList<T> {
+public interface SimpleList<T extends @PolyDet Object> {
 
   /**
    * Return the number of elements in this list.
@@ -52,7 +53,7 @@ public interface SimpleList<T> {
    * @param index the position for the element
    * @return the element at the index
    */
-  public T get(int index);
+  public @PolyDet("up") T get(int index);
 
   /**
    * Return a sublist of this list that contains the index. Does not necessarily contain the first
@@ -64,7 +65,7 @@ public interface SimpleList<T> {
    * @param index the index into this list
    * @return the sublist containing this index
    */
-  public SimpleList<T> getSublist(int index);
+  public @PolyDet("up") SimpleList<T> getSublist(int index);
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   /**

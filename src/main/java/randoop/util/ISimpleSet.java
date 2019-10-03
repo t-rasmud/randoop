@@ -1,8 +1,10 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
-public interface ISimpleSet<T> {
+public interface ISimpleSet<T extends @PolyDet Object> {
 
   /**
    * Adds the given elt to the set.
@@ -50,5 +52,5 @@ public interface ISimpleSet<T> {
    * @return a String representation of this set
    */
   @Override
-  String toString();
+  @NonDet String toString();
 }

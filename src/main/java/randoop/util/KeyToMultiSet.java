@@ -7,10 +7,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
-public class KeyToMultiSet<T1, T2> {
+@HasQualifierParameter(NonDet.class)
+public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Object> {
 
-  private final Map<T1, MultiSet<T2>> map;
+  private final Map<T1, @PolyDet MultiSet<T2>> map;
 
   public KeyToMultiSet() {
     map = new LinkedHashMap<>();

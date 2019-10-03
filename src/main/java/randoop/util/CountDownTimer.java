@@ -7,7 +7,7 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 @HasQualifierParameter(NonDet.class)
 public class CountDownTimer {
 
-  private @PolyDet long totalTime;
+  private long totalTime;
   private @NonDet long startTime;
 
   private CountDownTimer(long timeMillis) {

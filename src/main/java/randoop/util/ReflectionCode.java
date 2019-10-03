@@ -15,16 +15,16 @@ import randoop.util.RandoopSecurityManager.Status;
 public abstract class ReflectionCode {
 
   /** Has this started execution? */
-  private @PolyDet boolean hasStarted;
+  private boolean hasStarted;
 
   /** Has this been executed already? */
-  private @PolyDet boolean hasRun;
+  private boolean hasRun;
 
   // Before runReflectionCodeRaw is executed, both of these fields are null. After
   // runReflectionCodeRaw is executed, if exceptionThrown is null, then retval is the returned value
   // (which might be null).
-  protected @PolyDet Object retval;
-  protected @PolyDet Throwable exceptionThrown;
+  protected Object retval;
+  protected Throwable exceptionThrown;
 
   public final boolean hasStarted() {
     return hasStarted;

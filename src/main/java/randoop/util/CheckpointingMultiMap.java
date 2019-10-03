@@ -19,27 +19,27 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object>
     implements IMultiMap<T1, T2> {
 
-  public static @PolyDet boolean verbose_log = false;
+  public static boolean verbose_log = false;
 
-  private final @PolyDet Map<T1, @PolyDet Set<T2>> map;
+  private final Map<T1, @PolyDet Set<T2>> map;
 
-  public final @PolyDet List<Integer> marks;
+  public final List<Integer> marks;
 
   private enum Ops {
     ADD,
     REMOVE
   }
 
-  private final @PolyDet List<OpKeyVal> ops;
+  private final List<@PolyDet OpKeyVal> ops;
 
-  private @PolyDet int steps;
+  private int steps;
 
   // A triple of an operation, a key, and a value
   @HasQualifierParameter(NonDet.class)
   private class OpKeyVal {
-    final @PolyDet Ops op;
-    final @PolyDet T1 key;
-    final @PolyDet T2 val;
+    final Ops op;
+    final T1 key;
+    final T2 val;
 
     OpKeyVal(final Ops op, final T1 key, final T2 val) {
       this.op = op;
@@ -49,9 +49,9 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
   }
 
   public CheckpointingMultiMap() {
-    map = new LinkedHashMap<>();
+    map = new @PolyDet LinkedHashMap<>();
     marks = new ArrayList<>();
-    ops = new ArrayList<>();
+    ops = new @PolyDet ArrayList<>();
     steps = 0;
   }
 
@@ -66,7 +66,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
     add_bare(key, value);
-    ops.add(new OpKeyVal(Ops.ADD, key, value));
+    ops.add(new @PolyDet OpKeyVal(Ops.ADD, key, value));
     steps++;
   }
 

@@ -34,8 +34,10 @@ import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
@@ -56,22 +58,23 @@ public class ClassFileConstants {
 
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
-  static @Det byte bb = 23;
-  static @Det double d = 35.3;
-  static @Det float f = 3.0f;
-  static @Det int ii = 20;
-  static @Det long ll = 200000;
-  static @Det short s = 32000;
-  static @Det char c = 'a';
+  static byte bb = 23;
+  static double d = 35.3;
+  static float f = 3.0f;
+  static int ii = 20;
+  static long ll = 200000;
+  static short s = 32000;
+  static char c = 'a';
 
+  @HasQualifierParameter(NonDet.class)
   public static class ConstantSet {
     public @ClassGetName String classname;
-    public Set<Integer> ints = new TreeSet<>();
-    public Set<Long> longs = new TreeSet<>();
-    public Set<Float> floats = new TreeSet<>();
-    public Set<Double> doubles = new TreeSet<>();
-    public Set<String> strings = new TreeSet<>();
-    public Set<Class<?>> classes = new TreeSet<>();
+    public Set<@PolyDet Integer> ints = new @PolyDet TreeSet<@PolyDet Integer>();
+    public Set<@PolyDet Long> longs = new @PolyDet TreeSet<>();
+    public Set<@PolyDet Float> floats = new @PolyDet TreeSet<>();
+    public Set<@PolyDet Double> doubles = new @PolyDet TreeSet<>();
+    public Set<@PolyDet String> strings = new @PolyDet TreeSet<>();
+    public Set<@PolyDet Class<?>> classes = new @PolyDet TreeSet<>();
 
     @Override
     public String toString() {
@@ -124,7 +127,7 @@ public class ClassFileConstants {
    * @see #getConstants(String,ConstantSet)
    */
   public static ConstantSet getConstants(String classname) {
-    @PolyDet ConstantSet result = new ConstantSet();
+    ConstantSet result = new ConstantSet();
     getConstants(classname, result);
     return result;
   }
@@ -624,9 +627,9 @@ public class ClassFileConstants {
    * @param constantSets the sets of constantSets
    * @return a map of types to constant operations
    */
-  public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
-    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
-    for (ConstantSet cs : constantSets) {
+  public static @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> toMap(Collection<@PolyDet ConstantSet> constantSets) {
+    final @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> map = new @PolyDet("up") MultiMap<>();
+    for (@PolyDet("up") ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {
         clazz = TypeNames.getTypeForName(cs.classname);

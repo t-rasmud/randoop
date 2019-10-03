@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public class JarReader {
 
@@ -17,14 +19,14 @@ public class JarReader {
   }
 
   public static void main(String[] args) throws IOException {
-    List<String> names = getClasseNamesInJar(args[0]);
+    @Det List<String> names = getClasseNamesInJar(args[0]);
     Collections.sort(names);
     System.out.println(CollectionsExt.toStringInLines(names));
   }
 
-  public static List<String> getClassNamesInPackage(String jarName, String packageName)
+  public static List<String> getClassNamesInPackage(@Det String jarName, @Det String packageName)
       throws IOException {
-    ArrayList<String> classes = new ArrayList<>();
+    @Det ArrayList<String> classes = new ArrayList<>();
 
     packageName = packageName.replaceAll("\\.", "/");
     if (debug) {
@@ -52,8 +54,8 @@ public class JarReader {
     return classes;
   }
 
-  public static List<String> getClasseNamesInJar(String jarName) throws IOException {
-    ArrayList<String> classes = new ArrayList<>();
+  public static List<String> getClasseNamesInJar(@Det String jarName) throws IOException {
+    @Det ArrayList<String> classes = new ArrayList<>();
 
     if (debug) {
       System.out.println("Jar " + jarName);

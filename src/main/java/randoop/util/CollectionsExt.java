@@ -61,7 +61,7 @@ public final class CollectionsExt {
    */
   private static List<@PolyDet String> toStringLines(
       Collection<? extends @PolyDet("use") Object> c) {
-    @PolyDet List<@PolyDet String> lines = new @PolyDet ArrayList<>(c.size());
+    List<String> lines = new @PolyDet ArrayList<>(c.size());
     for (Object each : c) {
       @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
       @PolyDet String tmp = String.valueOf(each);
@@ -88,7 +88,7 @@ public final class CollectionsExt {
     }
     int numberOfFullSublists = list.size() / maxLength;
 
-    @PolyDet("up") List<@PolyDet("up") List<T>> result = new @PolyDet("up") ArrayList<>(numberOfFullSublists + 1);
+    @PolyDet("up") List<@PolyDet("up") List<T>> result = new @PolyDet("up") ArrayList<@PolyDet("up") List<T>>(numberOfFullSublists + 1);
     for (int i = 0; i < numberOfFullSublists; i++) {
       @PolyDet("up") List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
       if (subList.size() != maxLength) {

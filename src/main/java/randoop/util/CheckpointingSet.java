@@ -1,14 +1,18 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
  */
-public class CheckpointingSet<T> implements ISimpleSet<T> {
+@HasQualifierParameter(NonDet.class)
+public class CheckpointingSet<T extends @PolyDet Object> implements ISimpleSet<T> {
 
-  public final CheckpointingMultiMap<T, Boolean> map;
+  public final CheckpointingMultiMap<T, @PolyDet Boolean> map;
 
   public CheckpointingSet() {
     this.map = new CheckpointingMultiMap<>();
@@ -61,7 +65,7 @@ public class CheckpointingSet<T> implements ISimpleSet<T> {
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return map.keySet().toString();
   }
 }
