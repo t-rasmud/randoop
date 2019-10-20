@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public class JarReader {
 

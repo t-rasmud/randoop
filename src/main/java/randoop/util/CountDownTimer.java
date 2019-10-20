@@ -1,7 +1,6 @@
 package randoop.util;
 
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.HasQualifierParameter;
 
 @HasQualifierParameter(NonDet.class)

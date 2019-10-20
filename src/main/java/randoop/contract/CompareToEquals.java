@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -38,8 +37,9 @@ public class CompareToEquals extends ObjectContract {
     return 2;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
-      new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
+      new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

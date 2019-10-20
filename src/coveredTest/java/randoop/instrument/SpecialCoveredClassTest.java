@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -57,15 +58,12 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.output_limit = 5000;
     randoop.util.Randomness.setSeed(0);
 
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
-    Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
     VisibilityPredicate visibility = IS_PUBLIC;
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> coveredClassnames =
+        GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
@@ -76,7 +74,6 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.omitmethods,
             classnames,
             coveredClassnames,
-            methodSignatures,
             classNameErrorHandler,
             GenInputsAbstract.literals_file);
 
@@ -105,11 +102,11 @@ public class SpecialCoveredClassTest {
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    Set<TypedOperation> observers = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -128,9 +125,9 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.require_classname_in_test);
     testGenerator.setTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(
+            visibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);

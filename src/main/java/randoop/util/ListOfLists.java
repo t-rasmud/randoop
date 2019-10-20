@@ -3,10 +3,10 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.main.RandoopBug;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.HasQualifierParameter;
+import randoop.main.RandoopBug;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
@@ -27,9 +27,10 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private @PolyDet int[] cumulativeSize;
 
+  /** The size of this collection. */
   private int totalelements;
 
-  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<T> @PolyDet ... lists) {
     this.lists = new @PolyDet ArrayList<>(lists.length);
     for (SimpleList<T> sl : lists) {

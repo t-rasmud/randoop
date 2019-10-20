@@ -33,7 +33,6 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
-import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -627,8 +626,10 @@ public class ClassFileConstants {
    * @param constantSets the sets of constantSets
    * @return a map of types to constant operations
    */
-  public static @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> toMap(Collection<@PolyDet ConstantSet> constantSets) {
-    final @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> map = new @PolyDet("up") MultiMap<>();
+  public static @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm>
+      toMap(Collection<@PolyDet ConstantSet> constantSets) {
+    final @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> map =
+        new @PolyDet("up") MultiMap<>();
     for (@PolyDet("up") ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {

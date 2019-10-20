@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -33,9 +32,10 @@ public class EqualsTransitive extends ObjectContract {
     return 3;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
       new TypeTuple(
-          Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
+          Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

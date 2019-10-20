@@ -49,8 +49,8 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final LinkedHashSet<Sequence> allSequences;
 
-  /** The side-effect-free observer methods. */
-  private final Set<TypedOperation> observers;
+  /** The side-effect-free methods. */
+  private final Set<TypedOperation> sideEffectFreeMethods;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -73,24 +73,53 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  // The set of all primitive values seen during generation and execution
-  // of sequences. This set is used to tell if a new primitive value has
-  // been generated, to add the value to the components.
+  /**
+   * The set of all primitive values seen during generation and execution of sequences. This set is
+   * used to tell if a new primitive value has been generated, to add the value to the components.
+   */
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
+  /**
+   * Create a forward generator.
+   *
+   * @param operations list of operations under test
+   * @param sideEffectFreeMethods side-effect-free methods
+   * @param limits limits for generation, after which the generator will stop
+   * @param componentManager stores previously-generated sequences
+   * @param listenerManager manages notifications for listeners
+   * @param classesUnderTest set of classes under test
+   */
   public ForwardGenerator(
       List<TypedOperation> operations,
-      Set<TypedOperation> observers,
+      Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
-    this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
+    this(
+        operations,
+        sideEffectFreeMethods,
+        limits,
+        componentManager,
+        null,
+        listenerManager,
+        classesUnderTest);
   }
 
+  /**
+   * Create a forward generator.
+   *
+   * @param operations list of operations under test
+   * @param sideEffectFreeMethods side-effect-free methods
+   * @param limits limits for generation, after which the generator will stop
+   * @param componentManager stores previously-generated sequences
+   * @param stopper optional, additional stopping criterion for the generator. Can be null.
+   * @param listenerManager manages notifications for listeners
+   * @param classesUnderTest set of classes under test
+   */
   public ForwardGenerator(
       List<TypedOperation> operations,
-      Set<TypedOperation> observers,
+      Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
@@ -98,7 +127,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
-    this.observers = observers;
+    this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 
@@ -263,15 +292,16 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If it is a call to an observer method, clear the active flag of
-      // its receiver. (This method doesn't side effect the receiver or
+      // If it is a call to a side-effect-free method, clear the active flag of
+      // its receiver and arguments. (This method doesn't side effect the receiver or
       // any argument, so Randoop should use some other shorter sequence
       // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
-      boolean isObserver = stmt.isMethodCall() && observers.contains(stmt.getOperation());
-      Log.logPrintf("isObserver => %s for %s%n", isObserver, stmt);
-      if (isObserver) {
+      boolean isSideEffectFree =
+          stmt.isMethodCall() && sideEffectFreeMethods.contains(stmt.getOperation());
+      Log.logPrintf("isSideEffectFree => %s for %s%n", isSideEffectFree, stmt);
+      if (isSideEffectFree) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
         for (Integer inputIndex : inputVars) {
           seq.sequence.clearActiveFlag(inputIndex);
@@ -340,7 +370,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Select the next operation to use in constructing a new sequence.
     TypedOperation operation = operationSelector.selectOperation();
-    Log.logPrintf("Selected operation: %s%n", operation.toString());
+    Log.logPrintf("Selected operation: %s%n", operation);
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
@@ -353,13 +383,14 @@ public class ForwardGenerator extends AbstractGenerator {
           }
         } else {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logPrintf("Instantiation error for operation %s%n", operation);
+          Log.logPrintf("Instantiation error for operation%n %s%n", operation);
           Log.logStackTrace(e);
-          System.out.println("Instantiation error for operation " + operation);
-          operation = null;
+          System.out.printf("Instantiation error for operation%n %s%n", operation);
+          return null;
         }
       }
       if (operation == null) { // failed to instantiate generic
+        Log.logPrintf("Failed to instantiate generic operation%n", operation);
         return null;
       }
     }
@@ -398,7 +429,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
 
-    // With .5 probability, do a primitive value heuristic.
+    // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
       newSequence = repeat(newSequence, operation, times);
@@ -569,8 +600,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // define it as the concatenation of the following list of sequences.
     // In other words, S = sequences[0] + ... + sequences[sequences.size()-1].
     // (This representation choice is for efficiency: it is cheaper to perform
-    // a single concatenation of the subsequences in the end than repeatedly
-    // extending S.)
+    // a single concatenation of the subsequences in the end than to repeatedly
+    // extend S.)
 
     List<Sequence> sequences = new ArrayList<>();
 
@@ -769,7 +800,8 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * Return a variable of the given type.
    *
-   * @param candidates the list to choose from (I think?)
+   * @param candidates sequences, each of which produces the given type; that is, each would be a
+   *     legal return value
    * @param inputType the type of the chosen variable/sequence
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
@@ -863,14 +895,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
   @Override
   public String toString() {
-    return "randoop.generation.ForwardGenerator("
-        + ("allSequences.size()=" + allSequences.size())
-        + ","
-        + ("observers.size()=" + observers.size())
-        + ","
-        + ("subsumed_sequences.size()=" + subsumed_sequences.size())
-        + ","
-        + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
+    return "ForwardGenerator("
+        + ("allSequences:" + allSequences.size())
+        + ", "
+        + ("sideEffectFreeMethods:" + sideEffectFreeMethods.size())
+        + ", "
+        + ("subsumed_sequences:" + subsumed_sequences.size())
+        + ", "
+        + ("runtimePrimitivesSeen:" + runtimePrimitivesSeen.size())
         + ")";
   }
 }
