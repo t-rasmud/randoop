@@ -6,13 +6,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
 @HasQualifierParameter(NonDet.class)
-public class MultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object> implements IMultiMap<T1, T2> {
+public class MultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object>
+    implements IMultiMap<T1, T2> {
 
   private final @PolyDet Map<T1, @PolyDet Set<T2>> map;
 

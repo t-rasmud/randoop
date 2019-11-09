@@ -1,14 +1,13 @@
 package randoop.util;
 
-import org.checkerframework.framework.qual.HasQualifierParameter;
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
-public @PolyDet class SimpleArrayList<E extends @PolyDet Object> extends @PolyDet ArrayList<E> implements SimpleList<E>, Serializable {
+public @PolyDet class SimpleArrayList<E extends @PolyDet Object> extends @PolyDet ArrayList<E>
+    implements SimpleList<E>, Serializable {
 
   private static final long serialVersionUID = 20180317;
 
