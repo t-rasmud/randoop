@@ -2,13 +2,14 @@ package randoop.util;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
-public class SimpleSet<T> implements ISimpleSet<T> {
+public class SimpleSet<T extends @PolyDet Object> implements ISimpleSet<T> {
 
-  private final LinkedHashSet<T> set;
+  private final @PolyDet LinkedHashSet<T> set;
 
   public SimpleSet() {
-    set = new LinkedHashSet<>();
+    set = new @PolyDet LinkedHashSet<>();
   }
 
   @Override

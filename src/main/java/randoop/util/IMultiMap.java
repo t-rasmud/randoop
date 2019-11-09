@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** A multimap, which maps each key to a set of values. */
@@ -28,7 +29,7 @@ public interface IMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
    * @param key cannot be null
    * @return the set of values for the given key
    */
-  Set<T2> getValues(T1 key);
+  @PolyDet("up") Set<T2> getValues(T1 key);
 
   /**
    * Returns the set of keys in this map (the domain).
@@ -50,5 +51,5 @@ public interface IMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
    * @return a String representation of this map
    */
   @Override
-  String toString();
+  @NonDet String toString();
 }

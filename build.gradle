@@ -192,7 +192,6 @@ dependencies {
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
   if ("true".equals(project.ext.useCheckerFramework)) {
-    println "Using checkerframework"
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
       compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
@@ -241,6 +240,8 @@ build.dependsOn compileAll
 
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
+println sourceSets.main.runtimeClasspath.asPath
+
 if ("true".equals(project.ext.useCheckerFramework)) {
   checkerFramework {
     checkers = [
@@ -254,8 +255,11 @@ if ("true".equals(project.ext.useCheckerFramework)) {
 		'-ArequirePrefixInWarningSuppressions',
 		'-AwarnUnneededSuppressions',
 	'-AskipDefs=randoop.test',
-	'-AonlyDefs=randoop.util.JarReader',
+	'-AonlyDefs=randoop.util.SimpleSet',
+	'-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop',
 	'-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
+	// '-Astubs=Thread.astub',
+	// '-Astubs=GenericVisitor2.astub',
 	'-AsuppressWarnings=invalid.type.on.conditional,throw.type.invalid',
     ]
   }

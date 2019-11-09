@@ -12,7 +12,7 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Object> {
 
   /** the underlying map */
-  private IdentityHashMap<K, @PolyDet Set<V>> map;
+  private @PolyDet IdentityHashMap<K, @PolyDet Set<V>> map;
 
   /** Creates an empty multi-map. */
   public IdentityMultiMap() {
