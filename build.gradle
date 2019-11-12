@@ -250,17 +250,18 @@ if ("true".equals(project.ext.useCheckerFramework)) {
 	  'org.checkerframework.checker.determinism.DeterminismChecker'
     ]
     extraJavacArgs = [
-	'-Werror',
+	// '-Werror',
 		// '-AcheckPurityAnnotations',
 		'-ArequirePrefixInWarningSuppressions',
 		'-AwarnUnneededSuppressions',
 	'-AskipDefs=randoop.test',
-	'-AonlyDefs=randoop.util.StringEscapeUtils',
+	'-AonlyDefs=randoop.util.*',
 	'-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop',
 	'-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
 	// '-Astubs=Thread.astub',
 	// '-Astubs=GenericVisitor2.astub',
 	'-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid',
+	'-Amaxwarns=10000',
     ]
   }
 } else {
