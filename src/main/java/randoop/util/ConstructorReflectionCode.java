@@ -3,16 +3,13 @@ package randoop.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
-@HasQualifierParameter(NonDet.class)
 public final class ConstructorReflectionCode extends ReflectionCode {
 
   /** The constructor to be called. */
-  private final Constructor<?> constructor;
+  private final @PolyDet Constructor<?> constructor;
   /**
    * The arguments that the constructor is applied to. If an inner class constructor has a receiver,
    * it is the first element of this array.

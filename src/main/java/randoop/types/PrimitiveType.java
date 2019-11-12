@@ -2,12 +2,15 @@ package randoop.types;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.framework.qual.NoQualifierParameter;
 
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
  * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section
  * 4.2</a>.
  */
+@NoQualifierParameter(NonDet.class)
 public class PrimitiveType extends Type {
 
   /** The runtime class of the primitive type. */

@@ -1,12 +1,10 @@
 package randoop.util;
 
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.framework.qual.HasQualifierParameter;
 
-@HasQualifierParameter(NonDet.class)
 public class CountDownTimer {
 
-  private long totalTime;
+  private @NonDet long totalTime;
   private @NonDet long startTime;
 
   private CountDownTimer(long timeMillis) {

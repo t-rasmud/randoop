@@ -5,6 +5,7 @@ import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -126,7 +127,7 @@ public final class Util {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
     }
 
-    String indentString = new String(new char[indentWidth]).replace("\0", " ");
+    String indentString = new String(new char @PolyDet [indentWidth]).replace("\0", " ");
 
     StringBuilder b = new StringBuilder();
 

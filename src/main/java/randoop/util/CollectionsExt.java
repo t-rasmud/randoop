@@ -49,7 +49,9 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    return UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
+    @SuppressWarnings("determinism") // doesn't type check if not using annotated plume-util
+    @PolyDet("up") String tmp = UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
+    return tmp;
   }
 
   /**
@@ -60,7 +62,7 @@ public final class CollectionsExt {
    */
   private static List<@PolyDet String> toStringLines(
       Collection<? extends @PolyDet("use") Object> c) {
-    List<String> lines = new @PolyDet ArrayList<>(c.size());
+    @PolyDet List<@PolyDet String> lines = new @PolyDet ArrayList<>(c.size());
     for (Object each : c) {
       @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
       @PolyDet String tmp = String.valueOf(each);

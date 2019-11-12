@@ -255,12 +255,12 @@ if ("true".equals(project.ext.useCheckerFramework)) {
 		'-ArequirePrefixInWarningSuppressions',
 		'-AwarnUnneededSuppressions',
 	'-AskipDefs=randoop.test',
-	'-AonlyDefs=randoop.util.SimpleSet',
+	'-AonlyDefs=randoop.util.StringEscapeUtils',
 	'-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop',
 	'-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
 	// '-Astubs=Thread.astub',
 	// '-Astubs=GenericVisitor2.astub',
-	'-AsuppressWarnings=invalid.type.on.conditional,throw.type.invalid',
+	'-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid',
     ]
   }
 } else {

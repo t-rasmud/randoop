@@ -4,7 +4,7 @@ import java.util.Set;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
-public interface ISimpleSet<T extends @PolyDet Object> {
+public interface ISimpleSet<T extends @PolyDet("use") Object> {
 
   /**
    * Adds the given elt to the set.

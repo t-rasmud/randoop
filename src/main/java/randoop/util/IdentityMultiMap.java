@@ -9,7 +9,7 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** A multi-map using key identity rather than equality. */
 @HasQualifierParameter(NonDet.class)
-public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Object> {
+public class IdentityMultiMap<K extends @PolyDet("use") Object, V extends @PolyDet("use") Object> {
 
   /** the underlying map */
   private @PolyDet IdentityHashMap<K, @PolyDet Set<V>> map;

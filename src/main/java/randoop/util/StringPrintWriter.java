@@ -17,6 +17,7 @@ package randoop.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * A PrintWriter that maintains a String as its backing store.
@@ -58,6 +59,8 @@ public class StringPrintWriter extends PrintWriter {
    */
   public String getString() {
     flush();
-    return this.out.toString();
+    @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
+    @PolyDet String tmp = this.out.toString();
+    return tmp;
   }
 }

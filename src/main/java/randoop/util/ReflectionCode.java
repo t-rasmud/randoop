@@ -1,7 +1,6 @@
 package randoop.util;
 
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.framework.qual.HasQualifierParameter;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
@@ -9,20 +8,19 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
  *
  * <p>Implemented by parts of Randoop that want to execute reflection code via ReflectionExecutor.
  */
-@HasQualifierParameter(NonDet.class)
 public abstract class ReflectionCode {
 
   /** Has this started execution? */
-  private boolean hasStarted;
+  private @PolyDet boolean hasStarted;
 
   /** Has this been executed already? */
-  private boolean hasRun;
+  private @PolyDet boolean hasRun;
 
   // Before runReflectionCodeRaw is executed, both of these fields are null. After
   // runReflectionCodeRaw is executed, if exceptionThrown is null, then retval is the returned value
   // (which might be null).
-  protected Object retval;
-  protected Throwable exceptionThrown;
+  protected @PolyDet Object retval;
+  protected @PolyDet Throwable exceptionThrown;
 
   public final boolean hasStarted() {
     return hasStarted;

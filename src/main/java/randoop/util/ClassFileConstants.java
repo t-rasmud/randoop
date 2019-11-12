@@ -67,13 +67,13 @@ public class ClassFileConstants {
 
   @HasQualifierParameter(NonDet.class)
   public static class ConstantSet {
-    public @ClassGetName String classname;
-    public Set<@PolyDet Integer> ints = new @PolyDet TreeSet<@PolyDet Integer>();
-    public Set<@PolyDet Long> longs = new @PolyDet TreeSet<>();
-    public Set<@PolyDet Float> floats = new @PolyDet TreeSet<>();
-    public Set<@PolyDet Double> doubles = new @PolyDet TreeSet<>();
-    public Set<@PolyDet String> strings = new @PolyDet TreeSet<>();
-    public Set<@PolyDet Class<?>> classes = new @PolyDet TreeSet<>();
+    public @PolyDet @ClassGetName String classname;
+    public @PolyDet Set<@PolyDet Integer> ints = new @PolyDet TreeSet<>();
+    public @PolyDet Set<@PolyDet Long> longs = new @PolyDet TreeSet<>();
+    public @PolyDet Set<@PolyDet Float> floats = new @PolyDet TreeSet<>();
+    public @PolyDet Set<@PolyDet Double> doubles = new @PolyDet TreeSet<>();
+    public @PolyDet Set<@PolyDet String> strings = new @PolyDet TreeSet<>();
+    public @PolyDet Set<@PolyDet Class<?>> classes = new @PolyDet TreeSet<>();
 
     @Override
     public String toString() {
@@ -126,7 +126,7 @@ public class ClassFileConstants {
    * @see #getConstants(String,ConstantSet)
    */
   public static ConstantSet getConstants(String classname) {
-    ConstantSet result = new ConstantSet();
+    @PolyDet ConstantSet result = new @PolyDet ConstantSet();
     getConstants(classname, result);
     return result;
   }
@@ -630,7 +630,7 @@ public class ClassFileConstants {
       toMap(Collection<@PolyDet ConstantSet> constantSets) {
     final @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> map =
         new @PolyDet("up") MultiMap<>();
-    for (@PolyDet("up") ConstantSet cs : constantSets) {
+    for (@PolyDet ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {
         clazz = TypeNames.getTypeForName(cs.classname);

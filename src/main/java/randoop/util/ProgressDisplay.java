@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
@@ -33,14 +35,16 @@ public class ProgressDisplay extends Thread {
     NO_DISPLAY
   }
 
-  private Mode outputMode;
+  private @Det Mode outputMode;
 
-  private RandoopListenerManager listenerMgr;
+  private @Det RandoopListenerManager listenerMgr;
 
-  private AbstractGenerator generator;
+  private @Det AbstractGenerator generator;
 
-  public ProgressDisplay(
-      AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode) {
+  public @Det ProgressDisplay(
+      @Det AbstractGenerator generator,
+      @Det RandoopListenerManager listenerMgr,
+      @Det Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
@@ -76,7 +80,9 @@ public class ProgressDisplay extends Thread {
   public boolean shouldStop = false;
 
   @Override
-  public void run() {
+  @SuppressWarnings(
+      "determinism") // TODO: Remove this after figuring out stub files to change receiver type
+  public void run(@Det ProgressDisplay this) {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
     while (true) {
       if (shouldStop) {
@@ -151,12 +157,13 @@ public class ProgressDisplay extends Thread {
   }
 
   private void printAllStackTraces() {
-    for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
+    for (Map.@Det Entry<Thread, StackTraceElement @Det []> trace :
+        Thread.getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
       System.out.println("Thread " + trace.getKey().toString());
       System.out.println("Stack trace:");
-      StackTraceElement[] elts = trace.getValue();
-      for (StackTraceElement elt : elts) {
+      StackTraceElement @Det [] elts = trace.getValue();
+      for (@Det StackTraceElement elt : elts) {
         System.out.println(elt);
       }
     }
@@ -164,12 +171,12 @@ public class ProgressDisplay extends Thread {
   }
 
   /** When the most recent step completed. */
-  private long lastStepTime = System.currentTimeMillis();
+  private @NonDet long lastStepTime = System.currentTimeMillis();
   /** The step number of the most recent step. */
   private long lastNumSteps = 0;
 
   /** Set {@code lastStepTime} to when the most recent step completed. */
-  private void updateLastStepTime() {
+  private void updateLastStepTime(@Det ProgressDisplay this) {
     long seqs = generator.num_steps;
     if (seqs > lastNumSteps) {
       lastStepTime = System.currentTimeMillis();
@@ -203,7 +210,7 @@ public class ProgressDisplay extends Thread {
    *
    * @param withTime whether to print time and memory usage
    */
-  public void display(boolean withTime) {
+  public void display(@Det ProgressDisplay this, @Det boolean withTime) {
     if (noProgressOutput()) return;
     display(message(withTime));
   }
@@ -213,7 +220,7 @@ public class ProgressDisplay extends Thread {
    *
    * @param message the message to display
    */
-  private void display(String message) {
+  private void display(@Det ProgressDisplay this, @Det String message) {
     if (noProgressOutput()) return;
     synchronized (print_synchro) {
       System.out.print(

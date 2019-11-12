@@ -20,6 +20,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.Writer;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Escapes and unescapes {@code String}s for Java, JavaScript, HTML, XML, and SQL.
@@ -99,7 +100,7 @@ public class StringEscapeUtils {
       return null;
     }
     try {
-      StringPrintWriter writer = new StringPrintWriter(str.length() * 2);
+      @PolyDet StringPrintWriter writer = new StringPrintWriter(str.length() * 2);
       escapeJavaStyleString(writer, str, escapeSingleQuotes);
       return writer.getString();
     } catch (IOException ioe) {

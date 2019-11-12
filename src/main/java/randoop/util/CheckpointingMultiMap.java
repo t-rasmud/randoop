@@ -15,33 +15,33 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-@HasQualifierParameter(NonDet.class)
-public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object>
+public class CheckpointingMultiMap<
+        T1 extends @PolyDet("use") Object, T2 extends @PolyDet("use") Object>
     implements IMultiMap<T1, T2> {
 
   public static boolean verbose_log = false;
 
-  private final Map<T1, @PolyDet Set<T2>> map;
+  private final @PolyDet Map<T1, @PolyDet Set<T2>> map;
 
-  public final List<Integer> marks;
+  public final @PolyDet List<@PolyDet Integer> marks;
 
   private enum Ops {
     ADD,
     REMOVE
   }
 
-  private final List<@PolyDet OpKeyVal> ops;
+  private final @PolyDet List<@PolyDet OpKeyVal> ops;
 
-  private int steps;
+  private @PolyDet int steps;
 
   // A triple of an operation, a key, and a value
   @HasQualifierParameter(NonDet.class)
   private class OpKeyVal {
-    final Ops op;
-    final T1 key;
-    final T2 val;
+    final @PolyDet Ops op;
+    final @PolyDet T1 key;
+    final @PolyDet T2 val;
 
-    OpKeyVal(final Ops op, final T1 key, final T2 val) {
+    OpKeyVal(final @PolyDet Ops op, final T1 key, final T2 val) {
       this.op = op;
       this.key = key;
       this.val = val;
@@ -50,7 +50,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
 
   public CheckpointingMultiMap() {
     map = new @PolyDet LinkedHashMap<>();
-    marks = new ArrayList<>();
+    marks = new @PolyDet ArrayList<>();
     ops = new @PolyDet ArrayList<>();
     steps = 0;
   }
@@ -66,7 +66,8 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
     add_bare(key, value);
-    ops.add(new @PolyDet OpKeyVal(Ops.ADD, key, value));
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/123
+    Object dummy = ops.add(new @PolyDet OpKeyVal(Ops.ADD, key, value));
     steps++;
   }
 
@@ -77,7 +78,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
 
     @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
-      values = new LinkedHashSet<>(1);
+      values = new @PolyDet LinkedHashSet<>(1);
       map.put(key, values);
     }
     if (values.contains(value)) {
@@ -97,7 +98,8 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
     remove_bare(key, value);
-    ops.add(new OpKeyVal(Ops.REMOVE, key, value));
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/123
+    Object dummy = ops.add(new @PolyDet OpKeyVal(Ops.REMOVE, key, value));
     steps++;
   }
 
@@ -141,8 +143,11 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
 
   private void undoLastOp() {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
-    OpKeyVal last = ops.remove(ops.size() - 1);
-    Ops op = last.op;
+    @SuppressWarnings(
+        "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
+    // @PolyDet
+    @PolyDet OpKeyVal last = ops.remove(ops.size() - 1);
+    @PolyDet Ops op = last.op;
     T1 key = last.key;
     T2 val = last.val;
 

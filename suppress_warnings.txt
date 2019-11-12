@@ -3,3 +3,10 @@
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
 @SuppressWarnings("determinism") // this is code randoop is run on
+@SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
+
+// For exception
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/116
+
+// For upper bounds on inner classes
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/123

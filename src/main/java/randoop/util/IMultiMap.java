@@ -5,7 +5,7 @@ import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** A multimap, which maps each key to a set of values. */
-public interface IMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object> {
+public interface IMultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("use") Object> {
 
   /**
    * Precondition: the mapping key&rarr;value is not already in the map.
