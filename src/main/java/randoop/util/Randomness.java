@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -37,7 +39,7 @@ public final class Randomness {
    *
    * @param seed the initial seed
    */
-  public static void setSeed(long seed) {
+  public static void setSeed(@Det long seed) {
     random.setSeed(seed);
     totalCallsToRandom = 0;
     logSelection("[Random object]", "setSeed", seed);
@@ -94,7 +96,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(SimpleList<T> list) {
+  public static <T extends @PolyDet Object> T randomMember(SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }

@@ -22,13 +22,13 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
 
   private static final long serialVersionUID = -3307714585442970263L;
 
-  public final List<@PolyDet SimpleList<T>> lists;
+  public final @PolyDet List<@PolyDet SimpleList<T>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
-  private @PolyDet int[] cumulativeSize;
+  private @PolyDet int @PolyDet [] cumulativeSize;
 
   /** The size of this collection. */
-  private int totalelements;
+  private @PolyDet int totalelements;
 
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<T> @PolyDet ... lists) {

@@ -13,7 +13,7 @@ public class MultiSet<T extends @PolyDet Object> {
   private final @PolyDet Map<T, Integer> frequencyMap;
 
   public MultiSet() {
-    frequencyMap = new LinkedHashMap<>();
+    frequencyMap = new @PolyDet LinkedHashMap<>();
   }
 
   public void add(T obj) {

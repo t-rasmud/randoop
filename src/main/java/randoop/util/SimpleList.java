@@ -65,7 +65,7 @@ public interface SimpleList<T extends @PolyDet Object> {
    * @param index the index into this list
    * @return the sublist containing this index
    */
-  public @PolyDet("up") SimpleList<T> getSublist(int index);
+  public @PolyDet SimpleList<T> getSublist(int index);
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   /**

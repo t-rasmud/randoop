@@ -1,5 +1,7 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
@@ -45,10 +47,10 @@ public final class ReflectionExecutor {
   public static int call_timeout = CALL_TIMEOUT_DEFAULT;
 
   // Execution statistics.
-  private static long normal_exec_duration = 0;
-  private static int normal_exec_count = 0;
-  private static long excep_exec_duration = 0;
-  private static int excep_exec_count = 0;
+  private static @NonDet long normal_exec_duration = 0;
+  private static @NonDet int normal_exec_count = 0;
+  private static @NonDet long excep_exec_duration = 0;
+  private static @NonDet int excep_exec_count = 0;
 
   public static void resetStatistics() {
     normal_exec_duration = 0;
@@ -85,7 +87,7 @@ public final class ReflectionExecutor {
     if (usethreads) {
       try {
         executeReflectionCodeThreaded(code);
-      } catch (TimeoutExceededException e) {
+      } catch (@PolyDet TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(e, call_timeout * 1000);
       }

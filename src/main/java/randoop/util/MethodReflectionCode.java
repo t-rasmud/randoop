@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
 public final class MethodReflectionCode extends ReflectionCode {
@@ -25,7 +26,8 @@ public final class MethodReflectionCode extends ReflectionCode {
    * @param inputs the arguments that the method is applied to
    */
   @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
-  public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
+  public MethodReflectionCode(
+      @PolyDet Method method, @PolyDet Object receiver, @PolyDet Object @PolyDet [] inputs) {
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
@@ -83,12 +85,16 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    return "Call to "
-        + method
-        + " receiver: "
-        + receiver
-        + " args: "
-        + Arrays.toString(inputs)
-        + status();
+    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is
+    // the same as @PolyDet
+    @PolyDet String tmp =
+        "Call to "
+            + method
+            + " receiver: "
+            + receiver
+            + " args: "
+            + Arrays.toString(inputs)
+            + status();
+    return tmp;
   }
 }

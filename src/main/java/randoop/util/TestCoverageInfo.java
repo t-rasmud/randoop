@@ -75,7 +75,7 @@ public class TestCoverageInfo {
 
   private BranchCov getCoverageInfo(String methodSignature) {
     @PolyDet Set<@PolyDet Integer> indices = methodToIndices.get(methodSignature);
-    int totalBranches = indices.size() * 2;
+    int totalBranches = (@PolyDet int) indices.size() * 2;
     int branchesCovered = 0;
     for (Integer i : indices) {
       if (branchTrue[i] > 0) {

@@ -3,8 +3,11 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
-public final class OneMoreElementList<T> implements SimpleList<T>, Serializable {
+public final class OneMoreElementList<T extends @PolyDet Object>
+    implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = 1332963552183905833L;
 
@@ -12,7 +15,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   public final SimpleList<T> list;
   public final int size;
 
-  public OneMoreElementList(SimpleList<T> list, T extraElement) {
+  public OneMoreElementList(@PolyDet SimpleList<T> list, T extraElement) {
     this.list = list;
     this.lastElement = extraElement;
     this.size = list.size() + 1;
@@ -29,7 +32,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public T get(int index) {
+  public @PolyDet("up") T get(int index) {
     if (index < size - 1) {
       return list.get(index);
     }
@@ -53,14 +56,14 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
 
   @Override
   public List<T> toJDKList() {
-    List<T> result = new ArrayList<>();
+    @PolyDet List<T> result = new @PolyDet ArrayList<>();
     result.addAll(list.toJDKList());
     result.add(lastElement);
     return result;
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return toJDKList().toString();
   }
 }

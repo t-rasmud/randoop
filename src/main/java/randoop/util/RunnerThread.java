@@ -1,16 +1,21 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.NoQualifierParameter;
+
 public class RunnerThread extends Thread {
 
   // Fields assigned when calling setup(..)
-  private ReflectionCode code;
+  private @PolyDet ReflectionCode code;
 
   // Fields assigned when calling run()
-  boolean runFinished;
+  @PolyDet boolean runFinished;
 
   // The state of the thread.
-  private NextCallMustBe state;
+  private @PolyDet NextCallMustBe state;
 
+  @NoQualifierParameter(NonDet.class)
   private enum NextCallMustBe {
     SETUP,
     RUN
@@ -21,7 +26,7 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  RunnerThread(ThreadGroup threadGroup) {
+  RunnerThread(@PolyDet ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;

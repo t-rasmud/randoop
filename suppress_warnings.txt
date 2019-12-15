@@ -10,3 +10,6 @@
 
 // For upper bounds on inner classes
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/123
+
+// For @PolyDet being treated from @PolyDet("use") in upper bounds
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/143

@@ -3,6 +3,7 @@ package randoop.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -33,7 +34,7 @@ public final class Log {
       msg = String.format(fmt, args);
     } catch (Throwable t) {
       logPrintf("A user-defined toString() method failed.%n");
-      Class<?>[] argTypes = new Class<?>[args.length];
+      Class<?>[] argTypes = new @PolyDet Class<?>[args.length];
       for (int i = 0; i < args.length; i++) {
         argTypes[i] = args[i].getClass();
       }

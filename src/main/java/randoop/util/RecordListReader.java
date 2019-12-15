@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -28,14 +29,14 @@ import org.plumelib.util.UtilPlume;
 public class RecordListReader {
 
   /** startMarker is "START <em>recordType</em>" */
-  private final String startMarker;
+  private final @PolyDet String startMarker;
   /** endMarker is "END <em>recordType</em>" */
-  private final String endMarker;
+  private final @PolyDet String endMarker;
 
   /** The object in charge of doing whatever is to be done with the record. */
   private final RecordProcessor processor;
 
-  public RecordListReader(String recordType, RecordProcessor proc) {
+  public RecordListReader(@PolyDet String recordType, @PolyDet RecordProcessor proc) {
     if (recordType == null || recordType.length() == 0) {
       throw new IllegalArgumentException(
           "No record type given: " + (recordType == null ? "null" : "\"\""));
@@ -84,7 +85,7 @@ public class RecordListReader {
       while (line != null) {
         line = line.trim();
         if (line.startsWith(startMarker)) {
-          List<String> oneRecord = readOneRecord(reader);
+          @PolyDet List<@PolyDet String> oneRecord = readOneRecord(reader);
           processor.processRecord(oneRecord);
         } else {
           throw new IllegalArgumentException("Expected \"" + startMarker + "\" but got " + line);
@@ -96,8 +97,8 @@ public class RecordListReader {
     }
   }
 
-  private List<String> readOneRecord(BufferedReader reader) throws IOException {
-    List<String> ret = new ArrayList<>();
+  private List<@PolyDet String> readOneRecord(BufferedReader reader) throws IOException {
+    @PolyDet List<@PolyDet String> ret = new @PolyDet ArrayList<>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
       if (line.length() == 0 || line.charAt(0) == '#') continue;

@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.contract.ObjectContract;
 
 public final class ObjectContractReflectionCode extends ReflectionCode {
@@ -8,7 +9,8 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   final ObjectContract c;
   final Object[] objs;
 
-  public ObjectContractReflectionCode(final ObjectContract c, final Object... objs) {
+  public ObjectContractReflectionCode(
+      final @PolyDet ObjectContract c, final @PolyDet Object @PolyDet ... objs) {
     this.c = c;
     this.objs = objs;
   }

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.framework.qual.HasQualifierParameter;
+import org.checkerframework.framework.qual.NoQualifierParameter;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
@@ -25,6 +25,7 @@ public class CheckpointingMultiMap<
 
   public final @PolyDet List<@PolyDet Integer> marks;
 
+  @NoQualifierParameter(NonDet.class)
   private enum Ops {
     ADD,
     REMOVE
@@ -35,7 +36,6 @@ public class CheckpointingMultiMap<
   private @PolyDet int steps;
 
   // A triple of an operation, a key, and a value
-  @HasQualifierParameter(NonDet.class)
   private class OpKeyVal {
     final @PolyDet Ops op;
     final @PolyDet T1 key;
@@ -66,7 +66,6 @@ public class CheckpointingMultiMap<
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
     add_bare(key, value);
-    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/123
     Object dummy = ops.add(new @PolyDet OpKeyVal(Ops.ADD, key, value));
     steps++;
   }
@@ -98,7 +97,6 @@ public class CheckpointingMultiMap<
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
     remove_bare(key, value);
-    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/123
     Object dummy = ops.add(new @PolyDet OpKeyVal(Ops.REMOVE, key, value));
     steps++;
   }
@@ -141,6 +139,7 @@ public class CheckpointingMultiMap<
     steps = tmp;
   }
 
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/143
   private void undoLastOp() {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
     @SuppressWarnings(
@@ -175,7 +174,7 @@ public class CheckpointingMultiMap<
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     Set<T2> values = map.get(key);
     if (values == null) {
-      return Collections.emptySet();
+      return (@PolyDet Set<T2>) Collections.emptySet();
     }
     return values;
   }

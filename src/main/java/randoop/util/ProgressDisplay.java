@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.framework.qual.NoQualifierParameter;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
@@ -29,8 +30,9 @@ public class ProgressDisplay extends Thread {
    */
   private static int exit_if_no_steps_after_milliseconds = 10 * 1000;
 
+  @NoQualifierParameter(NonDet.class)
   public enum Mode {
-    SINGLE_LINE_OVERWRITE,
+    SINGLE_LINE_OVERWRITE(),
     MULTILINE,
     NO_DISPLAY
   }

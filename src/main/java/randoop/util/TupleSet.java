@@ -96,7 +96,7 @@ public class TupleSet<E extends @PolyDet("use") Object> {
    * @return a new list with the element inserted at the end
    */
   private List<E> extendTuple(@PolyDet List<E> tuple, E e) {
-    @PolyDet List<E> extTuple = new ArrayList<>(tupleLength + 1);
+    @PolyDet List<E> extTuple = new @PolyDet ArrayList<>(tupleLength + 1);
     extTuple.addAll(tuple);
     extTuple.add(e);
     return extTuple;

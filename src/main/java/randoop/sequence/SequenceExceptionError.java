@@ -1,5 +1,7 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.PolyDet;
+
 /**
  * Exception representing occurrence of a "flaky" test sequence where an exception was thrown by a
  * statement other than the last of the sequence. Occurs when a statement in an input sequence, that
@@ -12,13 +14,13 @@ public class SequenceExceptionError extends Error {
   private static final long serialVersionUID = 4778297090156993454L;
 
   /** The exception thrown by the sequence. */
-  private Throwable e;
+  private @PolyDet Throwable e;
 
   /** The test sequence. */
-  private ExecutableSequence testSequence;
+  private @PolyDet ExecutableSequence testSequence;
 
   /** The position of the statement that threw the exception. */
-  private int position;
+  private @PolyDet int position;
 
   /**
    * Create an exception for the exception thrown by the statement at the given position in the test

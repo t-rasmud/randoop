@@ -1,13 +1,14 @@
 package randoop.util;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import org.checkerframework.checker.determinism.qual.Det;
 
 public class RandoopUncaughtRunnerThreadExceptionHandler implements UncaughtExceptionHandler {
 
-  private static RandoopUncaughtRunnerThreadExceptionHandler singleInstance =
+  private static @Det RandoopUncaughtRunnerThreadExceptionHandler singleInstance =
       new RandoopUncaughtRunnerThreadExceptionHandler();
 
-  public static UncaughtExceptionHandler getHandler() {
+  public static @Det UncaughtExceptionHandler getHandler() {
     return singleInstance;
   }
 
