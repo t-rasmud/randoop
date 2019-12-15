@@ -43,6 +43,9 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof GenericClassType)) {
       return false;
     }
@@ -291,6 +294,6 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public NonParameterizedType getRawtype() {
-    return new NonParameterizedType(rawType);
+    return NonParameterizedType.forClass(rawType);
   }
 }

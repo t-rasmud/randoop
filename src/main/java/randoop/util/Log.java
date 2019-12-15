@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.formatter.qual.FormatMethod;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -24,6 +25,7 @@ public final class Log {
    * @param fmt the format string
    * @param args arguments to the format string
    */
+  @FormatMethod
   public static void logPrintf(String fmt, Object... args) {
     if (!isLoggingOn()) {
       return;

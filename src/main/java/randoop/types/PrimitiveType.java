@@ -54,6 +54,9 @@ public class PrimitiveType extends Type {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof PrimitiveType)) {
       return false;
     }
@@ -170,6 +173,6 @@ public class PrimitiveType extends Type {
    * @return the boxed type for this primitive type
    */
   public NonParameterizedType toBoxedPrimitive() {
-    return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+    return NonParameterizedType.forClass(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }
