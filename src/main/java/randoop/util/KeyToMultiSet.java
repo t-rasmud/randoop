@@ -67,7 +67,8 @@ public class KeyToMultiSet<T1 extends @PolyDet("use") Object, T2 extends @PolyDe
   public Set<T2> getVariables(T1 key) {
     @PolyDet MultiSet<T2> values = map.get(key);
     if (values == null) {
-      return (@PolyDet Set<T2>) Collections.emptySet();
+      @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
+      @PolyDet Set<T2> tmp = Collections.emptySet();
     }
     return values.getElements();
   }

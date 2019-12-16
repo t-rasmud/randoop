@@ -49,8 +49,9 @@ public class TupleSet<E extends @PolyDet("use") Object> {
    * @param elements the list of elements
    * @return a tuple set formed by extending the tuples with the elements of the given list
    */
-  public TupleSet<E> extend(List<E> elements) {
-    @PolyDet List<@PolyDet List<E>> tupleList = new @PolyDet ArrayList<>(tuples.size() * elements.size());
+  public @PolyDet("up") TupleSet<E> extend(List<E> elements) {
+    @PolyDet("up") List<@PolyDet("up") List<E>> tupleList =
+        new @PolyDet("up") ArrayList<>(tuples.size() * elements.size());
     for (@PolyDet List<E> tuple : tuples) {
       for (E e : elements) {
         @PolyDet List<E> extTuple = extendTuple(tuple, e);
@@ -97,7 +98,9 @@ public class TupleSet<E extends @PolyDet("use") Object> {
    */
   private List<E> extendTuple(@PolyDet List<E> tuple, E e) {
     @PolyDet List<E> extTuple = new @PolyDet ArrayList<>(tupleLength + 1);
-    extTuple.addAll(tuple);
+    @SuppressWarnings(
+        "determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
+    boolean dummy = extTuple.addAll(tuple);
     extTuple.add(e);
     return extTuple;
   }
@@ -114,7 +117,9 @@ public class TupleSet<E extends @PolyDet("use") Object> {
   private List<E> insertInTuple(@PolyDet List<E> tuple, E e, int i) {
     @PolyDet List<E> extTuple = new ArrayList<>(tupleLength + 1);
     // It's a bit inefficient to insert then shift; a better implementation could avoid that.
-    extTuple.addAll(tuple);
+    @SuppressWarnings("determinism") // this addAll is okay because it's just initializing a list to
+    // be a copy of tuple, which only requires @PolyDet
+    boolean dummy = extTuple.addAll(tuple);
     extTuple.add(i, e);
     return extTuple;
   }

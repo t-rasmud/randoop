@@ -57,7 +57,9 @@ public final class OneMoreElementList<T extends @PolyDet Object>
   @Override
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
-    result.addAll(list.toJDKList());
+    @SuppressWarnings(
+        "determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
+    boolean dummy = result.addAll(list.toJDKList());
     result.add(lastElement);
     return result;
   }

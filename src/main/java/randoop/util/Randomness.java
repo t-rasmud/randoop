@@ -80,7 +80,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(List<T> list) {
+  public static <T extends @PolyDet Object> T randomMember(List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }

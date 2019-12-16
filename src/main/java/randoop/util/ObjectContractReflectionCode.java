@@ -7,7 +7,7 @@ import randoop.contract.ObjectContract;
 public final class ObjectContractReflectionCode extends ReflectionCode {
 
   final ObjectContract c;
-  final Object[] objs;
+  final @PolyDet Object[] objs;
 
   public ObjectContractReflectionCode(
       final @PolyDet ObjectContract c, final @PolyDet Object @PolyDet ... objs) {

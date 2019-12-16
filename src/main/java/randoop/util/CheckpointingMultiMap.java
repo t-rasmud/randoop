@@ -66,7 +66,7 @@ public class CheckpointingMultiMap<
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
     add_bare(key, value);
-    Object dummy = ops.add(new @PolyDet OpKeyVal(Ops.ADD, key, value));
+    ops.add(new @PolyDet OpKeyVal(Ops.ADD, key, value));
     steps++;
   }
 
@@ -174,7 +174,8 @@ public class CheckpointingMultiMap<
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     Set<T2> values = map.get(key);
     if (values == null) {
-      return (@PolyDet Set<T2>) Collections.emptySet();
+      @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
+      @PolyDet Set<T2> tmp = Collections.emptySet();
     }
     return values;
   }

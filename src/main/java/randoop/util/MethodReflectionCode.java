@@ -16,7 +16,7 @@ public final class MethodReflectionCode extends ReflectionCode {
   /** The receiver, or null for a static method. */
   private final Object receiver;
   /** The arguments that the method is applied to. */
-  private final Object[] inputs;
+  private final @PolyDet Object[] inputs;
 
   /**
    * Create a new MethodReflectionCode to represent a method invocation.

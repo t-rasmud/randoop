@@ -74,7 +74,9 @@ public class ClassFileConstants {
     public @PolyDet Set<@PolyDet Float> floats = new @PolyDet TreeSet<>();
     public @PolyDet Set<@PolyDet Double> doubles = new @PolyDet TreeSet<>();
     public @PolyDet Set<@PolyDet String> strings = new @PolyDet TreeSet<>();
-    public @PolyDet Set<@PolyDet Class<?>> classes = new @PolyDet HashSet<>();
+
+    @SuppressWarnings("determinism") // can't create an @OrderNonDet HashSet here apparently
+    public @PolyDet("upDet") Set<@PolyDet Class<?>> classes = new HashSet<>();
 
     @Override
     public String toString() {
@@ -626,6 +628,9 @@ public class ClassFileConstants {
    * @param constantSets the sets of constantSets
    * @return a map of types to constant operations
    */
+  @SuppressWarnings("determinism") // In this method, each JavaTypes.XXX_TYPE is @Det, but
+  // @PolyDet("up") is required since @Det is not a subtype. However, since each is an ummutable
+  // constant, it's okay to treat @Det as @PolyDet("up")
   public static @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm>
       toMap(Collection<@PolyDet ConstantSet> constantSets) {
     final @PolyDet("up") MultiMap<@PolyDet("up") Class<?>, @PolyDet("up") NonreceiverTerm> map =

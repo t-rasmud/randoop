@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.framework.qual.NoQualifierParameter;
 
 /**
  * Constants for non-JDK Java types. Include primitive types, {@code Class<>}, {@code Object},
  * {@code Cloneable}, {@code Comparable}, {@code Serializable}, {@code String}, the null type, and
  * {@code void}.
  */
+@NoQualifierParameter(NonDet.class)
 public class JavaTypes {
   /** The {@code boolean} type. */
   public static final PrimitiveType BOOLEAN_TYPE = PrimitiveType.forClass(boolean.class);

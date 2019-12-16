@@ -31,15 +31,15 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   private @PolyDet int totalelements;
 
   @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public ListOfLists(SimpleList<T> @PolyDet ... lists) {
-    this.lists = new @PolyDet ArrayList<>(lists.length);
-    for (SimpleList<T> sl : lists) {
+  public @PolyDet("up") ListOfLists(@PolyDet SimpleList<T> @PolyDet ... lists) {
+    this.lists = new @PolyDet("up") ArrayList<>(lists.length);
+    for (@PolyDet("up") SimpleList<T> sl : lists) {
       this.lists.add(sl);
     }
-    this.cumulativeSize = new int @PolyDet [lists.length];
+    this.cumulativeSize = new int @PolyDet("up") [lists.length];
     this.totalelements = 0;
     for (int i = 0; i < lists.length; i++) {
-      SimpleList<T> l = lists[i];
+      @PolyDet("up") SimpleList<T> l = lists[i];
       if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
       }
@@ -48,19 +48,17 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
     }
   }
 
-  public ListOfLists(@PolyDet List<@PolyDet SimpleList<T>> lists) {
+  public @PolyDet("up") ListOfLists(@PolyDet List<@PolyDet SimpleList<T>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
-    this.cumulativeSize = new int @PolyDet [lists.size()];
+    this.cumulativeSize = new int @PolyDet("up") [lists.size()];
     this.totalelements = 0;
     for (int i = 0; i < lists.size(); i++) {
-      SimpleList<T> l = lists.get(i);
+      @PolyDet("up") SimpleList<T> l = lists.get(i);
       if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
       }
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
-      @PolyDet int tmp = l.size();
-      this.totalelements += tmp;
+      this.totalelements += l.size();
       this.cumulativeSize[i] = this.totalelements;
     }
   }
@@ -91,7 +89,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   }
 
   @Override
-  public @PolyDet("up") SimpleList<T> getSublist(int index) {
+  public @PolyDet SimpleList<T> getSublist(int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -99,7 +97,11 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
         // Recurse.
-        return lists.get(i).getSublist(index - previousListSize);
+        @SuppressWarnings(
+            "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
+                           // @PolyDet
+        @PolyDet SimpleList<T> tmp = lists.get(i).getSublist(index - previousListSize);
+        return tmp;
       }
       previousListSize = cumulativeSize[i];
     }
@@ -108,9 +110,12 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
 
   @Override
   public List<T> toJDKList() {
-    List<T> result = new @PolyDet ArrayList<>();
-    for (SimpleList<T> l : lists) {
-      result.addAll(l.toJDKList());
+    @PolyDet List<T> result = new @PolyDet ArrayList<>();
+    for (@PolyDet("up") SimpleList<T> l : lists) {
+      @SuppressWarnings(
+          "determinism") // addAll requires @PolyDet("down") but not in the case of just making a
+                         // copy
+      boolean dummy = result.addAll(l.toJDKList());
     }
     return result;
   }
