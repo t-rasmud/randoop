@@ -3,8 +3,11 @@ package randoop.types;
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
 import java.util.StringTokenizer;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
+import org.checkerframework.framework.qual.NoQualifierParameter;
 import org.plumelib.reflection.Signatures;
 
 /**
@@ -35,6 +38,7 @@ import org.plumelib.reflection.Signatures;
  * #forType(java.lang.reflect.Type)}, {@link #forClass(Class)}, or {@link #forName(String)}. These
  * methods translate the reflection types into objects of subclasses of this type.
  */
+@NoQualifierParameter(NonDet.class)
 public abstract class Type implements Comparable<Type> {
 
   /**
@@ -46,7 +50,8 @@ public abstract class Type implements Comparable<Type> {
    */
   public static Type forClass(Class<?> classType) {
     if (classType.equals(void.class)) {
-      return VoidType.getVoidType();
+      Type tmp = VoidType.getVoidType();
+      return tmp;
     }
     if (classType.isPrimitive()) {
       return PrimitiveType.forClass(classType);
@@ -108,7 +113,7 @@ public abstract class Type implements Comparable<Type> {
     int arrayDimension = numDimensions(fullyQualifiedName);
     if (arrayDimension > 0) {
       // Make each dimension size zero, since it is ignored by getClass().
-      int[] dimensions = new int[arrayDimension];
+      int @PolyDet [] dimensions = new int @PolyDet [arrayDimension];
       return Array.newInstance(baseType, dimensions).getClass();
     } else {
       return baseType;
@@ -500,7 +505,7 @@ public abstract class Type implements Comparable<Type> {
    * @param <T> the type of the value
    * @return true if the type of {@code value} is assignable to this type, false otherwise
    */
-  public <T> boolean isAssignableFromTypeOf(T value) {
+  public <T extends @PolyDet Object> boolean isAssignableFromTypeOf(T value) {
     if (value == null) {
       return !this.isPrimitive();
     }

@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a reference type defined in <a
@@ -93,7 +94,7 @@ public abstract class ReferenceType extends Type {
    *
    * @return the type parameters for this type
    */
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
 
@@ -141,7 +142,7 @@ public abstract class ReferenceType extends Type {
       return true;
     }
     if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
+      @PolyDet TypeVariable variable = (TypeVariable) otherType;
       return variable.canBeInstantiatedBy(this);
     }
     return false;
@@ -173,11 +174,11 @@ public abstract class ReferenceType extends Type {
   public static Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
     if (instantiatedType.equals(goalType)) {
-      return new Substitution();
+      return new @PolyDet Substitution();
     }
     if (goalType.isVariable()) {
-      TypeVariable variable = (TypeVariable) goalType;
-      Substitution substitution = new Substitution(variable, instantiatedType);
+      @PolyDet TypeVariable variable = (TypeVariable) goalType;
+      @PolyDet Substitution substitution = new Substitution(variable, instantiatedType);
       if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
           && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
         return substitution;

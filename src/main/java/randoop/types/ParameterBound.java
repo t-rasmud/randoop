@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.framework.qual.NoQualifierParameter;
 
 /**
  * Represents a type bound on a type variable or wildcard occurring as a type parameter of a generic
@@ -34,6 +36,7 @@ import java.util.Set;
  * @see IntersectionTypeBound
  * @see LazyParameterBound
  */
+@NoQualifierParameter(NonDet.class)
 public abstract class ParameterBound {
 
   /**

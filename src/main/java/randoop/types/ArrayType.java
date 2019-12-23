@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents an array type as defined in JLS, Section 4.3.
@@ -61,6 +63,9 @@ public class ArrayType extends ReferenceType {
    * @param type the {@link java.lang.reflect.Type} reference
    * @return the {@code Type} for the array type
    */
+  @SuppressWarnings(
+      "determinism") // getComponentType is annotated as returning @Det, when it should be @PolyDet
+  // in the JDK
   public static ArrayType forType(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;
@@ -99,12 +104,13 @@ public class ArrayType extends ReferenceType {
     if (!(obj instanceof ArrayType)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ArrayType t = (ArrayType) obj;
     return componentType.equals(t.componentType) && runtimeClass.equals(t.runtimeClass);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(componentType, runtimeClass);
   }
 
@@ -141,7 +147,9 @@ public class ArrayType extends ReferenceType {
    */
   public Type getElementType() {
     if (componentType.isArray()) {
-      return ((ArrayType) componentType).getElementType();
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      Type tmp = ((ArrayType) componentType).getElementType();
+      return tmp;
     }
     return componentType;
   }
@@ -164,7 +172,9 @@ public class ArrayType extends ReferenceType {
   @Override
   public List<TypeVariable> getTypeParameters() {
     if (componentType.isReferenceType()) {
-      return ((ReferenceType) componentType).getTypeParameters();
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      List<TypeVariable> tmp = ((ReferenceType) componentType).getTypeParameters();
+      return tmp;
     } else {
       return new ArrayList<>();
     }
@@ -190,6 +200,7 @@ public class ArrayType extends ReferenceType {
     }
 
     if (otherType.isArray() && this.componentType.isParameterized()) {
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       Type otherElementType = ((ArrayType) otherType).componentType;
       return otherElementType.isRawtype()
           && otherElementType.runtimeClassIs(this.componentType.getRuntimeClass());
@@ -225,6 +236,7 @@ public class ArrayType extends ReferenceType {
     }
 
     if (otherType.isArray() && componentType.isReferenceType()) {
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       ArrayType otherArrayType = (ArrayType) otherType;
       return otherArrayType.componentType.isReferenceType()
           && this.componentType.isSubtypeOf(otherArrayType.componentType);
@@ -263,11 +275,13 @@ public class ArrayType extends ReferenceType {
    * @return the non-parameterized form of this array type
    */
   public ArrayType getRawTypeArray() {
-    Type rawElementType;
+    @PolyDet Type rawElementType;
     if (this.componentType.isArray()) {
-      rawElementType = ((ArrayType) componentType).getRawTypeArray();
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      Type tmp = (rawElementType = ((ArrayType) componentType).getRawTypeArray());
     } else if (this.componentType.isClassOrInterfaceType()) {
-      rawElementType = ((ClassOrInterfaceType) componentType).getRawtype();
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      Type tmp = (rawElementType = ((ClassOrInterfaceType) componentType).getRawtype());
     } else {
       return this;
     }
@@ -277,7 +291,8 @@ public class ArrayType extends ReferenceType {
   public int getDimensions() {
     int dimensions = 1;
     if (componentType.isArray()) {
-      dimensions += ((ArrayType) componentType).getDimensions();
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      int tmp = (dimensions += ((ArrayType) componentType).getDimensions());
     }
     return dimensions;
   }
