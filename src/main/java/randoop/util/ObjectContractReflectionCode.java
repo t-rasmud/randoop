@@ -25,7 +25,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   }
 
   @Override
-  public String toString() {
+  public @PolyDet("up") String toString() {
     return "Check of ObjectContract " + c + " args: " + Arrays.toString(objs) + status();
   }
 }

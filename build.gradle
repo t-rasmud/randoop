@@ -74,7 +74,7 @@ allprojects {
       '-ArequirePrefixInWarningSuppressions',
         '-AwarnUnneededSuppressions',
         '-AskipDefs=randoop.test',
-        '-AonlyDefs=randoop.util.*',
+        '-AonlyDefs=randoop.types.BoundsCheck$',
         // '-AonlyDefs=randoop.util.RunnerThread',
         // '-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop.*',
         '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',

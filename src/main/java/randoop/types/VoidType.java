@@ -1,5 +1,8 @@
 package randoop.types;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.framework.qual.NoQualifierParameter;
+
 /**
  * Represents {@code void}. Technically, {@code void} is used to indicate that a method has no
  * return values, and is not a type. However, we need to pretend that it is to be able to represent
@@ -8,6 +11,7 @@ package randoop.types;
  * <p>The decision to have {@code void} be a separate "type" is counter to the fact that the
  * reflection method {@code Class.isPrimitive()} returns true for {@code void}.
  */
+@NoQualifierParameter(NonDet.class)
 public class VoidType extends Type {
 
   private static final VoidType value = new VoidType();

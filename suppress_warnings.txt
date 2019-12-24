@@ -8,6 +8,10 @@
 @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
 @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
 @SuppressWarnings("determinism") // can't create an @OrderNonDet HashSet here apparently
+@SuppressWarnings("determinism") // casting here doesn't change the determinism type
+@SuppressWarnings("determinism") // overriding JDK method but need to be more precise
+@SuppressWarnings("determinism") // type is immutable, so safe to treat @Det as a subtype of @PolyDet
+@SuppressWarnings("determinism") // getComponentType is annotated as returning @Det, when it should be @PolyDet in the JDK
 
 // For exception
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/116
@@ -17,3 +21,6 @@
 
 // For @PolyDet being treated from @PolyDet("use") in upper bounds
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/143
+
+// For @PolyDet("") related errors
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147

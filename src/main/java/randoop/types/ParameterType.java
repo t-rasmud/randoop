@@ -5,6 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -36,12 +38,13 @@ public abstract class ParameterType extends ReferenceType {
     if (!(object instanceof ParameterType)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ParameterType other = (ParameterType) object;
     return this.lowerBound.equals(other.lowerBound) && this.upperBound.equals(other.upperBound);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(lowerBound, upperBound);
   }
 
@@ -64,8 +67,8 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    @PolyDet Set<@PolyDet TypeVariable> parameters = new @PolyDet LinkedHashSet<>();
     parameters.addAll(lowerBound.getTypeParameters());
     parameters.addAll(upperBound.getTypeParameters());
     return new ArrayList<>(parameters);

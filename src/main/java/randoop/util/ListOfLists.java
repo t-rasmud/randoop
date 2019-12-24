@@ -30,7 +30,10 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   /** The size of this collection. */
   private @PolyDet int totalelements;
 
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  @SuppressWarnings({
+    "unchecked",
+    "determinism"
+  }) // heap pollution warning, https://github.com/t-rasmud/checker-framework/issues/147
   public @PolyDet("up") ListOfLists(@PolyDet SimpleList<T> @PolyDet ... lists) {
     this.lists = new @PolyDet("up") ArrayList<>(lists.length);
     for (@PolyDet("up") SimpleList<T> sl : lists) {
@@ -99,7 +102,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
         // Recurse.
         @SuppressWarnings(
             "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-                           // @PolyDet
+        // @PolyDet
         @PolyDet SimpleList<T> tmp = lists.get(i).getSublist(index - previousListSize);
         return tmp;
       }
@@ -109,12 +112,13 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   }
 
   @Override
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
     for (@PolyDet("up") SimpleList<T> l : lists) {
       @SuppressWarnings(
           "determinism") // addAll requires @PolyDet("down") but not in the case of just making a
-                         // copy
+      // copy
       boolean dummy = result.addAll(l.toJDKList());
     }
     return result;
