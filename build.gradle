@@ -76,7 +76,7 @@ allprojects {
         '-AskipDefs=randoop.test',
         '-AonlyDefs=randoop.util.*',
         // '-AonlyDefs=randoop.util.RunnerThread',
-        '-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop.*',
+        // '-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop.*',
         '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log',
         // '-Astubs=Thread.astub',
         // '-Astubs=GenericVisitor2.astub',
