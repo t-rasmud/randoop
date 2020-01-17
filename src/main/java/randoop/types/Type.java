@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
 import java.util.StringTokenizer;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -522,7 +523,7 @@ public abstract class Type implements Comparable<Type> {
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det Type this, @Det Type otherType) {
     // default behavior, refined by overrides in subclasses
     return this.equals(otherType);
   }

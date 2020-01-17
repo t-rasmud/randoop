@@ -1,5 +1,5 @@
-@DefaultHasQualifierParameter(NonDet.class)
+@HasQualifierParameter(NonDet.class)
 package randoop;
 
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.framework.qual.DefaultHasQualifierParameter;
+import org.checkerframework.framework.qual.HasQualifierParameter;

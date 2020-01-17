@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -95,7 +96,7 @@ public abstract class ReferenceType extends Type {
    * @return the type parameters for this type
    */
   public List<@PolyDet TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+    return new @PolyDet ArrayList<>();
   }
 
   /**
@@ -198,7 +199,7 @@ public abstract class ReferenceType extends Type {
    * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det ReferenceType this, @Det Type otherType) {
     if (otherType == null) {
       throw new IllegalArgumentException("type may not be null");
     }

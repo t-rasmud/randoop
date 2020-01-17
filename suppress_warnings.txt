@@ -12,6 +12,7 @@
 @SuppressWarnings("determinism") // overriding JDK method but need to be more precise
 @SuppressWarnings("determinism") // type is immutable, so safe to treat @Det as a subtype of @PolyDet
 @SuppressWarnings("determinism") // getComponentType is annotated as returning @Det, when it should be @PolyDet in the JDK
+@SuppressWarnings("determinism") // all concrete implementation of type of a deterministic toString
 
 // For exception
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/116
@@ -24,3 +25,5 @@
 
 // For @PolyDet("") related errors
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147
+
+// TODO: addAll
