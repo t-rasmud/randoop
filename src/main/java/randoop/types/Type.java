@@ -49,7 +49,7 @@ public abstract class Type implements Comparable<Type> {
    * @param classType the {@code Class} object for the type
    * @return the {@code Type} object for the given reflection type
    */
-  public static Type forClass(Class<?> classType) {
+  public static Type forClass(@Det Class<?> classType) {
     if (classType.equals(void.class)) {
       Type tmp = VoidType.getVoidType();
       return tmp;
@@ -74,7 +74,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type forName(@ClassGetName String typeName) throws ClassNotFoundException {
+  public static Type forName(@ClassGetName @Det String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);
@@ -91,7 +91,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type getTypeforFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
+  public static Type getTypeforFullyQualifiedName(@FqBinaryName @Det String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> className = forFullyQualifiedName(fullyQualifiedName);
     return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
@@ -173,7 +173,7 @@ public abstract class Type implements Comparable<Type> {
    * @param value the Object value
    * @return the {@link Type} for the given value
    */
-  public static Type forValue(Object value) {
+  public static Type forValue(@Det Object value) {
     return Type.forClass(value.getClass());
   }
 
@@ -190,7 +190,7 @@ public abstract class Type implements Comparable<Type> {
    * @return a {@link Type} object corresponding to the given type
    * @throws IllegalArgumentException if the type is a {@code java.lang.reflect.WildcardType}
    */
-  public static Type forType(java.lang.reflect.Type type) {
+  public static Type forType(java.lang.reflect. @Det Type type) {
 
     if (type instanceof WildcardType) {
       throw new IllegalArgumentException("Cannot construct type for wildcard " + type);
@@ -265,7 +265,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the raw type corresponding to this type
    */
-  public Type getRawtype() {
+  public Type getRawtype(@Det Type this) {
     return this;
   }
 
@@ -487,7 +487,7 @@ public abstract class Type implements Comparable<Type> {
    * @param sourceType the type to test for assignability
    * @return true if this type can be assigned from the source type, and false otherwise
    */
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det Type this, @Det Type sourceType) {
     // default behavior, refined by overrides in subclasses
     if (sourceType.isVoid()) {
       return false;
@@ -506,7 +506,7 @@ public abstract class Type implements Comparable<Type> {
    * @param <T> the type of the value
    * @return true if the type of {@code value} is assignable to this type, false otherwise
    */
-  public <T extends @PolyDet Object> boolean isAssignableFromTypeOf(T value) {
+  public <T extends Object> boolean isAssignableFromTypeOf(@Det Type this, T value) {
     if (value == null) {
       return !this.isPrimitive();
     }
@@ -554,4 +554,6 @@ public abstract class Type implements Comparable<Type> {
     }
     return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
   }
+
+  public abstract @PolyDet String toString();
 }

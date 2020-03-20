@@ -4,6 +4,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
@@ -15,19 +19,20 @@ public class GenericClassType extends ParameterizedType {
   private Class<?> rawType;
 
   /** The type parameters of the generic class. */
-  private List<TypeVariable> parameters;
+  private List<@PolyDet TypeVariable> parameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
    *
    * @param rawType the {@code Class} raw type
    */
-  GenericClassType(Class<?> rawType) {
+  GenericClassType(@PolyDet Class<?> rawType) {
     this.rawType = rawType;
-    this.parameters = new ArrayList<>();
+    this.parameters = new @PolyDet ArrayList<>();
 
     for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      TypeVariable variable = TypeVariable.forType(v);
+      @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @PolyDet TypeVariable variable = TypeVariable.forType(v);
       this.parameters.add(variable);
     }
   }
@@ -49,12 +54,13 @@ public class GenericClassType extends ParameterizedType {
     if (!(obj instanceof GenericClassType)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     GenericClassType t = (GenericClassType) obj;
     return this.rawType.equals(t.rawType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(rawType);
   }
 
@@ -71,9 +77,9 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable variable : parameters) {
-      ReferenceType referenceType = substitution.get(variable);
+    @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
+    for (@PolyDet TypeVariable variable : parameters) {
+      @PolyDet ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
         referenceType = variable;
       }
@@ -96,10 +102,12 @@ public class GenericClassType extends ParameterizedType {
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
-  public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaceTypes = new ArrayList<>();
+  public @OrderNonDet List<@Det ClassOrInterfaceType> getInterfaces(@Det GenericClassType this) {
+    @OrderNonDet List<@Det ClassOrInterfaceType> interfaceTypes = new @Det ArrayList<>();
     for (Class<?> c : rawType.getInterfaces()) {
-      interfaceTypes.add(ClassOrInterfaceType.forClass(c));
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @Det Class<?> tmp = c;
+      interfaceTypes.add(ClassOrInterfaceType.forClass(tmp));
     }
     return interfaceTypes;
   }
@@ -117,8 +125,8 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the list of instantiated directly-implemented interface types of this type
    */
-  List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+  List<ClassOrInterfaceType> getInterfaces(@Det GenericClassType this, @Det Substitution substitution) {
+    @Det List<ClassOrInterfaceType> interfaces = new @Det ArrayList<>();
     for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
       interfaces.add(ClassOrInterfaceType.forType(type).substitute(substitution));
     }
@@ -143,7 +151,7 @@ public class GenericClassType extends ParameterizedType {
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public ClassOrInterfaceType getSuperclass(@Det GenericClassType this) {
     Class<?> superclass = rawType.getSuperclass();
     if (superclass != null) {
       return ClassOrInterfaceType.forClass(superclass);
@@ -165,7 +173,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the instantiated type
    */
-  ClassOrInterfaceType getSuperclass(Substitution substitution) {
+  ClassOrInterfaceType getSuperclass(@Det GenericClassType this, @Det Substitution substitution) {
     java.lang.reflect.Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return JavaTypes.OBJECT_TYPE;
@@ -174,9 +182,9 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public List<TypeArgument> getTypeArguments() {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable v : parameters) {
+  public List<@PolyDet TypeArgument> getTypeArguments() {
+    @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
+    for (@PolyDet TypeVariable v : parameters) {
       argumentList.add(TypeArgument.forType(v));
     }
     return argumentList;
@@ -188,9 +196,10 @@ public class GenericClassType extends ParameterizedType {
    * @return the list of type parameters of this generic class
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> params = super.getTypeParameters();
-    params.addAll(parameters);
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    @PolyDet List<@PolyDet TypeVariable> params = super.getTypeParameters();
+    @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
+    boolean tmp = params.addAll(parameters);
     return params;
   }
 
@@ -201,12 +210,12 @@ public class GenericClassType extends ParameterizedType {
    * @return a type which is this type parameterized by the given type arguments
    * @see #substitute(Substitution)
    */
-  public InstantiatedType instantiate(ReferenceType... typeArguments) {
+  public InstantiatedType instantiate(@Det GenericClassType this, @Det ReferenceType @Det ... typeArguments) {
     if (typeArguments.length != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    @Det Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -226,12 +235,12 @@ public class GenericClassType extends ParameterizedType {
    * @return the type that is this type instantiated by the given type arguments
    * @see #substitute(Substitution)
    */
-  public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
+  public InstantiatedType instantiate(@Det GenericClassType this, @Det List<ReferenceType> typeArguments) {
     if (typeArguments.size() != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    @Det Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
@@ -278,7 +287,7 @@ public class GenericClassType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det GenericClassType this, @Det Type otherType) {
     if (otherType == null) {
       throw new IllegalArgumentException("type must be non-null");
     }
@@ -293,7 +302,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the rawtype for this generic class
    */
   @Override
-  public NonParameterizedType getRawtype() {
+  public NonParameterizedType getRawtype(@Det GenericClassType this) {
     return NonParameterizedType.forClass(rawType);
   }
 }

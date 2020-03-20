@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -45,12 +46,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param classType the class type to translate
    * @return the {@code ClassOrInterfaceType} object created from the given class type
    */
-  public static ClassOrInterfaceType forClass(Class<?> classType) {
+  public static @Det ClassOrInterfaceType forClass(@Det Class<?> classType) {
     if (classType.isArray() || classType.isPrimitive()) {
       throw new IllegalArgumentException("type must be a class or interface, got " + classType);
     }
 
-    ClassOrInterfaceType type;
+    @Det ClassOrInterfaceType type;
     if (classType.getTypeParameters().length > 0) {
       type = ParameterizedType.forClass(classType);
     } else {
@@ -72,7 +73,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
    */
-  public static ClassOrInterfaceType forType(java.lang.reflect.Type type) {
+  public static @Det ClassOrInterfaceType forType(java.lang.reflect. @Det Type type) {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
@@ -201,7 +202,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the list of interfaces directly implemented by this type
    */
-  public abstract List<ClassOrInterfaceType> getInterfaces();
+  public abstract @OrderNonDet List<@Det ClassOrInterfaceType> getInterfaces(@Det ClassOrInterfaceType this);
 
   /**
    * Returns the package of the runtime class of this type.
@@ -222,7 +223,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the non-parameterized form of this class type
    */
   @Override
-  public abstract NonParameterizedType getRawtype();
+  public abstract NonParameterizedType getRawtype(@Det ClassOrInterfaceType this);
 
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
@@ -237,16 +238,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  @SuppressWarnings("determinism") // The getInterfaces call in the loop is
+  // @OrderNonDet, but upon inspection it seems the logic is independent of order.
+  public InstantiatedType getMatchingSupertype(@Det ClassOrInterfaceType this, @Det GenericClassType goalType) {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
-            @PolyDet InstantiatedType type = (InstantiatedType) interfaceType;
+            @Det InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
-            @PolyDet InstantiatedType result = type.getMatchingSupertype(goalType);
+            @Det InstantiatedType result = type.getMatchingSupertype(goalType);
             if (result != null) {
               return result;
             }
@@ -273,8 +276,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    @PolyDet Substitution superResult =
+  public Substitution getInstantiatingSubstitution(@Det ClassOrInterfaceType this, @Det ReferenceType goalType) {
+    @Det Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
@@ -282,7 +285,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     assert goalType.isGeneric() : "goal type must be generic";
 
-    @PolyDet Substitution substitution = new @PolyDet Substitution();
+    @Det Substitution substitution = new @Det Substitution();
     if (this.isMemberClass()) {
       substitution = enclosingType.getInstantiatingSubstitution(goalType);
       if (substitution == null) {
@@ -291,9 +294,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     if (goalType instanceof GenericClassType) {
-      @PolyDet InstantiatedType supertype = this.getMatchingSupertype((@PolyDet GenericClassType) goalType);
+      @Det InstantiatedType supertype = this.getMatchingSupertype((@Det GenericClassType) goalType);
       if (supertype != null) {
-        @PolyDet Substitution supertypeSubstitution = supertype.getTypeSubstitution();
+        @Det Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null) {
           return null;
         }
@@ -308,28 +311,30 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return superclass of this type, or the {@code Object} type if this type has no superclass
    */
-  public abstract ClassOrInterfaceType getSuperclass();
+  public abstract @Det ClassOrInterfaceType getSuperclass(@Det ClassOrInterfaceType this);
 
   /**
    * Return the set of all of the supertypes of this type.
    *
    * @return the set of all supertypes of this type
    */
-  public Collection<@PolyDet ClassOrInterfaceType> getSuperTypes() {
-    @PolyDet Collection<@PolyDet ClassOrInterfaceType> supertypes = new @PolyDet ArrayList<>();
+  public @OrderNonDet Collection<@Det ClassOrInterfaceType> getSuperTypes(@Det ClassOrInterfaceType this) {
+    @OrderNonDet Collection<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
     if (this.isObject()) {
       return supertypes;
     }
-    ClassOrInterfaceType superclass = this.getSuperclass();
+    @Det ClassOrInterfaceType superclass = this.getSuperclass();
     if (superclass != null) {
       supertypes.add(superclass);
-      // TODO: addAll
-      supertypes.addAll(superclass.getSuperTypes());
+      @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
+      boolean ignore = supertypes.addAll(superclass.getSuperTypes());
     }
     for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
-      supertypes.add(interfaceType);
-      // TODO: addAll
-      supertypes.addAll(interfaceType.getSuperTypes());
+      @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
+      @Det ClassOrInterfaceType tmp = interfaceType;
+      supertypes.add(tmp);
+      @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
+      boolean ignore = supertypes.addAll(tmp.getSuperTypes());
     }
     return supertypes;
   }
@@ -340,16 +345,16 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the immediate supertypes of this type
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  public List<ClassOrInterfaceType> getImmediateSupertypes() {
+  public @OrderNonDet List<@Det ClassOrInterfaceType> getImmediateSupertypes(@Det ClassOrInterfaceType this) {
     if (this.isObject()) {
-      return (@PolyDet List<@PolyDet ClassOrInterfaceType>)
-          Collections.<ClassOrInterfaceType>emptyList();
+      return
+          Collections.<@Det ClassOrInterfaceType>emptyList();
     }
-    @PolyDet List<ClassOrInterfaceType> supertypes = new @PolyDet ArrayList<>();
-    ClassOrInterfaceType superclass = this.getSuperclass();
+    @OrderNonDet List<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
+    @Det ClassOrInterfaceType superclass = this.getSuperclass();
     supertypes.add(superclass);
-    // TODO: addAll
-    supertypes.addAll(this.getInterfaces());
+    @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
+    boolean ignore = supertypes.addAll(this.getInterfaces());
     return supertypes;
   }
 
@@ -373,12 +378,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * {@code otherType}.
    */
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det ClassOrInterfaceType this, @Det ReferenceType otherType) {
     if (super.isInstantiationOf(otherType)) {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
-      ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+      @Det ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
       // TODO: This checks that both are member classes, but they should be named the same and with
       // the same type parameters too.
       return otherClassType.isNestedClass()
@@ -435,11 +440,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(@Det ClassOrInterfaceType this, @Det Type otherType) {
     if (debug) {
-      String tmp =
-          String.format(
-              "isSubtypeOf(%s, %s) [%s, %s]%n",
-              this, otherType, this.getClass(), otherType.getClass());
-      System.out.print(tmp);
+        String tmp =
+            String.format(
+                    "isSubtypeOf(%s, %s) [%s, %s]%n",
+                    this, otherType, this.getClass(), otherType.getClass());
+        System.out.print(tmp);
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
@@ -469,8 +474,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (@Det ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          String tmp = String.format("  iface: %s [%s]%n", iface, iface.getClass());
-          System.out.print(tmp);
+            String tmp = String.format("  iface: %s [%s]%n", iface, iface.getClass());
+            System.out.print(tmp);
         }
 
         if (iface.equals(otherType)) {
@@ -492,8 +497,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     @Det ClassOrInterfaceType superClassType = this.getSuperclass();
     if (debug) {
-      String tmp = String.format("  superClassType: %s%n", superClassType);
-      System.out.printf(tmp);
+        String tmp = String.format("  superClassType: %s%n", superClassType);
+        System.out.printf(tmp);
     }
 
     if (superClassType == null || superClassType.isObject()) {
@@ -524,8 +529,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the list of type arguments
    */
-  public List<TypeArgument> getTypeArguments() {
-    return new ArrayList<>();
+  public List<@PolyDet TypeArgument> getTypeArguments() {
+    return new @PolyDet ArrayList<>();
   }
 
   @Override

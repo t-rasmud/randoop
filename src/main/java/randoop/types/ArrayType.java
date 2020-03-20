@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
@@ -45,7 +46,7 @@ public class ArrayType extends ReferenceType {
    * @param arrayClass the {@code Class} object for array type
    * @return the {@code ArrayType} for the given class object
    */
-  public static ArrayType forClass(Class<?> arrayClass) {
+  public static @Det ArrayType forClass(@Det Class<?> arrayClass) {
     if (!arrayClass.isArray()) {
       throw new IllegalArgumentException("type must be an array");
     }
@@ -170,13 +171,13 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     if (componentType.isReferenceType()) {
       @SuppressWarnings("determinism") // casting here doesn't change the determinism type
-      List<TypeVariable> tmp = ((ReferenceType) componentType).getTypeParameters();
+      @PolyDet List<@PolyDet TypeVariable> tmp = ((ReferenceType) componentType).getTypeParameters();
       return tmp;
     } else {
-      return new ArrayList<>();
+      return new @PolyDet ArrayList<>();
     }
   }
 
@@ -194,13 +195,12 @@ public class ArrayType extends ReferenceType {
    * C}).
    */
   @Override
-  public boolean isAssignableFrom(Type otherType) {
+  public boolean isAssignableFrom(@Det ArrayType this, @Det Type otherType) {
     if (super.isAssignableFrom(otherType)) {
       return true;
     }
 
     if (otherType.isArray() && this.componentType.isParameterized()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       Type otherElementType = ((ArrayType) otherType).componentType;
       return otherElementType.isRawtype()
           && otherElementType.runtimeClassIs(this.componentType.getRuntimeClass());
@@ -222,7 +222,7 @@ public class ArrayType extends ReferenceType {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det ArrayType this, @Det Type otherType) {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
@@ -236,8 +236,7 @@ public class ArrayType extends ReferenceType {
     }
 
     if (otherType.isArray() && componentType.isReferenceType()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
-      ArrayType otherArrayType = (ArrayType) otherType;
+      @Det ArrayType otherArrayType = (ArrayType) otherType;
       return otherArrayType.componentType.isReferenceType()
           && this.componentType.isSubtypeOf(otherArrayType.componentType);
     }
@@ -246,7 +245,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public Type getRawtype() {
+  public Type getRawtype(@Det ArrayType this) {
     if (!componentType.isGeneric()) {
       return this;
     }

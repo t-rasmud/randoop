@@ -3,6 +3,9 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
@@ -28,23 +31,23 @@ class LazyReferenceBound extends ReferenceBound {
    * @return the hashCode for the string representation of this bound
    */
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.toString());
   }
 
   @Override
-  public ReferenceBound substitute(Substitution substitution) {
+  public ReferenceBound substitute(@Det LazyReferenceBound this, @Det Substitution substitution) {
     // if the substitution has no effect on this bound just return this
     if (substitution.isEmpty()) {
       return this;
     }
-    for (TypeVariable parameter : getTypeParameters()) {
+    for (@Det TypeVariable parameter : getTypeParameters()) {
       if (substitution.get(parameter) == null) {
         return this;
       }
     }
 
-    ReferenceType referenceType = getBoundType().substitute(substitution);
+    @Det ReferenceType referenceType = getBoundType().substitute(substitution);
 
     if (referenceType.equals(getBoundType())) {
       return this;
@@ -72,12 +75,12 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> parameters = new ArrayList<>();
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    @PolyDet List<@PolyDet TypeVariable> parameters = new @PolyDet ArrayList<>();
     if (getBoundType().isVariable()) {
       parameters.add((TypeVariable) getBoundType());
     } else if (getBoundType().isParameterized()) {
-      for (ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
+      for (@PolyDet ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
         if (argType.isVariable()) {
           parameters.add((TypeVariable) argType);
         }
@@ -87,25 +90,25 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
+  public boolean isLowerBound(@Det LazyReferenceBound this, @Det Type argType, @Det Substitution substitution) {
+    @Det ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public boolean isSubtypeOf(@Det LazyReferenceBound this, @Det ParameterBound boundType) {
     assert false : "subtype not implemented for LazyReferenceBound";
     return false;
   }
 
   @Override
-  public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
+  public boolean isUpperBound(@Det LazyReferenceBound this, @Det Type argType, @Det Substitution substitution) {
+    @Det ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  boolean isUpperBound(@Det LazyReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
     return false;
   }

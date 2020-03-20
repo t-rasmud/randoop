@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.util.List;
 import randoop.types.LazyParameterBound.LazyBoundException;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
@@ -20,7 +22,7 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
-    ReferenceType referenceType = getBoundType().substitute(substitution);
+    @PolyDet ReferenceType referenceType = getBoundType().substitute(substitution);
     if (referenceType.equals(getBoundType())) {
       return this;
     }
@@ -29,7 +31,7 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public EagerReferenceBound applyCaptureConversion() {
-    ReferenceType referenceType = getBoundType().applyCaptureConversion();
+    @PolyDet ReferenceType referenceType = getBoundType().applyCaptureConversion();
     if (referenceType.equals(getBoundType())) {
       return this;
     }
@@ -37,13 +39,13 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     return getBoundType().getTypeParameters();
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution subst) {
-    ReferenceType boundType = this.getBoundType().substitute(subst);
+  public boolean isLowerBound(@Det EagerReferenceBound this, @Det Type argType, @Det Substitution subst) {
+    @Det ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
@@ -54,8 +56,8 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(boundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
-      InstantiatedType boundSuperType =
+      @Det InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      @Det InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) boundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
       if (boundSuperType == null) {
@@ -68,13 +70,13 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+  boolean isLowerBound(@Det EagerReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     assert bound instanceof EagerReferenceBound : "only handling reference bounds";
     return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound bound) {
+  public boolean isSubtypeOf(@Det EagerReferenceBound this, @Det ParameterBound bound) {
     if (bound instanceof EagerReferenceBound) {
       return this.getBoundType().isSubtypeOf(((EagerReferenceBound) bound).getBoundType());
     }
@@ -83,8 +85,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isUpperBound(Type argType, Substitution subst) {
-    ReferenceType boundType = this.getBoundType().substitute(subst);
+  public boolean isUpperBound(@Det EagerReferenceBound this, @Det Type argType, @Det Substitution subst) {
+    @Det ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
@@ -95,14 +97,14 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType;
+      @Det InstantiatedType boundClassType;
       try {
         boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
       } catch (LazyBoundException e) {
         // Capture conversion does not (currently?) work for a lazy bound.
         return false;
       }
-      InstantiatedType argSuperType =
+      @Det InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());
       if (argSuperType == null) {
@@ -115,7 +117,7 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  boolean isUpperBound(@Det EagerReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     return isUpperBound(getBoundType(), substitution);
   }
 }

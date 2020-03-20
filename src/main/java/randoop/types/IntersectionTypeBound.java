@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents an intersection type bound on a type parameter in a class, interface, method or
@@ -21,14 +24,14 @@ import org.plumelib.util.UtilPlume;
 class IntersectionTypeBound extends ParameterBound {
 
   /** the list of type bounds for the intersection bound */
-  private List<ParameterBound> boundList;
+  private List<@PolyDet ParameterBound> boundList;
 
   /**
    * Create an intersection type bound from the list of type bounds.
    *
    * @param boundList the list of type bounds
    */
-  IntersectionTypeBound(List<ParameterBound> boundList) {
+  IntersectionTypeBound(@PolyDet List<@PolyDet ParameterBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -46,18 +49,23 @@ class IntersectionTypeBound extends ParameterBound {
     if (!(obj instanceof IntersectionTypeBound)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     IntersectionTypeBound b = (IntersectionTypeBound) obj;
-    return this.boundList.equals(b.boundList);
+    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @PolyDet boolean tmp = this.boundList.equals(b.boundList);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(boundList);
   }
 
   @Override
   public String toString() {
-    return UtilPlume.join(boundList, " & ");
+    @SuppressWarnings("determinism") // the annotation for this library method is wrong
+    @PolyDet String tmp = UtilPlume.join(boundList, " & ");
+    return tmp;
   }
 
   /**
@@ -67,9 +75,10 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public IntersectionTypeBound substitute(Substitution substitution) {
-    List<ParameterBound> bounds = new ArrayList<>();
+    @PolyDet List<@PolyDet ParameterBound> bounds = new @PolyDet ArrayList<>();
     for (ParameterBound bound : this.boundList) {
-      bounds.add(bound.substitute(substitution));
+      @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      boolean tmp = bounds.add(bound.substitute(substitution));
     }
     return new IntersectionTypeBound(bounds);
   }
@@ -81,8 +90,8 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList = new ArrayList<>();
-    for (ParameterBound b : boundList) {
+    @PolyDet List<@PolyDet ParameterBound> convertedBoundList = new @PolyDet ArrayList<>();
+    for (@PolyDet ParameterBound b : boundList) {
       convertedBoundList.add(b.applyCaptureConversion());
     }
     return new IntersectionTypeBound(convertedBoundList);
@@ -95,10 +104,11 @@ class IntersectionTypeBound extends ParameterBound {
    *     bound
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    @PolyDet List<@PolyDet TypeVariable> paramList = new @PolyDet ArrayList<>();
     for (ParameterBound b : boundList) {
-      paramList.addAll(b.getTypeParameters());
+      @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
+      boolean ignore = paramList.addAll(b.getTypeParameters());
     }
     return paramList;
   }
@@ -130,7 +140,7 @@ class IntersectionTypeBound extends ParameterBound {
    * bounds of this object.
    */
   @Override
-  public boolean isLowerBound(Type otherType, Substitution subst) {
+  public boolean isLowerBound(@Det IntersectionTypeBound this, @Det Type otherType, @Det Substitution subst) {
     for (ParameterBound b : boundList) {
       if (!b.isLowerBound(otherType, subst)) {
         return false;
@@ -163,7 +173,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @return false, always
    */
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public boolean isSubtypeOf(@Det IntersectionTypeBound this, @Det ParameterBound boundType) {
     assert false : "intersection type bound isSubTypeOf not implemented";
     return false;
   }
@@ -174,7 +184,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @return true if the argument type satisfies all of the bounds in this intersection type bound
    */
   @Override
-  public boolean isUpperBound(Type argType, Substitution subst) {
+  public boolean isUpperBound(@Det IntersectionTypeBound this, @Det Type argType, @Det Substitution subst) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(argType, subst)) {
         return false;
@@ -190,7 +200,7 @@ class IntersectionTypeBound extends ParameterBound {
    *     bound
    */
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  boolean isUpperBound(@Det IntersectionTypeBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(bound, substitution)) {
         return false;

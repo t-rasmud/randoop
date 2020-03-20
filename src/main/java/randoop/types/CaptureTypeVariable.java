@@ -3,6 +3,8 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a type variable introduced by capture conversion over a wildcard type argument.
@@ -32,7 +34,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
-  CaptureTypeVariable(WildcardArgument wildcard) {
+  CaptureTypeVariable(@PolyDet WildcardArgument wildcard) {
     super();
     this.varID = count++;
     this.wildcard = wildcard;
@@ -53,7 +55,7 @@ class CaptureTypeVariable extends TypeVariable {
    * @param upperBound the upper type bound of the variable
    */
   private CaptureTypeVariable(
-      int varID, WildcardArgument wildcard, ParameterBound lowerBound, ParameterBound upperBound) {
+      int varID, @PolyDet WildcardArgument wildcard, ParameterBound lowerBound, ParameterBound upperBound) {
     super(lowerBound, upperBound);
     this.varID = varID;
     this.wildcard = wildcard;
@@ -67,6 +69,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (!(obj instanceof CaptureTypeVariable)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
     return this.varID == variable.varID
         && this.wildcard.equals(variable.wildcard)
@@ -74,7 +77,7 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(varID, wildcard, super.hashCode());
   }
 
@@ -116,7 +119,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
-      List<ParameterBound> boundList = new ArrayList<>();
+      @PolyDet List<@PolyDet ParameterBound> boundList = new @PolyDet ArrayList<>();
       boundList.add(parameterBound);
       boundList.add(getUpperTypeBound());
       setUpperBound(new IntersectionTypeBound(boundList));
@@ -145,7 +148,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
+    @PolyDet ReferenceType type = substitution.get(this);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
@@ -157,7 +160,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
       if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
-        WildcardArgument updatedWildcard = wildcard.substitute(substitution);
+        @PolyDet WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;

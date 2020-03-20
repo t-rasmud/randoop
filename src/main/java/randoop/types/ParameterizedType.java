@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -18,7 +23,7 @@ import org.plumelib.util.UtilPlume;
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /** A cache of all ParameterizedTypes that have been created. */
-  private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
+  private static final @OrderNonDet Map<@Det Class<?>, @Det GenericClassType> cache = new HashMap<>();
 
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
@@ -26,15 +31,16 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  public static GenericClassType forClass(Class<?> typeClass) {
+  public static @Det GenericClassType forClass(@Det Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
     }
-    GenericClassType cached = cache.get(typeClass);
+    @Det GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
       cached = new GenericClassType(typeClass);
-      cache.put(typeClass, cached);
+      // @SuppressWarnings("determinism") // second argument expects @OrderNonDet becaus of Map annotation
+      @Det GenericClassType tmp = cache.put(typeClass, cached);
     }
     return cached;
   }
@@ -46,7 +52,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param type the reflective type object
    * @return an object of type {@code ParameterizedType}
    */
-  public static ParameterizedType forType(java.lang.reflect.Type type) {
+  public static @Det ParameterizedType forType(java.lang.reflect. @Det Type type) {
     if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
@@ -57,15 +63,15 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
     // Categorize the type arguments as either a type variable or other kind of argument
     List<TypeArgument> typeArguments = new ArrayList<>();
-    for (Type argType : t.getActualTypeArguments()) {
-      TypeArgument argument = TypeArgument.forType(argType);
+    for (@Det Type argType : t.getActualTypeArguments()) {
+      @Det TypeArgument argument = TypeArgument.forType(argType);
       typeArguments.add(argument);
     }
 
     // When building parameterized type, first create generic class from the
     // rawtype, and then instantiate with the arguments collected from the
     // java.lang.reflect.ParameterizedType interface.
-    GenericClassType genericClass = ParameterizedType.forClass((Class<?>) rawType);
+    @Det GenericClassType genericClass = ParameterizedType.forClass((Class<?>) rawType);
     return new InstantiatedType(genericClass, typeArguments);
   }
 
@@ -92,11 +98,15 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public String getName() {
-    return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+    @SuppressWarnings("determinism") // the annotation for this library method is wrong
+    @PolyDet String tmp = super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+    return tmp;
   }
 
   @Override
   public String getUnqualifiedName() {
-    return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+    @SuppressWarnings("determinism") // the annotation for this library method is wrong
+    @PolyDet String tmp = this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+    return tmp;
   }
 }

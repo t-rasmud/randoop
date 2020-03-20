@@ -1,6 +1,9 @@
 package randoop.types;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
@@ -13,7 +16,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param boundType the {@link ReferenceType} of this bound
    */
-  ReferenceBound(ReferenceType boundType) {
+  ReferenceBound(@PolyDet ReferenceType boundType) {
     this.boundType = boundType;
   }
 
@@ -34,12 +37,13 @@ public abstract class ReferenceBound extends ParameterBound {
     if (!(obj instanceof ReferenceBound)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ReferenceBound bound = (ReferenceBound) obj;
     return this.boundType.equals(bound.boundType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(boundType);
   }
 
@@ -49,7 +53,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public abstract ReferenceBound substitute(Substitution substitution);
+  public abstract @Det ReferenceBound substitute(@Det ReferenceBound this, @Det Substitution substitution);
 
   @Override
   public abstract ReferenceBound applyCaptureConversion();

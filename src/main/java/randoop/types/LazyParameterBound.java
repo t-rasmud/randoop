@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.RandoopBug;
 
 /**
@@ -40,27 +44,30 @@ class LazyParameterBound extends ParameterBound {
     if (!(obj instanceof LazyParameterBound)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     LazyParameterBound b = (LazyParameterBound) obj;
     return this.boundType.equals(b.boundType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(boundType);
   }
 
   @Override
-  public String toString() {
-    return boundType.toString();
+  public String toString(@PolyDet LazyParameterBound this) {
+    @SuppressWarnings("determinism") // this toString call is probably @PolyDet
+    @PolyDet String tmp = boundType.toString();
+    return tmp;
   }
 
   @Override
-  public ParameterBound substitute(Substitution substitution) {
+  public ParameterBound substitute(@Det LazyParameterBound this, @Det Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
     if (boundType instanceof java.lang.reflect.TypeVariable) {
-      ReferenceType referenceType = substitution.get(boundType);
+      @Det ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
         if (referenceType.isVariable()) {
           return new LazyReferenceBound(referenceType);
@@ -75,16 +82,17 @@ class LazyParameterBound extends ParameterBound {
       List<TypeArgument> argumentList = new ArrayList<>();
       for (java.lang.reflect.Type parameter :
           ((ParameterizedType) boundType).getActualTypeArguments()) {
-        TypeArgument typeArgument = substitute(parameter, substitution);
+        java.lang.reflect.Type tmp = parameter;
+        @Det TypeArgument typeArgument = substitute(tmp, substitution);
         if (typeArgument == null) {
           return this;
         }
-        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy = isTypeVariable(tmp) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
-      GenericClassType classType =
+      @Det GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
-      InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
+      @Det InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       if (isLazy) {
         return new LazyReferenceBound(instantiatedType);
       }
@@ -104,9 +112,9 @@ class LazyParameterBound extends ParameterBound {
    * @param substitution the type substitution
    * @return the type argument
    */
-  private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
+  private static TypeArgument substitute(java.lang.reflect. @Det Type type, @Det Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
-      ReferenceType referenceType = substitution.get(type);
+      @Det ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
         return TypeArgument.forType(referenceType);
       }
@@ -116,12 +124,12 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       List<TypeArgument> argumentList = new ArrayList<>();
       for (java.lang.reflect.Type parameter : ((ParameterizedType) type).getActualTypeArguments()) {
-        TypeArgument paramType = substitute(parameter, substitution);
+        @Det TypeArgument paramType = substitute(parameter, substitution);
         argumentList.add(paramType);
       }
-      GenericClassType classType =
+      @Det GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
-      InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
+      @Det InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       return TypeArgument.forType(instantiatedType);
     }
 
@@ -134,10 +142,10 @@ class LazyParameterBound extends ParameterBound {
       if (wildcardType.getLowerBounds().length > 0) {
         assert wildcardType.getLowerBounds().length == 1
             : "a wildcard is defined by the JLS to only have one bound";
-        java.lang.reflect.Type lowerBound = wildcardType.getLowerBounds()[0];
-        ParameterBound bound;
+        java.lang.reflect. @Det Type lowerBound = wildcardType.getLowerBounds()[0];
+        @Det ParameterBound bound;
         if (lowerBound instanceof java.lang.reflect.TypeVariable) {
-          ReferenceType boundType = substitution.get(lowerBound);
+          @Det ReferenceType boundType = substitution.get(lowerBound);
           if (boundType != null) {
             bound = ParameterBound.forType(boundType);
           } else {
@@ -145,7 +153,7 @@ class LazyParameterBound extends ParameterBound {
           }
         } else {
           bound =
-              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
+              ParameterBound.forType(new @OrderNonDet HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
                   .substitute(substitution);
         }
 
@@ -154,7 +162,10 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      ParameterBound bound =
+      @SuppressWarnings("determinism") // Upon inspection, forTypes returns @PolyDet("up") because
+      // of the second argument, not the first. So as long as the second argument is @Det, the
+      // result should be @Det, even if the first argument is @OrderNonDet.
+      @Det ParameterBound bound =
           ParameterBound.forTypes(
               new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
       bound = bound.substitute(substitution);
@@ -172,7 +183,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     return getTypeParameters(boundType);
   }
 
@@ -182,8 +193,9 @@ class LazyParameterBound extends ParameterBound {
    * @param type the {@code Type} reference
    * @return the list of type variables in the given type
    */
-  private static List<TypeVariable> getTypeParameters(java.lang.reflect.Type type) {
-    List<TypeVariable> variableList = new ArrayList<>();
+  @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
+  private static List<@PolyDet TypeVariable> getTypeParameters(java.lang.reflect.Type type) {
+    @PolyDet List<@PolyDet TypeVariable> variableList = new @PolyDet ArrayList<>();
     if (type instanceof java.lang.reflect.TypeVariable) {
       variableList.add(TypeVariable.forType(type));
     } else if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -237,7 +249,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution substitution) {
+  public boolean isLowerBound(@Det LazyParameterBound this, @Det Type argType, @Det Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
@@ -252,7 +264,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public boolean isSubtypeOf(@Det LazyParameterBound this, @Det ParameterBound boundType) {
     throw new LazyBoundException();
     // assert false : "LazyParameterBound.isSubtypeOf not implemented";
     // return false;
@@ -265,7 +277,7 @@ class LazyParameterBound extends ParameterBound {
    * applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
-  public boolean isUpperBound(Type argType, Substitution substitution) {
+  public boolean isUpperBound(@Det LazyParameterBound this, @Det Type argType, @Det Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
@@ -275,7 +287,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  boolean isUpperBound(@Det LazyParameterBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     throw new LazyBoundException();
     // assert false : " not quite sure what to do with lazy type bound";
     // return false;

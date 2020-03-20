@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Predicate to check the type of a substitution for a list of type variables. */
@@ -30,11 +31,11 @@ public class BoundsCheck {
    * @return true if each argument's instantiation is within the bounds of the corresponding type
    *     parameter, after both have been substituted
    */
-  public @PolyDet("up") boolean test(
-      List<@PolyDet ReferenceType> tuple, @PolyDet("up") Substitution substitution) {
+  public boolean test(
+      @Det BoundsCheck this, @Det List<ReferenceType> tuple, @Det Substitution substitution) {
     for (int i = 0; i < tuple.size(); i++) {
-      @PolyDet("up") TypeVariable paramType = typeParameters.get(i);
-      @PolyDet("up") ReferenceType argType = tuple.get(i);
+      @Det TypeVariable paramType = typeParameters.get(i);
+      @Det ReferenceType argType = tuple.get(i);
       if (!(paramType.getLowerTypeBound().isLowerBound(argType, substitution)
           && paramType.getUpperTypeBound().isUpperBound(argType, substitution))) {
         return false;

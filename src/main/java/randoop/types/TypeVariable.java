@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
@@ -40,14 +42,16 @@ public abstract class TypeVariable extends ParameterType {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
+    @PolyDet("upDet") Set<java.lang.reflect. @PolyDet TypeVariable<?>> variableSet = new @PolyDet("upDet") HashSet<>();
     variableSet.add(v);
-    return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
+    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @PolyDet TypeVariable tmp = new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
+    return tmp;
   }
 
   @Override
-  public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
+  public ReferenceType substitute(@PolyDet Substitution substitution) {
+    @PolyDet ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
     }
@@ -60,19 +64,19 @@ public abstract class TypeVariable extends ParameterType {
    * <p>Returns false, since an uninstantiated type variable may not be assigned to.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det TypeVariable this, @Det Type sourceType) {
     return false;
   }
 
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det TypeVariable this, @Det ReferenceType otherType) {
     if (super.isInstantiationOf(otherType)) {
       return true;
     }
 
     if (otherType.isVariable()) {
-      TypeVariable otherVariable = (TypeVariable) otherType;
-      Substitution substitution = getSubstitution(otherVariable, this);
+      @Det TypeVariable otherVariable = (TypeVariable) otherType;
+      @Det Substitution substitution = getSubstitution(otherVariable, this);
       boolean lowerboundOk =
           otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
       boolean upperboundOk =
@@ -84,12 +88,12 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det TypeVariable this, @Det Type otherType) {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
     if (otherType.isReferenceType()) {
-      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
+      @Det Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
@@ -118,12 +122,12 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  boolean canBeInstantiatedBy(ReferenceType otherType) {
-    Substitution substitution;
+  boolean canBeInstantiatedBy(@Det TypeVariable this, @Det ReferenceType otherType) {
+    @Det Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
       ParameterBound boundType = getLowerTypeBound().substitute(substitution);
-      TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
+      @Det TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
@@ -136,7 +140,7 @@ public abstract class TypeVariable extends ParameterType {
     if (getUpperTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
       ParameterBound boundType = getUpperTypeBound().substitute(substitution);
-      TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
+      @Det TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
@@ -156,7 +160,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
+    @PolyDet Set<@PolyDet TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
@@ -165,7 +169,7 @@ public abstract class TypeVariable extends ParameterType {
       ParameterBound lowerBound, ParameterBound upperBound);
 
   @Override
-  public Type getRawtype() {
+  public Type getRawtype(@Det TypeVariable this) {
     return JavaTypes.OBJECT_TYPE;
   }
 }

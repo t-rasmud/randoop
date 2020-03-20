@@ -1,5 +1,6 @@
 package randoop.types;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.framework.qual.NoQualifierParameter;
 
@@ -31,7 +32,7 @@ public class VoidType extends Type {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return System.identityHashCode(this);
   }
 
@@ -66,7 +67,7 @@ public class VoidType extends Type {
    * <p>Returns false, since {@code void} is not a subtype of any type
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det VoidType this, @Det Type otherType) {
     return false;
   }
 
@@ -76,7 +77,7 @@ public class VoidType extends Type {
    * <p>Return false because cannot assign to void.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det VoidType this, @Det Type sourceType) {
     return false;
   }
 }

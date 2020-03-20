@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
@@ -18,7 +20,7 @@ class WildcardArgument extends TypeArgument {
    *
    * @param argumentType the wildcard type
    */
-  WildcardArgument(WildcardType argumentType) {
+  WildcardArgument(@PolyDet WildcardType argumentType) {
     this.argumentType = argumentType;
   }
 
@@ -51,12 +53,13 @@ class WildcardArgument extends TypeArgument {
     if (!(obj instanceof WildcardArgument)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     WildcardArgument wildcardArgument = (WildcardArgument) obj;
     return this.argumentType.equals(wildcardArgument.argumentType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(argumentType);
   }
 
@@ -67,7 +70,7 @@ class WildcardArgument extends TypeArgument {
 
   @Override
   public WildcardArgument substitute(Substitution substitution) {
-    WildcardType argType = this.argumentType.substitute(substitution);
+    @PolyDet WildcardType argType = this.argumentType.substitute(substitution);
     if (argType.equals(this.argumentType)) {
       return this;
     }
@@ -81,7 +84,7 @@ class WildcardArgument extends TypeArgument {
    * @see ReferenceType#applyCaptureConversion()
    */
   public WildcardArgument applyCaptureConversion() {
-    WildcardType wildcardType = argumentType.applyCaptureConversion();
+    @PolyDet WildcardType wildcardType = argumentType.applyCaptureConversion();
     if (wildcardType.equals(argumentType)) {
       return this;
     }
@@ -109,7 +112,7 @@ class WildcardArgument extends TypeArgument {
    * <p>Returns the type parameters of the bound of this wildcard argument
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     return argumentType.getTypeParameters();
   }
 

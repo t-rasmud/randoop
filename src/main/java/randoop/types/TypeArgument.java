@@ -3,6 +3,8 @@ package randoop.types;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a type argument of a parameterized type as described in <a
@@ -64,8 +66,8 @@ public abstract class TypeArgument {
    *
    * @return the list of type parameters for this argument
    */
-  public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    return new @PolyDet ArrayList<>();
   }
 
   /**
@@ -110,7 +112,7 @@ public abstract class TypeArgument {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public Substitution getInstantiatingSubstitution(@Det TypeArgument this, @Det TypeArgument goalType) {
     // This implementation is overridden by subclasses.
     return null;
   }

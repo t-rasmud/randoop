@@ -2,6 +2,9 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a reference type as a type argument to a parameterized type. (See <a
@@ -18,7 +21,7 @@ public class ReferenceArgument extends TypeArgument {
    *
    * @param referenceType the {@link ReferenceType}
    */
-  private ReferenceArgument(ReferenceType referenceType) {
+  private ReferenceArgument(@PolyDet ReferenceType referenceType) {
     this.referenceType = referenceType;
   }
 
@@ -44,12 +47,13 @@ public class ReferenceArgument extends TypeArgument {
     if (!(obj instanceof ReferenceArgument)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ReferenceArgument referenceArgument = (ReferenceArgument) obj;
     return this.referenceType.equals(referenceArgument.referenceType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(referenceType);
   }
 
@@ -94,7 +98,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     return referenceType.getTypeParameters();
   }
 
@@ -119,17 +123,17 @@ public class ReferenceArgument extends TypeArgument {
       return false;
     }
 
-    ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+    @PolyDet ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
 
     return referenceType.isInstantiationOf(otherReferenceType);
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public Substitution getInstantiatingSubstitution(@Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }
-    ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+    @Det ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
     return referenceType.getInstantiatingSubstitution(otherReferenceType);
   }
 

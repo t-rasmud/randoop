@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
@@ -14,18 +16,18 @@ import org.plumelib.util.UtilPlume;
  * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples are
  * primarily used to represent the input types of operations.
  */
-public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
+public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet TypeTuple> {
 
   /** The sequence of types in this type tuple. */
-  private final ArrayList<Type> list;
+  private final ArrayList<@PolyDet Type> list;
 
   /**
    * Creates a type tuple from the list of types, preserving the order.
    *
    * @param list the list of types
    */
-  public TypeTuple(List<Type> list) {
-    this.list = new ArrayList<>(list);
+  public TypeTuple(@PolyDet List<@PolyDet Type> list) {
+    this.list = new @PolyDet ArrayList<>(list);
   }
 
   /** Creates an empty type tuple. */
@@ -41,18 +43,23 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
     if (!(obj instanceof TypeTuple)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     TypeTuple tuple = (TypeTuple) obj;
-    return list.equals(tuple.list);
+    @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @PolyDet boolean tmp = list.equals(tuple.list);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(list);
   }
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(list, ", ") + ")";
+    @SuppressWarnings("determinism") // the annotation for this library method is wrong
+    @PolyDet String tmp = "(" + UtilPlume.join(list, ", ") + ")";
+    return tmp;
   }
 
   /**
@@ -64,13 +71,15 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
   public TypeTuple substitute(Substitution substitution) {
-    List<Type> typeList = new ArrayList<>();
+    @PolyDet List<@PolyDet Type> typeList = new @PolyDet ArrayList<>();
     for (Type type : this.list) {
-      Type newType = type.substitute(substitution);
+      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @PolyDet Type tmp = type;
+      Type newType = tmp.substitute(substitution);
       if (newType != null) {
         typeList.add(newType);
       } else {
-        typeList.add(type);
+        typeList.add(tmp);
       }
     }
     return new TypeTuple(typeList);
@@ -83,9 +92,11 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple after performing a capture conversion
    */
   public TypeTuple applyCaptureConversion() {
-    List<Type> typeList = new ArrayList<>();
+    @PolyDet List<@PolyDet Type> typeList = new @PolyDet ArrayList<>();
     for (Type type : this.list) {
-      typeList.add(type.applyCaptureConversion());
+      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @PolyDet Type tmp = type;
+      typeList.add(tmp.applyCaptureConversion());
     }
     return new TypeTuple(typeList);
   }
@@ -97,7 +108,9 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return the component type at the position
    */
   public Type get(int i) {
-    return list.get(i);
+    @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @PolyDet Type tmp = list.get(i);
+    return tmp;
   }
 
   /**
@@ -105,11 +118,14 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    *
    * @return the list of type parameters for this type tuple
    */
-  public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    @PolyDet Set<@PolyDet TypeVariable> paramSet = new @PolyDet LinkedHashSet<>();
     for (Type type : this.list) {
-      if (type.isReferenceType()) {
-        paramSet.addAll(((ReferenceType) type).getTypeParameters());
+      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @PolyDet Type tmp = type;
+      if (tmp.isReferenceType()) {
+        @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+        boolean ignore = paramSet.addAll(((ReferenceType) tmp).getTypeParameters());
       }
     }
     return new ArrayList<>(paramSet);
@@ -122,7 +138,9 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    */
   public boolean hasWildcard() {
     for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      @PolyDet Type tmp = (ParameterizedType) type;
+      if (type.isParameterized() && tmp.hasWildcard()) {
         return true;
       }
     }
@@ -162,7 +180,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   @Override
-  public Iterator<Type> iterator() {
+  public Iterator<@PolyDet Type> iterator() {
     return new TypeIterator(list.iterator());
   }
 
@@ -176,26 +194,28 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
     }
     int result = 0;
     for (int i = 0; i < this.size() && result == 0; i++) {
-      result = list.get(i).compareTo(tuple.list.get(i));
+      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @PolyDet int tmp = list.get(i).compareTo(tuple.list.get(i));
+      result = tmp;
     }
     return result;
   }
 
-  private static class TypeIterator implements Iterator<Type> {
+  private static class TypeIterator implements Iterator<@PolyDet Type> {
 
-    private Iterator<Type> iterator;
+    private Iterator<@PolyDet Type> iterator;
 
-    public TypeIterator(Iterator<Type> iterator) {
+    public TypeIterator(@PolyDet Iterator<@PolyDet Type> iterator) {
       this.iterator = iterator;
     }
 
     @Override
-    public boolean hasNext() {
+    public @PolyDet("down") boolean hasNext() {
       return iterator.hasNext();
     }
 
     @Override
-    public Type next() {
+    public @PolyDet("up") Type next() {
       return iterator.next();
     }
 

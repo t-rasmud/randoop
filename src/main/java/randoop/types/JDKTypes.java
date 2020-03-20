@@ -50,6 +50,7 @@ import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TransferQueue;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.main.RandoopBug;
 
 /**
@@ -280,8 +281,8 @@ public class JDKTypes {
    * @param type the (abstract) Collections type
    * @return a concrete Collection type implementing the given type
    */
-  public static GenericClassType getImplementingType(ParameterizedType type) {
-    GenericClassType genericType = type.getGenericClassType();
+  public static GenericClassType getImplementingType(@Det ParameterizedType type) {
+    @Det GenericClassType genericType = type.getGenericClassType();
     if (!genericType.isSubtypeOf(COLLECTION_TYPE) && !genericType.isSubtypeOf(MAP_TYPE)) {
       throw new IllegalArgumentException("type must be a JDK Collections type, got " + type);
     }
@@ -290,7 +291,7 @@ public class JDKTypes {
         || genericType.equals(ENUM_SET_TYPE)) {
       return genericType;
     } else {
-      GenericClassType implementingType = implementingTypeMap.get(genericType);
+      @Det GenericClassType implementingType = implementingTypeMap.get(genericType);
       if (implementingType != null) {
         return implementingType;
       } else {

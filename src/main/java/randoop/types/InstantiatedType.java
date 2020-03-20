@@ -5,6 +5,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -20,7 +24,7 @@ public class InstantiatedType extends ParameterizedType {
   private final GenericClassType instantiatedType;
 
   /** The type arguments for this class. */
-  private final List<TypeArgument> argumentList;
+  private final List<@PolyDet TypeArgument> argumentList;
 
   /**
    * Create a parameterized type from the generic class type.
@@ -29,7 +33,7 @@ public class InstantiatedType extends ParameterizedType {
    * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
-  InstantiatedType(GenericClassType instantiatedType, List<TypeArgument> argumentList) {
+  InstantiatedType(@PolyDet GenericClassType instantiatedType, @PolyDet List<@PolyDet TypeArgument> argumentList) {
     if (instantiatedType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
@@ -52,13 +56,16 @@ public class InstantiatedType extends ParameterizedType {
     if (!(obj instanceof InstantiatedType)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     InstantiatedType other = (InstantiatedType) obj;
-    return instantiatedType.equals(other.instantiatedType)
+    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @PolyDet boolean tmp = instantiatedType.equals(other.instantiatedType)
         && argumentList.equals(other.argumentList);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(instantiatedType, argumentList);
   }
 
@@ -69,8 +76,8 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeArgument argument : this.argumentList) {
+    @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
+    for (@PolyDet TypeArgument argument : this.argumentList) {
       argumentList.add(argument.substitute(substitution));
     }
     return (InstantiatedType)
@@ -100,29 +107,32 @@ public class InstantiatedType extends ParameterizedType {
       return this;
     }
 
-    List<ReferenceType> convertedTypeList = new ArrayList<>();
-    for (TypeArgument argument : argumentList) {
+    @PolyDet List<@PolyDet ReferenceType> convertedTypeList = new @PolyDet ArrayList<>();
+    for (@PolyDet TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
+        @PolyDet WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
         convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
       } else {
-        ReferenceType convertedArgument =
+        @PolyDet ReferenceType convertedArgument =
             ((ReferenceArgument) argument).getReferenceType().applyCaptureConversion();
         convertedTypeList.add(convertedArgument);
       }
     }
 
-    Substitution substitution =
+    @PolyDet Substitution substitution =
         new Substitution(instantiatedType.getTypeParameters(), convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
-        CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(instantiatedType.getTypeParameters().get(i), substitution);
+        @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+        @PolyDet CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
+        @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+        @PolyDet TypeVariable tmp = instantiatedType.getTypeParameters().get(i);
+        captureVariable.convert(tmp, substitution);
       }
     }
 
-    List<TypeArgument> convertedArgumentList = new ArrayList<>();
-    for (ReferenceType type : convertedTypeList) {
+    @PolyDet List<@PolyDet TypeArgument> convertedArgumentList = new @PolyDet ArrayList<>();
+    for (@PolyDet ReferenceType type : convertedTypeList) {
       convertedArgumentList.add(TypeArgument.forType(type));
     }
 
@@ -138,12 +148,14 @@ public class InstantiatedType extends ParameterizedType {
    * @return list of directly-implemented interfaces for this parameterized type
    */
   @Override
-  public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    Substitution substitution =
+  public @OrderNonDet List<ClassOrInterfaceType> getInterfaces(@Det InstantiatedType this) {
+    @OrderNonDet List<ClassOrInterfaceType> interfaces = new @Det ArrayList<>();
+    @Det Substitution substitution =
         new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
-    for (ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
-      interfaces.add(type);
+    for (@NonDet ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @Det ClassOrInterfaceType tmp = type;
+      interfaces.add(tmp);
     }
 
     return interfaces;
@@ -161,7 +173,7 @@ public class InstantiatedType extends ParameterizedType {
    * doing supertype search.
    */
   @Override
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  public @Det InstantiatedType getMatchingSupertype(@Det InstantiatedType this, @Det GenericClassType goalType) {
     /*
     if (this.hasWildcard()) {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
@@ -178,9 +190,9 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the list of reference types that are arguments to this type
    */
-  List<ReferenceType> getReferenceArguments() {
-    List<ReferenceType> referenceArgList = new ArrayList<>();
-    for (TypeArgument argument : argumentList) {
+  List<@PolyDet ReferenceType> getReferenceArguments() {
+    @PolyDet List<@PolyDet ReferenceType> referenceArgList = new @PolyDet ArrayList<>();
+    for (@PolyDet TypeArgument argument : argumentList) {
       if (!argument.isWildcard()) {
         referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
       } else {
@@ -207,8 +219,8 @@ public class InstantiatedType extends ParameterizedType {
    * @return the superclass type for this parameterized type
    */
   @Override
-  public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
+  public ClassOrInterfaceType getSuperclass(@Det InstantiatedType this) {
+    @Det Substitution substitution =
         new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
     return this.instantiatedType.getSuperclass(substitution);
   }
@@ -219,15 +231,15 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of type arguments
    */
   @Override
-  public List<TypeArgument> getTypeArguments() {
+  public List<@PolyDet TypeArgument> getTypeArguments() {
     return argumentList;
   }
 
   @Override
-  public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>(super.getTypeParameters());
-    for (TypeArgument argument : argumentList) {
-      List<TypeVariable> params = argument.getTypeParameters();
+  public List<@PolyDet TypeVariable> getTypeParameters() {
+    @PolyDet Set<@PolyDet TypeVariable> paramSet = new @PolyDet LinkedHashSet<>(super.getTypeParameters());
+    for (@PolyDet TypeArgument argument : argumentList) {
+      @PolyDet List<@PolyDet TypeVariable> params = argument.getTypeParameters();
       paramSet.addAll(params);
     }
     return new ArrayList<>(paramSet);
@@ -242,13 +254,13 @@ public class InstantiatedType extends ParameterizedType {
    *     instantiated type
    */
   public Substitution getTypeSubstitution() {
-    List<ReferenceType> arguments = new ArrayList<>();
-    for (TypeArgument arg : this.getTypeArguments()) {
+    @PolyDet List<@PolyDet ReferenceType> arguments = new @PolyDet ArrayList<>();
+    for (@PolyDet TypeArgument arg : this.getTypeArguments()) {
       if (!arg.isWildcard()) {
         arguments.add(((ReferenceArgument) arg).getReferenceType());
       }
     }
-    Substitution substitution = null;
+    @PolyDet Substitution substitution = null;
     if (arguments.size() == this.getTypeArguments().size()) {
       substitution = new Substitution(instantiatedType.getTypeParameters(), arguments);
     }
@@ -257,7 +269,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean hasWildcard() {
-    for (TypeArgument argument : argumentList) {
+    for (@PolyDet TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
         return true;
       }
@@ -271,7 +283,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isAssignableFrom(Type otherType) {
+  public boolean isAssignableFrom(@Det InstantiatedType this, @Det Type otherType) {
     if (super.isAssignableFrom(otherType)) {
       return true;
     }
@@ -285,7 +297,7 @@ public class InstantiatedType extends ParameterizedType {
     if (super.isGeneric()) { // enclosing type is generic
       return true;
     }
-    for (TypeArgument argument : argumentList) {
+    for (@PolyDet TypeArgument argument : argumentList) {
       if (argument.isGeneric()) {
         return true;
       }
@@ -310,16 +322,16 @@ public class InstantiatedType extends ParameterizedType {
    * @see ReferenceType#isInstantiationOf(ReferenceType)
    */
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det InstantiatedType this, @Det ReferenceType otherType) {
     if (super.isInstantiationOf(otherType) && !(otherType instanceof InstantiatedType)) {
       return true;
     }
     if (otherType instanceof InstantiatedType) {
-      InstantiatedType otherInstType = (InstantiatedType) otherType;
+      @Det InstantiatedType otherInstType = (InstantiatedType) otherType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          TypeArgument thisTypeArg = this.argumentList.get(i);
-          TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
+          @Det TypeArgument thisTypeArg = this.argumentList.get(i);
+          @Det TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
           if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
             return false;
           }
@@ -333,22 +345,22 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    Substitution superResult =
+  public Substitution getInstantiatingSubstitution(@Det InstantiatedType this, @Det ReferenceType goalType) {
+    @Det Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
     }
 
     assert goalType.isGeneric();
-    Substitution substitution = super.getInstantiatingSubstitution(goalType);
+    @Det Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (goalType instanceof InstantiatedType) {
-      InstantiatedType otherInstType = (InstantiatedType) goalType;
+      @Det InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          TypeArgument thisTArg = this.argumentList.get(i);
-          TypeArgument otherTArg = otherInstType.argumentList.get(i);
-          Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
+          @Det TypeArgument thisTArg = this.argumentList.get(i);
+          @Det TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          @Det Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           if (subst == null) {
             return null;
           }
@@ -380,11 +392,11 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return true if the type argument is a subtype of this type, false otherwise
    */
-  public boolean isRecursiveType() {
+  public boolean isRecursiveType(@Det InstantiatedType this) {
     if (this.argumentList.size() > 1 || this.argumentList.get(0).hasWildcard()) {
       return false;
     }
-    ReferenceType argType = ((ReferenceArgument) this.argumentList.get(0)).getReferenceType();
+    @Det ReferenceType argType = ((ReferenceArgument) this.argumentList.get(0)).getReferenceType();
     return argType.isSubtypeOf(this);
   }
 
@@ -409,12 +421,12 @@ public class InstantiatedType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det InstantiatedType this, @Det Type otherType) {
     if (otherType.isParameterized()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
+        @Det ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
         List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
@@ -429,8 +441,8 @@ public class InstantiatedType extends ParameterizedType {
       }
 
       // first clause.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
-      InstantiatedType superType =
+      @Det InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
+      @Det InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.instantiatedType);
       if (superType != null && superType.equals(otherType)) {
         return true;
@@ -451,7 +463,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public NonParameterizedType getRawtype() {
+  public NonParameterizedType getRawtype(@Det InstantiatedType this) {
     return instantiatedType.getRawtype();
   }
 }

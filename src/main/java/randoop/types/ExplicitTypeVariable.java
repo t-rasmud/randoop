@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
 class ExplicitTypeVariable extends TypeVariable {
@@ -35,18 +37,21 @@ class ExplicitTypeVariable extends TypeVariable {
     if (!(obj instanceof ExplicitTypeVariable)) {
       return isAssignableFrom(null);
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExplicitTypeVariable t = (ExplicitTypeVariable) obj;
     return variable.equals(t.variable) && super.equals(t);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(variable, super.hashCode());
   }
 
   @Override
   public String toString() {
-    return variable.toString();
+    @SuppressWarnings("determinism") // method not annotated in JDK but probably returns @PolyDet
+    @PolyDet String tmp = variable.toString();
+    return tmp;
   }
 
   @Override
@@ -70,7 +75,7 @@ class ExplicitTypeVariable extends TypeVariable {
 
   @Override
   public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
+    @PolyDet ReferenceType type = substitution.get(this);
     if (type != null && !type.isVariable()) {
       return type;
     }

@@ -28,7 +28,7 @@ public abstract class ReferenceType extends Type {
    * @param classType the {@code Class} object representing the type
    * @return the {@code ReferenceType} object for the given type
    */
-  public static ReferenceType forClass(Class<?> classType) {
+  public static @Det ReferenceType forClass(@Det Class<?> classType) {
     if (classType.isPrimitive()) {
       throw new IllegalArgumentException("type must be a reference type");
     }
@@ -54,7 +54,7 @@ public abstract class ReferenceType extends Type {
    * @param type the type reference
    * @return the {@code ReferenceType} for the given {@code Type}
    */
-  public static ReferenceType forType(java.lang.reflect.Type type) {
+  public static @Det ReferenceType forType(java.lang.reflect. @Det Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return ArrayType.forType(type);
     }
@@ -108,7 +108,7 @@ public abstract class ReferenceType extends Type {
    * 5.1.5</a> for details.
    */
   @Override
-  public boolean isAssignableFrom(Type sourceType) {
+  public boolean isAssignableFrom(@Det ReferenceType this, @Det Type sourceType) {
     return super.isAssignableFrom(sourceType)
         || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
   }
@@ -138,12 +138,12 @@ public abstract class ReferenceType extends Type {
    * @param otherType the general reference type
    * @return true if this type instantiates the other reference type, false otherwise
    */
-  public boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(@Det ReferenceType this, @Det ReferenceType otherType) {
     if (this.equals(otherType)) {
       return true;
     }
     if (otherType.isVariable()) {
-      @PolyDet TypeVariable variable = (TypeVariable) otherType;
+      @Det TypeVariable variable = (TypeVariable) otherType;
       return variable.canBeInstantiatedBy(this);
     }
     return false;
@@ -159,7 +159,7 @@ public abstract class ReferenceType extends Type {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public Substitution getInstantiatingSubstitution(@Det ReferenceType this, @Det ReferenceType goalType) {
     return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
   }
 
@@ -173,13 +173,13 @@ public abstract class ReferenceType extends Type {
    *     type
    */
   public static Substitution getInstantiatingSubstitutionforTypeVariable(
-      ReferenceType instantiatedType, ReferenceType goalType) {
+      @Det ReferenceType instantiatedType, @Det ReferenceType goalType) {
     if (instantiatedType.equals(goalType)) {
-      return new @PolyDet Substitution();
+      return new Substitution();
     }
     if (goalType.isVariable()) {
-      @PolyDet TypeVariable variable = (TypeVariable) goalType;
-      @PolyDet Substitution substitution = new Substitution(variable, instantiatedType);
+      @Det TypeVariable variable = (TypeVariable) goalType;
+      @Det Substitution substitution = new Substitution(variable, instantiatedType);
       if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
           && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
         return substitution;

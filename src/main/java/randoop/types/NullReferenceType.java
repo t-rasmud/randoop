@@ -1,12 +1,15 @@
 package randoop.types;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+
 /**
  * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
  * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
  */
 class NullReferenceType extends ReferenceType {
 
-  private static final NullReferenceType value = new NullReferenceType();
+  private static final @Det NullReferenceType value = new NullReferenceType();
 
   private NullReferenceType() {}
 
@@ -15,7 +18,7 @@ class NullReferenceType extends ReferenceType {
    *
    * @return the null type object
    */
-  static NullReferenceType getNullType() {
+  static @Det NullReferenceType getNullType() {
     return value;
   }
 
@@ -31,7 +34,7 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return System.identityHashCode(this);
   }
 
@@ -77,7 +80,7 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOf(@Det NullReferenceType this, @Det Type otherType) {
     return !otherType.equals(JavaTypes.VOID_TYPE) && otherType.isReferenceType();
   }
 }

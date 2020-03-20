@@ -49,7 +49,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public String toString() {
+  public @PolyDet String toString() {
     return "ParameterType [ " + lowerBound + ", " + upperBound + " ]";
   }
 

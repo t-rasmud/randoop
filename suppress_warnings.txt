@@ -1,9 +1,11 @@
-@SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+@SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
 @SuppressWarnings("determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
+@SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
+@SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
 @SuppressWarnings("determinism") // this is code randoop is run on
 @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
 @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
@@ -13,6 +15,12 @@
 @SuppressWarnings("determinism") // type is immutable, so safe to treat @Det as a subtype of @PolyDet
 @SuppressWarnings("determinism") // getComponentType is annotated as returning @Det, when it should be @PolyDet in the JDK
 @SuppressWarnings("determinism") // all concrete implementation of type of a deterministic toString
+@SuppressWarnings("determinism") // method not annotated in JDK but probably returns @PolyDet
+@SuppressWarnings("determinism") // second argument expects @OrderNonDet becaus of Map annotation
+@SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+@SuppressWarnings("determinism") // the annotation for this library method is wrong
+@SuppressWarnings("determinism") // this toString call is probably @PolyDet
+@SuppressWarnings("determinism") // iterating over a @PolyDet("down") collection should give @PolyDet elements
 
 // For exception
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/116
@@ -26,4 +34,8 @@
 // For @PolyDet("") related errors
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147
 
+@SuppressWarnings("determinism") // The getInterfaces call in the loop is
+// @OrderNonDet, but upon inspection it seems the logic is independent of order.
+
 // TODO: addAll
+
