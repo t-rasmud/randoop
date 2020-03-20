@@ -112,7 +112,8 @@ class LazyParameterBound extends ParameterBound {
    * @param substitution the type substitution
    * @return the type argument
    */
-  private static TypeArgument substitute(java.lang.reflect. @Det Type type, @Det Substitution substitution) {
+  private static TypeArgument substitute(
+      java.lang.reflect.@Det Type type, @Det Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       @Det ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
@@ -142,7 +143,7 @@ class LazyParameterBound extends ParameterBound {
       if (wildcardType.getLowerBounds().length > 0) {
         assert wildcardType.getLowerBounds().length == 1
             : "a wildcard is defined by the JLS to only have one bound";
-        java.lang.reflect. @Det Type lowerBound = wildcardType.getLowerBounds()[0];
+        java.lang.reflect.@Det Type lowerBound = wildcardType.getLowerBounds()[0];
         @Det ParameterBound bound;
         if (lowerBound instanceof java.lang.reflect.TypeVariable) {
           @Det ReferenceType boundType = substitution.get(lowerBound);
@@ -153,7 +154,8 @@ class LazyParameterBound extends ParameterBound {
           }
         } else {
           bound =
-              ParameterBound.forType(new @OrderNonDet HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
+              ParameterBound.forType(
+                      new @OrderNonDet HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
                   .substitute(substitution);
         }
 
@@ -176,7 +178,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public ParameterBound applyCaptureConversion() {
+  public @Det ParameterBound applyCaptureConversion(@Det LazyParameterBound this) {
     throw new LazyBoundException();
     // assert false : "unable to do capture conversion on lazy bound " + this;
     // return this;
@@ -249,7 +251,8 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isLowerBound(@Det LazyParameterBound this, @Det Type argType, @Det Substitution substitution) {
+  public boolean isLowerBound(
+      @Det LazyParameterBound this, @Det Type argType, @Det Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
@@ -277,7 +280,8 @@ class LazyParameterBound extends ParameterBound {
    * applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
-  public boolean isUpperBound(@Det LazyParameterBound this, @Det Type argType, @Det Substitution substitution) {
+  public boolean isUpperBound(
+      @Det LazyParameterBound this, @Det Type argType, @Det Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
@@ -287,7 +291,8 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  boolean isUpperBound(@Det LazyParameterBound this, @Det ParameterBound bound, @Det Substitution substitution) {
+  boolean isUpperBound(
+      @Det LazyParameterBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     throw new LazyBoundException();
     // assert false : " not quite sure what to do with lazy type bound";
     // return false;

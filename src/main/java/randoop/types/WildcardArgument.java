@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
@@ -31,7 +32,7 @@ class WildcardArgument extends TypeArgument {
    * @param type the {@code Type} object
    * @return the {@code WildcardArgument} created from the given {@code Type}
    */
-  public static WildcardArgument forType(java.lang.reflect.Type type) {
+  public static @Det WildcardArgument forType(java.lang.reflect.@Det Type type) {
     if (!(type instanceof java.lang.reflect.WildcardType)) {
       throw new IllegalArgumentException("Must be a wildcard type " + type);
     }
@@ -69,8 +70,9 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public WildcardArgument substitute(Substitution substitution) {
-    @PolyDet WildcardType argType = this.argumentType.substitute(substitution);
+  public @Det WildcardArgument substitute(
+      @Det WildcardArgument this, @Det Substitution substitution) {
+    @Det WildcardType argType = this.argumentType.substitute(substitution);
     if (argType.equals(this.argumentType)) {
       return this;
     }
@@ -83,8 +85,8 @@ class WildcardArgument extends TypeArgument {
    * @return this wildcard argument with capture conversion applied to the type bound
    * @see ReferenceType#applyCaptureConversion()
    */
-  public WildcardArgument applyCaptureConversion() {
-    @PolyDet WildcardType wildcardType = argumentType.applyCaptureConversion();
+  public @Det WildcardArgument applyCaptureConversion(@Det WildcardArgument this) {
+    @Det WildcardType wildcardType = argumentType.applyCaptureConversion();
     if (wildcardType.equals(argumentType)) {
       return this;
     }
@@ -137,7 +139,8 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(
+      @Det WildcardArgument this, @Det TypeArgument otherArgument) {
     return this.equals(otherArgument);
   }
 

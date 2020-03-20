@@ -55,7 +55,7 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public ReferenceType substitute(Substitution substitution) {
+  public ReferenceType substitute(@Det NullReferenceType this, @Det Substitution substitution) {
     return this;
   }
 

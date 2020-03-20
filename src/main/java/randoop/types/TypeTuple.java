@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
@@ -45,7 +46,9 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     }
     @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     TypeTuple tuple = (TypeTuple) obj;
-    @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
     @PolyDet boolean tmp = list.equals(tuple.list);
     return tmp;
   }
@@ -70,11 +73,10 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple substitute(Substitution substitution) {
-    @PolyDet List<@PolyDet Type> typeList = new @PolyDet ArrayList<>();
+  public @Det TypeTuple substitute(@Det TypeTuple this, @Det Substitution substitution) {
+    List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
-      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
-      @PolyDet Type tmp = type;
+      Type tmp = type;
       Type newType = tmp.substitute(substitution);
       if (newType != null) {
         typeList.add(newType);
@@ -91,11 +93,10 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
    *
    * @return a new type tuple after performing a capture conversion
    */
-  public TypeTuple applyCaptureConversion() {
-    @PolyDet List<@PolyDet Type> typeList = new @PolyDet ArrayList<>();
+  public @Det TypeTuple applyCaptureConversion(@Det TypeTuple this) {
+    List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
-      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
-      @PolyDet Type tmp = type;
+      Type tmp = type;
       typeList.add(tmp.applyCaptureConversion());
     }
     return new TypeTuple(typeList);
@@ -108,7 +109,9 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
    * @return the component type at the position
    */
   public Type get(int i) {
-    @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
     @PolyDet Type tmp = list.get(i);
     return tmp;
   }
@@ -121,7 +124,9 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> paramSet = new @PolyDet LinkedHashSet<>();
     for (Type type : this.list) {
-      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
       @PolyDet Type tmp = type;
       if (tmp.isReferenceType()) {
         @SuppressWarnings("determinism") // casting here doesn't change the determinism type
@@ -194,13 +199,16 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     }
     int result = 0;
     for (int i = 0; i < this.size() && result == 0; i++) {
-      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
       @PolyDet int tmp = list.get(i).compareTo(tuple.list.get(i));
       result = tmp;
     }
     return result;
   }
 
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
   private static class TypeIterator implements Iterator<@PolyDet Type> {
 
     private Iterator<@PolyDet Type> iterator;

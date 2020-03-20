@@ -9,7 +9,6 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
@@ -22,7 +21,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   private final Class<?> runtimeType;
 
   /** A cache of all NonParameterizedTypes that have been created. */
-  private static final @OrderNonDet Map<Class<?>, @Det NonParameterizedType> cache = new HashMap<>();
+  private static final @OrderNonDet Map<Class<?>, @Det NonParameterizedType> cache =
+      new HashMap<>();
 
   /**
    * Create a {@link NonParameterizedType} object for the runtime class.
@@ -84,13 +84,14 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public NonParameterizedType substitute(Substitution substitution) {
+  public @Det NonParameterizedType substitute(
+      @Det NonParameterizedType this, @Det Substitution substitution) {
     return (NonParameterizedType)
         substitute(substitution, new NonParameterizedType(this.runtimeType));
   }
 
   @Override
-  public NonParameterizedType applyCaptureConversion() {
+  public @Det NonParameterizedType applyCaptureConversion(@Det NonParameterizedType this) {
     return (NonParameterizedType) applyCaptureConversion(this);
   }
 
@@ -125,7 +126,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    *
    * @return the list of rawtypes for the direct interfaces of this type
    */
-  private @OrderNonDet List<ClassOrInterfaceType> getRawTypeInterfaces(@Det NonParameterizedType this) {
+  private @OrderNonDet List<ClassOrInterfaceType> getRawTypeInterfaces(
+      @Det NonParameterizedType this) {
     @OrderNonDet List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Class<?> c : runtimeType.getInterfaces()) {
       @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another

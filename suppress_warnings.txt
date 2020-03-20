@@ -21,6 +21,12 @@
 @SuppressWarnings("determinism") // the annotation for this library method is wrong
 @SuppressWarnings("determinism") // this toString call is probably @PolyDet
 @SuppressWarnings("determinism") // iterating over a @PolyDet("down") collection should give @PolyDet elements
+@SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet so for each loop assignment compatible
+@SuppressWarnings("determinism") // The fact the function requiredEntry is @Det is clearly not an issue
+@SuppressWarnings("determinism") // can pass @Det receiver to @PolyDet method setUpperBound here because no chance of aliasing.
+
+// For when there's an error on a collection in an extends/implements clause
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
 
 // For exception
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/116

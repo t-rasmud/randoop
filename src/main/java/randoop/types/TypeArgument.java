@@ -28,7 +28,7 @@ public abstract class TypeArgument {
    * @param type the type of a type argument
    * @return the {@code TypeArgument} for the given type
    */
-  public static TypeArgument forType(java.lang.reflect.Type type) {
+  public static @Det TypeArgument forType(java.lang.reflect.@Det Type type) {
     if (type instanceof WildcardType) {
       return WildcardArgument.forType(type);
     } else {
@@ -36,7 +36,7 @@ public abstract class TypeArgument {
     }
   }
 
-  public static TypeArgument forType(ReferenceType referenceType) {
+  public static @Det TypeArgument forType(@Det ReferenceType referenceType) {
     if (referenceType instanceof randoop.types.WildcardType) {
       return WildcardArgument.forType(referenceType);
     }
@@ -49,7 +49,8 @@ public abstract class TypeArgument {
    * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
-  public abstract TypeArgument substitute(Substitution substitution);
+  public abstract @Det TypeArgument substitute(
+      @Det TypeArgument this, @Det Substitution substitution);
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in <a
@@ -93,7 +94,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(@Det TypeArgument this, @Det TypeArgument otherArgument) {
     return false;
   }
 
@@ -112,7 +113,8 @@ public abstract class TypeArgument {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(@Det TypeArgument this, @Det TypeArgument goalType) {
+  public Substitution getInstantiatingSubstitution(
+      @Det TypeArgument this, @Det TypeArgument goalType) {
     // This implementation is overridden by subclasses.
     return null;
   }

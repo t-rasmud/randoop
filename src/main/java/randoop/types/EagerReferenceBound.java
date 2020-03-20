@@ -1,9 +1,9 @@
 package randoop.types;
 
 import java.util.List;
-import randoop.types.LazyParameterBound.LazyBoundException;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
@@ -21,8 +21,9 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public EagerReferenceBound substitute(Substitution substitution) {
-    @PolyDet ReferenceType referenceType = getBoundType().substitute(substitution);
+  public @Det EagerReferenceBound substitute(
+      @Det EagerReferenceBound this, @Det Substitution substitution) {
+    @Det ReferenceType referenceType = getBoundType().substitute(substitution);
     if (referenceType.equals(getBoundType())) {
       return this;
     }
@@ -30,8 +31,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public EagerReferenceBound applyCaptureConversion() {
-    @PolyDet ReferenceType referenceType = getBoundType().applyCaptureConversion();
+  public @Det EagerReferenceBound applyCaptureConversion(@Det EagerReferenceBound this) {
+    @Det ReferenceType referenceType = getBoundType().applyCaptureConversion();
     if (referenceType.equals(getBoundType())) {
       return this;
     }
@@ -44,7 +45,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(@Det EagerReferenceBound this, @Det Type argType, @Det Substitution subst) {
+  public boolean isLowerBound(
+      @Det EagerReferenceBound this, @Det Type argType, @Det Substitution subst) {
     @Det ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
@@ -70,7 +72,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(@Det EagerReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
+  boolean isLowerBound(
+      @Det EagerReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     assert bound instanceof EagerReferenceBound : "only handling reference bounds";
     return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
   }
@@ -85,7 +88,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isUpperBound(@Det EagerReferenceBound this, @Det Type argType, @Det Substitution subst) {
+  public boolean isUpperBound(
+      @Det EagerReferenceBound this, @Det Type argType, @Det Substitution subst) {
     @Det ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
@@ -117,7 +121,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isUpperBound(@Det EagerReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
+  boolean isUpperBound(
+      @Det EagerReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     return isUpperBound(getBoundType(), substitution);
   }
 }

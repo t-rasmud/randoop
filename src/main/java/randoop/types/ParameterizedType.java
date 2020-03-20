@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -23,7 +21,8 @@ import org.plumelib.util.UtilPlume;
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /** A cache of all ParameterizedTypes that have been created. */
-  private static final @OrderNonDet Map<@Det Class<?>, @Det GenericClassType> cache = new HashMap<>();
+  private static final @OrderNonDet Map<@Det Class<?>, @Det GenericClassType> cache =
+      new HashMap<>();
 
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
@@ -39,7 +38,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     @Det GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
       cached = new GenericClassType(typeClass);
-      // @SuppressWarnings("determinism") // second argument expects @OrderNonDet becaus of Map annotation
+      // @SuppressWarnings("determinism") // second argument expects @OrderNonDet becaus of Map
+      // annotation
       @Det GenericClassType tmp = cache.put(typeClass, cached);
     }
     return cached;
@@ -52,7 +52,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param type the reflective type object
    * @return an object of type {@code ParameterizedType}
    */
-  public static @Det ParameterizedType forType(java.lang.reflect. @Det Type type) {
+  public static @Det ParameterizedType forType(java.lang.reflect.@Det Type type) {
     if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
@@ -81,7 +81,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public abstract ParameterizedType substitute(Substitution substitution);
+  public abstract @Det ParameterizedType substitute(
+      @Det ParameterizedType this, @Det Substitution substitution);
 
   /**
    * Returns the {@link GenericClassType} for this parameterized type.

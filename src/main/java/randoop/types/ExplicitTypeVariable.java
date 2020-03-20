@@ -1,8 +1,9 @@
 package randoop.types;
 
 import java.util.Objects;
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
 class ExplicitTypeVariable extends TypeVariable {
@@ -74,8 +75,8 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public ReferenceType substitute(Substitution substitution) {
-    @PolyDet ReferenceType type = substitution.get(this);
+  public ReferenceType substitute(@Det ExplicitTypeVariable this, @Det Substitution substitution) {
+    @Det ReferenceType type = substitution.get(this);
     if (type != null && !type.isVariable()) {
       return type;
     }

@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
@@ -55,7 +56,10 @@ class CaptureTypeVariable extends TypeVariable {
    * @param upperBound the upper type bound of the variable
    */
   private CaptureTypeVariable(
-      int varID, @PolyDet WildcardArgument wildcard, ParameterBound lowerBound, ParameterBound upperBound) {
+      int varID,
+      @PolyDet WildcardArgument wildcard,
+      ParameterBound lowerBound,
+      ParameterBound upperBound) {
     super(lowerBound, upperBound);
     this.varID = varID;
     this.wildcard = wildcard;
@@ -113,7 +117,13 @@ class CaptureTypeVariable extends TypeVariable {
    * @param typeParameter the formal type parameter of the generic type
    * @param substitution the capture conversion substitution
    */
-  public void convert(TypeVariable typeParameter, Substitution substitution) {
+  @SuppressWarnings(
+      "determinism") // can pass @Det receiver to @PolyDet method setUpperBound here because no
+                     // chance of aliasing.
+  public void convert(
+      @Det CaptureTypeVariable this,
+      @Det TypeVariable typeParameter,
+      @Det Substitution substitution) {
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
     ParameterBound parameterBound = typeParameter.getUpperTypeBound().substitute(substitution);
     if (getUpperTypeBound().isObject()) {
@@ -147,8 +157,8 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public ReferenceType substitute(Substitution substitution) {
-    @PolyDet ReferenceType type = substitution.get(this);
+  public ReferenceType substitute(@Det CaptureTypeVariable this, @Det Substitution substitution) {
+    @Det ReferenceType type = substitution.get(this);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
@@ -160,7 +170,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
       if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
-        @PolyDet WildcardArgument updatedWildcard = wildcard.substitute(substitution);
+        @Det WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;

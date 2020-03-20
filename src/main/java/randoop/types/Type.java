@@ -190,7 +190,7 @@ public abstract class Type implements Comparable<Type> {
    * @return a {@link Type} object corresponding to the given type
    * @throws IllegalArgumentException if the type is a {@code java.lang.reflect.WildcardType}
    */
-  public static Type forType(java.lang.reflect. @Det Type type) {
+  public static Type forType(java.lang.reflect.@Det Type type) {
 
     if (type instanceof WildcardType) {
       throw new IllegalArgumentException("Cannot construct type for wildcard " + type);
@@ -449,7 +449,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} constructed by substituting for type parameters in this type, or this
    *     type if this is not a generic class type
    */
-  public Type substitute(Substitution substitution) {
+  public Type substitute(@Det Type this, @Det Substitution substitution) {
     return this;
   }
 
@@ -458,7 +458,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return a copy of this type with wildcards replaced by type conversion
    */
-  public Type applyCaptureConversion() {
+  public Type applyCaptureConversion(@Det Type this) {
     return this;
   }
 

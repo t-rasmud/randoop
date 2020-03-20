@@ -26,7 +26,7 @@ public class Substitution {
    * Map on reflection types - used for testing bounds. Its keys are a subset of the keys of {@link
    * #map}: those that are type parameters as opposed to other type variables such as wildcards.
    */
-  private Map<java.lang.reflect. @PolyDet Type, @PolyDet ReferenceType> rawMap;
+  private Map<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> rawMap;
 
   /** Create an empty substitution. */
   public Substitution() {
@@ -61,7 +61,9 @@ public class Substitution {
    * @param parameters the type parameters
    * @param arguments the type arguments
    */
-  public Substitution(@PolyDet List<@PolyDet TypeVariable> parameters, @PolyDet ReferenceType @PolyDet ... arguments) {
+  public Substitution(
+      @PolyDet List<@PolyDet TypeVariable> parameters,
+      @PolyDet ReferenceType @PolyDet ... arguments) {
     this();
     assert parameters.size() == arguments.length
         : "parameters=" + parameters + "  arguments=" + Arrays.toString(arguments);
@@ -80,7 +82,9 @@ public class Substitution {
    * @param parameters the type parameters
    * @param arguments the type arguments
    */
-  public Substitution(@PolyDet List<@PolyDet TypeVariable> parameters, @PolyDet List<@PolyDet ReferenceType> arguments) {
+  public Substitution(
+      @PolyDet List<@PolyDet TypeVariable> parameters,
+      @PolyDet List<@PolyDet ReferenceType> arguments) {
     this();
     assert parameters.size() == arguments.size();
     for (int i = 0; i < parameters.size(); i++) {
@@ -107,7 +111,9 @@ public class Substitution {
     }
     @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Substitution s = (Substitution) obj;
-    @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
     @PolyDet boolean tmp = map.equals(s.map);
     return tmp;
   }
@@ -131,13 +137,16 @@ public class Substitution {
    * @return true if the the substitutions are consistent, false otherwise
    */
   public boolean isConsistentWith(Substitution substitution) {
-    for (@PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : substitution.map.entrySet()) {
+    for (
+    @PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : substitution.map.entrySet()) {
       if (this.map.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
         return false;
       }
     }
-    for (@PolyDet Entry<java.lang.reflect. @PolyDet Type, @PolyDet ReferenceType> entry : substitution.rawMap.entrySet()) {
+    for (
+    @PolyDet Entry<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> entry :
+        substitution.rawMap.entrySet()) {
       if (this.rawMap.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
         return false;
@@ -165,7 +174,9 @@ public class Substitution {
    * @param arguments the type arguments
    * @return a new substitution that is this substitution extended by the given mappings
    */
-  public Substitution extend(@PolyDet List<@PolyDet TypeVariable> parameters, @PolyDet List<@PolyDet ReferenceType> arguments) {
+  public Substitution extend(
+      @PolyDet List<@PolyDet TypeVariable> parameters,
+      @PolyDet List<@PolyDet ReferenceType> arguments) {
     return extend(new Substitution(parameters, arguments));
   }
 
@@ -176,13 +187,23 @@ public class Substitution {
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
+  @SuppressWarnings(
+      "determinism") // @PolyDet("use") same as @PolyDet so for each loop assignment compatible
   public Substitution extend(@PolyDet("use") Substitution other) {
     Substitution result = new Substitution(this);
-    for (@PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : other.map.entrySet()) {
-      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+    for (
+    @PolyDet("down") Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : other.map.entrySet()) {
+      @SuppressWarnings(
+          "determinism") // The fact the function requiredEntry is @Det is clearly not an issue
+      ReferenceType ignore = result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
-    for (@PolyDet Entry<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> entry : other.rawMap.entrySet()) {
-      result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+    for (
+    @PolyDet("down") Entry<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> entry :
+        other.rawMap.entrySet()) {
+      @SuppressWarnings(
+          "determinism") // The fact the function requiredEntry is @Det is clearly not an issue
+      ReferenceType ignore =
+          result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
   }

@@ -3,6 +3,8 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
@@ -46,7 +48,7 @@ class WildcardType extends ParameterType {
    * @param type the {@code java.lang.reflect.WildcardType} object
    * @return a {@link WildcardType} with the bounds from the given reflection type
    */
-  public static WildcardType forType(java.lang.reflect.WildcardType type) {
+  public static @Det WildcardType forType(java.lang.reflect.@Det WildcardType type) {
     // Note: every wildcard has an upper bound, so need to check lower first
     if (type.getLowerBounds().length > 0) {
       assert type.getLowerBounds().length == 1
@@ -71,12 +73,13 @@ class WildcardType extends ParameterType {
     if (!(obj instanceof WildcardType)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     WildcardType otherType = (WildcardType) obj;
     return otherType.hasUpperBound == this.hasUpperBound && super.equals(otherType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(hasUpperBound, super.hashCode());
   }
 
@@ -109,7 +112,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public WildcardType substitute(Substitution substitution) {
+  public @Det WildcardType substitute(@Det WildcardType this, @Det Substitution substitution) {
     ParameterBound bound = getTypeBound().substitute(substitution);
     if (bound.equals(this.getTypeBound())) {
       return this;
@@ -118,9 +121,9 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public WildcardType applyCaptureConversion() {
+  public @Det WildcardType applyCaptureConversion(@Det WildcardType this) {
     if (getTypeBound().hasWildcard()) {
-      EagerReferenceBound convertedType =
+      @Det EagerReferenceBound convertedType =
           (EagerReferenceBound) getTypeBound().applyCaptureConversion();
       return new WildcardType(convertedType, this.hasUpperBound);
     }
@@ -149,7 +152,7 @@ class WildcardType extends ParameterType {
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
-  public boolean contains(WildcardType otherType) {
+  public boolean contains(@Det WildcardType this, @Det WildcardType otherType) {
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound
           && this.getUpperTypeBound().isSubtypeOf(otherType.getUpperTypeBound())) {

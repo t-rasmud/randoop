@@ -54,7 +54,7 @@ public abstract class ReferenceType extends Type {
    * @param type the type reference
    * @return the {@code ReferenceType} for the given {@code Type}
    */
-  public static @Det ReferenceType forType(java.lang.reflect. @Det Type type) {
+  public static @Det ReferenceType forType(java.lang.reflect.@Det Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return ArrayType.forType(type);
     }
@@ -81,10 +81,11 @@ public abstract class ReferenceType extends Type {
    * @return the type created by applying the substitution to this type
    */
   @Override
-  public abstract ReferenceType substitute(Substitution substitution);
+  public abstract @Det ReferenceType substitute(
+      @Det ReferenceType this, @Det Substitution substitution);
 
   @Override
-  public ReferenceType applyCaptureConversion() {
+  public @Det ReferenceType applyCaptureConversion(@Det ReferenceType this) {
     return this;
   }
 
@@ -159,7 +160,8 @@ public abstract class ReferenceType extends Type {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(@Det ReferenceType this, @Det ReferenceType goalType) {
+  public Substitution getInstantiatingSubstitution(
+      @Det ReferenceType this, @Det ReferenceType goalType) {
     return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
   }
 

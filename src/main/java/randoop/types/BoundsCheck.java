@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Predicate to check the type of a substitution for a list of type variables. */
 public class BoundsCheck {

@@ -73,7 +73,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
    */
-  public static @Det ClassOrInterfaceType forType(java.lang.reflect. @Det Type type) {
+  public static @Det ClassOrInterfaceType forType(java.lang.reflect.@Det Type type) {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
@@ -125,7 +125,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * objects without casting.
    */
   @Override
-  public abstract ClassOrInterfaceType substitute(Substitution substitution);
+  public abstract @Det ClassOrInterfaceType substitute(
+      @Det ClassOrInterfaceType this, @Det Substitution substitution);
 
   /**
    * Applies the substitution to the enclosing type of this type and adds the result as the
@@ -135,7 +136,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type to which resulting enclosing type is to be added
    * @return the type with enclosing type added if needed
    */
-  final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
+  final @Det ClassOrInterfaceType substitute(
+      @Det ClassOrInterfaceType this,
+      @Det Substitution substitution,
+      @Det ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
       type.setEnclosingType(enclosingType.substitute(substitution));
     }
@@ -143,7 +147,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public abstract ClassOrInterfaceType applyCaptureConversion();
+  public abstract @Det ClassOrInterfaceType applyCaptureConversion(@Det ClassOrInterfaceType this);
 
   /**
    * Applies capture conversion to the enclosing type of this type and adds the result as the
@@ -152,7 +156,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type this type with capture conversion applied
    * @return the type with converted enclosing type
    */
-  final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
+  final @Det ClassOrInterfaceType applyCaptureConversion(
+      @Det ClassOrInterfaceType this, @Det ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
       type.setEnclosingType(enclosingType.applyCaptureConversion());
     }
@@ -202,7 +207,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the list of interfaces directly implemented by this type
    */
-  public abstract @OrderNonDet List<@Det ClassOrInterfaceType> getInterfaces(@Det ClassOrInterfaceType this);
+  public abstract @OrderNonDet List<@Det ClassOrInterfaceType> getInterfaces(
+      @Det ClassOrInterfaceType this);
 
   /**
    * Returns the package of the runtime class of this type.
@@ -240,7 +246,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   @SuppressWarnings("determinism") // The getInterfaces call in the loop is
   // @OrderNonDet, but upon inspection it seems the logic is independent of order.
-  public InstantiatedType getMatchingSupertype(@Det ClassOrInterfaceType this, @Det GenericClassType goalType) {
+  public InstantiatedType getMatchingSupertype(
+      @Det ClassOrInterfaceType this, @Det GenericClassType goalType) {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
@@ -276,7 +283,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(@Det ClassOrInterfaceType this, @Det ReferenceType goalType) {
+  public Substitution getInstantiatingSubstitution(
+      @Det ClassOrInterfaceType this, @Det ReferenceType goalType) {
     @Det Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
@@ -318,7 +326,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the set of all supertypes of this type
    */
-  public @OrderNonDet Collection<@Det ClassOrInterfaceType> getSuperTypes(@Det ClassOrInterfaceType this) {
+  public @OrderNonDet Collection<@Det ClassOrInterfaceType> getSuperTypes(
+      @Det ClassOrInterfaceType this) {
     @OrderNonDet Collection<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
     if (this.isObject()) {
       return supertypes;
@@ -329,8 +338,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
       boolean ignore = supertypes.addAll(superclass.getSuperTypes());
     }
-    for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
-      @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
+    for (@Det ClassOrInterfaceType interfaceType : this.getInterfaces()) {
       @Det ClassOrInterfaceType tmp = interfaceType;
       supertypes.add(tmp);
       @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
@@ -345,10 +353,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the immediate supertypes of this type
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  public @OrderNonDet List<@Det ClassOrInterfaceType> getImmediateSupertypes(@Det ClassOrInterfaceType this) {
+  public @OrderNonDet List<@Det ClassOrInterfaceType> getImmediateSupertypes(
+      @Det ClassOrInterfaceType this) {
     if (this.isObject()) {
-      return
-          Collections.<@Det ClassOrInterfaceType>emptyList();
+      return Collections.<@Det ClassOrInterfaceType>emptyList();
     }
     @OrderNonDet List<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
     @Det ClassOrInterfaceType superclass = this.getSuperclass();
@@ -440,11 +448,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(@Det ClassOrInterfaceType this, @Det Type otherType) {
     if (debug) {
-        String tmp =
-            String.format(
-                    "isSubtypeOf(%s, %s) [%s, %s]%n",
-                    this, otherType, this.getClass(), otherType.getClass());
-        System.out.print(tmp);
+      String tmp =
+          String.format(
+              "isSubtypeOf(%s, %s) [%s, %s]%n",
+              this, otherType, this.getClass(), otherType.getClass());
+      System.out.print(tmp);
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
@@ -474,8 +482,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (@Det ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-            String tmp = String.format("  iface: %s [%s]%n", iface, iface.getClass());
-            System.out.print(tmp);
+          String tmp = String.format("  iface: %s [%s]%n", iface, iface.getClass());
+          System.out.print(tmp);
         }
 
         if (iface.equals(otherType)) {
@@ -497,8 +505,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     @Det ClassOrInterfaceType superClassType = this.getSuperclass();
     if (debug) {
-        String tmp = String.format("  superClassType: %s%n", superClassType);
-        System.out.printf(tmp);
+      String tmp = String.format("  superClassType: %s%n", superClassType);
+      System.out.printf(tmp);
     }
 
     if (superClassType == null || superClassType.isObject()) {

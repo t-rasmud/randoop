@@ -31,11 +31,11 @@ public class ReferenceArgument extends TypeArgument {
    * @param type the type
    * @return a {@code ReferenceArgument} for the given type
    */
-  public static ReferenceArgument forType(java.lang.reflect.Type type) {
+  public static @Det ReferenceArgument forType(java.lang.reflect.@Det Type type) {
     return forType(ReferenceType.forType(type));
   }
 
-  public static ReferenceArgument forType(ReferenceType referenceType) {
+  public static @Det ReferenceArgument forType(@Det ReferenceType referenceType) {
     return new ReferenceArgument(referenceType);
   }
 
@@ -63,7 +63,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public TypeArgument substitute(Substitution substitution) {
+  public TypeArgument substitute(@Det ReferenceArgument this, @Det Substitution substitution) {
     return TypeArgument.forType(referenceType.substitute(substitution));
   }
 
@@ -118,18 +118,20 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(
+      @Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return false;
     }
 
-    @PolyDet ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+    @Det ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
 
     return referenceType.isInstantiationOf(otherReferenceType);
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(@Det ReferenceArgument this, @Det TypeArgument otherArgument) {
+  public Substitution getInstantiatingSubstitution(
+      @Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }

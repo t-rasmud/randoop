@@ -42,16 +42,19 @@ public abstract class TypeVariable extends ParameterType {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    @PolyDet("upDet") Set<java.lang.reflect. @PolyDet TypeVariable<?>> variableSet = new @PolyDet("upDet") HashSet<>();
+    @PolyDet("upDet") Set<java.lang.reflect.@PolyDet TypeVariable<?>> variableSet = new @PolyDet("upDet") HashSet<>();
     variableSet.add(v);
-    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
-    @PolyDet TypeVariable tmp = new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
+    @SuppressWarnings(
+        "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
+    @PolyDet TypeVariable tmp =
+        new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
     return tmp;
   }
 
   @Override
-  public ReferenceType substitute(@PolyDet Substitution substitution) {
-    @PolyDet ReferenceType type = substitution.get(this);
+  public ReferenceType substitute(@Det TypeVariable this, @Det Substitution substitution) {
+    @Det ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
     }

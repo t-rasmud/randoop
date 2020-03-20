@@ -33,7 +33,9 @@ public class InstantiatedType extends ParameterizedType {
    * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
-  InstantiatedType(@PolyDet GenericClassType instantiatedType, @PolyDet List<@PolyDet TypeArgument> argumentList) {
+  InstantiatedType(
+      @PolyDet GenericClassType instantiatedType,
+      @PolyDet List<@PolyDet TypeArgument> argumentList) {
     if (instantiatedType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
@@ -58,9 +60,11 @@ public class InstantiatedType extends ParameterizedType {
     }
     @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     InstantiatedType other = (InstantiatedType) obj;
-    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
-    @PolyDet boolean tmp = instantiatedType.equals(other.instantiatedType)
-        && argumentList.equals(other.argumentList);
+    @SuppressWarnings(
+        "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
+    @PolyDet boolean tmp =
+        instantiatedType.equals(other.instantiatedType) && argumentList.equals(other.argumentList);
     return tmp;
   }
 
@@ -75,9 +79,10 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public InstantiatedType substitute(Substitution substitution) {
-    @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
-    for (@PolyDet TypeArgument argument : this.argumentList) {
+  public @Det InstantiatedType substitute(
+      @Det InstantiatedType this, @Det Substitution substitution) {
+    List<TypeArgument> argumentList = new ArrayList<>();
+    for (@Det TypeArgument argument : this.argumentList) {
       argumentList.add(argument.substitute(substitution));
     }
     return (InstantiatedType)
@@ -101,38 +106,36 @@ public class InstantiatedType extends ParameterizedType {
    * @return the capture conversion type for this type
    */
   @Override
-  public InstantiatedType applyCaptureConversion() {
+  public @Det InstantiatedType applyCaptureConversion(@Det InstantiatedType this) {
 
     if (!this.hasWildcard()) {
       return this;
     }
 
-    @PolyDet List<@PolyDet ReferenceType> convertedTypeList = new @PolyDet ArrayList<>();
-    for (@PolyDet TypeArgument argument : argumentList) {
+    List<ReferenceType> convertedTypeList = new ArrayList<>();
+    for (@Det TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        @PolyDet WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
+        @Det WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
         convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
       } else {
-        @PolyDet ReferenceType convertedArgument =
+        @Det ReferenceType convertedArgument =
             ((ReferenceArgument) argument).getReferenceType().applyCaptureConversion();
         convertedTypeList.add(convertedArgument);
       }
     }
 
-    @PolyDet Substitution substitution =
+    @Det Substitution substitution =
         new Substitution(instantiatedType.getTypeParameters(), convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
-        @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
-        @PolyDet CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
-        @PolyDet TypeVariable tmp = instantiatedType.getTypeParameters().get(i);
+        @Det CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
+        @Det TypeVariable tmp = instantiatedType.getTypeParameters().get(i);
         captureVariable.convert(tmp, substitution);
       }
     }
 
-    @PolyDet List<@PolyDet TypeArgument> convertedArgumentList = new @PolyDet ArrayList<>();
-    for (@PolyDet ReferenceType type : convertedTypeList) {
+    List<TypeArgument> convertedArgumentList = new ArrayList<>();
+    for (@Det ReferenceType type : convertedTypeList) {
       convertedArgumentList.add(TypeArgument.forType(type));
     }
 
@@ -152,8 +155,7 @@ public class InstantiatedType extends ParameterizedType {
     @OrderNonDet List<ClassOrInterfaceType> interfaces = new @Det ArrayList<>();
     @Det Substitution substitution =
         new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
-    for (@NonDet ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+    for (@Det ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
       @Det ClassOrInterfaceType tmp = type;
       interfaces.add(tmp);
     }
@@ -173,7 +175,8 @@ public class InstantiatedType extends ParameterizedType {
    * doing supertype search.
    */
   @Override
-  public @Det InstantiatedType getMatchingSupertype(@Det InstantiatedType this, @Det GenericClassType goalType) {
+  public @Det InstantiatedType getMatchingSupertype(
+      @Det InstantiatedType this, @Det GenericClassType goalType) {
     /*
     if (this.hasWildcard()) {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
@@ -345,7 +348,8 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(@Det InstantiatedType this, @Det ReferenceType goalType) {
+  public Substitution getInstantiatingSubstitution(
+      @Det InstantiatedType this, @Det ReferenceType goalType) {
     @Det Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {

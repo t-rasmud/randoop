@@ -31,7 +31,9 @@ public class GenericClassType extends ParameterizedType {
     this.parameters = new @PolyDet ArrayList<>();
 
     for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @SuppressWarnings(
+          "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
       @PolyDet TypeVariable variable = TypeVariable.forType(v);
       this.parameters.add(variable);
     }
@@ -76,10 +78,10 @@ public class GenericClassType extends ParameterizedType {
    * @return a {@link ParameterizedType} instantiating this generic class by the given substitution
    */
   @Override
-  public InstantiatedType substitute(Substitution substitution) {
-    @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
-    for (@PolyDet TypeVariable variable : parameters) {
-      @PolyDet ReferenceType referenceType = substitution.get(variable);
+  public InstantiatedType substitute(@Det GenericClassType this, @Det Substitution substitution) {
+    List<TypeArgument> argumentList = new ArrayList<>();
+    for (@Det TypeVariable variable : parameters) {
+      @Det ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
         referenceType = variable;
       }
@@ -90,7 +92,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public GenericClassType applyCaptureConversion() {
+  public @Det GenericClassType applyCaptureConversion(@Det GenericClassType this) {
     return (GenericClassType) applyCaptureConversion(this);
   }
 
@@ -125,7 +127,8 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the list of instantiated directly-implemented interface types of this type
    */
-  List<ClassOrInterfaceType> getInterfaces(@Det GenericClassType this, @Det Substitution substitution) {
+  List<ClassOrInterfaceType> getInterfaces(
+      @Det GenericClassType this, @Det Substitution substitution) {
     @Det List<ClassOrInterfaceType> interfaces = new @Det ArrayList<>();
     for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
       interfaces.add(ClassOrInterfaceType.forType(type).substitute(substitution));
@@ -210,7 +213,8 @@ public class GenericClassType extends ParameterizedType {
    * @return a type which is this type parameterized by the given type arguments
    * @see #substitute(Substitution)
    */
-  public InstantiatedType instantiate(@Det GenericClassType this, @Det ReferenceType @Det ... typeArguments) {
+  public InstantiatedType instantiate(
+      @Det GenericClassType this, @Det ReferenceType @Det ... typeArguments) {
     if (typeArguments.length != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
@@ -235,7 +239,8 @@ public class GenericClassType extends ParameterizedType {
    * @return the type that is this type instantiated by the given type arguments
    * @see #substitute(Substitution)
    */
-  public InstantiatedType instantiate(@Det GenericClassType this, @Det List<ReferenceType> typeArguments) {
+  public InstantiatedType instantiate(
+      @Det GenericClassType this, @Det List<ReferenceType> typeArguments) {
     if (typeArguments.size() != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }

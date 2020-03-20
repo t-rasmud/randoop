@@ -53,10 +53,11 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public abstract @Det ReferenceBound substitute(@Det ReferenceBound this, @Det Substitution substitution);
+  public abstract @Det ReferenceBound substitute(
+      @Det ReferenceBound this, @Det Substitution substitution);
 
   @Override
-  public abstract ReferenceBound applyCaptureConversion();
+  public abstract @Det ReferenceBound applyCaptureConversion(@Det ReferenceBound this);
 
   @Override
   boolean hasWildcard() {

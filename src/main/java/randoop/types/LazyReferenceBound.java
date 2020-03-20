@@ -70,7 +70,7 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public ReferenceBound applyCaptureConversion() {
+  public @Det ReferenceBound applyCaptureConversion(@Det LazyReferenceBound this) {
     return null;
   }
 
@@ -80,7 +80,8 @@ class LazyReferenceBound extends ReferenceBound {
     if (getBoundType().isVariable()) {
       parameters.add((TypeVariable) getBoundType());
     } else if (getBoundType().isParameterized()) {
-      for (@PolyDet ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
+      for (
+      @PolyDet ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
         if (argType.isVariable()) {
           parameters.add((TypeVariable) argType);
         }
@@ -90,7 +91,8 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(@Det LazyReferenceBound this, @Det Type argType, @Det Substitution substitution) {
+  public boolean isLowerBound(
+      @Det LazyReferenceBound this, @Det Type argType, @Det Substitution substitution) {
     @Det ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
@@ -102,13 +104,15 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isUpperBound(@Det LazyReferenceBound this, @Det Type argType, @Det Substitution substitution) {
+  public boolean isUpperBound(
+      @Det LazyReferenceBound this, @Det Type argType, @Det Substitution substitution) {
     @Det ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 
   @Override
-  boolean isUpperBound(@Det LazyReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
+  boolean isUpperBound(
+      @Det LazyReferenceBound this, @Det ParameterBound bound, @Det Substitution substitution) {
     assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
     return false;
   }
