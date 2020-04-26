@@ -207,7 +207,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the list of interfaces directly implemented by this type
    */
-  public abstract @OrderNonDet List<@Det ClassOrInterfaceType> getInterfaces(
+  public abstract @Det List<@Det ClassOrInterfaceType> getInterfaces(
       @Det ClassOrInterfaceType this);
 
   /**
@@ -326,9 +326,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the set of all supertypes of this type
    */
-  public @OrderNonDet Collection<@Det ClassOrInterfaceType> getSuperTypes(
-      @Det ClassOrInterfaceType this) {
-    @OrderNonDet Collection<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
+  public Collection<@Det ClassOrInterfaceType> getSuperTypes(@Det ClassOrInterfaceType this) {
+    @Det Collection<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
     if (this.isObject()) {
       return supertypes;
     }
@@ -358,7 +357,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (this.isObject()) {
       return Collections.<@Det ClassOrInterfaceType>emptyList();
     }
-    @OrderNonDet List<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
+    @OrderNonDet List<@Det ClassOrInterfaceType> supertypes = new @OrderNonDet ArrayList<>();
     @Det ClassOrInterfaceType superclass = this.getSuperclass();
     supertypes.add(superclass);
     @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet

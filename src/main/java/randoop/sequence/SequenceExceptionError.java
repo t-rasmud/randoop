@@ -31,7 +31,7 @@ public class SequenceExceptionError extends Error {
    * @param exception the exception
    */
   public SequenceExceptionError(
-      ExecutableSequence testSequence, int position, Throwable exception) {
+      @PolyDet ExecutableSequence testSequence, int position, Throwable exception) {
     super("Exception thrown before end of sequence", exception);
     this.testSequence = testSequence;
     this.position = position;

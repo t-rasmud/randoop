@@ -96,7 +96,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public @OrderNonDet List<ClassOrInterfaceType> getInterfaces(@Det NonParameterizedType this) {
+  public @Det List<ClassOrInterfaceType> getInterfaces(@Det NonParameterizedType this) {
     if (this.isRawtype()) {
       return this.getRawTypeInterfaces();
     }
@@ -126,9 +126,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    *
    * @return the list of rawtypes for the direct interfaces of this type
    */
-  private @OrderNonDet List<ClassOrInterfaceType> getRawTypeInterfaces(
-      @Det NonParameterizedType this) {
-    @OrderNonDet List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+  private @Det List<ClassOrInterfaceType> getRawTypeInterfaces(@Det NonParameterizedType this) {
+    @Det List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Class<?> c : runtimeType.getInterfaces()) {
       @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @Det Class<?> tmp = c;

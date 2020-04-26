@@ -2,10 +2,12 @@
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+@SuppressWarnings("determinism") // process is order insensitive, can't be verified
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
 @SuppressWarnings("determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
 @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
 @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
+@SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
 @SuppressWarnings("determinism") // this is code randoop is run on
 @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
 @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
@@ -24,6 +26,9 @@
 @SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet so for each loop assignment compatible
 @SuppressWarnings("determinism") // The fact the function requiredEntry is @Det is clearly not an issue
 @SuppressWarnings("determinism") // can pass @Det receiver to @PolyDet method setUpperBound here because no chance of aliasing.
+@SuppressWarnings("determinism") // method doesn't mutate so safe to call
+@SuppressWarnings("determinism") // empty list clearly assignable to anything
+@SuppressWarnings("determinism") // okay to treat cache as @PolyDet
 
 // For when there's an error on a collection in an extends/implements clause
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
@@ -39,6 +44,9 @@
 
 // For @PolyDet("") related errors
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147
+
+// For loop issue
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/168
 
 @SuppressWarnings("determinism") // The getInterfaces call in the loop is
 // @OrderNonDet, but upon inspection it seems the logic is independent of order.

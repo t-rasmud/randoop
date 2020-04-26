@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
 
@@ -16,9 +17,9 @@ import randoop.NotExecuted;
 public final class Execution {
 
   // The execution outcome of each statement.
-  final List<ExecutionOutcome> outcomes;
+  final @PolyDet List<@PolyDet ExecutionOutcome> outcomes;
 
-  private Set<Class<?>> coveredClasses;
+  private Set<@PolyDet Class<?>> coveredClasses;
 
   /**
    * Create an Execution to store the execution results of the given sequence. The list of outcomes
@@ -27,11 +28,11 @@ public final class Execution {
    * @param owner the executed sequence
    */
   public Execution(Sequence owner) {
-    this.outcomes = new ArrayList<>(owner.size());
+    this.outcomes = new @PolyDet ArrayList<>(owner.size());
     for (int i = 0; i < owner.size(); i++) {
       outcomes.add(NotExecuted.create());
     }
-    this.coveredClasses = new LinkedHashSet<>();
+    this.coveredClasses = new @PolyDet LinkedHashSet<>();
   }
 
   /**
@@ -50,14 +51,18 @@ public final class Execution {
    * @return the outcome of the ith statement
    */
   public ExecutionOutcome get(int i) {
-    return outcomes.get(i);
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+    // @PolyDet
+    @PolyDet ExecutionOutcome tmp = outcomes.get(i);
+    return tmp;
   }
 
   void addCoveredClass(Class<?> c) {
     coveredClasses.add(c);
   }
 
-  Set<Class<?>> getCoveredClasses() {
+  Set<@PolyDet Class<?>> getCoveredClasses() {
     return coveredClasses;
   }
 }

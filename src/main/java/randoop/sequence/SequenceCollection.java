@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
@@ -35,19 +37,20 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
-  private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<@PolyDet Type, @PolyDet SimpleArrayList<@PolyDet Sequence>> sequenceMap =
+      new @PolyDet LinkedHashMap<>();
 
   /**
    * A set of all the types that can be created with the sequences in this. This is the same as
    * {@code sequenceMap.keySet()}, but provides additional operations.
    */
-  private SubTypeSet typeSet = new SubTypeSet(false);
+  private SubTypeSet typeSet = new @PolyDet SubTypeSet(false);
 
   /**
    * A set of all the types that can be created with the sequences in this, and all their
    * supertypes. Thus, this may be larger than {@link #typeSet}.
    */
-  private Set<Type> typesAndSupertypes = new TreeSet<>();
+  private Set<@PolyDet Type> typesAndSupertypes = new @PolyDet TreeSet<>();
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
@@ -75,8 +78,8 @@ public class SequenceCollection {
   /** Removes all sequences from this collection. */
   public void clear() {
     Log.logPrintf("Clearing sequence collection.%n");
-    this.sequenceMap = new LinkedHashMap<>();
-    this.typeSet = new SubTypeSet(false);
+    this.sequenceMap = new @PolyDet LinkedHashMap<>();
+    this.typeSet = new @PolyDet SubTypeSet(false);
     sequenceCount = 0;
     checkRep();
   }
@@ -91,7 +94,7 @@ public class SequenceCollection {
    *
    * @param initialSequences the initial collection of sequences
    */
-  public SequenceCollection(Collection<Sequence> initialSequences) {
+  public @Det SequenceCollection(@Det Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
@@ -105,11 +108,11 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(Collection<Sequence> col) {
+  public void addAll(@Det SequenceCollection this, @Det Collection<Sequence> col) {
     if (col == null) {
       throw new IllegalArgumentException("col is null");
     }
-    for (Sequence c : col) {
+    for (@Det Sequence c : col) {
       add(c);
     }
   }
@@ -119,9 +122,9 @@ public class SequenceCollection {
    *
    * @param components the sequences to add
    */
-  public void addAll(SequenceCollection components) {
+  public void addAll(@Det SequenceCollection this, @Det SequenceCollection components) {
     for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
-      for (Sequence seq : s) {
+      for (@Det Sequence seq : s) {
         add(seq);
       }
     }
@@ -146,12 +149,12 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(Sequence sequence) {
+  public void add(@Det SequenceCollection this, @Det Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
-      Variable argument = arguments.get(i);
+      @Det Variable argument = arguments.get(i);
       assert formalTypes.get(i).isAssignableFrom(argument.getType())
           : formalTypes.get(i).getName()
               + " should be assignable from "
@@ -176,7 +179,8 @@ public class SequenceCollection {
    * @param sequence the sequence
    * @param type the {@link Type}
    */
-  private void updateCompatibleMap(Sequence sequence, Type type) {
+  private void updateCompatibleMap(
+      @Det SequenceCollection this, @Det Sequence sequence, @Det Type type) {
     SimpleArrayList<Sequence> set = this.sequenceMap.get(type);
     if (set == null) {
       set = new SimpleArrayList<>();
@@ -205,7 +209,10 @@ public class SequenceCollection {
    *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(
-      Type type, boolean exactMatch, boolean onlyReceivers) {
+      @Det SequenceCollection this,
+      @Det Type type,
+      @Det boolean exactMatch,
+      @Det boolean onlyReceivers) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -216,7 +223,7 @@ public class SequenceCollection {
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
-      SimpleList<Sequence> l = this.sequenceMap.get(type);
+      @Det SimpleList<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
         resultList.add(l);
       }
@@ -236,7 +243,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = new ListOfLists<>(resultList);
+    @Det SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
@@ -246,10 +253,11 @@ public class SequenceCollection {
    *
    * @return the set of all sequences in this collection
    */
-  public Set<Sequence> getAllSequences() {
-    Set<Sequence> result = new LinkedHashSet<>();
-    for (SimpleArrayList<Sequence> a : sequenceMap.values()) {
-      result.addAll(a);
+  public @PolyDet Set<@PolyDet Sequence> getAllSequences() {
+    @PolyDet Set<@PolyDet Sequence> result = new @PolyDet LinkedHashSet<>();
+    for (@PolyDet("up") SimpleArrayList<@PolyDet Sequence> a : sequenceMap.values()) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      boolean ignore = result.addAll(a);
     }
     return result;
   }
@@ -258,7 +266,7 @@ public class SequenceCollection {
     return new TypeInstantiator(typesAndSupertypes);
   }
 
-  public void log() {
+  public void log(@Det SequenceCollection this) {
     if (!Log.isLoggingOn()) {
       return;
     }

@@ -46,7 +46,7 @@ public abstract class TypeVariable extends ParameterType {
     variableSet.add(v);
     @SuppressWarnings(
         "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet TypeVariable tmp =
         new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
     return tmp;

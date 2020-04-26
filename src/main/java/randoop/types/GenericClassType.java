@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -33,7 +32,7 @@ public class GenericClassType extends ParameterizedType {
     for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
       @SuppressWarnings(
           "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet TypeVariable variable = TypeVariable.forType(v);
       this.parameters.add(variable);
     }
@@ -104,8 +103,8 @@ public class GenericClassType extends ParameterizedType {
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
-  public @OrderNonDet List<@Det ClassOrInterfaceType> getInterfaces(@Det GenericClassType this) {
-    @OrderNonDet List<@Det ClassOrInterfaceType> interfaceTypes = new @Det ArrayList<>();
+  public @Det List<@Det ClassOrInterfaceType> getInterfaces(@Det GenericClassType this) {
+    @Det List<@Det ClassOrInterfaceType> interfaceTypes = new @Det ArrayList<>();
     for (Class<?> c : rawType.getInterfaces()) {
       @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @Det Class<?> tmp = c;

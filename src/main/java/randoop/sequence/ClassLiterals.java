@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -18,7 +20,7 @@ import randoop.util.SimpleList;
  *
  * <p>These are used preferentially as arguments to methods of class C.
  */
-public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
+public class ClassLiterals extends MappedSequences<@PolyDet ClassOrInterfaceType> {
 
   @Override
   public void addSequence(ClassOrInterfaceType key, Sequence seq) {
@@ -33,16 +35,17 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
       new LinkedHashMap<>();
 
   @Override
-  public SimpleList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
-
-    Set<ClassOrInterfaceType> superClasses = hashedSuperClasses.get(key);
+  public SimpleList<Sequence> getSequences(
+      @Det ClassLiterals this, @Det ClassOrInterfaceType key, @Det Type desiredType) {
+    @Det Set<ClassOrInterfaceType> superClasses = hashedSuperClasses.get(key);
     if (superClasses == null) {
       superClasses = getSuperClasses(key);
-      hashedSuperClasses.put(key, superClasses);
+      @SuppressWarnings("determinism") // okay to treat cache as @PolyDet
+      Set<ClassOrInterfaceType> ignore = hashedSuperClasses.put(key, superClasses);
     }
     List<SimpleList<Sequence>> listOfLists = new ArrayList<>();
     listOfLists.add(super.getSequences(key, desiredType));
-    for (ClassOrInterfaceType c : superClasses) {
+    for (@Det ClassOrInterfaceType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));
     }
     return new ListOfLists<>(listOfLists);
@@ -54,9 +57,10 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
    * @param cls the class/interface type
    * @return the superclasses for the given type
    */
-  private Set<ClassOrInterfaceType> getSuperClasses(ClassOrInterfaceType cls) {
-    Set<ClassOrInterfaceType> ret = new LinkedHashSet<>();
-    ClassOrInterfaceType sup = cls.getSuperclass();
+  private Set<ClassOrInterfaceType> getSuperClasses(
+      @Det ClassLiterals this, @Det ClassOrInterfaceType cls) {
+    @Det Set<@Det ClassOrInterfaceType> ret = new @Det LinkedHashSet<>();
+    @Det ClassOrInterfaceType sup = cls.getSuperclass();
     while (sup != null && !sup.equals(JavaTypes.OBJECT_TYPE)) {
       ret.add(sup);
       sup = sup.getSuperclass();

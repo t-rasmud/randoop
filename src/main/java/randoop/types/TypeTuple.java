@@ -48,7 +48,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     TypeTuple tuple = (TypeTuple) obj;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet boolean tmp = list.equals(tuple.list);
     return tmp;
   }
@@ -111,7 +111,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
   public Type get(int i) {
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet Type tmp = list.get(i);
     return tmp;
   }
@@ -126,7 +126,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     for (Type type : this.list) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet Type tmp = type;
       if (tmp.isReferenceType()) {
         @SuppressWarnings("determinism") // casting here doesn't change the determinism type
@@ -201,7 +201,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     for (int i = 0; i < this.size() && result == 0; i++) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet int tmp = list.get(i).compareTo(tuple.list.get(i));
       result = tmp;
     }

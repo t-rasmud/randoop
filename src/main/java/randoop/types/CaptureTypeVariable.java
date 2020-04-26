@@ -119,7 +119,7 @@ class CaptureTypeVariable extends TypeVariable {
    */
   @SuppressWarnings(
       "determinism") // can pass @Det receiver to @PolyDet method setUpperBound here because no
-                     // chance of aliasing.
+  // chance of aliasing.
   public void convert(
       @Det CaptureTypeVariable this,
       @Det TypeVariable typeParameter,

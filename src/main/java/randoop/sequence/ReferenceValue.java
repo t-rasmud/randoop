@@ -1,6 +1,8 @@
 package randoop.sequence;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.ReferenceType;
 
 /**
@@ -21,7 +23,7 @@ public final class ReferenceValue {
    * @param type the type of this value
    * @param value the {@link Object} reference to this value
    */
-  ReferenceValue(ReferenceType type, Object value) {
+  ReferenceValue(@PolyDet ReferenceType type, Object value) {
     this.type = type;
     this.value = value;
   }
@@ -41,17 +43,18 @@ public final class ReferenceValue {
     if (!(obj instanceof ReferenceValue)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ReferenceValue refValue = (ReferenceValue) obj;
     return this.type.equals(refValue.type) && this.value == refValue.value;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(type, System.identityHashCode(value));
   }
 
   @Override
-  public String toString() {
+  public @NonDet String toString() {
     return value.toString();
   }
 

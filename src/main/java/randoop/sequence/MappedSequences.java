@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.CollectionType;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -15,12 +18,13 @@ import randoop.util.SimpleList;
  * should only be used in specific contexts, for example sequences that should only be used as
  * components when testing a specific class.
  */
-public class MappedSequences<T> {
+@CollectionType
+public class MappedSequences<T extends @PolyDet Object> {
 
-  private Map<T, SequenceCollection> map;
+  private Map<T, @PolyDet SequenceCollection> map;
 
   public MappedSequences() {
-    this.map = new LinkedHashMap<>();
+    this.map = new @PolyDet LinkedHashMap<>();
   }
 
   /**
@@ -32,9 +36,9 @@ public class MappedSequences<T> {
   public void addSequence(T key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
-    SequenceCollection c = map.get(key);
+    @PolyDet SequenceCollection c = map.get(key);
     if (c == null) {
-      c = new SequenceCollection();
+      c = new @PolyDet SequenceCollection();
       map.put(key, c);
     }
     c.add(seq);
@@ -48,13 +52,16 @@ public class MappedSequences<T> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(T key, Type desiredType) {
+  public @Det SimpleList<Sequence> getSequences(
+      @Det MappedSequences<T> this, @Det T key, @Det Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
-    SequenceCollection c = map.get(key);
+    @PolyDet SequenceCollection c = map.get(key);
     if (c == null) {
-      return emptyList;
+      @SuppressWarnings("determinism") // empty list clearly assignable to anything
+      @PolyDet SimpleList<@PolyDet Sequence> tmp = emptyList;
+      return tmp;
     }
     return map.get(key).getSequencesForType(desiredType, true, false);
   }
@@ -72,10 +79,11 @@ public class MappedSequences<T> {
    *
    * @return the set of all sequence objects in this set of collections
    */
-  public Set<Sequence> getAllSequences() {
-    Set<Sequence> result = new LinkedHashSet<>();
-    for (SequenceCollection c : map.values()) {
-      result.addAll(c.getAllSequences());
+  public Set<@PolyDet Sequence> getAllSequences() {
+    @PolyDet Set<@PolyDet Sequence> result = new @PolyDet LinkedHashSet<>();
+    for (@PolyDet("up") SequenceCollection c : map.values()) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      boolean ignore = result.addAll(c.getAllSequences());
     }
     return result;
   }

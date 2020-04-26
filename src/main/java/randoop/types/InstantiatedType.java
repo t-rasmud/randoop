@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -62,7 +61,7 @@ public class InstantiatedType extends ParameterizedType {
     InstantiatedType other = (InstantiatedType) obj;
     @SuppressWarnings(
         "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet boolean tmp =
         instantiatedType.equals(other.instantiatedType) && argumentList.equals(other.argumentList);
     return tmp;
@@ -151,8 +150,8 @@ public class InstantiatedType extends ParameterizedType {
    * @return list of directly-implemented interfaces for this parameterized type
    */
   @Override
-  public @OrderNonDet List<ClassOrInterfaceType> getInterfaces(@Det InstantiatedType this) {
-    @OrderNonDet List<ClassOrInterfaceType> interfaces = new @Det ArrayList<>();
+  public List<ClassOrInterfaceType> getInterfaces(@Det InstantiatedType this) {
+    @Det List<ClassOrInterfaceType> interfaces = new @Det ArrayList<>();
     @Det Substitution substitution =
         new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
     for (@Det ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {

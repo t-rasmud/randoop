@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -79,7 +81,7 @@ public class ExecutableSequence {
    * How long it took to execute this sequence in nanoseconds. Is -1 until the sequence completes
    * execution.
    */
-  public long exectime = -1;
+  public @NonDet long exectime = -1;
 
   /**
    * Flag to record whether execution of sequence has a null input.
@@ -97,17 +99,19 @@ public class ExecutableSequence {
   private static PrintStream output_buffer_stream = new PrintStream(output_buffer);
 
   /** Maps a value to the set of variables that hold it. */
-  private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
+  private IdentityMultiMap<@PolyDet Object, @PolyDet Variable> variableMap =
+      new @PolyDet IdentityMultiMap<>();
 
   /** The subsequences that were concatenated to create this sequence. */
-  public List<Sequence> componentSequences = Collections.emptyList();
+  @SuppressWarnings("determinism") // empty list clearly assignable to anything
+  public List<@PolyDet Sequence> componentSequences = Collections.emptyList();
 
   /**
    * Create an executable sequence that executes the given sequence.
    *
    * @param sequence the underlying sequence for this executable sequence
    */
-  public ExecutableSequence(Sequence sequence) {
+  public ExecutableSequence(@PolyDet Sequence sequence) {
     this.sequence = sequence;
     this.executionResults = new Execution(sequence);
   }
@@ -117,7 +121,7 @@ public class ExecutableSequence {
     executionResults = new Execution(sequence);
     exectime = -1;
     hasNullInput = false;
-    variableMap = new IdentityMultiMap<>();
+    variableMap = new @PolyDet IdentityMultiMap<>();
   }
 
   @Override
@@ -132,9 +136,13 @@ public class ExecutableSequence {
         b.append(executionResults.get(i).toString());
       }
       if ((i == sequence.size() - 1) && (checks != null)) {
-        for (Check check : checks.checks()) {
+        for (@PolyDet("up") Check check : checks.checks()) {
+          @SuppressWarnings(
+              "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the
+          // same as @PolyDet
+          @PolyDet Check tmp = check;
           b.append(Globals.lineSep);
-          b.append(check.toString());
+          b.append(tmp.toString());
         }
       }
       b.append(Globals.lineSep);
@@ -152,8 +160,8 @@ public class ExecutableSequence {
    *
    * @return the sequence as a string
    */
-  private List<String> toCodeLines() {
-    List<String> lines = new ArrayList<>();
+  private List<@PolyDet String> toCodeLines() {
+    @PolyDet List<@PolyDet String> lines = new @PolyDet ArrayList<>();
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
@@ -172,14 +180,14 @@ public class ExecutableSequence {
         // Print exception check first, if present.
         // This makes its pre-statement part the last pre-statement part,
         // and its post-statement part the first post-statement part.
-        Check exObs = checks.getExceptionCheck();
+        @PolyDet Check exObs = checks.getExceptionCheck();
         if (exObs != null) {
           oneStatement.insert(0, exObs.toCodeStringPreStatement());
           oneStatement.append(exObs.toCodeStringPostStatement());
         }
 
         // Print the rest of the checks.
-        for (Check d : checks.checks()) {
+        for (@PolyDet("up") Check d : checks.checks()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
           oneStatement.append(Globals.lineSep).append(d.toCodeStringPostStatement());
         }
@@ -286,15 +294,16 @@ public class ExecutableSequence {
       for (int i = 0; i < this.sequence.size(); i++) {
 
         // Collect the input values to i-th statement.
-        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @PolyDet Object @PolyDet [] inputValues =
+            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
-          TypedOperation operation = this.sequence.getStatement(i).getOperation();
+          @PolyDet TypedOperation operation = this.sequence.getStatement(i).getOperation();
           if (operation.isConstructorCall() || operation.isMethodCall()) {
             // Phase 1 of specification checking:  evaluate guards of the specifications before the
             // call.
-            ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
+            @PolyDet ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
             if (outcomeTable.isInvalidCall()) {
               checks = new InvalidChecks(new InvalidValueCheck(this, i));
               return;
@@ -307,7 +316,7 @@ public class ExecutableSequence {
         executeStatement(sequence, executionResults.outcomes, i, inputValues);
 
         // make sure statement executed
-        ExecutionOutcome statementResult = getResult(i);
+        @PolyDet ExecutionOutcome statementResult = getResult(i);
         if (statementResult instanceof NotExecuted) {
           throw new Error("Unexecuted statement in sequence: " + this.toString());
         }
@@ -345,12 +354,13 @@ public class ExecutableSequence {
     }
   }
 
-  public Object[] getRuntimeInputs(List<Variable> inputs) {
+  public Object[] getRuntimeInputs(List<@PolyDet Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
-  private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
-    Object[] ros = getRuntimeValuesForVars(inputs, outcome);
+  private Object[] getRuntimeInputs(
+      List<@PolyDet ExecutionOutcome> outcome, @PolyDet List<@PolyDet Variable> inputs) {
+    @PolyDet Object @PolyDet [] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
@@ -367,19 +377,22 @@ public class ExecutableSequence {
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
-  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+  public static Object[] getRuntimeValuesForVars(
+      List<@PolyDet Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
   private static Object[] getRuntimeValuesForVars(
-      List<Variable> vars, List<ExecutionOutcome> execution) {
-    Object[] runtimeObjects = new Object[vars.size()];
+      List<@PolyDet Variable> vars, List<@PolyDet ExecutionOutcome> execution) {
+    @PolyDet Object @PolyDet [] runtimeObjects = new Object @PolyDet [vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
       assert execution.get(creatingStatementIdx) instanceof NormalExecution
           : execution.get(creatingStatementIdx).getClass();
-      NormalExecution ne = (NormalExecution) execution.get(creatingStatementIdx);
-      runtimeObjects[j] = ne.getRuntimeValue();
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet NormalExecution ne = (NormalExecution) execution.get(creatingStatementIdx);
+      @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
+      Object ignore = (runtimeObjects[j] = ne.getRuntimeValue());
     }
     return runtimeObjects;
   }
@@ -387,8 +400,11 @@ public class ExecutableSequence {
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
-    Statement statement = s.getStatement(index);
+      Sequence s,
+      @PolyDet List<@PolyDet ExecutionOutcome> outcome,
+      @PolyDet int index,
+      Object[] inputVariables) {
+    @PolyDet Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
     // we don't capture its output as well.
@@ -405,7 +421,7 @@ public class ExecutableSequence {
       // assert ((statement.isMethodCall() && !statement.isStatic()) ?
       // inputVariables[0] != null : true);
 
-      ExecutionOutcome r;
+      @PolyDet ExecutionOutcome r;
       try {
         r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {
@@ -452,7 +468,7 @@ public class ExecutableSequence {
    *     execution completed normally
    */
   private Object getValue(int index) {
-    ExecutionOutcome result = getResult(index);
+    @PolyDet ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
       return ((NormalExecution) result).getRuntimeValue();
     }
@@ -465,16 +481,18 @@ public class ExecutableSequence {
    *
    * @return the list of values created and used by the last statement of this sequence
    */
-  public List<ReferenceValue> getLastStatementValues() {
-    Set<ReferenceValue> values = new LinkedHashSet<>();
+  public List<@PolyDet ReferenceValue> getLastStatementValues() {
+    @PolyDet Set<@PolyDet ReferenceValue> values = new @PolyDet LinkedHashSet<>();
 
     Object outputValue = getValue(sequence.size() - 1);
-    Variable outputVariable = sequence.getLastVariable();
+    @PolyDet Variable outputVariable = sequence.getLastVariable();
     addReferenceValue(outputVariable, outputValue, values);
 
-    for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
-      Object inputValue = getValue(inputVariable.index);
-      addReferenceValue(inputVariable, inputValue, values);
+    for (@PolyDet("up") Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet Variable tmp = inputVariable;
+      Object inputValue = getValue(tmp.index);
+      addReferenceValue(tmp, inputValue, values);
     }
 
     return new ArrayList<>(values);
@@ -488,11 +506,13 @@ public class ExecutableSequence {
    * @param value the Java value to use as a key in variableMap
    * @param refValues the set of all reference values; is side-effected by this method
    */
-  private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
+  private void addReferenceValue(
+      Variable variable, Object value, Set<@PolyDet ReferenceValue> refValues) {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
-        refValues.add(new ReferenceValue((ReferenceType) type, value));
+        @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+        boolean ignore = refValues.add(new ReferenceValue((ReferenceType) type, value));
         variableMap.put(value, variable);
       }
     }
@@ -504,17 +524,21 @@ public class ExecutableSequence {
    *
    * @return the list of input values used to compute values in last statement
    */
-  public List<ReferenceValue> getInputValues() {
-    Set<Integer> skipSet = new HashSet<>();
-    for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
-      skipSet.add(inputVariable.index);
+  public List<@PolyDet ReferenceValue> getInputValues() {
+    @PolyDet("upDet") Set<@PolyDet Integer> skipSet = new @PolyDet("upDet") HashSet<>();
+    for (@PolyDet("up") Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+      // @PolyDet
+      @PolyDet int tmp2 = inputVariable.index;
+      skipSet.add(tmp2);
     }
 
-    Set<ReferenceValue> values = new LinkedHashSet<>();
+    @PolyDet Set<@PolyDet ReferenceValue> values = new @PolyDet LinkedHashSet<>();
     for (int i = 0; i < sequence.size() - 1; i++) {
       if (!skipSet.contains(i)) {
         Object value = getValue(i);
-        Variable variable = sequence.getVariable(i);
+        @PolyDet Variable variable = sequence.getVariable(i);
         addReferenceValue(variable, value, values);
       }
     }
@@ -528,8 +552,8 @@ public class ExecutableSequence {
    * @param value the value
    * @return the set of variables that have the given value, or null if none
    */
-  public List<Variable> getVariables(Object value) {
-    Set<Variable> variables = variableMap.get(value);
+  public List<@PolyDet Variable> getVariables(Object value) {
+    @PolyDet Set<@PolyDet Variable> variables = variableMap.get(value);
     if (variables == null) {
       return null;
     } else {
@@ -544,7 +568,11 @@ public class ExecutableSequence {
    * @return a variable that has the given value
    */
   public Variable getVariable(Object value) {
-    return variableMap.get(value).iterator().next();
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+    // @PolyDet
+    @PolyDet Variable tmp = variableMap.get(value).iterator().next();
+    return tmp;
   }
 
   /**
@@ -581,7 +609,7 @@ public class ExecutableSequence {
     }
     for (int i = 0; i < this.sequence.size(); i++) {
       if ((getResult(i) instanceof ExceptionalExecution)) {
-        ExceptionalExecution e = (ExceptionalExecution) getResult(i);
+        @PolyDet ExceptionalExecution e = (ExceptionalExecution) getResult(i);
         if (exceptionClass.isAssignableFrom(e.getException().getClass())) {
           return i;
         }
@@ -627,7 +655,7 @@ public class ExecutableSequence {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
@@ -639,6 +667,7 @@ public class ExecutableSequence {
     if (!(obj instanceof ExecutableSequence)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExecutableSequence that = (ExecutableSequence) obj;
     return this.sequence.equals(that.sequence) && Objects.equals(this.checks, that.checks);
   }

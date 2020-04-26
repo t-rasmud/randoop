@@ -113,7 +113,7 @@ public class Substitution {
     Substitution s = (Substitution) obj;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet boolean tmp = map.equals(s.map);
     return tmp;
   }

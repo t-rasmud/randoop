@@ -155,7 +155,7 @@ public abstract class ParameterBound {
       for (java.lang.reflect.Type boundType : variable.getBounds()) {
         @SuppressWarnings(
             "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-                           // elements
+        // elements
         java.lang.reflect.@PolyDet("down") Type tmp = boundType;
         if (hasTypeVariable(tmp, recursiveSet)) {
           return true;
@@ -167,7 +167,7 @@ public abstract class ParameterBound {
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         @SuppressWarnings(
             "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-                           // elements
+        // elements
         java.lang.reflect.@PolyDet("down") Type tmp = argType;
         if (hasTypeVariable(tmp, variableSet)) {
           return true;
@@ -179,7 +179,7 @@ public abstract class ParameterBound {
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
         @SuppressWarnings(
             "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-                           // elements
+        // elements
         java.lang.reflect.@PolyDet("down") Type tmp = boundType;
         if (hasTypeVariable(tmp, variableSet)) {
           return true;
@@ -188,7 +188,7 @@ public abstract class ParameterBound {
       for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
         @SuppressWarnings(
             "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-                           // elements
+        // elements
         java.lang.reflect.@PolyDet("down") Type tmp = boundType;
         if (hasTypeVariable(tmp, variableSet)) {
           return true;

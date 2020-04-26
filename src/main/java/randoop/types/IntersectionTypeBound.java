@@ -53,7 +53,7 @@ class IntersectionTypeBound extends ParameterBound {
     IntersectionTypeBound b = (IntersectionTypeBound) obj;
     @SuppressWarnings(
         "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet boolean tmp = this.boundList.equals(b.boundList);
     return tmp;
   }

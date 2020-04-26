@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.Globals;
@@ -36,7 +39,7 @@ import randoop.util.SimpleList;
 public final class Sequence {
 
   /** The list of statements. */
-  public final SimpleList<Statement> statements;
+  public final SimpleList<@PolyDet Statement> statements;
 
   /**
    * The variables that are inputs or output for the last statement of this sequence: first the
@@ -44,10 +47,10 @@ public final class Sequence {
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization.
    */
-  private transient /*final*/ List<Variable> lastStatementVariables;
+  private transient /*final*/ List<@PolyDet Variable> lastStatementVariables;
 
   /** The types of elements of {@link #lastStatementVariables}. */
-  private transient /*final*/ List<Type> lastStatementTypes;
+  private transient /*final*/ List<@PolyDet Type> lastStatementTypes;
 
   /** If true, inline primitive values rather than creating and using a variable. */
   private transient boolean shouldInlineLiterals = true;
@@ -66,7 +69,8 @@ public final class Sequence {
    * @param hashCode the hashcode for the new sequence
    * @param netSize the net size for the new sequence
    */
-  private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
+  private @Det Sequence(
+      @Det SimpleList<@Det Statement> statements, @NonDet int hashCode, @Det int netSize) {
     if (statements == null) {
       throw new IllegalArgumentException("`statements' argument cannot be null");
     }
@@ -84,7 +88,7 @@ public final class Sequence {
    *
    * @param statements the statements
    */
-  public Sequence(SimpleList<Statement> statements) {
+  public @Det Sequence(@Det SimpleList<Statement> statements) {
     this(statements, computeHashcode(statements), computeNetSize(statements));
   }
 
@@ -95,8 +99,10 @@ public final class Sequence {
    * @return the sequence consisting of the initialization
    */
   public static Sequence zero(Type c) {
-    return new Sequence()
-        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
+    return new @PolyDet Sequence()
+        .extend(
+            TypedOperation.createNullOrZeroInitializationForType(c),
+            new @PolyDet ArrayList<@PolyDet Variable>());
   }
 
   /**
@@ -105,7 +111,7 @@ public final class Sequence {
    * @param value non-null reference to a primitive or String value
    * @return a {@link Sequence} consisting of a statement created with the object
    */
-  public static Sequence createSequenceForPrimitive(Object value) {
+  public static @Det Sequence createSequenceForPrimitive(@Det Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");
     Type type = Type.forValue(value);
 
@@ -133,23 +139,35 @@ public final class Sequence {
    * @param indexes the indices of the inputs to the operation; same length as inputSequences
    * @return the sequence that applies the operation to the given inputs
    */
-  public static Sequence createSequence(
-      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
-    Sequence inputSequence = Sequence.concatenate(inputSequences);
-    List<Variable> inputs = new ArrayList<>();
+  public static @PolyDet("up") Sequence createSequence(
+      TypedOperation operation,
+      @PolyDet List<@PolyDet Sequence> inputSequences,
+      @PolyDet List<@PolyDet Integer> indexes) {
+    @SuppressWarnings("determinism") // method doesn't mutate so safe to call
+    @PolyDet("up") Sequence inputSequence = Sequence.concatenate(inputSequences);
+    @PolyDet("up") List<@PolyDet("up") Variable> inputs = new @PolyDet("up") ArrayList<>();
     for (Integer inputIndex : indexes) {
-      Variable v = inputSequence.getVariable(inputIndex);
+      @PolyDet("up") Variable v = inputSequence.getVariable(inputIndex);
       inputs.add(v);
     }
-    return inputSequence.extend(operation, inputs);
+    @SuppressWarnings("determinism") // method doesn't mutate inputs so safe to call
+    @PolyDet("up") Sequence tmp = inputSequence.extend(operation, inputs);
+    return tmp;
   }
 
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
-    List<Variable> inputs = new ArrayList<>();
+    @PolyDet List<@PolyDet Variable> inputs = new @PolyDet ArrayList<>();
     for (int index : elementsSequence.getOutputIndices()) {
-      inputs.add(elementsSequence.sequence.getVariable(index));
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+      // @PolyDet
+      boolean ignore = inputs.add(elementsSequence.sequence.getVariable(index));
     }
-    return elementsSequence.sequence.extend(operation, inputs);
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+    // @PolyDet
+    @PolyDet Sequence tmp = elementsSequence.sequence.extend(operation, inputs);
+    return tmp;
   }
 
   /**
@@ -160,13 +178,16 @@ public final class Sequence {
    * @param inputVariables the input variables
    * @return the sequence formed by appending the given operation to this sequence
    */
-  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/168
+  public final @PolyDet("up") Sequence extend(
+      TypedOperation operation, @PolyDet List<@PolyDet Variable> inputVariables) {
     checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
+    @PolyDet("up") List<@PolyDet("up") RelativeNegativeIndex> indexList = new @PolyDet("up") ArrayList<>(1);
+    for (@PolyDet("up") Variable v : inputVariables) {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
-    Statement statement = new Statement(operation, indexList);
+    @SuppressWarnings("determinism") // method doesn't mutate so safe to call
+    @PolyDet("up") Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
@@ -183,7 +204,10 @@ public final class Sequence {
    * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(TypedOperation operation, Variable... inputs) {
-    return extend(operation, Arrays.asList(inputs));
+    @SuppressWarnings(
+        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @PolyDet Sequence tmp = extend(operation, Arrays.asList(inputs));
+    return tmp;
   }
 
   /**
@@ -195,7 +219,8 @@ public final class Sequence {
    * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(TypedOperation, List)
    */
-  public final Sequence extend(Statement statement, List<Variable> inputs) {
+  public final @PolyDet("up") Sequence extend(
+      Statement statement, @PolyDet List<@PolyDet Variable> inputs) {
     return extend(statement.getOperation(), inputs);
   }
 
@@ -205,11 +230,11 @@ public final class Sequence {
    * @param sequences the list of sequences to concatenate
    * @return the concatenation of the sequences in the list
    */
-  public static Sequence concatenate(List<Sequence> sequences) {
+  public static @Det Sequence concatenate(@Det List<@Det Sequence> sequences) {
     List<SimpleList<Statement>> statements1 = new ArrayList<>();
     int newHashCode = 0;
     int newNetSize = 0;
-    for (Sequence c : sequences) {
+    for (@Det Sequence c : sequences) {
       newHashCode += c.savedHashCode;
       newNetSize += c.savedNetSize;
       statements1.add(c.statements);
@@ -253,7 +278,7 @@ public final class Sequence {
    *
    * @return the variables used in the last statement of this sequence
    */
-  List<Variable> getVariablesOfLastStatement() {
+  List<@PolyDet Variable> getVariablesOfLastStatement() {
     return this.lastStatementVariables;
   }
 
@@ -264,7 +289,7 @@ public final class Sequence {
    *
    * @return the types of the variables in the last statement of this sequence
    */
-  List<Type> getTypesForLastStatement() {
+  List<@PolyDet Type> getTypesForLastStatement() {
     return this.lastStatementTypes;
   }
 
@@ -295,10 +320,15 @@ public final class Sequence {
    * @param statementIndex the index for the statement
    * @return the list of variables for the statement at the given index
    */
-  public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
+  public List<@PolyDet Variable> getInputs(int statementIndex) {
+    @PolyDet List<@PolyDet Variable> inputsAsVariables = new @PolyDet ArrayList<>();
+    for (
+    @PolyDet("up") RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+      // @PolyDet
+      @PolyDet Variable tmp = getVariableForInput(statementIndex, relIndex);
+      inputsAsVariables.add(tmp);
     }
     return inputsAsVariables;
   }
@@ -418,10 +448,10 @@ public final class Sequence {
    * @param statements the list of statements over which to compute the hash code
    * @return the sum of the hash codes of the statements in the sequence
    */
-  private static int computeHashcode(SimpleList<Statement> statements) {
+  private static @NonDet int computeHashcode(@PolyDet SimpleList<@PolyDet Statement> statements) {
     int hashCode = 0;
     for (int i = 0; i < statements.size(); i++) {
-      Statement s = statements.get(i);
+      @PolyDet Statement s = statements.get(i);
       hashCode += s.hashCode();
     }
     return hashCode;
@@ -434,7 +464,7 @@ public final class Sequence {
    * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
    */
-  private static int computeNetSize(SimpleList<Statement> statements) {
+  private static @PolyDet("down") int computeNetSize(SimpleList<@PolyDet Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
       if (!statements.get(i).isNonreceivingInitialization()) {
@@ -445,13 +475,13 @@ public final class Sequence {
   }
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
-  private void computeLastStatementInfo() {
+  private void computeLastStatementInfo(@Det Sequence this) {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
 
     if (!this.statements.isEmpty()) {
       int lastStatementIndex = this.statements.size() - 1;
-      Statement lastStatement = this.statements.get(lastStatementIndex);
+      @Det Statement lastStatement = this.statements.get(lastStatementIndex);
 
       // Process return value
       if (!lastStatement.getOutputType().isVoid()) {
@@ -475,7 +505,7 @@ public final class Sequence {
       }
 
       for (int i = 0; i < v.size(); i++) {
-        Variable actualArgument = v.get(i);
+        @Det Variable actualArgument = v.get(i);
         assert lastStatement.getInputTypes().get(i).isAssignableFrom(actualArgument.getType());
         this.lastStatementTypes.add(actualArgument.getType());
         this.lastStatementVariables.add(actualArgument);
@@ -484,7 +514,7 @@ public final class Sequence {
   }
 
   /** Representation invariant check. */
-  private void checkRep() {
+  private void checkRep(@Det Sequence this) {
 
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -496,7 +526,7 @@ public final class Sequence {
 
     for (int si = 0; si < this.statements.size(); si++) {
 
-      Statement statementWithInputs = this.statements.get(si);
+      @Det Statement statementWithInputs = this.statements.get(si);
 
       // No nulls.
       if (statementWithInputs == null) {
@@ -558,13 +588,14 @@ public final class Sequence {
     if (!(o instanceof Sequence)) {
       return false;
     }
-    Sequence other = (Sequence) o;
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+    @PolyDet Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
     }
     for (int i = 0; i < this.statements.size(); i++) {
-      Statement thisStatement = this.statements.get(i);
-      Statement otherStatement = other.statements.get(i);
+      @PolyDet Statement thisStatement = this.statements.get(i);
+      @PolyDet Statement otherStatement = other.statements.get(i);
       if (GenInputsAbstract.debug_checks) {
         assert this.statements.get(i) == thisStatement;
         assert other.statements.get(i) == otherStatement;
@@ -585,14 +616,14 @@ public final class Sequence {
   }
 
   // A saved copy of this sequence's hashcode to avoid recalculation.
-  private final int savedHashCode;
+  private final @NonDet int savedHashCode;
 
   // A saved copy of this sequence's net size to avoid recomputation.
   private final int savedNetSize;
 
   // See comment at computeHashCode method for notes on hashCode.
   @Override
-  public final int hashCode() {
+  public final @NonDet int hashCode() {
     return savedHashCode;
   }
 
@@ -611,7 +642,7 @@ public final class Sequence {
    *
    * @return the list of all statements in this sequence
    */
-  private SimpleList<Statement> getStatementsWithInputs() {
+  private SimpleList<@PolyDet Statement> getStatementsWithInputs() {
     // The list is constructed unmodifiable so we can just return it.
     return this.statements;
   }
@@ -642,10 +673,11 @@ public final class Sequence {
    *     call receiver
    * @return a variable used in the last statement of the given type
    */
-  public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
+  public @Det List<Variable> allVariablesForTypeLastStatement(
+      @Det Sequence this, @Det Type type, @Det boolean onlyReceivers) {
     List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
-    for (Variable i : this.lastStatementVariables) {
-      Statement s = statements.get(i.index);
+    for (@Det Variable i : this.lastStatementVariables) {
+      @Det Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)
           && !(onlyReceivers && outputType.isNonreceiverType())
@@ -664,14 +696,18 @@ public final class Sequence {
    *     call receiver
    * @return a variable used in the last statement of the given type
    */
-  public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+  public Variable randomVariableForTypeLastStatement(
+      @Det Sequence this, @Det Type type, @Det boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      throw new RandoopBug(
-          String.format(
-              "Failed to select %svariable with input type %s from statement %s",
-              (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      @Det Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/178
+      RandoopBug tmp =
+          new RandoopBug(
+              String.format(
+                  "Failed to select %svariable with input type %s from statement %s",
+                  (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      throw tmp;
     }
     if (possibleVars.size() == 1) {
       return possibleVars.get(0);
@@ -688,13 +724,14 @@ public final class Sequence {
    *     call receiver
    * @return a variable of the given type
    */
-  public Variable randomVariableForType(Type type, boolean onlyReceivers) {
+  public Variable randomVariableForType(
+      @Det Sequence this, @Det Type type, @Det boolean onlyReceivers) {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
     List<Integer> possibleIndices = new ArrayList<>();
     for (int i = 0; i < size(); i++) {
-      Statement s = statements.get(i);
+      @Det Statement s = statements.get(i);
       if (isActive(i)) {
         Type outputType = s.getOutputType();
         if (type.isAssignableFrom(outputType)
@@ -726,7 +763,8 @@ public final class Sequence {
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
   @SuppressWarnings("ReferenceEquality")
-  private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
+  private void checkInputs(
+      @Det Sequence this, @Det TypedOperation operation, @Det List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
           "statement.getInputTypes().size():"
@@ -794,10 +832,12 @@ public final class Sequence {
    * @param i the statement index
    * @return the absolute indices for the input variables in the given statement
    */
-  public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    List<Integer> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
-      inputsAsVariables.add(getVariableForInput(i, relIndex).index);
+  public List<@PolyDet Integer> getInputsAsAbsoluteIndices(int i) {
+    @PolyDet List<@PolyDet Integer> inputsAsVariables = new @PolyDet ArrayList<>();
+    for (@PolyDet("up") RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet int tmp = getVariableForInput(i, relIndex).index;
+      inputsAsVariables.add(tmp);
     }
     return inputsAsVariables;
   }
@@ -841,7 +881,7 @@ public final class Sequence {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      Statement sk = getStatement(i);
+      @PolyDet Statement sk = getStatement(i);
       b.append(
           sk.toParsableString(Variable.classToVariableName(sk.getOutputType()) + i, getInputs(i)));
       b.append(statementSep);
@@ -896,10 +936,10 @@ public final class Sequence {
    * @return the sequence constructed from the list of strings
    * @throws SequenceParseException if any statement cannot be parsed
    */
-  public static Sequence parse(List<String> statements) throws SequenceParseException {
+  public static @Det Sequence parse(@Det List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<>();
-    Sequence sequence = new Sequence();
+    @Det Map<@Det String, @Det Integer> valueMap = new LinkedHashMap<>();
+    @Det Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
       for (String statement : statements) {
@@ -953,7 +993,7 @@ public final class Sequence {
 
         System.out.println("operation string: " + opStr);
         // Parse operation.
-        TypedOperation operation;
+        @Det TypedOperation operation;
         try {
           operation = OperationParser.parse(opStr);
         } catch (OperationParseException e) {
@@ -962,7 +1002,7 @@ public final class Sequence {
         assert operation != null;
 
         // Find input variables from their names.
-        String[] inVars = new String[0];
+        @Det String @Det [] inVars = new @Det String @Det [0];
         if (!inVarsStr.trim().isEmpty()) {
           // One or more input vars.
           inVars = inVarsStr.split("\\s");
@@ -1043,7 +1083,7 @@ public final class Sequence {
    * @return the sequence constructed by parsing the input string
    * @throws SequenceParseException if string is not valid sequence
    */
-  public static Sequence parse(String string) throws SequenceParseException {
+  public static @Det Sequence parse(@Det String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
 
@@ -1083,7 +1123,7 @@ public final class Sequence {
    * @param index the statement position in this sequence
    * @return the sequence containing the index position
    */
-  Sequence getSubsequence(int index) {
+  @PolyDet Sequence getSubsequence(int index) {
     return new Sequence(statements.getSublist(index));
   }
 
