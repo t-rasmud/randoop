@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
@@ -29,7 +30,7 @@ public final class Statement {
   // NOTE that the inputs to a statement are not a list
   // of Variables, but a list of RelativeNegativeIndex objects.
   // See that class for an explanation.
-  final List<RelativeNegativeIndex> inputs;
+  final List<@PolyDet RelativeNegativeIndex> inputs;
 
   /**
    * Create a new statement of type statement that takes as input the given values.
@@ -37,7 +38,7 @@ public final class Statement {
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
    */
-  public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
+  public Statement(@PolyDet TypedOperation operation, @PolyDet List<@PolyDet RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
   }
@@ -64,6 +65,7 @@ public final class Statement {
     if (!(obj instanceof Statement)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Statement s = (Statement) obj;
     if (!operation.equals(s.operation)) {
       return false;
@@ -80,7 +82,7 @@ public final class Statement {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return java.util.Objects.hash(operation, inputs);
   }
 
@@ -114,7 +116,7 @@ public final class Statement {
     b.append(";");
   }
 
-  public String toParsableString(String variableName, List<Variable> inputs) {
+  public @PolyDet("up") String toParsableString(String variableName, List<@PolyDet Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
     b.append(" =  ");
@@ -122,7 +124,7 @@ public final class Statement {
     b.append(" : ");
     b.append(operation.toParsableString());
     b.append(" : ");
-    for (Variable v : inputs) {
+    for (@PolyDet("up") Variable v : inputs) {
       b.append(v.toString());
       b.append(" ");
     }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -66,7 +67,7 @@ public final class Randomness {
    * @param i upper bound on range for generated values
    * @return a value selected from range [0, i)
    */
-  public static int nextRandomInt(int i) {
+  public static int nextRandomInt(@Det int i) {
     incrementCallsToRandom("nextRandomInt");
     int value = Randomness.random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
@@ -80,7 +81,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T extends @PolyDet Object> T randomMember(List<T> list) {
+  public static <T extends @Det Object> T randomMember(@Det List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
@@ -96,7 +97,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T extends @PolyDet Object> T randomMember(SimpleList<T> list) {
+  public static <T extends @Det Object> T randomMember(@Det SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
@@ -115,7 +116,7 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
+  public static <T extends @Det Object> T randomMemberWeighted(@Det SimpleList<T> list, @Det Map<T, Double> weights) {
 
     if (list.size() == 0) {
       throw new IllegalArgumentException("Empty list");
@@ -145,8 +146,8 @@ public final class Randomness {
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(
-      SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
+  public static <T extends @Det Object> T randomMemberWeighted(
+      @Det SimpleList<T> list, @Det Map<T, Double> weights, @Det double totalWeight) {
 
     if (list.size() == 0) {
       throw new IllegalArgumentException("Empty list");
@@ -188,7 +189,7 @@ public final class Randomness {
    * @param set the collection from which to select an element
    * @return a randomly-selected member of the set
    */
-  public static <T> T randomSetMember(Collection<T> set) {
+  public static <T extends @Det Object> T randomSetMember(@Det Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
     logSelection(randIndex, "randomSetMember", set);
@@ -201,7 +202,7 @@ public final class Randomness {
    * @param trueProb the likelihood that true is returned; must be within [0..1]
    * @return true with likelihood {@code trueProb}; otherwise false
    */
-  public static boolean weightedCoinFlip(double trueProb) {
+  public static boolean weightedCoinFlip(@Det double trueProb) {
     if (trueProb < 0 || trueProb > 1) {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
     }
@@ -219,7 +220,7 @@ public final class Randomness {
    * @param trueProb the likelihood that true is returned; an arbitrary non-negative number
    * @return true or false, with the given probabilities
    */
-  public static boolean randomBoolFromDistribution(double falseProb, double trueProb) {
+  public static boolean randomBoolFromDistribution(@Det double falseProb, @Det double trueProb) {
     if (falseProb < 0) {
       throw new IllegalArgumentException("falseProb is " + falseProb + ", must be non-negative");
     }
@@ -244,7 +245,8 @@ public final class Randomness {
    * @param methodName the name of the method called
    * @param argument the method argument
    */
-  private static void logSelection(Object returnValue, String methodName, Object argument) {
+  @RequiresDetToString
+  private static void logSelection(@Det Object returnValue, @Det String methodName, @Det Object argument) {
     if (GenInputsAbstract.selection_log != null && verbosity > 0) {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;

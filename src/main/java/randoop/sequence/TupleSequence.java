@@ -2,6 +2,8 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.Type;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -53,7 +55,7 @@ public final class TupleSequence {
    * @param variables one index per sequence in {@code sequences}, defining the outputs of the
    *     TupleSequence
    */
-  public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
+  public @Det TupleSequence(@Det List<Sequence> sequences, @Det List<Integer> variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
     outputIndices = new ArrayList<>();
