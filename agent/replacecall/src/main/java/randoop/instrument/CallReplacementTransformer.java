@@ -24,6 +24,10 @@ import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.NEW;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
 import org.plumelib.bcelutil.SimpleLog;
@@ -34,6 +38,7 @@ import org.plumelib.bcelutil.SimpleLog;
  *
  * @see ReplaceCallAgent
  */
+@HasQualifierParameter(NonDet.class)
 public class CallReplacementTransformer extends InstructionListUtils
     implements ClassFileTransformer {
 
@@ -54,10 +59,10 @@ public class CallReplacementTransformer extends InstructionListUtils
   // debug_instrument field is defined in InstructionListUtils.
 
   /** Map from a method to its replacement. */
-  private final HashMap<MethodSignature, MethodSignature> replacementMap;
+  private final @PolyDet("upDet") HashMap<@PolyDet MethodSignature, @PolyDet MethodSignature> replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation. */
-  private final Set<String> excludedPackagePrefixes;
+  private final Set<@PolyDet String> excludedPackagePrefixes;
 
   /**
    * Create a {@link CallReplacementTransformer} that transforms method calls in classes other than
@@ -68,8 +73,8 @@ public class CallReplacementTransformer extends InstructionListUtils
    *     should not be transformed
    */
   CallReplacementTransformer(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      Set<String> excludedPackagePrefixes) {
+      @PolyDet("upDet") HashMap<@PolyDet MethodSignature, @PolyDet MethodSignature> replacementMap,
+      @PolyDet Set<@PolyDet String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
     // debug_instrument.enabled = ReplaceCallAgent.debug;
@@ -90,11 +95,12 @@ public class CallReplacementTransformer extends InstructionListUtils
    */
   @Override
   public byte[] transform(
-      ClassLoader loader,
-      String className,
-      Class<?> classBeingRedefined,
-      ProtectionDomain protectionDomain,
-      byte[] classfileBuffer)
+      @Det CallReplacementTransformer this,
+      @Det ClassLoader loader,
+      @Det String className,
+      @Det Class<?> classBeingRedefined,
+      @Det ProtectionDomain protectionDomain,
+      @Det byte @Det [] classfileBuffer)
       throws IllegalClassFormatException {
 
     debug_transform.log("loader: %s, className: %s%n", loader, className);
@@ -127,6 +133,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       return null;
     }
 
+    String tmp = className;
     try {
       ClassGen cg = new ClassGen(c);
       if (transformClass(cg)) {
@@ -151,14 +158,14 @@ public class CallReplacementTransformer extends InstructionListUtils
           "transform: EXIT transform of %s resulted in exception %s%n", className, e);
       System.out.format(
           "Unexpected exception %s (cause=%s) in CallReplacementTransformer.transform(%s)%n",
-          e, e.getCause(), className);
+          e, e.getCause(), tmp);
       throw e;
     } catch (Throwable e) {
       debug_transform.log(
           "transform: EXIT transform of %s resulted in exception %s%n", className, e);
       System.out.format(
           "Unexpected exception %s (%s) in CallReplacementTransformer.transform(%s)%n",
-          e, e.getCause(), className);
+          e, e.getCause(), tmp);
       e.printStackTrace();
       return null;
     }
@@ -209,6 +216,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     return false;
   }
 
+  @HasQualifierParameter(NonDet.class)
   private static class NewInstInfo {
     InstructionHandle new_inst;
     String new_class;
@@ -219,7 +227,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     }
   }
 
-  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<NewInstInfo>();
+  private Deque<@PolyDet NewInstInfo> new_inst_stack = new @PolyDet ArrayDeque<@PolyDet NewInstInfo>();
 
   /**
    * Processes each method in the given class replacing any specified calls. The replacements are
@@ -230,7 +238,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private boolean transformClass(ClassGen cg) throws IllegalClassFormatException {
+  private boolean transformClass(@Det CallReplacementTransformer this, @Det ClassGen cg) throws IllegalClassFormatException {
     // Have we modified this class?
     boolean transformed = false;
     InstructionFactory ifact = new InstructionFactory(cg);
@@ -327,7 +335,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private boolean transformMethod(ClassGen cg, MethodGen mg, InstructionFactory ifact)
+  private boolean transformMethod(@Det CallReplacementTransformer this, ClassGen cg, @Det MethodGen mg, InstructionFactory ifact)
       throws IllegalClassFormatException {
     InstructionList il = mg.getInstructionList();
     InstructionHandle ih = il.getStart();
@@ -366,7 +374,8 @@ public class CallReplacementTransformer extends InstructionListUtils
    *     expected
    */
   private InstructionList getReplacementInstruction(
-      ClassGen cg, MethodGen mg, InstructionFactory ifact, InstructionHandle ih)
+      @Det CallReplacementTransformer this,
+      ClassGen cg, MethodGen mg, InstructionFactory ifact, @Det InstructionHandle ih)
       throws IllegalClassFormatException {
 
     Instruction inst = ih.getInstruction();
@@ -383,8 +392,8 @@ public class CallReplacementTransformer extends InstructionListUtils
     }
 
     InvokeInstruction origInvocation = (InvokeInstruction) inst;
-    MethodSignature origSig = MethodSignature.of(origInvocation, pool);
-    MethodSignature newSig = replacementMap.get(origSig);
+    @Det MethodSignature origSig = MethodSignature.of(origInvocation, pool);
+    @Det MethodSignature newSig = replacementMap.get(origSig);
 
     String super_class_name = cg.getSuperclassName();
     String class_name = cg.getClassName();
@@ -412,7 +421,7 @@ public class CallReplacementTransformer extends InstructionListUtils
             return null;
           }
         }
-        NewInstInfo top = new_inst_stack.pop();
+        @Det NewInstInfo top = new_inst_stack.pop();
         if (!invoke_class.equals(top.new_class)) {
           throw new IllegalClassFormatException(
               "Type of NEW object and <init> method do not match.");
@@ -460,7 +469,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       }
 
       // get the matching new instruction information
-      NewInstInfo top = new_inst_stack.pop();
+      @Det NewInstInfo top = new_inst_stack.pop();
       if (!invoke_class.equals(top.new_class)) {
         throw new IllegalClassFormatException("Type of NEW object and <init> method do not match.");
       }
@@ -499,8 +508,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           // to a static call, the receiver type is inserted at the beginning of the argument type
           // array. This argument has already been explicitly pushed onto the stack, so modifying
           // the call signature is enough.
-          Type[] arguments =
-              BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
+          @PolyDet Type @PolyDet [] arguments =
+              (@PolyDet Type @PolyDet []) BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
           newInvocation =
               ifact.createInvoke(
                   newSig.getClassname(),
@@ -538,7 +547,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /** Dumps out {@link #replacementMap} to the debug_map logger, if that logger is enabled. */
-  private void logReplacementMap() {
+  private void logReplacementMap(@Det CallReplacementTransformer this) {
     if (debug_map.enabled()) {
       if (replacementMap.isEmpty()) {
         debug_map.log("No method replacements");

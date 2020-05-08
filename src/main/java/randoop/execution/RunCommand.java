@@ -10,6 +10,8 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.util.Log;
@@ -31,10 +33,10 @@ public class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeout)
+  static Status run(@Det List<@Det String> command, @Det Path workingDirectory, @Det long timeout)
       throws CommandException {
 
-    String[] args = command.toArray(new String[0]);
+    @Det String @Det [] args = command.toArray(new @Det String @Det [0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
@@ -52,7 +54,9 @@ public class RunCommand {
 
     Log.logPrintf("RunCommand.run():%n");
     Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
-    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
+    @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+    @Det String tmp = System.getenv().toString();
+    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, tmp);
 
     try {
       executor.execute(cmdLine, resultHandler);
@@ -93,7 +97,7 @@ public class RunCommand {
   public static class Status {
 
     /** The command executed. */
-    public final List<String> command;
+    public final List<@PolyDet String> command;
 
     /** The exit status of the command. */
     public final int exitStatus;
@@ -102,10 +106,10 @@ public class RunCommand {
     public final boolean timedOut;
 
     /** The output from running the command. */
-    public final List<String> standardOutputLines;
+    public final List<@PolyDet String> standardOutputLines;
 
     /** The error output from running the command. */
-    public final List<String> errorOutputLines;
+    public final List<@PolyDet String> errorOutputLines;
 
     /**
      * Creates a {@link Status} object for the command with captured exit status and output.
@@ -120,11 +124,11 @@ public class RunCommand {
      * @param errorOutputLines the lines of process output to standard error
      */
     Status(
-        List<String> command,
+        @PolyDet List<@PolyDet String> command,
         int exitStatus,
         boolean timedOut,
-        List<String> standardOutputLines,
-        List<String> errorOutputLines) {
+        @PolyDet List<@PolyDet String> standardOutputLines,
+        @PolyDet List<@PolyDet String> errorOutputLines) {
       this.command = command;
       this.exitStatus = exitStatus;
       this.timedOut = timedOut;
@@ -151,7 +155,7 @@ public class RunCommand {
      * @param lines the lines
      * @param sb where to print the represenation
      */
-    private void describeLines(String source, List<String> lines, StringBuilder sb) {
+    private void describeLines(String source, List<@PolyDet String> lines, StringBuilder sb) {
       if (lines.size() <= 2) {
         sb.append(", ");
         sb.append(source);

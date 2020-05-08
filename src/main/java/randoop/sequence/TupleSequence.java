@@ -45,7 +45,7 @@ public final class TupleSequence {
   public Sequence sequence;
 
   /** The list of statement indices that define outputs of this sequence. */
-  private List<Integer> outputIndices;
+  private List<@PolyDet Integer> outputIndices;
 
   /**
    * Create a TupleSequence that concatenates the given sequences, choosing the given variable from
@@ -71,7 +71,7 @@ public final class TupleSequence {
    *
    * @return the list of output indices for this sequence
    */
-  public List<Integer> getOutputIndices() {
+  public List<@PolyDet Integer> getOutputIndices() {
     return outputIndices;
   }
 
@@ -83,14 +83,14 @@ public final class TupleSequence {
    * @param elementType the type of elements
    * @return a sequence with subsequences that create element values for a collection
    */
-  public static TupleSequence createElementsSequence(
-      SimpleList<Sequence> candidates, int length, Type elementType) {
+  public static @Det TupleSequence createElementsSequence(
+      @Det SimpleList<Sequence> candidates, @Det int length, @Det Type elementType) {
     List<Sequence> sequences = new ArrayList<>();
     List<Integer> variables = new ArrayList<>();
     for (int i = 0; i < length; i++) {
-      Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
+      @Det Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);
-      Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
+      @Det Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
       assert element != null;
       variables.add(element.index);
     }

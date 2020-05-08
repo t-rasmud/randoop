@@ -23,6 +23,9 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
@@ -86,7 +89,7 @@ public class ReplacementFileReader {
    * @throws ReplacementFileException if there is an error in the replacement file
    * @see #readReplacements(Reader, String)
    */
-  static HashMap<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
+  static @OrderNonDet HashMap<MethodSignature, MethodSignature> readReplacements(@Det Path replacementFile)
       throws IOException, ReplacementFileException {
     return readReplacements(
         Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8),
@@ -105,11 +108,11 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
-  static HashMap<MethodSignature, MethodSignature> readReplacements(Reader in, String filename)
+  static @OrderNonDet HashMap<MethodSignature, MethodSignature> readReplacements(@Det Reader in, @Det String filename)
       throws ReplacementFileException, IOException {
-    HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
+    @OrderNonDet HashMap<@Det MethodSignature, @Det MethodSignature> replacementMap = new HashMap<>();
 
-    try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
+    try (@Det EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (trimmed.isEmpty()) {
@@ -165,13 +168,13 @@ public class ReplacementFileReader {
    * @throws NoSuchMethodException if either method cannot be found
    */
   private static void addMethodReplacement(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalSignature,
-      String replacementSignature)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @Det String originalSignature,
+      @Det String replacementSignature)
       throws ReplacementException, ClassNotFoundException, IllegalClassFormatException,
           NoSuchMethodException {
 
-    MethodSignature original;
+    @Det MethodSignature original;
     try {
       original = MethodSignature.of(originalSignature);
     } catch (IllegalArgumentException e) {
@@ -180,7 +183,7 @@ public class ReplacementFileReader {
     // Call toMethod() instead of exists() to get more precise error messages.
     original.toMethod();
 
-    MethodSignature replacement;
+    @Det MethodSignature replacement;
     try {
       replacement = MethodSignature.of(replacementSignature);
     } catch (IllegalArgumentException e) {
@@ -204,9 +207,9 @@ public class ReplacementFileReader {
    * @throws ReplacementException if a replacement already exists for {@code original}
    */
   private static void addReplacement(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      MethodSignature original,
-      MethodSignature replacement)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @Det MethodSignature original,
+      @Det MethodSignature replacement)
       throws ReplacementException {
 
     // If there is already a replacement, do not overwrite it.
@@ -243,9 +246,9 @@ public class ReplacementFileReader {
    * @throws ClassNotFoundException if no class corresponding to the replacement is found
    */
   private static void addReplacementsForClassOrPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      @DotSeparatedIdentifiers String original,
-      @DotSeparatedIdentifiers String replacement)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers @Det String original,
+      @DotSeparatedIdentifiers @Det String replacement)
       throws ReplacementException, IOException, ClassNotFoundException {
 
     String replacementClassPath = replacement.replace('.', java.io.File.separatorChar) + ".class";
@@ -274,10 +277,10 @@ public class ReplacementFileReader {
    *     original, or if the replacement class cannot be found
    */
   private static void addReplacementsForClass(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      @DotSeparatedIdentifiers String originalPackage,
-      @DotSeparatedIdentifiers String replacementPackage,
-      @BinaryName String classname)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers @Det String originalPackage,
+      @DotSeparatedIdentifiers @Det String replacementPackage,
+      @BinaryName @Det String classname)
       throws ClassNotFoundException, ReplacementException {
     addReplacementsForClass(
         replacementMap,
@@ -303,9 +306,9 @@ public class ReplacementFileReader {
    *     original, or if the replacement class cannot be found
    */
   private static void addReplacementsForClass(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      @ClassGetName String originalClassname,
-      @ClassGetName String replacementClassname)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @ClassGetName @Det String originalClassname,
+      @ClassGetName @Det String replacementClassname)
       throws ClassNotFoundException, ReplacementException {
 
     // Check that replacement class exists
@@ -314,7 +317,7 @@ public class ReplacementFileReader {
       throw new ReplacementException("Replacement class not found: " + replacementClassname);
     }
 
-    for (Method m : replacementJC.getMethods()) {
+    for (@Det Method m : replacementJC.getMethods()) {
       if (m.getName().equals("<init>")) {
         // Do not to replace the original class constructor with the replacement class constructor.
         continue;
@@ -331,9 +334,9 @@ public class ReplacementFileReader {
         throw new ReplacementException(msg);
       }
 
-      MethodSignature replacement = MethodSignature.of(replacementClassname, m);
+      @Det MethodSignature replacement = MethodSignature.of(replacementClassname, m);
 
-      MethodSignature original = replacement.substituteClassname(originalClassname);
+      @Det MethodSignature original = replacement.substituteClassname(originalClassname);
       if (original.exists()) {
         addReplacement(replacementMap, original, replacement);
         continue;
@@ -372,9 +375,9 @@ public class ReplacementFileReader {
    * @see #addReplacementsForClassOrPackage(HashMap, String, String)
    */
   private static void addReplacementsForPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      @DotSeparatedIdentifiers String originalPackage,
-      @DotSeparatedIdentifiers String replacementPackage)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers @Det String originalPackage,
+      @DotSeparatedIdentifiers @Det String replacementPackage)
       throws ReplacementException, ClassNotFoundException {
 
     if (ReplaceCallAgent.debug) {
@@ -437,14 +440,15 @@ public class ReplacementFileReader {
    * @see #addReplacementsForPackage(HashMap, String, String)
    */
   private static void addReplacementsForPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      @DotSeparatedIdentifiers String originalPackage,
-      @DotSeparatedIdentifiers String replacementPackage,
-      Path replacementDirectory)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers @Det String originalPackage,
+      @DotSeparatedIdentifiers @Det String replacementPackage,
+      @Det Path replacementDirectory)
       throws ReplacementException, ClassNotFoundException {
-
-    for (File file : replacementDirectory.toFile().listFiles()) {
-      String filename = file.getName();
+    @SuppressWarnings("determinism") // we consider file operations to be deterministic
+    @Det File @Det [] tmp = replacementDirectory.toFile().listFiles();
+    for (@Det File file : tmp) {
+      @Det String filename = file.getName();
       if (file.isFile()) {
         if (filename.endsWith(".class")) {
           addReplacementsForClass(
@@ -480,10 +484,10 @@ public class ReplacementFileReader {
    * @see #addReplacementsForPackage(HashMap, String, String)
    */
   private static void addReplacementsFromAllClassesOfPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      @DotSeparatedIdentifiers String originalPackage,
-      @DotSeparatedIdentifiers String replacementPackage,
-      JarFile jarFile)
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers @Det String originalPackage,
+      @DotSeparatedIdentifiers @Det String replacementPackage,
+      @Det JarFile jarFile)
       throws ReplacementException, ClassNotFoundException {
 
     String replacementPath = replacementPackage.replace('.', '/') + "/";
@@ -511,7 +515,7 @@ public class ReplacementFileReader {
    * @return JavaClass object or null if not found
    * @throws ReplacementException if any error loading and converting class file
    */
-  protected static JavaClass getJavaClassFromClassname(String classname)
+  protected static JavaClass getJavaClassFromClassname(@Det String classname)
       throws ReplacementException {
 
     JavaClass c = javaClasses.get(classname);

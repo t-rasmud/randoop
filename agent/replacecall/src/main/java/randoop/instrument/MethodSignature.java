@@ -8,7 +8,11 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
@@ -21,6 +25,7 @@ import org.plumelib.util.UtilPlume;
  * <p>Note: this is similar to the Randoop {@code randoop.reflection.RawSignature} class, but uses
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
+@HasQualifierParameter(NonDet.class)
 public class MethodSignature implements Comparable<MethodSignature> {
 
   /** The fully-qualified class name. */
@@ -36,7 +41,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * Cached {@link org.apache.bcel.classfile.Method} object for this {@link MethodSignature}. Is set
    * by {@link #toMethod}.
    */
-  private Method method;
+  private @PolyDet Method method;
 
   /**
    * Creates a {@code MethodSignature}.
@@ -94,9 +99,10 @@ public class MethodSignature implements Comparable<MethodSignature> {
     }
     String classname = fullMethodName.substring(0, dotPos);
     String methodName = fullMethodName.substring(dotPos + 1);
-    Type[] paramTypes = new Type[params.length];
+    @PolyDet Type @PolyDet [] paramTypes = new @PolyDet Type @PolyDet [params.length];
     for (int i = 0; i < params.length; i++) {
-      paramTypes[i] = BcelUtil.classnameToType(params[i]);
+      @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
+      Type ignore = (paramTypes[i] = BcelUtil.classnameToType(params[i]));
     }
 
     return new MethodSignature(classname, methodName, paramTypes);
@@ -127,8 +133,8 @@ public class MethodSignature implements Comparable<MethodSignature> {
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
-    @BinaryName String[] parameters =
-        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+    @BinaryName @PolyDet String @PolyDet [] parameters =
+        paramString.isEmpty() ? new @PolyDet String @PolyDet [0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
       if (!Signatures.isBinaryName(parameter)) {
         throw new IllegalArgumentException(
@@ -139,13 +145,14 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public @PolyDet("up") boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
     if (!(obj instanceof MethodSignature)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     MethodSignature md = (MethodSignature) obj;
     return this.classname.equals(md.classname)
         && this.name.equals(md.name)
@@ -165,7 +172,9 @@ public class MethodSignature implements Comparable<MethodSignature> {
           return 1;
         }
         for (int i = 0; i < this.paramTypes.length; i++) {
-          result = this.paramTypes[i].getSignature().compareTo(m.paramTypes[i].getSignature());
+          @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+          @PolyDet int tmp = this.paramTypes[i].getSignature().compareTo(m.paramTypes[i].getSignature());
+          result = tmp;
           if (result != 0) {
             return result;
           }
@@ -176,7 +185,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(classname, name, Arrays.hashCode(paramTypes));
   }
 
@@ -235,7 +244,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * @throws IllegalClassFormatException if the containing class of this {@link MethodSignature}
    *     exists, but cannot be loaded
    */
-  Method toMethod()
+  Method toMethod(@Det MethodSignature this)
       throws ClassNotFoundException, NoSuchMethodException, IllegalClassFormatException {
     if (method != null) {
       return method;
@@ -244,7 +253,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
     String currentClassname = classname;
     while (true) {
       // Check that the class exists
-      JavaClass currentClass;
+      @Det JavaClass currentClass;
       try {
         currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
       } catch (Throwable e) {
@@ -280,7 +289,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return true if the the represented method exists on the classpath, false otherwise
    */
-  boolean exists() {
+  boolean exists(@Det MethodSignature this) {
     try {
       return toMethod() != null;
     } catch (ClassNotFoundException | NoSuchMethodException | IllegalClassFormatException e) {
@@ -308,7 +317,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    *     parameter removed
    */
   MethodSignature removeFirstParameter() {
-    Type[] types = new Type[paramTypes.length - 1];
+    @PolyDet Type @PolyDet [] types = new @PolyDet Type @PolyDet [paramTypes.length - 1];
     System.arraycopy(paramTypes, 1, types, 0, paramTypes.length - 1);
     return new MethodSignature(this.classname, this.getName(), types);
   }

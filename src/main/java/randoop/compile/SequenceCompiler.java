@@ -13,6 +13,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
@@ -36,7 +37,7 @@ public class SequenceCompiler {
   private static final String debugCompilationFailure = null;
 
   /** The options to the compiler. */
-  private final List<String> compilerOptions;
+  private final List<@PolyDet String> compilerOptions;
 
   /** the Java compiler */
   private final JavaCompiler compiler;
@@ -54,8 +55,8 @@ public class SequenceCompiler {
    *
    * @param compilerOptions the compiler options
    */
-  public SequenceCompiler(List<String> compilerOptions) {
-    this.compilerOptions = new ArrayList<>(compilerOptions);
+  public SequenceCompiler(@PolyDet List<@PolyDet String> compilerOptions) {
+    this.compilerOptions = new @PolyDet ArrayList<>(compilerOptions);
     this.compilerOptions.add("-XDuseUnsharedTable");
     this.compilerOptions.add("-d");
     this.compilerOptions.add(".");
@@ -153,9 +154,10 @@ public class SequenceCompiler {
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + CompileUtil.JAVA_EXTENSION;
-    List<JavaFileObject> sources = new ArrayList<>();
+    @PolyDet List<@PolyDet JavaFileObject> sources = new @PolyDet ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
+    @SuppressWarnings("determinism") // library not annotated
     JavaCompiler.CompilationTask task =
         compiler.getTask(
             null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
@@ -194,7 +196,7 @@ public class SequenceCompiler {
    */
   private static Class<?> loadClassFile(File directory, @BinaryName String className) {
     try {
-      ClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()});
+      ClassLoader cl = new URLClassLoader(new URL @PolyDet [] {directory.toURI().toURL()});
       Class<?> cls = cl.loadClass(className);
       return cls;
     } catch (MalformedURLException | ClassNotFoundException e) {

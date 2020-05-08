@@ -10,12 +10,13 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Compiler for Java source code files. */
 public class FileCompiler {
 
   /** The command-line options for running this compiler. */
-  private final List<String> options;
+  private final List<@PolyDet String> options;
 
   /** The compiler object. */
   private final JavaCompiler compiler;
@@ -32,7 +33,7 @@ public class FileCompiler {
    *     href="https://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html">command-line</a>
    *     arguments for the {@code JavaCompiler}
    */
-  public FileCompiler(List<String> options) {
+  public FileCompiler(@PolyDet List<@PolyDet String> options) {
     this.options = options;
     this.compiler = ToolProvider.getSystemJavaCompiler();
   }
@@ -44,25 +45,29 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
+  public void compile(@PolyDet List<@PolyDet File> sourceFiles, Path destinationDir) throws FileCompilerException {
     // Set the destination directory for the compiler
-    List<String> compilerOptions = new ArrayList<>(options);
+    @PolyDet List<@PolyDet String> compilerOptions = new @PolyDet ArrayList<>(options);
     compilerOptions.add("-d");
     compilerOptions.add(destinationDir.toString());
     compilerOptions.add("-XDuseUnsharedTable");
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+    @SuppressWarnings("determinism") // library not annotated
     Iterable<? extends JavaFileObject> filesToCompile =
         fileManager.getJavaFileObjectsFromFiles(sourceFiles);
 
+    @SuppressWarnings("determinism") // library not annotated
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, filesToCompile);
 
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
-      throw new FileCompilerException(
+      @SuppressWarnings("determinism") // library not annotated
+      FileCompilerException tmp = new FileCompilerException(
           "Compilation failed", sourceFiles, compilerOptions, diagnostics);
+      throw tmp;
     }
   }
 
@@ -83,13 +88,13 @@ public class FileCompiler {
     private static final long serialVersionUID = 8362158619216912395L;
 
     /** The list of source files for the compilation. */
-    private final List<File> sourceFiles;
+    private final List<@PolyDet File> sourceFiles;
 
     /** The compiler options. */
-    private final List<String> options;
+    private final List<@PolyDet String> options;
 
     /** The compiler diagnostics. */
-    private final DiagnosticCollector<JavaFileObject> diagnostics;
+    private final DiagnosticCollector<@PolyDet JavaFileObject> diagnostics;
 
     /**
      * Creates a {@link FileCompilerException} with the error message, the list of source classes,
@@ -102,9 +107,9 @@ public class FileCompiler {
      */
     FileCompilerException(
         String message,
-        List<File> sourceFiles,
-        List<String> options,
-        DiagnosticCollector<JavaFileObject> diagnostics) {
+        @PolyDet List<@PolyDet File> sourceFiles,
+        @PolyDet List<@PolyDet String> options,
+        DiagnosticCollector<@PolyDet JavaFileObject> diagnostics) {
       super(message);
       this.sourceFiles = sourceFiles;
       this.options = options;
@@ -116,7 +121,7 @@ public class FileCompiler {
      *
      * @return the list of source files for which compilation generated this exception
      */
-    public List<File> getSourceFiles() {
+    public List<@PolyDet File> getSourceFiles() {
       return sourceFiles;
     }
 
@@ -125,7 +130,7 @@ public class FileCompiler {
      *
      * @return the list of compiler options for which compilation generated this exception
      */
-    public List<String> getOptions() {
+    public List<@PolyDet String> getOptions() {
       return options;
     }
 
@@ -134,7 +139,7 @@ public class FileCompiler {
      *
      * @return the compiler diagnostics for the compilation that generated this exception
      */
-    public DiagnosticCollector<JavaFileObject> getDiagnostics() {
+    public DiagnosticCollector<@PolyDet JavaFileObject> getDiagnostics() {
       return diagnostics;
     }
   }

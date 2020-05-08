@@ -18,6 +18,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
@@ -80,7 +83,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private final JavaFileWriter javaFileWriter;
 
   /** Method names for flaky tests (e.g., "test005"). */
-  private final HashSet<String> flakyTestNames = new HashSet<>();
+  private final @PolyDet("upDet") HashSet<@PolyDet String> flakyTestNames = new @PolyDet("upDet") HashSet<>();
 
   /**
    * Create a {@link FailingAssertionCommentWriter}.
@@ -89,7 +92,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @param javaFileWriter the {@link JavaFileWriter} to write {@code .java} files for the classes
    */
   public FailingAssertionCommentWriter(
-      TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
+      @PolyDet TestEnvironment testEnvironment, @PolyDet JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
   }
@@ -100,8 +103,10 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    *
    * @return the flaky test names
    */
-  public TreeSet<String> getFlakyTestNames() {
-    return new TreeSet<>(flakyTestNames);
+  public @PolyDet("down") TreeSet<@PolyDet("down") String> getFlakyTestNames() {
+    @SuppressWarnings("determinism") // Tree set constructed from HashSet should be @PolyDet("down")
+    @PolyDet("down") TreeSet<@PolyDet("down") String> tmp = new TreeSet<>(flakyTestNames);
+    return tmp;
   }
 
   /**
@@ -113,7 +118,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public Path writeClassCode(String packageName, String classname, String classSource)
+  public Path writeClassCode(@Det FailingAssertionCommentWriter this, @Det String packageName, @Det String classname, @Det String classSource)
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
@@ -130,7 +135,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
         try {
           compileTestClass(packageName, classname, classSource, workingDirectory);
-        } catch (FileCompiler.FileCompilerException e) {
+        } catch (FileCompiler. @Det FileCompilerException e) {
           classSource =
               commentCatchStatements(
                   packageName,
@@ -143,7 +148,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
         // Run tests
 
-        Status status;
+        @Det Status status;
         try {
           status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
         } catch (CommandException e) {
@@ -180,7 +185,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
+  public Path writeUnmodifiedClassCode(@Det FailingAssertionCommentWriter this, @Det String packageName, @Det String classname, @Det String javaCode)
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
@@ -199,14 +204,15 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    *     catch or try statement)
    */
   private String commentCatchStatements(
-      String packageName,
-      String javaCode,
-      List<Diagnostic<? extends JavaFileObject>> diagnostics,
-      Path destinationDir,
-      FileCompiler.FileCompilerException e) {
+      @Det FailingAssertionCommentWriter this,
+      @Det String packageName,
+      @Det String javaCode,
+      @Det List<Diagnostic<? extends JavaFileObject>> diagnostics,
+      @Det Path destinationDir,
+      FileCompiler. @Det FileCompilerException e) {
     assert !Objects.equals(packageName, "");
 
-    String[] javaCodeLines = javaCode.split(Globals.lineSep);
+    @Det String @Det [] javaCodeLines = javaCode.split(Globals.lineSep);
 
     for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
       if (diagnostic.getKind() != Diagnostic.Kind.ERROR) {
@@ -277,16 +283,17 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String packageName,
-      String classname,
-      String javaCode,
-      Status status,
-      HashSet<String> flakyTests) {
+      @Det FailingAssertionCommentWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String javaCode,
+      @Det Status status,
+      @OrderNonDet HashSet<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     // Iterator to move through JUnit output. (JUnit only writes to standard output.)
-    Iterator<String> lineIterator = status.standardOutputLines.iterator();
+    @Det Iterator<String> lineIterator = status.standardOutputLines.iterator();
 
     // numJunitFailures returns a non-negative integer.
     int totalFailures = numJunitFailures(lineIterator, status, qualifiedClassname, javaCode);
@@ -295,11 +302,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // Split Java code text so that we can match the line number for the assertion with the code.
     // Use same line break as used to write test class file.
-    String[] javaCodeLines = javaCode.split(Globals.lineSep);
+    @Det String @Det [] javaCodeLines = javaCode.split(Globals.lineSep);
 
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       // Read until beginning of failure
-      Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
+      @Det Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
       String line = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
@@ -330,7 +337,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                   "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)",
                   qualifiedClassname, methodName, classname));
 
-      Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      @Det Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
       // lineNumber is 1-based, not 0-based
       int lineNumber = Integer.parseInt(failureLineMatch.group);
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
@@ -392,8 +399,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @return the number of JUnit failures, a non-negative integer
    */
   private int numJunitFailures(
-      Iterator<String> lineIterator, Status status, String qualifiedClassname, String javaCode) {
-    Match failureCountMatch;
+      Iterator<@PolyDet String> lineIterator, Status status, String qualifiedClassname, String javaCode) {
+    @PolyDet Match failureCountMatch;
     try {
       failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
     } catch (NotMatchedException e) {
@@ -492,13 +499,15 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @return the pair containing the line and the text matching the first group
    * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
-  private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
+  private Match readUntilMatch(Iterator<@PolyDet String> lineIterator, Pattern pattern) {
     // Not a for loop because the iterator is side effected and passed around.
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);
       if (matcher.matches()) {
-        return new Match(line, matcher.group(1));
+        @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/179
+        @PolyDet Match tmp = new Match(line, matcher.group(1));
+        return tmp;
       }
     }
     throw new NotMatchedException();
@@ -520,7 +529,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      String packageName, String classname, String classSource, Path destinationDir)
+      @Det FailingAssertionCommentWriter this, @Det String packageName, @Det String classname, @Det String classSource, @Det Path destinationDir)
       throws FileCompiler.FileCompilerException {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
@@ -530,7 +539,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     } catch (RandoopOutputException e) {
       throw new RandoopBug("Output error during flaky-test filtering", e);
     }
-    FileCompiler fileCompiler = new FileCompiler();
+    @Det FileCompiler fileCompiler = new FileCompiler();
     fileCompiler.compile(sourceFile, destinationDir);
     return sourceFile;
   }

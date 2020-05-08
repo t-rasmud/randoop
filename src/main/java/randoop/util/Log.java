@@ -37,7 +37,7 @@ public final class Log {
       msg = String.format(fmt, args);
     } catch (Throwable t) {
       logPrintf("A user-defined toString() method failed.%n");
-      Class<?>[] argTypes = new @PolyDet Class<?>[args.length];
+      Class<?>[] argTypes = new Class<?>[args.length];
       for (int i = 0; i < args.length; i++) {
         argTypes[i] = args[i].getClass();
       }

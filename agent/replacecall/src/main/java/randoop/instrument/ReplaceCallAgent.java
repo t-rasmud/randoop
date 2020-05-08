@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.EntryReader;
@@ -81,13 +84,15 @@ public class ReplaceCallAgent {
    * @param instrumentation the {@code Instrumentation} object
    * @throws IOException if there is an error reading a file
    */
-  public static void premain(String agentArgs, Instrumentation instrumentation) throws IOException {
+  public static void premain(@Det String agentArgs, @Det Instrumentation instrumentation) throws IOException {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
         String[] target_args = options.parse(true, Options.tokenize(agentArgs));
         if (target_args.length > 0) {
-          System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
+          @SuppressWarnings("determinism") // Arrays.toString deterministic in this case
+          @Det String tmp = Arrays.toString(target_args);
+          System.err.printf("Unexpected agent arguments %s%n", tmp);
           System.exit(1); // Exit on bad user input.
         }
       }
@@ -107,7 +112,7 @@ public class ReplaceCallAgent {
       }
 
       // Load package prefixes from the resource file in the jar for default package exclusions
-      Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
+      @Det Set<@Det String> excludedPackagePrefixes = new LinkedHashSet<>();
 
       String exclusionFileName = "/default-load-exclusions.txt";
       InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
@@ -143,7 +148,7 @@ public class ReplaceCallAgent {
        * The agent is called when classes are loaded. If Randoop is using threads, this can result
        * in multiple threads accessing the map to apply replacements.
        */
-      HashMap<MethodSignature, MethodSignature> replacementMap;
+      @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap;
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";
@@ -183,22 +188,26 @@ public class ReplaceCallAgent {
       MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
 
       if (debug && false) {
-        ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
+        @OrderNonDet ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
         Collections.sort(sortedKeys);
         for (MethodSignature key : sortedKeys) {
-          System.err.println("map: " + key + " : " + replacementMap.get(key));
+          @SuppressWarnings("determinism") // collection clearly sorted above, so deterministic
+          @Det MethodSignature tmp = key;
+          System.err.println("map: " + tmp + " : " + replacementMap.get(tmp));
         }
       }
 
       // Communicate the list of replaced methods to Randoop to omit direct calls
-      List<String> signatureList = new ArrayList<>();
+      @OrderNonDet List<String> signatureList = new @OrderNonDet ArrayList<>();
       for (MethodSignature def : replacementMap.keySet()) {
-        signatureList.add(def.toString());
+        @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
+        @Det String tmp = def.toString();
+        signatureList.add(tmp);
       }
       MethodReplacements.setReplacedMethods(signatureList);
 
       // Create the transformer and add to the class loader instrumentation
-      CallReplacementTransformer transformer =
+      @Det CallReplacementTransformer transformer =
           new CallReplacementTransformer(replacementMap, excludedPackagePrefixes);
       transformer.addMapFileShutdownHook();
       instrumentation.addTransformer(transformer);
@@ -232,10 +241,10 @@ public class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(Reader exclusionReader, String filename)
+  private static @PolyDet("up") Set<@PolyDet("up") String> loadExclusions(Reader exclusionReader, String filename)
       throws IOException {
-    Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
+    @PolyDet("up") Set<@PolyDet("up") String> excludedPackagePrefixes = new @PolyDet("up") LinkedHashSet<>();
+    try (@PolyDet EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (!trimmed.isEmpty()) {
@@ -295,7 +304,7 @@ public class ReplaceCallAgent {
    * @return the argument string for the current run using absolute paths
    */
   private static String createAgentArgs(Path replacementFilePath, Path exclusionFilePath) {
-    List<String> args = new ArrayList<>();
+    @PolyDet List<@PolyDet String> args = new @PolyDet ArrayList<>();
     if (replacementFilePath != null) {
       args.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
     }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -22,7 +24,7 @@ class VariableRenamer {
   /** Maximum depth to concatenate parameterized type names. */
   private static final int VAR_NAME_MAX_DEPTH = 2;
 
-  public VariableRenamer(Sequence sequence) {
+  public VariableRenamer(@PolyDet Sequence sequence) {
     assert sequence != null : "The given sequence to rename cannot be null";
     this.sequence = sequence;
   }
@@ -43,7 +45,7 @@ class VariableRenamer {
    * @return a variable name based on its type, with the first character lowercase and the final
    *     character not a digit
    */
-  static String getVariableName(Type type) {
+  static String getVariableName(@Det Type type) {
     String varName = getVariableName(type, VAR_NAME_MAX_DEPTH);
 
     // Preserve camel case.
@@ -68,7 +70,7 @@ class VariableRenamer {
    * @return a variable name based on its type and is camel cased. The first character may be
    *     uppercase.
    */
-  private static String getVariableName(Type type, int depth) {
+  private static String getVariableName(@Det Type type, @Det int depth) {
     // Special cases.
     if (type.isVoid()) {
       return "void";
@@ -125,7 +127,7 @@ class VariableRenamer {
       /// for a parameterized type?
       if (!arglist.isEmpty()) {
         // Only use the first type argument to construct the name to simplify things.
-        TypeArgument argument = arglist.get(0);
+        @Det TypeArgument argument = arglist.get(0);
         if (argument.isWildcard()) {
           varName = "wildcard" + capitalizeString(varName);
         } else {

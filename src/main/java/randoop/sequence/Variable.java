@@ -1,5 +1,7 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.Type;
 
 /** Represents the result of a statement call in a sequence. */
@@ -11,7 +13,7 @@ public class Variable implements Comparable<Variable> {
   // The sequence that creates this value.
   public final Sequence sequence;
 
-  public Variable(Sequence owner, int i) {
+  public Variable(@PolyDet Sequence owner, int i) {
     if (owner == null) throw new IllegalArgumentException("missing owner");
     if (i < 0) {
       throw new IllegalArgumentException("negative index: " + i);
@@ -39,6 +41,7 @@ public class Variable implements Comparable<Variable> {
     if (!(o instanceof Variable)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Variable other = (Variable) o;
     // Two values are equal only if they are owned by the
     // same sequence, where "same" means the same reference.
@@ -47,7 +50,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return this.index * this.sequence.hashCode();
   }
 

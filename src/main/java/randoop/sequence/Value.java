@@ -3,6 +3,8 @@ package randoop.sequence;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
@@ -21,7 +23,8 @@ public class Value {
    *     primitive type, a String, or null.
    * @return a string representing code for the given value
    */
-  public static String toCodeString(Object value) {
+  @RequiresDetToString
+  public static String toCodeString(@Det Object value) {
 
     if (value == null) {
       return "null";
@@ -30,8 +33,10 @@ public class Value {
     Type valueType = Type.forClass(value.getClass());
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
+    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString 
+    @Det String tmp = value.toString();
     if (valueType.isString()) {
-      String escaped = StringEscapeUtils.escapeJava(value.toString());
+      String escaped = StringEscapeUtils.escapeJava(tmp);
       if (escaped.length() > GenInputsAbstract.string_maxlen) {
         throw new Error("String too long, length = " + escaped.length());
       }
@@ -52,11 +57,11 @@ public class Value {
       if (value.equals(' ')) {
         return "' '";
       }
-      return "\'" + StringEscapeUtils.escapeJavaStyleString(value.toString(), true) + "\'";
+      return "\'" + StringEscapeUtils.escapeJavaStyleString(tmp, true) + "\'";
     }
 
     if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
-      return value.toString();
+      return tmp;
     }
 
     // numeric types
@@ -86,13 +91,13 @@ public class Value {
       assert rep != null;
       rep = rep + "f";
     } else if (valueType.equals(JavaTypes.LONG_TYPE)) {
-      rep = value.toString() + "L";
+      rep = tmp + "L";
     } else if (valueType.equals(JavaTypes.BYTE_TYPE)) {
-      rep = "(byte)" + value.toString();
+      rep = "(byte)" + tmp;
     } else if (valueType.equals(JavaTypes.SHORT_TYPE)) {
-      rep = "(short)" + value.toString();
+      rep = "(short)" + tmp;
     } else if (valueType.equals(JavaTypes.INT_TYPE)) {
-      rep = value.toString();
+      rep = tmp;
     } else {
       throw new RandoopBug("type should be a nonreceiver type: " + valueType);
     }
@@ -148,7 +153,7 @@ public class Value {
    * @return true if the string length is reasonable for generated tests, false otherwise
    * @see GenInputsAbstract
    */
-  public static boolean stringLengthOK(String s) {
+  public static boolean stringLengthOK(@Det String s) {
     if (s == null) {
       throw new IllegalArgumentException("s is null");
     }
@@ -171,7 +176,7 @@ public class Value {
    * @param s the {@code String} to test
    * @return true if the string length meets criterion for generated tests, false otherwise
    */
-  private static boolean isOKLength(String s) {
+  private static boolean isOKLength(@Det String s) {
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.
