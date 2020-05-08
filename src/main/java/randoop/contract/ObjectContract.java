@@ -19,6 +19,10 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.TimeoutExceededException;
 
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
  * used as part of the oracle (assertion) for a unit test: the oracle expects that every object
@@ -51,7 +55,7 @@ public abstract class ObjectContract {
    *
    * @return the input types for this contract
    */
-  public abstract TypeTuple getInputTypes();
+  public abstract @Det TypeTuple getInputTypes();
 
   /**
    * Evaluates the contract on the given values. Returns {@code false} if the contract was violated.
@@ -64,7 +68,7 @@ public abstract class ObjectContract {
    * @return false if the contract is violated, true otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
-  public abstract boolean evaluate(Object... objects) throws Throwable;
+  public abstract @PolyDet("up") boolean evaluate(Object... objects) throws Throwable;
 
   /**
    * A string that will be inserted as a comment in the test before the code corresponding to this
@@ -105,9 +109,10 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
+  @SuppressWarnings("determinism:invariant.cast.unsafe")
   public final Check checkContract(ExecutableSequence eseq, Object[] values) {
 
-    ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
+    @PolyDet ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
 
     if (Log.isLoggingOn()) {
       // Commented out because it makes the logs too big.  Uncomment when debugging this code.
@@ -140,7 +145,7 @@ public abstract class ObjectContract {
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
 
-      BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
+      @PolyDet BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
       Log.logPrintf("  ExceptionBehaviorClassifier.classify(e, eseq) => %s%n", eseqBehavior);
 
       if (eseqBehavior == BehaviorType.EXPECTED) {
@@ -191,8 +196,9 @@ public abstract class ObjectContract {
    * @param values the input values
    * @return an ObjectCheck indicating that a contract failed
    */
-  ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
-    Variable[] varArray = new Variable[values.length];
+  @SuppressWarnings("determinism:method.invocation.invalid")
+  ObjectCheck failedContract(ExecutableSequence eseq, @PolyDet("use") Object @PolyDet[] values) {
+    @PolyDet("use") Variable @PolyDet[] varArray = new @PolyDet("use") Variable @PolyDet[values.length];
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);
       // Note: the following alternative to the above line slightly improves coverage
@@ -210,7 +216,7 @@ public abstract class ObjectContract {
   }
 
   // The toString() of class Buggy throws an exception.
-  static String toStringHandleExceptions(Object o) {
+  static @NonDet String toStringHandleExceptions(Object o) {
     try {
       return o.toString();
     } catch (Throwable t) {
