@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
@@ -109,6 +112,7 @@ public class ExecutableBooleanExpression {
     if (!(object instanceof ExecutableBooleanExpression)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExecutableBooleanExpression other = (ExecutableBooleanExpression) object;
     return this.expressionMethod.equals(other.expressionMethod)
         && this.comment.equals(other.comment)
@@ -116,7 +120,7 @@ public class ExecutableBooleanExpression {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(expressionMethod, comment, contractSource);
   }
 
@@ -139,7 +143,7 @@ public class ExecutableBooleanExpression {
    * @param values the values to check the expression against
    * @return true if this expression is satisfied by the values, false otherwise
    */
-  public boolean check(Object[] values) {
+  public boolean check(@Det ExecutableBooleanExpression this, Object[] values) {
     try {
       return (boolean) expressionMethod.invoke(null, values);
     } catch (IllegalAccessException e) {
@@ -216,7 +220,7 @@ public class ExecutableBooleanExpression {
     Class<?> expressionClass;
     try {
       expressionClass = compiler.compileAndLoad(packageName, classname, classText);
-    } catch (SequenceCompilerException e) {
+    } catch (@PolyDet SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopSpecificationError(msg, e);
     }
@@ -249,7 +253,7 @@ public class ExecutableBooleanExpression {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
     return UtilPlume.join(
-        new String[] {
+        new String @PolyDet [] {
           packageDeclaration + "public class " + expressionClassName + " {",
           "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
           "    return " + expressionText + ";",

@@ -5,9 +5,11 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Visitor for Class types in JavaParser AST. */
-public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceType>> {
+public class ClassTypeVisitor
+    extends VoidVisitorAdapter<@PolyDet Set<@PolyDet ClassOrInterfaceType>> {
   /**
    * If the class or interface type is in a package that's not visible by default, add the type to
    * the set of types that is passed in as an argument. For instance, suppose that the type {@code
@@ -21,7 +23,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
    */
   @SuppressWarnings("unchecked")
   @Override
-  public void visit(ClassOrInterfaceType n, Set<ClassOrInterfaceType> params) {
+  public void visit(ClassOrInterfaceType n, Set<@PolyDet ClassOrInterfaceType> params) {
 
     // If the class type is a generic types, visit each one of the
     // parameter types as well.

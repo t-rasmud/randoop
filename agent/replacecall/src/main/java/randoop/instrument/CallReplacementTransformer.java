@@ -59,7 +59,8 @@ public class CallReplacementTransformer extends InstructionListUtils
   // debug_instrument field is defined in InstructionListUtils.
 
   /** Map from a method to its replacement. */
-  private final @PolyDet("upDet") HashMap<@PolyDet MethodSignature, @PolyDet MethodSignature> replacementMap;
+  private final @PolyDet("upDet") HashMap<@PolyDet MethodSignature, @PolyDet MethodSignature>
+      replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<@PolyDet String> excludedPackagePrefixes;
@@ -227,7 +228,8 @@ public class CallReplacementTransformer extends InstructionListUtils
     }
   }
 
-  private Deque<@PolyDet NewInstInfo> new_inst_stack = new @PolyDet ArrayDeque<@PolyDet NewInstInfo>();
+  private Deque<@PolyDet NewInstInfo> new_inst_stack =
+      new @PolyDet ArrayDeque<@PolyDet NewInstInfo>();
 
   /**
    * Processes each method in the given class replacing any specified calls. The replacements are
@@ -238,7 +240,8 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private boolean transformClass(@Det CallReplacementTransformer this, @Det ClassGen cg) throws IllegalClassFormatException {
+  private boolean transformClass(@Det CallReplacementTransformer this, @Det ClassGen cg)
+      throws IllegalClassFormatException {
     // Have we modified this class?
     boolean transformed = false;
     InstructionFactory ifact = new InstructionFactory(cg);
@@ -335,7 +338,11 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private boolean transformMethod(@Det CallReplacementTransformer this, ClassGen cg, @Det MethodGen mg, InstructionFactory ifact)
+  private boolean transformMethod(
+      @Det CallReplacementTransformer this,
+      ClassGen cg,
+      @Det MethodGen mg,
+      InstructionFactory ifact)
       throws IllegalClassFormatException {
     InstructionList il = mg.getInstructionList();
     InstructionHandle ih = il.getStart();
@@ -375,7 +382,10 @@ public class CallReplacementTransformer extends InstructionListUtils
    */
   private InstructionList getReplacementInstruction(
       @Det CallReplacementTransformer this,
-      ClassGen cg, MethodGen mg, InstructionFactory ifact, @Det InstructionHandle ih)
+      ClassGen cg,
+      MethodGen mg,
+      InstructionFactory ifact,
+      @Det InstructionHandle ih)
       throws IllegalClassFormatException {
 
     Instruction inst = ih.getInstruction();
@@ -509,7 +519,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           // array. This argument has already been explicitly pushed onto the stack, so modifying
           // the call signature is enough.
           @PolyDet Type @PolyDet [] arguments =
-              (@PolyDet Type @PolyDet []) BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
+              (@PolyDet Type @PolyDet [])
+                  BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
           newInvocation =
               ifact.createInvoke(
                   newSig.getClassname(),

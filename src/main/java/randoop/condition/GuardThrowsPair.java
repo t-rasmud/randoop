@@ -1,5 +1,7 @@
 package randoop.condition;
 
+import org.checkerframework.checker.determinism.qual.PolyDet;
+
 /**
  * Represents a pair of a an executable guard expression and an executable throws clause.
  *
@@ -23,7 +25,7 @@ class GuardThrowsPair {
    *     called
    * @param throwsClause the {@link ThrowsClause} to be evaluated after the operation is called
    */
-  GuardThrowsPair(ExecutableBooleanExpression guard, ThrowsClause throwsClause) {
+  GuardThrowsPair(@PolyDet ExecutableBooleanExpression guard, @PolyDet ThrowsClause throwsClause) {
     this.guard = guard;
     this.throwsClause = throwsClause;
   }

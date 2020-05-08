@@ -38,7 +38,9 @@ public final class Statement {
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
    */
-  public Statement(@PolyDet TypedOperation operation, @PolyDet List<@PolyDet RelativeNegativeIndex> inputVariables) {
+  public Statement(
+      @PolyDet TypedOperation operation,
+      @PolyDet List<@PolyDet RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
   }
@@ -116,7 +118,8 @@ public final class Statement {
     b.append(";");
   }
 
-  public @PolyDet("up") String toParsableString(String variableName, List<@PolyDet Variable> inputs) {
+  public @PolyDet("up") String toParsableString(
+      String variableName, List<@PolyDet Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
     b.append(" =  ");

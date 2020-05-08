@@ -3,6 +3,8 @@ package randoop.output;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.Minimize;
 import randoop.main.RandoopBug;
 
@@ -21,7 +23,7 @@ public class MinimizerWriter implements CodeWriter {
    *
    * @param javaFileWriter the {@link JavaFileWriter} for writing the classes
    */
-  public MinimizerWriter(JavaFileWriter javaFileWriter) {
+  public MinimizerWriter(@PolyDet JavaFileWriter javaFileWriter) {
     this.javaFileWriter = javaFileWriter;
   }
 
@@ -31,7 +33,11 @@ public class MinimizerWriter implements CodeWriter {
    * <p>Writes both the original class and the minimized class. Returns the original class.
    */
   @Override
-  public Path writeClassCode(String packageName, String classname, String classCode)
+  public Path writeClassCode(
+      @Det MinimizerWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String classCode)
       throws RandoopOutputException {
 
     // Write the original class.
@@ -64,7 +70,11 @@ public class MinimizerWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+  public Path writeUnmodifiedClassCode(
+      @Det MinimizerWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String classCode)
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, classCode);
   }

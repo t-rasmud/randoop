@@ -16,7 +16,10 @@ public class ErrorRevealed implements IMessage {
   public final List<@PolyDet String> failingClassNames;
 
   public ErrorRevealed(
-      String testCode, String description, @PolyDet List<@PolyDet String> failingClassNames, Path junitFile) {
+      String testCode,
+      String description,
+      @PolyDet List<@PolyDet String> failingClassNames,
+      Path junitFile) {
     this.testCode = testCode;
     this.description = description;
     @PolyDet List<@PolyDet String> tmp = new @PolyDet ArrayList<>(failingClassNames);

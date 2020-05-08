@@ -25,7 +25,6 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
@@ -89,8 +88,8 @@ public class ReplacementFileReader {
    * @throws ReplacementFileException if there is an error in the replacement file
    * @see #readReplacements(Reader, String)
    */
-  static @OrderNonDet HashMap<MethodSignature, MethodSignature> readReplacements(@Det Path replacementFile)
-      throws IOException, ReplacementFileException {
+  static @OrderNonDet HashMap<MethodSignature, MethodSignature> readReplacements(
+      @Det Path replacementFile) throws IOException, ReplacementFileException {
     return readReplacements(
         Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8),
         replacementFile.toString());
@@ -108,8 +107,8 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
-  static @OrderNonDet HashMap<MethodSignature, MethodSignature> readReplacements(@Det Reader in, @Det String filename)
-      throws ReplacementFileException, IOException {
+  static @OrderNonDet HashMap<MethodSignature, MethodSignature> readReplacements(
+      @Det Reader in, @Det String filename) throws ReplacementFileException, IOException {
     @OrderNonDet HashMap<@Det MethodSignature, @Det MethodSignature> replacementMap = new HashMap<>();
 
     try (@Det EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {

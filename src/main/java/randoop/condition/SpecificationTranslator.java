@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
@@ -51,7 +53,7 @@ public class SpecificationTranslator {
   private final String poststateExpressionDeclarations;
 
   /** The map of expression identifiers to dummy variables. */
-  private final Map<String, String> replacementMap;
+  private final @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap;
 
   /** The {@link SequenceCompiler} for compiling expression methods. */
   private final SequenceCompiler compiler;
@@ -70,12 +72,12 @@ public class SpecificationTranslator {
    * @param compiler the {@link SequenceCompiler} for creating expression methods
    */
   private SpecificationTranslator(
-      RawSignature prestateExpressionSignature,
+      @PolyDet RawSignature prestateExpressionSignature,
       String prestateExpressionDeclaration,
-      RawSignature poststateExpressionSignature,
+      @PolyDet RawSignature poststateExpressionSignature,
       String poststateExpressionDeclaration,
-      Map<String, String> replacementMap,
-      SequenceCompiler compiler) {
+      @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap,
+      @PolyDet SequenceCompiler compiler) {
     this.prestateExpressionSignature = prestateExpressionSignature;
     this.prestateExpressionDeclaration = prestateExpressionDeclaration;
     this.poststateExpressionSignature = poststateExpressionSignature;
@@ -96,14 +98,14 @@ public class SpecificationTranslator {
    */
   static SpecificationTranslator createTranslator(
       Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
-    Identifiers identifiers = specification.getIdentifiers();
+    @PolyDet Identifiers identifiers = specification.getIdentifiers();
 
     // Get expression method signatures.
-    RawSignature prestateExpressionSignature = getExpressionSignature(executable, false);
-    RawSignature poststateExpressionSignature = getExpressionSignature(executable, true);
+    @PolyDet RawSignature prestateExpressionSignature = getExpressionSignature(executable, false);
+    @PolyDet RawSignature poststateExpressionSignature = getExpressionSignature(executable, true);
 
     // parameterNames is side-effected, then used, then side-effected and used again.
-    List<String> parameterNames = new ArrayList<>();
+    @PolyDet List<@PolyDet String> parameterNames = new @PolyDet ArrayList<>();
 
     // Get expression method parameter declaration strings.
     if (executable instanceof Method) { // TODO: inner class constructors have a receiver
@@ -117,7 +119,7 @@ public class SpecificationTranslator {
     String poststateExpressionDeclarations =
         poststateExpressionSignature.getDeclarationArguments(parameterNames);
 
-    Map<String, String> replacementMap = createReplacementMap(parameterNames);
+    @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap = createReplacementMap(parameterNames);
     return new SpecificationTranslator(
         prestateExpressionSignature,
         prestateExpressionDeclarations,
@@ -149,11 +151,15 @@ public class SpecificationTranslator {
     Class<?> declaringClass = executable.getDeclaringClass();
     // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
     Class<?> receiverType = isMethod ? declaringClass : null;
-    Class<?>[] parameterTypes = executable.getParameterTypes();
+    @PolyDet Class<?> @PolyDet [] parameterTypes = executable.getParameterTypes();
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = renamedPackage(declaringClass.getPackage());
-    return getRawSignature(packageName, receiverType, parameterTypes, returnType);
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
+    @PolyDet RawSignature tmp = getRawSignature(packageName, receiverType, parameterTypes, returnType);
+    return tmp;
   }
 
   /**
@@ -171,7 +177,8 @@ public class SpecificationTranslator {
    *     included last in parameter types if non-null
    * @return the constructed post-expression method signature
    */
-  private static RawSignature getRawSignature(
+  @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/3277
+  private static @PolyDet("up") RawSignature getRawSignature(
       @DotSeparatedIdentifiers String packageName,
       Class<?> receiverType,
       Class<?>[] parameterTypes,
@@ -229,10 +236,12 @@ public class SpecificationTranslator {
    * @param parameterNames the parameter names of the expression methods
    * @return the map from the parameter names to dummy variables
    */
-  private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    Map<String, String> replacementMap = new HashMap<>();
+  private static @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> createReplacementMap(
+      List<@PolyDet String> parameterNames) {
+    @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap = new @PolyDet("upDet") HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
-      replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      String ignore = replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
     return replacementMap;
   }
@@ -247,8 +256,10 @@ public class SpecificationTranslator {
    * @return the {@link ExecutableSpecification} for the given specification
    */
   public static ExecutableSpecification createExecutableSpecification(
-      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
-    SpecificationTranslator st = createTranslator(executable, specification, compiler);
+      @Det Executable executable,
+      @Det OperationSpecification specification,
+      @Det SequenceCompiler compiler) {
+    @Det SpecificationTranslator st = createTranslator(executable, specification, compiler);
     return new ExecutableSpecification(
         st.getGuardExpressions(specification.getPreconditions()),
         st.getReturnConditions(specification.getPostconditions()),
@@ -264,11 +275,14 @@ public class SpecificationTranslator {
    * @return the list of {@link ExecutableBooleanExpression} objects obtained by converting each
    *     {@link Precondition}
    */
-  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
-    List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>();
-    for (Precondition precondition : preconditions) {
+  private List<@PolyDet ExecutableBooleanExpression> getGuardExpressions(
+      List<@PolyDet Precondition> preconditions) {
+    @PolyDet List<@PolyDet ExecutableBooleanExpression> guardExpressions = new @PolyDet ArrayList<>();
+    for (@PolyDet("up") Precondition precondition : preconditions) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet Precondition tmp = precondition;
       try {
-        guardExpressions.add(create(precondition.getGuard()));
+        guardExpressions.add(create(tmp.getGuard()));
       } catch (RandoopSpecificationError e) {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           System.out.println("Warning: discarded uncompilable guard expression: " + e.getMessage());
@@ -289,12 +303,15 @@ public class SpecificationTranslator {
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     Postcondition}
    */
-  private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
-    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
-    for (Postcondition postcondition : postconditions) {
+  private ArrayList<@PolyDet GuardPropertyPair> getReturnConditions(
+      List<Postcondition> postconditions) {
+    @PolyDet ArrayList<@PolyDet GuardPropertyPair> returnConditions = new @PolyDet ArrayList<>();
+    for (@PolyDet("up") Postcondition postcondition : postconditions) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet Postcondition tmp = postcondition;
       try {
-        ExecutableBooleanExpression guard = create(postcondition.getGuard());
-        ExecutableBooleanExpression property = create(postcondition.getProperty());
+        @PolyDet ExecutableBooleanExpression guard = create(tmp.getGuard());
+        @PolyDet ExecutableBooleanExpression property = create(tmp.getProperty());
         returnConditions.add(new GuardPropertyPair(guard, property));
       } catch (RandoopSpecificationError e) {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
@@ -317,10 +334,11 @@ public class SpecificationTranslator {
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     ThrowsCondition}
    */
-  private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
+  private ArrayList<GuardThrowsPair> getThrowsConditions(
+      @Det SpecificationTranslator this, @Det List<@Det ThrowsCondition> throwsConditions) {
     ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
-    for (ThrowsCondition throwsCondition : throwsConditions) {
-      ClassOrInterfaceType exceptionType;
+    for (@Det ThrowsCondition throwsCondition : throwsConditions) {
+      @Det ClassOrInterfaceType exceptionType;
       try {
         exceptionType =
             (ClassOrInterfaceType)
@@ -339,8 +357,8 @@ public class SpecificationTranslator {
         }
       }
       try {
-        ExecutableBooleanExpression guard = create(throwsCondition.getGuard());
-        ThrowsClause throwsClause =
+        @Det ExecutableBooleanExpression guard = create(throwsCondition.getGuard());
+        @Det ThrowsClause throwsClause =
             new ThrowsClause(exceptionType, throwsCondition.getDescription());
         throwsPairs.add(new GuardThrowsPair(guard, throwsClause));
       } catch (RandoopSpecificationError e) {
@@ -365,7 +383,8 @@ public class SpecificationTranslator {
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
    */
   private ExecutableBooleanExpression create(Guard expression) {
-    String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
+    @SuppressWarnings("determinism") // @PolyDet not resolved correctly with @PolyDet("upDet")
+    @PolyDet String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         prestateExpressionSignature,
         prestateExpressionDeclaration,
@@ -385,7 +404,8 @@ public class SpecificationTranslator {
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
    */
   public ExecutableBooleanExpression create(Property expression) {
-    String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
+    @SuppressWarnings("determinism") // @PolyDet not resolved correctly with @PolyDet("upDet")
+    @PolyDet String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         poststateExpressionSignature,
         poststateExpressionDeclarations,
@@ -448,7 +468,7 @@ public class SpecificationTranslator {
    *
    * @return the replacement map for the identifiers in the expression
    */
-  Map<String, String> getReplacementMap() {
+  @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> getReplacementMap() {
     return replacementMap;
   }
 }

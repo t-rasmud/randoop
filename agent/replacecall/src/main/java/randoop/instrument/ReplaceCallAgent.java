@@ -84,7 +84,8 @@ public class ReplaceCallAgent {
    * @param instrumentation the {@code Instrumentation} object
    * @throws IOException if there is an error reading a file
    */
-  public static void premain(@Det String agentArgs, @Det Instrumentation instrumentation) throws IOException {
+  public static void premain(@Det String agentArgs, @Det Instrumentation instrumentation)
+      throws IOException {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
@@ -98,9 +99,10 @@ public class ReplaceCallAgent {
       }
 
       if (verbose) {
+        @SuppressWarnings("determinism") // impossible to verify toString on interface
+        @Det String tmp = instrumentation.toString();
         System.out.format(
-            "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n",
-            agentArgs, instrumentation);
+            "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, tmp);
       }
 
       debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
@@ -241,8 +243,8 @@ public class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static @PolyDet("up") Set<@PolyDet("up") String> loadExclusions(Reader exclusionReader, String filename)
-      throws IOException {
+  private static @PolyDet("up") Set<@PolyDet("up") String> loadExclusions(
+      Reader exclusionReader, String filename) throws IOException {
     @PolyDet("up") Set<@PolyDet("up") String> excludedPackagePrefixes = new @PolyDet("up") LinkedHashSet<>();
     try (@PolyDet EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
       for (String line : reader) {
@@ -311,7 +313,9 @@ public class ReplaceCallAgent {
     if (exclusionFilePath != null) {
       args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    return UtilPlume.join(args, ",");
+    @SuppressWarnings("determinism") // library not annotated
+    String tmp = UtilPlume.join(args, ",");
+    return tmp;
   }
 
   /**

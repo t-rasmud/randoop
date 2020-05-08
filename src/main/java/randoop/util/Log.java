@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -27,6 +27,8 @@ public final class Log {
    * @param args arguments to the format string
    */
   @FormatMethod
+  @RequiresDetToString
+  @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/3277
   public static void logPrintf(@Det String fmt, @Det Object @Det ... args) {
     if (!isLoggingOn()) {
       return;
@@ -34,7 +36,8 @@ public final class Log {
 
     String msg;
     try {
-      msg = String.format(fmt, args);
+      String tmp = String.format(fmt, args);
+      msg = tmp;
     } catch (Throwable t) {
       logPrintf("A user-defined toString() method failed.%n");
       Class<?>[] argTypes = new Class<?>[args.length];

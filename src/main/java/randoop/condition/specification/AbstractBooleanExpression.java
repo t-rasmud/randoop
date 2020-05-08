@@ -2,6 +2,7 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Abstract class representing boolean expressions that occur in {@link SpecificationClause}
@@ -67,13 +68,14 @@ public abstract class AbstractBooleanExpression {
     if (!(object instanceof AbstractBooleanExpression)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     AbstractBooleanExpression other = (AbstractBooleanExpression) object;
     return this.description.equals(other.description)
         && this.conditionSource.equals(other.conditionSource);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.description, this.conditionSource);
   }
 

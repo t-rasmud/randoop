@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -116,7 +115,8 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T extends @Det Object> T randomMemberWeighted(@Det SimpleList<T> list, @Det Map<T, Double> weights) {
+  public static <T extends @Det Object> T randomMemberWeighted(
+      @Det SimpleList<T> list, @Det Map<T, Double> weights) {
 
     if (list.size() == 0) {
       throw new IllegalArgumentException("Empty list");
@@ -246,7 +246,8 @@ public final class Randomness {
    * @param argument the method argument
    */
   @RequiresDetToString
-  private static void logSelection(@Det Object returnValue, @Det String methodName, @Det Object argument) {
+  private static void logSelection(
+      @Det Object returnValue, @Det String methodName, @Det Object argument) {
     if (GenInputsAbstract.selection_log != null && verbosity > 0) {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;

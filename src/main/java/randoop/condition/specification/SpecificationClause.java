@@ -1,6 +1,8 @@
 package randoop.condition.specification;
 
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Abstract class for representations of conditions that can be attached to methods and
@@ -32,7 +34,7 @@ public abstract class SpecificationClause {
    * @param description the description of the created specification
    * @param guard the {@link Guard} for the created specification
    */
-  public SpecificationClause(String description, Guard guard) {
+  public SpecificationClause(String description, @PolyDet Guard guard) {
     this.description = description;
     this.guard = guard;
   }
@@ -63,6 +65,7 @@ public abstract class SpecificationClause {
     if (!(object instanceof SpecificationClause)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     SpecificationClause other = (SpecificationClause) object;
     return this.description.equals(other.description)
         && ((this.guard != null && this.guard.equals(other.guard))
@@ -70,7 +73,7 @@ public abstract class SpecificationClause {
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hashCode(description);
   }
 }

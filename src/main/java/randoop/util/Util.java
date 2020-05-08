@@ -161,7 +161,8 @@ public final class Util {
    * @param replacements the map of replacements to perform
    * @return the text modified by replacing original names with replacement names
    */
-  public static String replaceWords(String text, Map<String, String> replacements) {
+  public static String replaceWords(
+      String text, Map<@PolyDet String, @PolyDet String> replacements) {
     Pattern namesPattern =
         Pattern.compile("\\b(" + UtilPlume.join(replacements.keySet().toArray(), "|") + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);

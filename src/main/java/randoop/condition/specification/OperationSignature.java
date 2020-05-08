@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
@@ -49,7 +51,7 @@ public class OperationSignature {
   private final String name;
 
   /** The list of fully-qualified raw type names for the parameters of this operation. */
-  private final List<@ClassGetName String> parameterTypes;
+  private final List<@ClassGetName @PolyDet String> parameterTypes;
 
   /** Gson serialization requires a default constructor. */
   @SuppressWarnings({
@@ -59,7 +61,7 @@ public class OperationSignature {
   private OperationSignature() {
     this.classname = "";
     this.name = "";
-    this.parameterTypes = new ArrayList<>();
+    this.parameterTypes = new @PolyDet ArrayList<>();
   }
 
   /**
@@ -71,7 +73,9 @@ public class OperationSignature {
    * @param parameterTypes the list of fully-qualified raw parameter type names
    */
   private OperationSignature(
-      @ClassGetName String classname, String name, List<@ClassGetName String> parameterTypes) {
+      @ClassGetName String classname,
+      String name,
+      @PolyDet List<@ClassGetName @PolyDet String> parameterTypes) {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
@@ -89,7 +93,7 @@ public class OperationSignature {
   public static OperationSignature forConstructorName(
       @ClassGetName String classname,
       String simpleName,
-      List<@ClassGetName String> parameterTypes) {
+      @PolyDet List<@ClassGetName @PolyDet String> parameterTypes) {
     return new OperationSignature(classname, simpleName, parameterTypes);
   }
 
@@ -182,7 +186,7 @@ public class OperationSignature {
    *
    * @return the list of parameter type names for this operation
    */
-  public List<@ClassGetName String> getParameterTypeNames() {
+  public List<@ClassGetName @PolyDet String> getParameterTypeNames() {
     return parameterTypes;
   }
 
@@ -217,10 +221,12 @@ public class OperationSignature {
    * @param classes the array of {@code Class<?>} objects
    * @return the list of fully-qualified type names for the objects in {@code classes}
    */
-  private static List<@ClassGetName String> getTypeNames(Class<?>[] classes) {
-    List<@ClassGetName String> parameterTypes = new ArrayList<>();
+  private static List<@ClassGetName @PolyDet String> getTypeNames(Class<?>[] classes) {
+    @PolyDet List<@ClassGetName @PolyDet String> parameterTypes = new @PolyDet ArrayList<>();
     for (Class<?> aClass : classes) {
-      parameterTypes.add(aClass.getName());
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet Class<?> tmp = aClass;
+      parameterTypes.add(tmp.getName());
     }
     return parameterTypes;
   }
@@ -233,14 +239,19 @@ public class OperationSignature {
     if (!(object instanceof OperationSignature)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     OperationSignature other = (OperationSignature) object;
-    return this.classname.equals(other.classname)
-        && this.name.equals(other.name)
-        && this.parameterTypes.equals(other.parameterTypes);
+    @SuppressWarnings(
+        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @PolyDet boolean tmp =
+        this.classname.equals(other.classname)
+            && this.name.equals(other.name)
+            && this.parameterTypes.equals(other.parameterTypes);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.classname, this.name, this.parameterTypes);
   }
 

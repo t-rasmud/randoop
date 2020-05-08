@@ -33,7 +33,7 @@ public class Value {
     Type valueType = Type.forClass(value.getClass());
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
-    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString 
+    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
     @Det String tmp = value.toString();
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(tmp);

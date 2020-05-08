@@ -134,7 +134,9 @@ public class MethodSignature implements Comparable<MethodSignature> {
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
     @BinaryName @PolyDet String @PolyDet [] parameters =
-        paramString.isEmpty() ? new @PolyDet String @PolyDet [0] : paramString.trim().split("\\s*,\\s*");
+        paramString.isEmpty()
+            ? new @PolyDet String @PolyDet [0]
+            : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
       if (!Signatures.isBinaryName(parameter)) {
         throw new IllegalArgumentException(
@@ -172,7 +174,9 @@ public class MethodSignature implements Comparable<MethodSignature> {
           return 1;
         }
         for (int i = 0; i < this.paramTypes.length; i++) {
-          @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+          @SuppressWarnings(
+              "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the
+                             // same as @PolyDet
           @PolyDet int tmp = this.paramTypes[i].getSignature().compareTo(m.paramTypes[i].getSignature());
           result = tmp;
           if (result != 0) {

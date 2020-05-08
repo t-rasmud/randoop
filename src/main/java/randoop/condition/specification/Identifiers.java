@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -37,7 +39,7 @@ public class Identifiers {
   private final String receiverName;
 
   /** The formal parameter names (not including the receiver). */
-  private final List<String> parameters;
+  private final List<@PolyDet String> parameters;
 
   /** The return value identifier. */
   private final String returnName;
@@ -49,7 +51,8 @@ public class Identifiers {
    * @param parameters the list of identifiers for the operation formal parameters
    * @param returnName the return name
    */
-  public Identifiers(String receiverName, List<String> parameters, String returnName) {
+  public Identifiers(
+      String receiverName, @PolyDet List<@PolyDet String> parameters, String returnName) {
     this.receiverName = receiverName;
     this.parameters = parameters;
     this.returnName = returnName;
@@ -61,7 +64,7 @@ public class Identifiers {
    *
    * @param parameters the list of identifiers for the operation parameters
    */
-  public Identifiers(List<String> parameters) {
+  public Identifiers(@PolyDet List<@PolyDet String> parameters) {
     this("receiver", parameters, "result");
   }
 
@@ -87,7 +90,7 @@ public class Identifiers {
    *
    * @return the parameter names
    */
-  public List<String> getParameterNames() {
+  public List<@PolyDet String> getParameterNames() {
     return parameters;
   }
 
@@ -107,10 +110,14 @@ public class Identifiers {
    * @return a name occurs more than once, or null if there are no duplicate names
    */
   public String duplicateName() {
-    Set<String> names = new HashSet<>();
+    @PolyDet("upDet") Set<@PolyDet String> names = new @PolyDet("upDet") HashSet<>();
     for (String name : parameters) {
-      if (!names.add(name)) {
-        return name;
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet String tmp = name;
+      if (!names.add(tmp)) {
+        return tmp;
       }
     }
     if (!names.add(receiverName)) {
@@ -130,14 +137,20 @@ public class Identifiers {
     if (!(object instanceof Identifiers)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Identifiers other = (Identifiers) object;
-    return this.receiverName.equals(other.receiverName)
-        && this.parameters.equals(other.parameters)
-        && this.returnName.equals(other.returnName);
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
+    @PolyDet boolean tmp =
+        this.receiverName.equals(other.receiverName)
+            && this.parameters.equals(other.parameters)
+            && this.returnName.equals(other.returnName);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(this.receiverName, this.parameters, this.returnName);
   }
 

@@ -25,6 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.CollectionType;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
@@ -43,19 +45,22 @@ import randoop.util.MultiMap;
  * corresponding {@link ExecutableSpecification} on demand. This lazy strategy avoids building
  * condition methods for specifications that are not used.
  */
+@CollectionType
 public class SpecificationCollection {
 
   /** Map from method or constructor to the corresponding {@link OperationSpecification}. */
-  private final Map<AccessibleObject, OperationSpecification> specificationMap;
+  private final Map<@PolyDet AccessibleObject, @PolyDet OperationSpecification> specificationMap;
 
   /**
    * Given a method signature, what methods (that have specifications) have that signature? Does not
    * contain constructors.
    */
-  private final MultiMap<OperationSignature, Method> signatureToMethods;
+  private final MultiMap<@PolyDet OperationSignature, @PolyDet Method> signatureToMethods;
 
   /** Map from reflection object to all the methods it overrides (that have a specification). */
-  private final Map<AccessibleObject, Set<Method>> overridden;
+  private final @PolyDet("upDet") Map<
+          @PolyDet AccessibleObject, @PolyDet("upDet") Set<@PolyDet Method>>
+      overridden;
 
   /** Compiler for creating conditionMethods. */
   private final SequenceCompiler compiler;
@@ -72,14 +77,14 @@ public class SpecificationCollection {
    *     specification
    */
   SpecificationCollection(
-      Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureToMethods,
-      Map<AccessibleObject, Set<Method>> overridden) {
+      @PolyDet Map<@PolyDet AccessibleObject, @PolyDet OperationSpecification> specificationMap,
+      @PolyDet MultiMap<@PolyDet OperationSignature, @PolyDet Method> signatureToMethods,
+          @PolyDet("upDet") Map<@PolyDet AccessibleObject, @PolyDet("upDet") Set<@PolyDet Method>> overridden) {
     this.specificationMap = specificationMap;
     this.signatureToMethods = signatureToMethods;
     this.overridden = overridden;
-    this.getExecutableSpecificationCache = new HashMap<>();
-    this.compiler = new SequenceCompiler();
+    this.getExecutableSpecificationCache = new @PolyDet("upDet") HashMap<>();
+    this.compiler = new @PolyDet SequenceCompiler();
   }
 
   /**
@@ -89,16 +94,19 @@ public class SpecificationCollection {
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
    */
-  public static SpecificationCollection create(List<Path> specificationFiles) {
+  public static SpecificationCollection create(@PolyDet List<@PolyDet Path> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
-    MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
-    Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
+    @PolyDet MultiMap<@PolyDet OperationSignature, @PolyDet Method> signatureToMethods =
+        new @PolyDet MultiMap<>();
+    @PolyDet Map<@PolyDet AccessibleObject, @PolyDet OperationSpecification> specificationMap =
+        new @PolyDet LinkedHashMap<>();
     for (Path specificationFile : specificationFiles) {
       readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
-    Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
+    @PolyDet("upDet") Map<@PolyDet AccessibleObject, @PolyDet("upDet") Set<@PolyDet Method>> overridden =
+        buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
   }
 
@@ -109,15 +117,20 @@ public class SpecificationCollection {
    *     signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
-  private static Map<AccessibleObject, Set<Method>> buildOverridingMap(
-      MultiMap<OperationSignature, Method> signatureToMethods) {
-    Map<AccessibleObject, Set<Method>> overridden = new HashMap<>();
-    for (OperationSignature signature : signatureToMethods.keySet()) {
+  private static @PolyDet("upDet") Map<
+          @PolyDet AccessibleObject, @PolyDet("upDet") Set<@PolyDet Method>>
+      buildOverridingMap(
+          MultiMap<@PolyDet OperationSignature, @PolyDet Method> signatureToMethods) {
+    @PolyDet("upDet") Map<AccessibleObject, @PolyDet Set<@PolyDet Method>> overridden =
+        new @PolyDet("upDet") HashMap<>();
+    for (@PolyDet("up") OperationSignature signature : signatureToMethods.keySet()) {
       // This lookup is required because MultiMap does not have an entrySet() method.
-      Set<Method> methods = signatureToMethods.getValues(signature);
+      @SuppressWarnings(
+          "determinism") // may create bad alias but fine because only used temporarily here
+      @PolyDet("up") Set<@PolyDet Method> methods = signatureToMethods.getValues(signature);
       for (Method method : methods) {
         Class<?> declaringClass = method.getDeclaringClass();
-        Set<Method> parents = findOverridden(declaringClass, methods);
+        @PolyDet("upDet") Set<@PolyDet Method> parents = findOverridden(declaringClass, methods);
         overridden.put(method, parents);
       }
     }
@@ -134,12 +147,14 @@ public class SpecificationCollection {
    * @return the elements of {@code methods} that are declared in a strict supertype of {@code
    *     classType}
    */
-  private static Set<Method> findOverridden(Class<?> classType, Set<Method> methods) {
-    Set<Method> parents = new HashSet<>();
+  private static @PolyDet("upDet") Set<@PolyDet Method> findOverridden(
+      Class<?> classType, Set<@PolyDet Method> methods) {
+    @PolyDet("upDet") Set<@PolyDet Method> parents = new @PolyDet("upDet") HashSet<>();
     for (Method method : methods) {
       Class<?> declaringClass = method.getDeclaringClass();
       if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
-        parents.add(method);
+        @SuppressWarnings("determinism") // order of insertion doesn't matter
+        boolean ignore = parents.add(method);
       }
     }
     return parents;
@@ -280,7 +295,8 @@ public class SpecificationCollection {
   }
 
   /** Cache for {@link #getExecutableSpecification}. */
-  private Map<AccessibleObject, ExecutableSpecification> getExecutableSpecificationCache;
+  private @PolyDet("upDet") Map<@PolyDet AccessibleObject, @PolyDet ExecutableSpecification>
+      getExecutableSpecificationCache;
 
   /**
    * Creates an {@link ExecutableSpecification} object for the given constructor or method, from its

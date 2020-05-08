@@ -2,6 +2,7 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
@@ -72,12 +73,13 @@ public class ThrowsCondition extends SpecificationClause {
     if (!(object instanceof ThrowsCondition)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ThrowsCondition other = (ThrowsCondition) object;
     return super.equals(other) && this.exceptionType.equals(other.exceptionType);
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(super.hashCode(), exceptionType);
   }
 

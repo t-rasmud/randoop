@@ -21,7 +21,8 @@ public class TestEnvironment {
   private final String testClasspath;
 
   /** A map from javaagent jar path to argument string. */
-  private final LinkedHashMap<@PolyDet Path, @PolyDet String> agentMap = new @PolyDet LinkedHashMap<>();
+  private final LinkedHashMap<@PolyDet Path, @PolyDet String> agentMap =
+      new @PolyDet LinkedHashMap<>();
 
   /** The path for the replacecall agent. */
   private Path replaceCallAgentPath;
@@ -78,7 +79,8 @@ public class TestEnvironment {
    * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws CommandException if there is an error running the test command
    */
-  public RunCommand.Status runTest(@Det TestEnvironment this, @Det String testClassName, @Det Path workingDirectory)
+  public RunCommand.Status runTest(
+      @Det TestEnvironment this, @Det String testClassName, @Det Path workingDirectory)
       throws CommandException {
     List<String> command = commandPrefix();
     command.add(testClassName);
@@ -103,9 +105,9 @@ public class TestEnvironment {
       command.add(getJavaagentOption(replaceCallAgentPath, replaceCallAgentArgs));
     }
 
-    for (Map. @PolyDet("up") Entry<@PolyDet Path, @PolyDet String> entry : agentMap.entrySet()) {
+    for (Map.@PolyDet("up") Entry<@PolyDet Path, @PolyDet String> entry : agentMap.entrySet()) {
       @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
-      Map. @PolyDet Entry<@PolyDet Path, @PolyDet String> tmp = entry;
+      Map.@PolyDet Entry<@PolyDet Path, @PolyDet String> tmp = entry;
       String args = tmp.getValue();
       command.add(getJavaagentOption(tmp.getKey(), args));
     }

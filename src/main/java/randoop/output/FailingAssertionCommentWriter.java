@@ -83,7 +83,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private final JavaFileWriter javaFileWriter;
 
   /** Method names for flaky tests (e.g., "test005"). */
-  private final @PolyDet("upDet") HashSet<@PolyDet String> flakyTestNames = new @PolyDet("upDet") HashSet<>();
+  private final @PolyDet("upDet") HashSet<@PolyDet String> flakyTestNames =
+      new @PolyDet("upDet") HashSet<>();
 
   /**
    * Create a {@link FailingAssertionCommentWriter}.
@@ -118,7 +119,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public Path writeClassCode(@Det FailingAssertionCommentWriter this, @Det String packageName, @Det String classname, @Det String classSource)
+  public Path writeClassCode(
+      @Det FailingAssertionCommentWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String classSource)
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
@@ -135,7 +140,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
         try {
           compileTestClass(packageName, classname, classSource, workingDirectory);
-        } catch (FileCompiler. @Det FileCompilerException e) {
+        } catch (FileCompiler.@Det FileCompilerException e) {
           classSource =
               commentCatchStatements(
                   packageName,
@@ -185,7 +190,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(@Det FailingAssertionCommentWriter this, @Det String packageName, @Det String classname, @Det String javaCode)
+  public Path writeUnmodifiedClassCode(
+      @Det FailingAssertionCommentWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String javaCode)
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
@@ -209,7 +218,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       @Det String javaCode,
       @Det List<Diagnostic<? extends JavaFileObject>> diagnostics,
       @Det Path destinationDir,
-      FileCompiler. @Det FileCompilerException e) {
+      FileCompiler.@Det FileCompilerException e) {
     assert !Objects.equals(packageName, "");
 
     @Det String @Det [] javaCodeLines = javaCode.split(Globals.lineSep);
@@ -399,7 +408,10 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @return the number of JUnit failures, a non-negative integer
    */
   private int numJunitFailures(
-      Iterator<@PolyDet String> lineIterator, Status status, String qualifiedClassname, String javaCode) {
+      Iterator<@PolyDet String> lineIterator,
+      Status status,
+      String qualifiedClassname,
+      String javaCode) {
     @PolyDet Match failureCountMatch;
     try {
       failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
@@ -529,7 +541,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      @Det FailingAssertionCommentWriter this, @Det String packageName, @Det String classname, @Det String classSource, @Det Path destinationDir)
+      @Det FailingAssertionCommentWriter this,
+      @Det String packageName,
+      @Det String classname,
+      @Det String classSource,
+      @Det Path destinationDir)
       throws FileCompiler.FileCompilerException {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.

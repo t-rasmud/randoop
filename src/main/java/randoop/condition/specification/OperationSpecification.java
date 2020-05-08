@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
@@ -63,24 +65,24 @@ public class OperationSpecification {
 
   /** The list of pre-conditions for the operation. */
   @SerializedName("pre")
-  private final List<Precondition> preSpecifications;
+  private final List<@PolyDet Precondition> preSpecifications;
 
   /** The list of post-conditions for the operation. */
   @SerializedName("post")
-  private final List<Postcondition> postSpecifications;
+  private final List<@PolyDet Postcondition> postSpecifications;
 
   /** The specification of expected exceptions for the operation. */
   @SerializedName("throws")
-  private final List<ThrowsCondition> throwsSpecifications;
+  private final List<@PolyDet ThrowsCondition> throwsSpecifications;
 
   /** Gson serialization requires a default constructor. */
   @SuppressWarnings("unused")
   private OperationSpecification() {
     this.operation = null;
-    this.identifiers = new Identifiers();
-    this.preSpecifications = new ArrayList<>();
-    this.postSpecifications = new ArrayList<>();
-    this.throwsSpecifications = new ArrayList<>();
+    this.identifiers = new @PolyDet Identifiers();
+    this.preSpecifications = new @PolyDet ArrayList<>();
+    this.postSpecifications = new @PolyDet ArrayList<>();
+    this.throwsSpecifications = new @PolyDet ArrayList<>();
   }
 
   /**
@@ -109,11 +111,11 @@ public class OperationSpecification {
    * @param throwsSpecifications the list of specifications for the operation
    */
   public OperationSpecification(
-      OperationSignature operation,
-      Identifiers identifiers,
-      List<Precondition> preSpecifications,
-      List<Postcondition> postSpecifications,
-      List<ThrowsCondition> throwsSpecifications) {
+      @PolyDet OperationSignature operation,
+      @PolyDet Identifiers identifiers,
+      @PolyDet List<@PolyDet Precondition> preSpecifications,
+      @PolyDet List<@PolyDet Postcondition> postSpecifications,
+      @PolyDet List<@PolyDet ThrowsCondition> throwsSpecifications) {
     this.operation = operation;
     this.identifiers = identifiers;
     this.preSpecifications = preSpecifications;
@@ -144,7 +146,7 @@ public class OperationSpecification {
    *
    * @return the list of {@link Precondition} objects for this specification
    */
-  public List<Precondition> getPreconditions() {
+  public List<@PolyDet Precondition> getPreconditions() {
     return preSpecifications;
   }
 
@@ -153,7 +155,7 @@ public class OperationSpecification {
    *
    * @return the list of {@link Postcondition} objects for this specification
    */
-  public List<Postcondition> getPostconditions() {
+  public List<@PolyDet Postcondition> getPostconditions() {
     return postSpecifications;
   }
 
@@ -162,7 +164,7 @@ public class OperationSpecification {
    *
    * @return the list of specifications for this operation specification, is non-null
    */
-  public List<ThrowsCondition> getThrowsConditions() {
+  public List<@PolyDet ThrowsCondition> getThrowsConditions() {
     return throwsSpecifications;
   }
 
@@ -213,16 +215,22 @@ public class OperationSpecification {
     if (!(object instanceof OperationSpecification)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     OperationSpecification other = (OperationSpecification) object;
-    return this.operation.equals(other.operation)
-        && this.identifiers.equals(other.identifiers)
-        && this.preSpecifications.equals(other.preSpecifications)
-        && this.postSpecifications.equals(other.postSpecifications)
-        && this.throwsSpecifications.equals(other.throwsSpecifications);
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
+    @PolyDet boolean tmp =
+        this.operation.equals(other.operation)
+            && this.identifiers.equals(other.identifiers)
+            && this.preSpecifications.equals(other.preSpecifications)
+            && this.postSpecifications.equals(other.postSpecifications)
+            && this.throwsSpecifications.equals(other.throwsSpecifications);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(
         this.operation,
         this.identifiers,

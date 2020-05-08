@@ -2,6 +2,8 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -21,26 +23,26 @@ public class ExecutableSpecification {
    * The {@link ExecutableBooleanExpression} objects for the {@link
    * randoop.condition.specification.Precondition}s of the operation.
    */
-  private final List<ExecutableBooleanExpression> preExpressions;
+  private final List<@PolyDet ExecutableBooleanExpression> preExpressions;
 
   /**
    * The {@link GuardThrowsPair} objects for the {@link
    * randoop.condition.specification.Postcondition}s of the operation.
    */
-  private final List<GuardPropertyPair> guardPropertyPairs;
+  private final List<@PolyDet GuardPropertyPair> guardPropertyPairs;
 
   /**
    * The {@link GuardThrowsPair} objects for the {@link
    * randoop.condition.specification.ThrowsCondition}s of the operation.
    */
-  private final List<GuardThrowsPair> guardThrowsPairs;
+  private final List<@PolyDet GuardThrowsPair> guardThrowsPairs;
 
   /**
    * Mirrors the overrides/implements relation among methods. If this ExecutableSpecification is the
    * local specification for method declaration m, the {@code parentList} contains one element for
    * each method that m overrides or implements (and has specifications).
    */
-  private List<ExecutableSpecification> parentList = new ArrayList<>();
+  private List<@PolyDet ExecutableSpecification> parentList = new @PolyDet ArrayList<>();
 
   /** Creates an empty {@link ExecutableSpecification} object. */
   public ExecutableSpecification() {
@@ -60,9 +62,9 @@ public class ExecutableSpecification {
    * @param guardThrowsPairs the operation throws-specifications
    */
   public ExecutableSpecification(
-      List<ExecutableBooleanExpression> preExpressions,
-      List<GuardPropertyPair> guardPropertyPairs,
-      List<GuardThrowsPair> guardThrowsPairs) {
+      @PolyDet List<@PolyDet ExecutableBooleanExpression> preExpressions,
+      @PolyDet List<@PolyDet GuardPropertyPair> guardPropertyPairs,
+      @PolyDet List<@PolyDet GuardThrowsPair> guardThrowsPairs) {
     this.preExpressions = preExpressions;
     this.guardPropertyPairs = guardPropertyPairs;
     this.guardThrowsPairs = guardThrowsPairs;
@@ -77,10 +79,10 @@ public class ExecutableSpecification {
    * @return the table with entries for this operation
    * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] args) {
-    ExpectedOutcomeTable table = new ExpectedOutcomeTable();
+  public ExpectedOutcomeTable checkPrestate(@Det ExecutableSpecification this, Object[] args) {
+    @PolyDet ExpectedOutcomeTable table = new @PolyDet ExpectedOutcomeTable();
     this.checkPrestate(args, table);
-    for (ExecutableSpecification execSpec : parentList) {
+    for (@Det ExecutableSpecification execSpec : parentList) {
       execSpec.checkPrestate(args, table);
     }
     return table;
@@ -102,10 +104,11 @@ public class ExecutableSpecification {
    * @param args the argument values; always includes a receiver (null for static methods)
    * @param table the table to which the created entry is to be added
    */
-  private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
+  private void checkPrestate(
+      @Det ExecutableSpecification this, Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreExpressions(args);
     List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
-    ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
+    @PolyDet ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
     table.add(preconditionCheck, postCondition, throwsClauses);
   }
 
@@ -117,8 +120,8 @@ public class ExecutableSpecification {
    * @param args the argument values
    * @return false if any local precondition fails on the argument values, true if all succeed
    */
-  private boolean checkPreExpressions(Object[] args) {
-    for (ExecutableBooleanExpression preCondition : preExpressions) {
+  private boolean checkPreExpressions(@Det ExecutableSpecification this, Object[] args) {
+    for (@Det ExecutableBooleanExpression preCondition : preExpressions) {
       if (!preCondition.check(args)) {
         return false;
       }
@@ -133,10 +136,11 @@ public class ExecutableSpecification {
    * @param args the argument values
    * @return the set of exceptions for which the guard expression evaluated to true
    */
-  private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
+  private @Det List<ThrowsClause> checkGuardThrowsPairs(
+      @Det ExecutableSpecification this, Object[] args) {
     List<ThrowsClause> throwsClauses = new ArrayList<>();
-    for (GuardThrowsPair pair : guardThrowsPairs) {
-      ExecutableBooleanExpression guard = pair.guard;
+    for (@Det GuardThrowsPair pair : guardThrowsPairs) {
+      @Det ExecutableBooleanExpression guard = pair.guard;
       if (guard.check(args)) {
         throwsClauses.add(pair.throwsClause);
       }
@@ -153,9 +157,10 @@ public class ExecutableSpecification {
    * @return the property for the first {@link GuardPropertyPair} for which the guard expression
    *     evaluates to true; null if there is none
    */
-  private ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args) {
-    for (GuardPropertyPair gpPair : guardPropertyPairs) {
-      ExecutableBooleanExpression guard = gpPair.guard;
+  private @PolyDet ExecutableBooleanExpression checkGuardPropertyPairs(
+      @Det ExecutableSpecification this, Object[] args) {
+    for (@Det GuardPropertyPair gpPair : guardPropertyPairs) {
+      @Det ExecutableBooleanExpression guard = gpPair.guard;
       if (guard.check(args)) {
         return gpPair.property.addPrestate(args);
       }
@@ -183,7 +188,7 @@ public class ExecutableSpecification {
     if (!(preExpressions.isEmpty() && guardPropertyPairs.isEmpty() && guardThrowsPairs.isEmpty())) {
       return false;
     }
-    for (ExecutableSpecification execSpec : parentList) {
+    for (@PolyDet("up") ExecutableSpecification execSpec : parentList) {
       if (!execSpec.isEmpty()) {
         return false;
       }

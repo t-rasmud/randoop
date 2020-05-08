@@ -1,7 +1,9 @@
 @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+@SuppressWarnings("determinism") // iterated collection can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+@SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
 @SuppressWarnings("determinism") // process is order insensitive, can't be verified
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
 @SuppressWarnings("determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
@@ -29,6 +31,17 @@
 @SuppressWarnings("determinism") // method doesn't mutate so safe to call
 @SuppressWarnings("determinism") // empty list clearly assignable to anything
 @SuppressWarnings("determinism") // okay to treat cache as @PolyDet
+@SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+@SuppressWarnings("determinism") // Tree set constructed from HashSet should be @PolyDet("down")
+@SuppressWarnings("determinism") // library not annotated
+@SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type argumetns
+@SuppressWarnings("determinism") // only printed in exceptional circumstances
+@SuppressWarnings("determinism") // Arrays.toString deterministic in this case
+@SuppressWarnings("determinism") // collection clearly sorted above, so deterministic
+@SuppressWarnings("determinism") // we consider file operations to be deterministic
+@SuppressWarnings("determinism") // impossible to verify toString on interface
+
+@SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 
 // For when there's an error on a collection in an extends/implements clause
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
@@ -44,6 +57,9 @@
 
 // For @PolyDet("") related errors
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147
+
+// For issue with Class<?> arrays
+@SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/3277
 
 // For loop issue
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/168

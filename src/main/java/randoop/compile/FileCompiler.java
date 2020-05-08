@@ -45,7 +45,8 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(@PolyDet List<@PolyDet File> sourceFiles, Path destinationDir) throws FileCompilerException {
+  public void compile(@PolyDet List<@PolyDet File> sourceFiles, Path destinationDir)
+      throws FileCompilerException {
     // Set the destination directory for the compiler
     @PolyDet List<@PolyDet String> compilerOptions = new @PolyDet ArrayList<>(options);
     compilerOptions.add("-d");
@@ -65,8 +66,9 @@ public class FileCompiler {
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
       @SuppressWarnings("determinism") // library not annotated
-      FileCompilerException tmp = new FileCompilerException(
-          "Compilation failed", sourceFiles, compilerOptions, diagnostics);
+      FileCompilerException tmp =
+          new FileCompilerException(
+              "Compilation failed", sourceFiles, compilerOptions, diagnostics);
       throw tmp;
     }
   }
