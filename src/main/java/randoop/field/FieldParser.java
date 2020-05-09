@@ -70,7 +70,7 @@ public class FieldParser {
    * @param fieldName field name for which to search the class
    * @return field of the class with the given name
    */
-  @SuppressWarnings("determinism:return.type.incompatible")
+  @SuppressWarnings("determinism:return.type.incompatible")  // process is order insensitive, can't be verified
   private static Field fieldForName(Class<?> type, String fieldName) {
     for (Field f : type.getDeclaredFields()) {
       if (fieldName.equals(f.getName())) {
