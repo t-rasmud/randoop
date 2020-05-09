@@ -58,7 +58,7 @@ public class FieldSet extends CallableOperation {
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  @SuppressWarnings({"determinism:override.return.invalid", "determinism:method.invocation.invalid"})
+  @SuppressWarnings({"determinism:override.return.invalid", "determinism:method.invocation.invalid"})    // Other classes that override evaluate return @NonDet like the super class. This method returns @PolyDet, method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
 
     Object instance = null;
@@ -192,7 +192,7 @@ public class FieldSet extends CallableOperation {
     if (!(obj instanceof FieldSet)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     FieldSet s = (FieldSet) obj;
     return field.equals(s.field);
   }

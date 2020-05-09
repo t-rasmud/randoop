@@ -57,7 +57,7 @@ public class TypedClassOperation extends TypedOperation {
     if (!(obj instanceof TypedClassOperation)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     TypedClassOperation op = (TypedClassOperation) obj;
     return declaringType.equals(op.declaringType) && super.equals(obj);
   }
@@ -152,7 +152,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  @SuppressWarnings("determinism:invariant.cast.unsafe")
+  @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
   public boolean hasWildcardTypes() {
     return getInputTypes().hasWildcard()
         || (getOutputType().isParameterized()
@@ -160,7 +160,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  @SuppressWarnings("determinism:invariant.cast.unsafe")
+  @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
   public @PolyDet List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> paramSet = new @PolyDet LinkedHashSet<>();
     paramSet.addAll(getInputTypes().getTypeParameters());

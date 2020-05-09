@@ -139,7 +139,7 @@ public final class MethodCall extends CallableOperation {
     if (!(o instanceof MethodCall)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }
@@ -156,7 +156,7 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid"})
+  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid"})  // Other classes that override evaluate return @NonDet like the super class. This method returns @Det
   public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);

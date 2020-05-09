@@ -105,7 +105,7 @@ public final class NonreceiverTerm extends CallableOperation {
     if (!(o instanceof NonreceiverTerm)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     NonreceiverTerm other = (NonreceiverTerm) o;
 
     return this.type.equals(other.type) && Objects.equals(this.value, other.value);
