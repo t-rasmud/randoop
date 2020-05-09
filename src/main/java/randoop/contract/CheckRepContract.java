@@ -103,7 +103,7 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det CheckRepContract this) {
     return "Check rep invariant (method " + checkRepMethod.getName() + ") for x0";
   }
 
@@ -113,7 +113,7 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det CheckRepContract this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Check representation invariant.").append(Globals.lineSep);

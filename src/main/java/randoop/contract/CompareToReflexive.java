@@ -49,7 +49,7 @@ public class CompareToReflexive extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det CompareToReflexive this) {
     return "compareTo-reflexive on x0";
   }
 
@@ -59,7 +59,7 @@ public class CompareToReflexive extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det CompareToReflexive this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

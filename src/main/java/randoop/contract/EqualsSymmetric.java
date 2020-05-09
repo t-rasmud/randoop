@@ -42,7 +42,7 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsSymmetric this) {
     return "equals-symmetric on x0 and x1.";
   }
 
@@ -52,7 +52,7 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsSymmetric this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// This assertion (symmetry of equals) fails ");

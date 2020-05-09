@@ -43,7 +43,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsHashcode this) {
     return "equals-hashcode on x0 and x1";
   }
 
@@ -53,7 +53,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsHashcode this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

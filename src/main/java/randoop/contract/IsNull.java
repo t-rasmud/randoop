@@ -51,7 +51,7 @@ public final class IsNull extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det IsNull this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append(
@@ -61,7 +61,7 @@ public final class IsNull extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det IsNull this) {
     return "x0 == null";
   }
 

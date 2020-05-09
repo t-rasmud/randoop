@@ -63,7 +63,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EnumValue this) {
     return null;
   }
 
@@ -72,7 +72,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EnumValue this) {
     String valueName = getValueName();
     StringBuilder b = new StringBuilder();
     b.append("org.junit.Assert.assertTrue(");

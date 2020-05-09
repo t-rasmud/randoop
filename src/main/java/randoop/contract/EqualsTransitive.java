@@ -46,7 +46,7 @@ public class EqualsTransitive extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsTransitive this) {
     return "equals-transitive on x0, x1, and x2.";
   }
 
@@ -56,7 +56,7 @@ public class EqualsTransitive extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsTransitive this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// This assertion (transitivity of equals) fails ");

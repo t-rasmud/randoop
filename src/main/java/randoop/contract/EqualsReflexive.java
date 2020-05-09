@@ -42,7 +42,7 @@ public final class EqualsReflexive extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsReflexive this) {
     return "x0.equals(x0)";
   }
 
@@ -52,7 +52,7 @@ public final class EqualsReflexive extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsReflexive this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

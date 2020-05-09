@@ -46,7 +46,7 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det SizeToArrayLength this) {
     return "x0.toArray().length == x0.size()";
   }
 
@@ -56,7 +56,7 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det SizeToArrayLength this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

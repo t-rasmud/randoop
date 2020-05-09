@@ -52,7 +52,9 @@ public final class ObserverEqValue extends ObjectContract {
     return Objects.hash(observer, value);
   }
 
-  public ObserverEqValue(@PolyDet TypedOperation observer, @Det Object value) {
+  @SuppressWarnings({"determinism:nondeterministic.tostring"})
+  // value holds a primitive or a String (See comment on field)
+  public ObserverEqValue(@PolyDet TypedOperation observer, Object value) {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
@@ -86,7 +88,8 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  @SuppressWarnings("determinism:nondeterministic.tostring")
+  public String toCodeString(@Det ObserverEqValue this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Regression assertion (captures the current behavior of the code)")
@@ -96,7 +99,7 @@ public final class ObserverEqValue extends ObjectContract {
     // representation, but this works for this simple case.
     String call;
     {
-      @PolyDet CallableOperation operation = observer.getOperation();
+      @Det CallableOperation operation = observer.getOperation();
       String methodname = operation.getName();
       if (operation.isStatic()) {
         Executable m = (Executable) operation.getReflectionObject();
@@ -149,7 +152,7 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det ObserverEqValue this) {
     return toCodeString();
   }
 

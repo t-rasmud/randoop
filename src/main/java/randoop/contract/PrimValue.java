@@ -100,7 +100,8 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  @SuppressWarnings("determinism:nondeterministic.tostring")    // value is a primitive or String (see comment on field)
+  public String toCodeString(@Det PrimValue this) {
 
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
@@ -147,7 +148,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det PrimValue this) {
     return null;
   }
 }
