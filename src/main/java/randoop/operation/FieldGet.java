@@ -76,11 +76,12 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+          @Det FieldGet this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 

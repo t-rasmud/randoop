@@ -249,7 +249,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public Object getValue() {
+  public Object getValue(@Det TypedOperation this) {
     return operation.getValue();
   }
 
@@ -265,7 +265,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param inputVars the list of input variables for this operation
    * @param b the {@code StringBuilder}
    */
-  public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(@Det TypedOperation this, @Det List<@Det Variable> inputVars, @Det StringBuilder b);
 
   /**
    * Performs this operation using the array of input values. Returns the results of execution as an
@@ -587,9 +587,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] values) {
+  public ExpectedOutcomeTable checkPrestate(@Det TypedOperation this, @Det Object @Det[] values) {
     if (execSpec == null) {
-      return new @PolyDet ExpectedOutcomeTable();
+      return new ExpectedOutcomeTable();
     }
     return execSpec.checkPrestate(addNullReceiverIfStatic(values));
   }

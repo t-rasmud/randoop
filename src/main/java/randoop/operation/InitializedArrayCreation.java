@@ -86,11 +86,12 @@ public final class InitializedArrayCreation extends CallableOperation {
   /** {@inheritDoc} */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+      @Det InitializedArrayCreation this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     if (inputVars.size() > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + inputVars.size() + ", capacity: " + length);
@@ -104,7 +105,6 @@ public final class InitializedArrayCreation extends CallableOperation {
         b.append(", ");
       }
 
-      @SuppressWarnings("determinism:method.invocation.invalid")
       String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }

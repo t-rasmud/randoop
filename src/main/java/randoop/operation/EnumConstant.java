@@ -88,11 +88,12 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+          @Det EnumConstant this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b) {
     b.append(declaringType.getName()).append(".").append(this.value.name());
   }
 
@@ -210,7 +211,7 @@ public class EnumConstant extends CallableOperation {
    * @return value of enum constant
    */
   @Override
-  public Object getValue() {
+  public Object getValue(@Det EnumConstant this) {
     return value();
   }
 

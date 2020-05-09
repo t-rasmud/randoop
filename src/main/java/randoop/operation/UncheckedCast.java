@@ -8,6 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * An {@link Operation} to perform an explicit cast. NOTE: there is no actual checking of the types
@@ -57,14 +58,14 @@ class UncheckedCast extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+      @Det UncheckedCast this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     b.append("(").append(type.getName()).append(")");
     int i = 0;
-    @SuppressWarnings("determinism:method.invocation.invalid")
     String param = getArgumentString(inputVars.get(i));
     b.append(param);
   }

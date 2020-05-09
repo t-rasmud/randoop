@@ -98,18 +98,18 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+          @Det FieldSet this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
 
     // variable/value to be assigned is either only or second entry in list
     int index = inputVars.size() - 1;
-    @SuppressWarnings("determinism:method.invocation.invalid")
     String rhs = getArgumentString(inputVars.get(index));
     b.append(rhs);
   }

@@ -10,6 +10,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Created by bjkeller on 8/19/16. */
 class ArrayElementSet extends CallableOperation {
@@ -43,18 +44,17 @@ class ArrayElementSet extends CallableOperation {
 
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+          @Det ArrayElementSet this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b) {
 
     b.append(inputVars.get(ARRAY).getName()).append("[");
-    @PolyDet("up") Variable indexVariable = inputVars.get(INDEX);
-    @SuppressWarnings("determinism:method.invocation.invalid")
+    @Det Variable indexVariable = inputVars.get(INDEX);
     String index = getArgumentString(indexVariable);
     b.append(index).append("]").append(" = ");
-    @SuppressWarnings("determinism:method.invocation.invalid")
     String value = getArgumentString(inputVars.get(VALUE));
     b.append(value);
   }

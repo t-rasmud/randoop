@@ -3,6 +3,8 @@ package randoop.operation;
 import randoop.reflection.ReflectionPredicate;
 import randoop.types.Type;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 /**
  * Operation represents the constructs that can occur in a statement as part of a test sequence.
  * These include method calls, constructor calls, field accesses, enum constant values, or primitive
@@ -105,7 +107,7 @@ public interface Operation {
    * @return object reference to value
    * @throws IllegalArgumentException if no meaningful definition of "value" for type
    */
-  Object getValue();
+  Object getValue(@Det Operation this);
 
   /**
    * Determines whether the reflective object in this {@link Operation} satisfies the {@code canUse}

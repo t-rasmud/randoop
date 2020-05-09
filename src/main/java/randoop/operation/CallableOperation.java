@@ -10,6 +10,7 @@ import randoop.types.TypeTuple;
 
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * CallableOperation is an abstract implementation of the Operation interface to provide default
@@ -53,7 +54,7 @@ public abstract class CallableOperation implements Operation {
   }
 
   @Override
-  public Object getValue() {
+  public Object getValue(@Det CallableOperation this) {
     throw new IllegalArgumentException("No value for this kind of operation.");
   }
 
@@ -89,11 +90,12 @@ public abstract class CallableOperation implements Operation {
    * @param b the {@link StringBuilder} to which code is added
    */
   public abstract void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          @PolyDet List<@PolyDet Variable> inputVars,
-          StringBuilder b);
+          @Det CallableOperation this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b);
 
   /**
    * Returns the variable as a string to be used as an argument to an operation. Determines if the

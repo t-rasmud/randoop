@@ -87,15 +87,15 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+          @Det ConstructorCall this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     assert declaringType instanceof ClassOrInterfaceType : "constructor must be member of class";
 
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
-    @PolyDet ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType) declaringType;
+    @Det ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType) declaringType;
 
     boolean isMemberClass = declaringClassType.isMemberClass();
     assert Util.implies(isMemberClass, !inputVars.isEmpty());
@@ -120,7 +120,6 @@ public final class ConstructorCall extends CallableOperation {
         b.append("(").append(inputTypes.get(i).getName()).append(")");
       }
 
-      @SuppressWarnings("determinism:method.invocation.invalid")
       String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }

@@ -154,12 +154,12 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param b {@link StringBuilder} to which string representation is appended
    */
   @Override
-  public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+  public void appendCode(@Det NonreceiverTerm this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     b.append(Value.toCodeString(getValue()));
   }
 
@@ -169,7 +169,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return value of this {@link NonreceiverTerm}
    */
   @Override
-  public Object getValue() {
+  public @Det Object getValue(@Det NonreceiverTerm this) {
     return value;
   }
 
