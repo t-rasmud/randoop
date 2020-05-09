@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -23,10 +26,6 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Type decorator of {@link Operation} objects. An operation has zero or more input types, and one
@@ -60,7 +59,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param inputTypes the input types
    * @param outputType the output types
    */
-  TypedOperation(@PolyDet CallableOperation operation, @PolyDet TypeTuple inputTypes, Type outputType) {
+  TypedOperation(
+      @PolyDet CallableOperation operation, @PolyDet TypeTuple inputTypes, Type outputType) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -288,7 +288,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
-  public abstract @Det TypedOperation substitute(@Det TypedOperation this, @Det Substitution substitution);
+  public abstract @Det TypedOperation substitute(
+      @Det TypedOperation this, @Det Substitution substitution);
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
@@ -387,11 +388,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
-    for (Method m : enumClass.getMethods()) {
+    for (@Det Method m : enumClass.getMethods()) {
       if (m.getName().equals(method.getName())
           && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
         @Det List<@Det Type> paramTypes = new ArrayList<>();
-        MethodCall op = new MethodCall(m);
+        @Det MethodCall op = new MethodCall(m);
         if (!op.isStatic()) {
           paramTypes.add(enumType);
         }
@@ -522,7 +523,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param size the size of the created array
    * @return the array creation operation
    */
-  public static @Det TypedOperation createInitializedArrayCreation(@Det ArrayType arrayType, @Det int size) {
+  public static @Det TypedOperation createInitializedArrayCreation(
+      @Det ArrayType arrayType, @Det int size) {
     List<Type> typeList = new ArrayList<>();
     for (int i = 0; i < size; i++) {
       typeList.add(arrayType.getComponentType());
@@ -587,9 +589,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] values) {
+  public ExpectedOutcomeTable checkPrestate(@Det TypedOperation this, @Det Object @Det [] values) {
     if (execSpec == null) {
-      return new @PolyDet ExpectedOutcomeTable();
+      return new ExpectedOutcomeTable();
     }
     return execSpec.checkPrestate(addNullReceiverIfStatic(values));
   }
@@ -606,9 +608,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   @SuppressWarnings("determinism:invalid.array.assignment")
   private Object[] addNullReceiverIfStatic(Object[] values) {
-    @PolyDet Object @PolyDet[] args = values;
+    @PolyDet Object @PolyDet [] args = values;
     if (this.isStatic()) {
-      args = new Object @PolyDet[values.length + 1];
+      args = new Object @PolyDet [values.length + 1];
       args[0] = null;
       System.arraycopy(values, 0, args, 1, values.length);
     }

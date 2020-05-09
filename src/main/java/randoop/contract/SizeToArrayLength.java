@@ -2,12 +2,11 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
 public final class SizeToArrayLength extends ObjectContract {
@@ -25,7 +24,8 @@ public final class SizeToArrayLength extends ObjectContract {
     Object o = objects[0];
     if (o instanceof Collection) {
       @SuppressWarnings("determinism:invariant.cast.unsafe")
-      @PolyDet("up") Collection<? extends @PolyDet("up") Object> c = (Collection<? extends @PolyDet("up") Object>) o;
+      @PolyDet("up") Collection<? extends @PolyDet("up") Object> c =
+          (Collection<? extends @PolyDet("up") Object>) o;
       assert c != null;
       return c.size() == c.toArray().length;
     }

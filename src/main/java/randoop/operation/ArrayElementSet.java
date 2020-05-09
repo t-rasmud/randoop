@@ -2,14 +2,13 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Created by bjkeller on 8/19/16. */
 class ArrayElementSet extends CallableOperation {
@@ -28,7 +27,7 @@ class ArrayElementSet extends CallableOperation {
   @SuppressWarnings("determinism:override.return.invalid")
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 3
-            : "array element assignment must have array, index and value as arguments";
+        : "array element assignment must have array, index and value as arguments";
     Object array = input[ARRAY];
     int index = (int) input[INDEX];
     Object value = input[VALUE];
@@ -43,11 +42,11 @@ class ArrayElementSet extends CallableOperation {
 
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      List<@PolyDet Variable> inputVars,
+      StringBuilder b) {
 
     b.append(inputVars.get(ARRAY).getName()).append("[");
     @PolyDet("up") Variable indexVariable = inputVars.get(INDEX);

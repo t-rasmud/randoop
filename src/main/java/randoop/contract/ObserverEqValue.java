@@ -3,6 +3,9 @@ package randoop.contract;
 import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
@@ -11,10 +14,6 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check

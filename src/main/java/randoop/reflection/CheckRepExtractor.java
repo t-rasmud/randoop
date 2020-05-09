@@ -2,6 +2,8 @@ package randoop.reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.CheckRep;
 import randoop.contract.CheckRepContract;
 import randoop.main.GenInputsAbstract;
@@ -22,7 +24,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
    *
    * @param contracts the set of contracts
    */
-  CheckRepExtractor(ContractSet contracts) {
+  CheckRepExtractor(@PolyDet ContractSet contracts) {
     this.contracts = contracts;
   }
 
@@ -36,8 +38,10 @@ class CheckRepExtractor extends DefaultClassVisitor {
    * @param m the method
    */
   @Override
-  public void visit(Method m) {
-    if (m.getAnnotation(CheckRep.class) != null) {
+  public void visit(@Det CheckRepExtractor this, @Det Method m) {
+    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+    @Det Class<@Det CheckRep> tmp = CheckRep.class;
+    if (m.getAnnotation(tmp) != null) {
       if (Modifier.isStatic(m.getModifiers())) {
         String msg =
             "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
@@ -85,7 +89,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
    *
    * @param m the method
    */
-  private static void printDetectedAnnotatedCheckRepMethod(Method m) {
+  private static void printDetectedAnnotatedCheckRepMethod(@Det Method m) {
     String msg =
         "ANNOTATION: Detected @CheckRep-annotated method \""
             + m.toString()

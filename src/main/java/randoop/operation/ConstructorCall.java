@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
@@ -14,9 +16,6 @@ import randoop.types.TypeTuple;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * ConstructorCall is an {@link Operation} that represents a call to a constructor, and holds a
@@ -206,7 +205,7 @@ public final class ConstructorCall extends CallableOperation {
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(constructor.getName()).append(".<init>(");
-    @PolyDet Class<?> @PolyDet[] params = constructor.getParameterTypes();
+    @PolyDet Class<?> @PolyDet [] params = constructor.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();

@@ -2,11 +2,9 @@ package randoop.contract;
 
 import java.util.Collections;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * A check for a particular value of an {@code Enum}. To be used in regression tests when {@code

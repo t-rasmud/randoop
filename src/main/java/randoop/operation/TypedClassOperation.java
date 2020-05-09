@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
@@ -15,10 +18,6 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents a TypedOperation and its declaring class. Examples of TypedOperations that have a
@@ -82,7 +81,8 @@ public class TypedClassOperation extends TypedOperation {
    * <p>Applies the substitution to the declaring type, all input types, and the output type.
    */
   @Override
-  public @Det TypedClassOperation substitute(@Det TypedClassOperation this, @Det Substitution substitution) {
+  public @Det TypedClassOperation substitute(
+      @Det TypedClassOperation this, @Det Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }

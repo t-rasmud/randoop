@@ -1,5 +1,7 @@
 package randoop.operation;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -7,10 +9,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Represents a method with a return type that is a type variable that must be instantiated, and for
@@ -27,7 +25,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
   }
 
   @Override
-  public @Det TypedClassOperationWithCast substitute(@Det TypedClassOperationWithCast this, @Det Substitution substitution) {
+  public @Det TypedClassOperationWithCast substitute(
+      @Det TypedClassOperationWithCast this, @Det Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
@@ -39,7 +38,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
   }
 
   @Override
-  public @Det TypedClassOperationWithCast applyCaptureConversion(@Det TypedClassOperationWithCast this) {
+  public @Det TypedClassOperationWithCast applyCaptureConversion(
+      @Det TypedClassOperationWithCast this) {
     return new TypedClassOperationWithCast(
         this.getOperation(),
         this.getDeclaringType(),

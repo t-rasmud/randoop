@@ -3,15 +3,14 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * {@code ArrayCreation} is a {@link Operation} representing the construction of a one-dimensional
@@ -50,7 +49,7 @@ public class ArrayCreation extends CallableOperation {
     @SuppressWarnings("determinism:invariant.cast.unsafe")
     ArrayCreation arrayCreation = (ArrayCreation) obj;
     return this.elementType.equals(arrayCreation.elementType)
-            && this.dimensions == arrayCreation.dimensions;
+        && this.dimensions == arrayCreation.dimensions;
   }
 
   @Override
@@ -80,11 +79,11 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      List<@PolyDet Variable> inputVars,
+      StringBuilder b) {
     @PolyDet("up") Variable inputVar = inputVars.get(0);
     b.append("new").append(" ").append(this.elementType.getName());
     b.append("[ ");
@@ -99,7 +98,7 @@ public class ArrayCreation extends CallableOperation {
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder result =
-            new StringBuilder(elementType.getName() + "[ " + inputTypes.get(0) + " ]");
+        new StringBuilder(elementType.getName() + "[ " + inputTypes.get(0) + " ]");
     for (int i = 1; i < dimensions; i++) {
       result.append("[]");
     }

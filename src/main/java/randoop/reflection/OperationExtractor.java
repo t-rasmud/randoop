@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
 import randoop.main.RandoopBug;
@@ -36,7 +38,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   private ClassOrInterfaceType classType;
 
   /** The operations collected by the extractor. This is the product of applying the visitor. */
-  private final Collection<TypedOperation> operations;
+  private final Collection<@PolyDet TypedOperation> operations;
 
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
@@ -65,13 +67,13 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    */
   public OperationExtractor(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      @PolyDet ClassOrInterfaceType classType,
+      @PolyDet ReflectionPredicate reflectionPredicate,
+      @PolyDet OmitMethodsPredicate omitPredicate,
+      @PolyDet VisibilityPredicate visibilityPredicate,
+      @PolyDet SpecificationCollection operationSpecifications) {
     this.classType = classType;
-    this.operations = new TreeSet<>();
+    this.operations = new @PolyDet TreeSet<>();
     this.reflectionPredicate = reflectionPredicate;
     this.omitPredicate = omitPredicate;
     this.visibilityPredicate = visibilityPredicate;
@@ -126,9 +128,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @throws RandoopBug if there is no substitution that unifies the declaring type with {@code
    *     classType} or a supertype
    */
-  private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
+  private TypedClassOperation instantiateTypes(
+      @Det OperationExtractor this, @Det TypedClassOperation operation) {
     if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
-      Substitution substitution =
+      @Det Substitution substitution =
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
       if (substitution == null) { // No unifying substitution found
         throw new RandoopBug(
@@ -155,8 +158,8 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     operation.getDeclaringType()}
    */
   // TODO: poor name
-  private void checkSubTypes(TypedClassOperation operation) {
-    ClassOrInterfaceType declaringType = operation.getDeclaringType();
+  private void checkSubTypes(@Det OperationExtractor this, @Det TypedClassOperation operation) {
+    @Det ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOf(declaringType)) {
       throw new RandoopBug(
           String.format(
@@ -171,7 +174,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param constructor a {@link Constructor} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Constructor<?> constructor) {
+  public void visit(@Det OperationExtractor this, @Det Constructor<?> constructor) {
     if (debug) {
       System.out.println("OperationExtractor.visit: constructor=" + constructor);
     }
@@ -184,14 +187,14 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!reflectionPredicate.test(constructor)) {
       return;
     }
-    TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
+    @Det TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
     if (debug) {
       System.out.println("OperationExtractor.visit: operation=" + operation);
     }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
       if (operationSpecifications != null) {
-        ExecutableSpecification execSpec =
+        @Det ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(constructor);
         if (!execSpec.isEmpty()) {
           operation.setExecutableSpecification(execSpec);
@@ -215,14 +218,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param method a {@link Method} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Method method) {
+  public void visit(@Det OperationExtractor this, @Det Method method) {
     if (debug) {
       System.out.println("OperationExtractor.visit: method=" + method);
     }
     if (!reflectionPredicate.test(method)) {
       return;
     }
-    TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
+    @Det TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
     if (debug) {
       System.out.println("OperationExtractor.visit: operation=" + operation);
     }
@@ -246,7 +249,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     // search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
       if (operationSpecifications != null) {
-        ExecutableSpecification execSpec =
+        @Det ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(method);
         if (!execSpec.isEmpty()) {
           operation.setExecutableSpecification(execSpec);
@@ -266,7 +269,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param field a {@link Field} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Field field) {
+  public void visit(@Det OperationExtractor this, @Det Field field) {
     assert field.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
         : "classType "
             + classType
@@ -276,7 +279,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
 
-    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
+    @Det ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
 
     int mods = field.getModifiers() & Modifier.fieldModifiers();
     if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
@@ -293,14 +296,14 @@ public class OperationExtractor extends DefaultClassVisitor {
       }
     }
 
-    TypedClassOperation getter =
+    @Det TypedClassOperation getter =
         instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
     checkSubTypes(getter);
     if (getter != null) {
       operations.add(getter);
     }
     if (!Modifier.isFinal(mods)) {
-      TypedClassOperation operation =
+      @Det TypedClassOperation operation =
           instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
       if (operation != null) {
         operations.add(operation);
@@ -314,11 +317,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param e an {@link Enum} object to be represented as an {@link Operation}
    */
   @Override
-  public void visit(Enum<?> e) {
-    ClassOrInterfaceType enumType = NonParameterizedType.forClass(e.getDeclaringClass());
+  public void visit(@Det OperationExtractor this, @Det Enum<?> e) {
+    @Det ClassOrInterfaceType enumType = NonParameterizedType.forClass(e.getDeclaringClass());
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
-    EnumConstant op = new EnumConstant(e);
-    TypedClassOperation operation =
+    @Det EnumConstant op = new EnumConstant(e);
+    @Det TypedClassOperation operation =
         new TypedClassOperation(op, enumType, new TypeTuple(), enumType);
     operations.add(operation);
   }
@@ -330,7 +333,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *
    * @return the collection of operations collected for the class
    */
-  public Collection<TypedOperation> getOperations() {
+  public Collection<@PolyDet TypedOperation> getOperations() {
     return operations;
   }
 }

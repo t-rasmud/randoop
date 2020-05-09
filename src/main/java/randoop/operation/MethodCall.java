@@ -5,6 +5,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -16,10 +19,6 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper for a
@@ -170,7 +169,7 @@ public final class MethodCall extends CallableOperation {
       paramsStartIndex = 1;
     }
 
-    @PolyDet("up") Object @PolyDet("up")[] params = new @PolyDet("up") Object @PolyDet("up")[paramsLength];
+    @PolyDet("up") Object @PolyDet("up") [] params = new @PolyDet("up") Object @PolyDet("up") [paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
@@ -209,7 +208,7 @@ public final class MethodCall extends CallableOperation {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
-    @PolyDet Class<?> @PolyDet[] params = method.getParameterTypes();
+    @PolyDet Class<?> @PolyDet [] params = method.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
@@ -251,7 +250,7 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    @Det Class<?> @Det[] typeArguments;
+    @Det Class<?> @Det [] typeArguments;
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {

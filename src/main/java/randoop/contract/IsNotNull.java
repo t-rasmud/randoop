@@ -1,12 +1,11 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import  org.checkerframework.checker.determinism.qual.PolyDet;
-import  org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * The contract: {@code x != null}.

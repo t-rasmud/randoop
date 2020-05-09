@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.util.UtilPlume;
 
@@ -94,15 +96,21 @@ public class RawSignature {
     if (!(object instanceof RawSignature)) {
       return false;
     }
+    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     RawSignature that = (RawSignature) object;
-    return Objects.equals(this.packageName, that.packageName)
-        && this.classname.equals(that.classname)
-        && this.name.equals(that.name)
-        && Arrays.equals(this.parameterTypes, that.parameterTypes);
+    @SuppressWarnings(
+        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                       // @PolyDet
+    @PolyDet boolean tmp =
+        Objects.equals(this.packageName, that.packageName)
+            && this.classname.equals(that.classname)
+            && this.name.equals(that.name)
+            && Arrays.equals(this.parameterTypes, that.parameterTypes);
+    return tmp;
   }
 
   @Override
-  public int hashCode() {
+  public @NonDet int hashCode() {
     return Objects.hash(classname, name, Arrays.hashCode(parameterTypes));
   }
 
@@ -114,9 +122,13 @@ public class RawSignature {
    */
   @Override
   public String toString() {
-    List<String> typeNames = new ArrayList<>();
+    @PolyDet List<@PolyDet String> typeNames = new @PolyDet ArrayList<>();
     for (Class<?> type : parameterTypes) {
-      typeNames.add(type.getCanonicalName());
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet Class<?> tmp = type;
+      typeNames.add(tmp.getCanonicalName());
     }
 
     return ((packageName == null) ? "" : packageName + ".")
@@ -162,7 +174,7 @@ public class RawSignature {
    *     same as the number of parameter types in this signature
    * @return the parameter declarations for this signature using the given parameter names
    */
-  public String getDeclarationArguments(List<String> parameterNames) {
+  public @PolyDet("up") String getDeclarationArguments(List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
           String.format(
@@ -174,7 +186,7 @@ public class RawSignature {
               this));
     }
 
-    List<String> paramDeclarations = new ArrayList<>();
+    @PolyDet("up") List<@PolyDet("up") String> paramDeclarations = new @PolyDet("up") ArrayList<>();
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }

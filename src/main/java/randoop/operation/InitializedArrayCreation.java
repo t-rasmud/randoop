@@ -3,16 +3,15 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * InitializedArrayCreation is an {@link Operation} representing the construction of a

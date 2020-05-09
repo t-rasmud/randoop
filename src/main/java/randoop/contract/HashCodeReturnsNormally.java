@@ -1,12 +1,10 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Checks that calling hashCode() on an object does not throw an exception. */
 public final class HashCodeReturnsNormally extends ObjectContract {

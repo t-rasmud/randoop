@@ -4,16 +4,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Interface for predicates that check whether a class or class member is considered visible. */
 public abstract class VisibilityPredicate {
 
   /** A predicate that returns true for public elements. */
-  public static VisibilityPredicate IS_PUBLIC = new PublicVisibilityPredicate();
+  public static @Det VisibilityPredicate IS_PUBLIC = new PublicVisibilityPredicate();
   /** A predicate that returns true for non-private elements. */
-  public static VisibilityPredicate IS_NOT_PRIVATE = new NotPrivateVisibilityPredicate();
+  public static @Det VisibilityPredicate IS_NOT_PRIVATE = new NotPrivateVisibilityPredicate();
   /** A predicate that always returns true. */
-  public static VisibilityPredicate IS_ANY = new AnyVisibilityPredicate();
+  public static @Det VisibilityPredicate IS_ANY = new AnyVisibilityPredicate();
 
   /**
    * Determines whether this VisibilityPredicate considers a {@link Class} visible.

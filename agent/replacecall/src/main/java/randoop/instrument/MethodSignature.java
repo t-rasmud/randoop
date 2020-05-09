@@ -176,7 +176,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
         for (int i = 0; i < this.paramTypes.length; i++) {
           @SuppressWarnings(
               "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the
-                             // same as @PolyDet
+          // same as @PolyDet
           @PolyDet int tmp = this.paramTypes[i].getSignature().compareTo(m.paramTypes[i].getSignature());
           result = tmp;
           if (result != 0) {

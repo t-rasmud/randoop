@@ -1,13 +1,12 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * An {@link Operation} to perform an explicit cast. NOTE: there is no actual checking of the types

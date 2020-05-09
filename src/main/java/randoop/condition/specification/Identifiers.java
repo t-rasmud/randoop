@@ -114,7 +114,7 @@ public class Identifiers {
     for (String name : parameters) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet String tmp = name;
       if (!names.add(tmp)) {
         return tmp;
@@ -141,7 +141,7 @@ public class Identifiers {
     Identifiers other = (Identifiers) object;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet boolean tmp =
         this.receiverName.equals(other.receiverName)
             && this.parameters.equals(other.parameters)

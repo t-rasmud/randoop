@@ -2,6 +2,8 @@ package randoop.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -14,9 +16,6 @@ import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a {@link AccessibleField} and
@@ -76,11 +75,11 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      List<@PolyDet Variable> inputVars,
+      StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
@@ -161,7 +160,7 @@ public class FieldGet extends CallableOperation {
       getInputTypeList.add(classType);
     }
     return new TypedClassOperation(
-            new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
+        new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

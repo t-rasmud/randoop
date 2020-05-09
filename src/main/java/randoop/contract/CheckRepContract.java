@@ -4,15 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Represents the contract that an object must conform to its representation invariant, as expressed

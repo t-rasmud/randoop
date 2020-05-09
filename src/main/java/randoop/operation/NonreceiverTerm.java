@@ -2,6 +2,9 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -14,10 +17,6 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.StringEscapeUtils;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -242,7 +241,8 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   @Override
   @SuppressWarnings("determinism:override.return.invalid")
-  public @NonDet String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
+  public @NonDet String toParsableString(
+      Type declaringType, TypeTuple inputTypes, Type outputType) {
 
     String valStr;
     if (value == null) {

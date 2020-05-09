@@ -3,37 +3,39 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Default implementation of the {@code ClassVisitor} class. All methods do nothing. */
 public class DefaultClassVisitor implements ClassVisitor {
 
   @Override
-  public void visit(Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(
+      @Det DefaultClassVisitor this, @Det Class<?> c, @Det ReflectionManager reflectionManager) {
     // default is to do nothing
   }
 
   @Override
-  public void visit(Constructor<?> c) {
+  public void visit(@Det DefaultClassVisitor this, @Det Constructor<?> c) {
     // default is to do nothing
   }
 
   @Override
-  public void visit(Method m) {
+  public void visit(@Det DefaultClassVisitor this, @Det Method m) {
     // default is to do nothing
   }
 
   @Override
-  public void visit(Field f) {
+  public void visit(@Det DefaultClassVisitor this, @Det Field f) {
     // default is to do nothing
   }
 
   @Override
-  public void visit(Enum<?> e) {
+  public void visit(@Det DefaultClassVisitor this, @Det Enum<?> e) {
     // default is to do nothing
   }
 
   @Override
-  public void visitBefore(Class<?> c) {
+  public void visitBefore(@Det DefaultClassVisitor this, @Det Class<?> c) {
     // default is to do nothing
   }
 

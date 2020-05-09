@@ -2,14 +2,13 @@ package randoop.operation;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * CallableOperation is an abstract implementation of the Operation interface to provide default
@@ -89,11 +88,11 @@ public abstract class CallableOperation implements Operation {
    * @param b the {@link StringBuilder} to which code is added
    */
   public abstract void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          @PolyDet List<@PolyDet Variable> inputVars,
-          StringBuilder b);
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      @PolyDet List<@PolyDet Variable> inputVars,
+      StringBuilder b);
 
   /**
    * Returns the variable as a string to be used as an argument to an operation. Determines if the
@@ -127,7 +126,7 @@ public abstract class CallableOperation implements Operation {
    * @return a string representation of this operation
    */
   public abstract String toParsableString(
-          Type declaringType, TypeTuple inputTypes, Type outputType);
+      Type declaringType, TypeTuple inputTypes, Type outputType);
 
   public AccessibleObject getReflectionObject() {
     return null;

@@ -2,6 +2,8 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeArgument;
@@ -19,15 +21,15 @@ import randoop.types.TypeVariable;
 class TypeTupleSet {
 
   /** The list of type lists (tuples) */
-  private List<List<ReferenceType>> typeTuples;
+  private List<@PolyDet List<@PolyDet ReferenceType>> typeTuples;
 
   /** The length of tuples in the set. */
   private int tupleLength;
 
   /** Creates a tuple set with a single empty tuple. */
   TypeTupleSet() {
-    this.typeTuples = new ArrayList<>();
-    this.typeTuples.add(new ArrayList<ReferenceType>());
+    this.typeTuples = new @PolyDet ArrayList<>();
+    this.typeTuples.add(new @PolyDet ArrayList<@PolyDet ReferenceType>());
     this.tupleLength = 0;
   }
 
@@ -38,11 +40,11 @@ class TypeTupleSet {
    *
    * @param types the list of types
    */
-  public void extend(List<ReferenceType> types) {
+  public void extend(@Det TypeTupleSet this, @Det List<ReferenceType> types) {
     tupleLength += 1;
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
-      for (ReferenceType type : types) {
+      for (@Det ReferenceType type : types) {
         List<ReferenceType> extTuple = new ArrayList<>(tuple);
         extTuple.add(type);
         assert extTuple.size() == tupleLength
@@ -60,13 +62,13 @@ class TypeTupleSet {
    * @param typeParameters the type arguments
    * @return the list of substitutions that instantiate the type arguments
    */
-  List<Substitution> filter(List<TypeVariable> typeParameters) {
+  List<Substitution> filter(@Det TypeTupleSet this, @Det List<TypeVariable> typeParameters) {
     assert typeParameters.size() == tupleLength
         : "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
     List<Substitution> substitutionSet = new ArrayList<>();
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
-      Substitution substitution = new Substitution(typeParameters, tuple);
+      @Det Substitution substitution = new Substitution(typeParameters, tuple);
 
       int i = 0;
       while (i < tuple.size()

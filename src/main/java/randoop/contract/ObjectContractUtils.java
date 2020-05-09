@@ -1,12 +1,11 @@
 package randoop.contract;
 
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
 import randoop.util.ObjectContractReflectionCode;
 import randoop.util.ReflectionCode;
 import randoop.util.ReflectionExecutor;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Utility methods for safely executing and printing {@link ObjectContract} code. */
 public class ObjectContractUtils {

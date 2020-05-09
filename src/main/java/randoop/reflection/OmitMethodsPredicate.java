@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -31,10 +34,10 @@ public class OmitMethodsPredicate {
   private static boolean logOmit = false;
 
   /** An OmitMethodsPredicate that does no omission. */
-  public static final OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
+  public static final @Det OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
 
   /** {@code Pattern}s to match operations that should be omitted. */
-  private final List<Pattern> omitPatterns;
+  private final List<@PolyDet Pattern> omitPatterns;
 
   /**
    * Create a new OmitMethodsPredicate.
@@ -42,11 +45,11 @@ public class OmitMethodsPredicate {
    * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
    *     least mean to do no omissions.
    */
-  public OmitMethodsPredicate(@Nullable List<Pattern> omitPatterns) {
+  public OmitMethodsPredicate(@Nullable @PolyDet List<@PolyDet Pattern> omitPatterns) {
     if (omitPatterns == null) {
-      this.omitPatterns = new ArrayList<>();
+      this.omitPatterns = new @PolyDet ArrayList<>();
     } else {
-      this.omitPatterns = new ArrayList<>(omitPatterns);
+      this.omitPatterns = new @PolyDet ArrayList<>(omitPatterns);
     }
   }
 
@@ -59,7 +62,8 @@ public class OmitMethodsPredicate {
    * @param operation the operation to be matched against the omit patterns of this predicate
    * @return true if the signature matches an omit pattern, and false otherwise
    */
-  private boolean shouldOmitExact(TypedClassOperation operation) {
+  private boolean shouldOmitExact(
+      @Det OmitMethodsPredicate this, @Det TypedClassOperation operation) {
     if (logOmit) {
       Log.logPrintf("shouldOmitExact(%s)%n", operation);
     }
@@ -97,7 +101,8 @@ public class OmitMethodsPredicate {
    *     an omit pattern, false otherwise
    */
   @SuppressWarnings("ReferenceEquality")
-  public boolean shouldOmit(final TypedClassOperation operation) {
+  public boolean shouldOmit(
+      @Det OmitMethodsPredicate this, final @Det TypedClassOperation operation) {
     if (logOmit) {
       Log.logPrintf("shouldOmit: testing %s%n", operation);
     }
@@ -107,16 +112,16 @@ public class OmitMethodsPredicate {
       return false;
     }
 
-    RawSignature signature = operation.getRawSignature();
+    @Det RawSignature signature = operation.getRawSignature();
 
     /*
      * Search the type and its supertypes that have the method.
      */
-    Set<ClassOrInterfaceType> visited = new HashSet<>();
-    Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
+    @OrderNonDet Set<@Det ClassOrInterfaceType> visited = new HashSet<>();
+    @Det Queue<@Det ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
     typeQueue.add(operation.getDeclaringType());
     while (!typeQueue.isEmpty()) {
-      ClassOrInterfaceType type = typeQueue.remove();
+      @Det ClassOrInterfaceType type = typeQueue.remove();
       if (!visited.add(type)) {
         continue;
       }
@@ -133,12 +138,13 @@ public class OmitMethodsPredicate {
         exists = true;
       } catch (NoSuchMethodException e) {
         // This is not necessarily an error (yet); it might be a constructor.
+
+        // see https://github.com/t-rasmud/checker-framework/issues/178
+        String tmp = (type == operation.getDeclaringType()) ? "" : "super";
         if (logOmit) {
           Log.logPrintf(
               "no method %s in %stype %s%n",
-              signature,
-              (type == operation.getDeclaringType()) ? "" : "super",
-              type.getRuntimeClass().getSimpleName());
+              signature, tmp, type.getRuntimeClass().getSimpleName());
         }
         exists = false;
       }
@@ -159,7 +165,7 @@ public class OmitMethodsPredicate {
       // If type has the method or constructor
       if (exists) {
         // Create the operation and test whether it is matched by an omit pattern
-        TypedClassOperation superTypeOperation = operation.getOperationForType(type);
+        @Det TypedClassOperation superTypeOperation = operation.getOperationForType(type);
         if (shouldOmitExact(superTypeOperation)) {
           return true;
         }

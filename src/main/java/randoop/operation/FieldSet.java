@@ -2,6 +2,8 @@ package randoop.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -15,10 +17,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation} that acts like a
@@ -58,7 +56,10 @@ public class FieldSet extends CallableOperation {
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  @SuppressWarnings({"determinism:override.return.invalid", "determinism:method.invocation.invalid"})
+  @SuppressWarnings({
+    "determinism:override.return.invalid",
+    "determinism:method.invocation.invalid"
+  })
   public ExecutionOutcome execute(Object[] statementInput) {
 
     Object instance = null;
@@ -98,11 +99,11 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<@PolyDet Variable> inputVars,
-          StringBuilder b) {
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      List<@PolyDet Variable> inputVars,
+      StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
@@ -160,18 +161,19 @@ public class FieldSet extends CallableOperation {
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException(
-              "Cannot create setter for final field " + classname + "." + opname);
+          "Cannot create setter for final field " + classname + "." + opname);
     }
     List<Type> setInputTypeList = new ArrayList<Type>();
     if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }
     setInputTypeList.add(fieldType);
-    return new @Det TypedClassOperation(
-            new FieldSet(accessibleField),
-            classType,
-            new TypeTuple(setInputTypeList),
-            JavaTypes.VOID_TYPE);
+    return new
+    @Det TypedClassOperation(
+        new FieldSet(accessibleField),
+        classType,
+        new TypeTuple(setInputTypeList),
+        JavaTypes.VOID_TYPE);
   }
 
   @Override

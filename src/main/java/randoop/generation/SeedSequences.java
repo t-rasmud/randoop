@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.sequence.Sequence;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -70,7 +71,7 @@ public final class SeedSequences {
     return SeedSequences.objectsToSeeds(seeds);
   }
 
-  public static Set<Sequence> objectsToSeeds(List<Object> seeds) {
+  public static Set<@PolyDet Sequence> objectsToSeeds(List<@PolyDet Object> seeds) {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {
       if (seed == null) {

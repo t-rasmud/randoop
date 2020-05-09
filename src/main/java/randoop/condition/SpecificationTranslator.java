@@ -157,7 +157,7 @@ public class SpecificationTranslator {
     String packageName = renamedPackage(declaringClass.getPackage());
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet RawSignature tmp = getRawSignature(packageName, receiverType, parameterTypes, returnType);
     return tmp;
   }

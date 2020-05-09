@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -334,13 +333,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     @Det ClassOrInterfaceType superclass = this.getSuperclass();
     if (superclass != null) {
       supertypes.add(superclass);
-      @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
       boolean ignore = supertypes.addAll(superclass.getSuperTypes());
     }
     for (@Det ClassOrInterfaceType interfaceType : this.getInterfaces()) {
       @Det ClassOrInterfaceType tmp = interfaceType;
       supertypes.add(tmp);
-      @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
       boolean ignore = supertypes.addAll(tmp.getSuperTypes());
     }
     return supertypes;
@@ -352,15 +349,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the immediate supertypes of this type
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  public @OrderNonDet List<@Det ClassOrInterfaceType> getImmediateSupertypes(
+  public @Det List<@Det ClassOrInterfaceType> getImmediateSupertypes(
       @Det ClassOrInterfaceType this) {
     if (this.isObject()) {
       return Collections.<@Det ClassOrInterfaceType>emptyList();
     }
-    @OrderNonDet List<@Det ClassOrInterfaceType> supertypes = new @OrderNonDet ArrayList<>();
+    @Det List<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
     @Det ClassOrInterfaceType superclass = this.getSuperclass();
     supertypes.add(superclass);
-    @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
     boolean ignore = supertypes.addAll(this.getInterfaces());
     return supertypes;
   }
