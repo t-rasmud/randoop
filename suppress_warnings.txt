@@ -40,6 +40,13 @@
 @SuppressWarnings("determinism") // collection clearly sorted above, so deterministic
 @SuppressWarnings("determinism") // we consider file operations to be deterministic
 @SuppressWarnings("determinism") // impossible to verify toString on interface
+@SuppressWarnings("determinism:nondeterministic.tostring") // this toString call is @Det; value is a primitive or String (see comment on field)
+@SuppressWarnings("determinism:override.return.invalid") // Other classes that override evaluate() return @PolyDet("up") like the super class. This method calls JDK hashCode()
+@SuppressWarnings("determinism:override.return.invalid") // Other classes that override getName() return @PolyDet like the super class. This method returns @NonDet
+@SuppressWarnings("determinism:override.return.invalid") // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
+@SuppressWarnings("determinism:override.return.invalid") // Other classes that override execute() return @NonDet like the super class. This method returns @Det
+@SuppressWarnings("determinism:override.return.invalid") // Other classes that override toParsableString() return @PolyDet like the super class. This method returns @NonDet
+@SuppressWarnings("determinism:invalid.array.assignment")  // iterating over @PolyDet array to create another
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 
