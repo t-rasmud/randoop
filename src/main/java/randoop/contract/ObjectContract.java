@@ -55,7 +55,7 @@ public abstract class ObjectContract {
    *
    * @return the input types for this contract
    */
-  public abstract @Det TypeTuple getInputTypes();
+  public abstract @Det TypeTuple getInputTypes(@Det ObjectContract this);
 
   /**
    * Evaluates the contract on the given values. Returns {@code false} if the contract was violated.

@@ -98,7 +98,7 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public @Det TypeTuple getInputTypes() {
+  public @Det TypeTuple getInputTypes(@Det CheckRepContract this) {
     return operation.getInputTypes();
   }
 
