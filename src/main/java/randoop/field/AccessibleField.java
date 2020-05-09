@@ -161,7 +161,7 @@ public class AccessibleField {
    * @param reflectionPredicate the {@link ReflectionPredicate} to check this.field against
    * @return true if this.field satisfies predicate.canUse(field)
    */
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det AccessibleField this, @Det ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(field);
   }
 
