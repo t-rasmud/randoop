@@ -377,6 +377,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
+  @SuppressWarnings({"determinism:argument.type.incompatible", "determinism:cast.unsafe"})
   private static TypedClassOperation getAnonEnumOperation(
       @Det Method method, @Det List<@Det Type> methodParamTypes, @Det Class<?> enumClass) {
     @Det ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
@@ -421,7 +422,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
           i++;
         }
         if (i == methodParamTypes.size()) {
-          return new TypedClassOperation(op, enumType, inputTypes, outputType);
+          return new @Det TypedClassOperation(op, enumType, inputTypes, outputType);
         }
       }
     }
