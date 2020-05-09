@@ -75,7 +75,7 @@ public class EnumConstant extends CallableOperation {
    * @return a {@link NormalExecution} object holding the value of the enum constant
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override evaluate return @NonDet like the super class. This method returns @PolyDet
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);

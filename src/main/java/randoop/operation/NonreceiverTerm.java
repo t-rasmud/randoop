@@ -127,7 +127,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override getName() return @PolyDet like the super class. This method returns @NonDet
   public @NonDet String getName() {
     return this.toString();
   }
@@ -138,7 +138,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
@@ -241,7 +241,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return string representation of primitive, String or null value
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override toParseab;eString() return @PolyDet like the super class. This method returns @NonDet
   public @NonDet String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
 
     String valStr;

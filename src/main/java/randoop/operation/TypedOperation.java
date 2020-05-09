@@ -153,7 +153,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public String toString() {
+  @SuppressWarnings("determinism:override.receiver.invalid")    // overriding JDK method but need to be more precise
+  public String toString(@Det TypedOperation this) {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
     return getName() + " : " + inputTypes + " -> " + outputType + specString;
   }
@@ -377,7 +378,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible", "determinism:cast.unsafe"})
+  @SuppressWarnings({"determinism:argument.type.incompatible", "determinism:cast.unsafe"})    // process is order insensitive, can't be verified
   private static TypedClassOperation getAnonEnumOperation(
       @Det Method method, @Det List<@Det Type> methodParamTypes, @Det Class<?> enumClass) {
     @Det ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
@@ -605,7 +606,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the corresponding operation array for checking a {@link
    *     randoop.condition.ExecutableBooleanExpression}
    */
-  @SuppressWarnings("determinism:invalid.array.assignment")
+  @SuppressWarnings("determinism:invalid.array.assignment")    // iterating over @PolyDet array to create another
   private Object[] addNullReceiverIfStatic(Object[] values) {
     @PolyDet Object @PolyDet[] args = values;
     if (this.isStatic()) {

@@ -127,8 +127,8 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  @SuppressWarnings("determinism:argument.type.incompatible")
-  public String toString() {
+  @SuppressWarnings("determinism:override.receiver.invalid")    // overriding JDK method but need to be more precise
+  public String toString(@Det TypedClassOperation this) {
     if (this.isGeneric()) {
       String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
       return b + super.toString();

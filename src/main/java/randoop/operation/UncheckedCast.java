@@ -38,7 +38,7 @@ class UncheckedCast extends CallableOperation {
    * @return the value cast to the type of this cast
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
     return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);

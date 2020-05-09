@@ -165,7 +165,7 @@ public final class ConstructorCall extends CallableOperation {
    * @see TypedOperation#execute(Object[])
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override evaluate return @NonDet like the super class. This method returns @PolyDet
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
 
     // if this is a constructor from a non-static inner class, then first argument must

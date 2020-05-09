@@ -156,7 +156,7 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid"})  // Other classes that override evaluate return @NonDet like the super class. This method returns @Det
+  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid"})  // Other classes that override execute() return @NonDet like the super class. This method returns @Det
   public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
