@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.RandoopBug;
 
 /** Stores the mutable state of a class, allowing it to be saved, printed and restored. */
@@ -13,7 +15,7 @@ public class StaticCache {
   private final Class<?> declaringClass;
 
   /** The map from static fields to a value. */
-  private final Map<Field, Object> valueMap;
+  private final Map<@PolyDet Field, @PolyDet Object> valueMap;
 
   /**
    * Creates the cache object for a particular class. State is not saved until {@link #saveState()}
@@ -23,11 +25,11 @@ public class StaticCache {
    */
   public StaticCache(Class<?> declaringClass) {
     this.declaringClass = declaringClass;
-    this.valueMap = new LinkedHashMap<>();
+    this.valueMap = new @PolyDet LinkedHashMap<>();
   }
 
   /** Prints the fields and their values to standard output. */
-  public void printCache() {
+  public void printCache(@Det StaticCache this) {
     for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
       System.out.println(
           declaringClass.getName() + "." + entry.getKey().getName() + " = " + entry.getValue());
@@ -37,25 +39,33 @@ public class StaticCache {
   /** Saves the state for the class in this object. Only saves non-final static fields. */
   public void saveState() {
     for (Field field : declaringClass.getDeclaredFields()) {
-      field.setAccessible(true);
-      int mods = Modifier.fieldModifiers() & field.getModifiers();
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet Field tmp = field;
+      tmp.setAccessible(true);
+      int mods = Modifier.fieldModifiers() & tmp.getModifiers();
       if (Modifier.isStatic(mods) && !Modifier.isFinal(mods)) {
         Object value;
         try {
-          value = field.get(null);
+          value = tmp.get(null);
         } catch (IllegalAccessException e) {
-          throw new RandoopBug("unable to save value of field " + field.getName());
+          throw new RandoopBug("unable to save value of field " + tmp.getName());
         }
-        valueMap.put(field, value);
+        valueMap.put(tmp, value);
       }
     }
   }
 
   /** Restores the saved state of the class in this object to previously saved values. */
   public void restoreState() {
-    for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
+    for (Map.@PolyDet("up") Entry<@PolyDet Field, @PolyDet Object> entry : valueMap.entrySet()) {
       try {
-        entry.getKey().set(null, entry.getValue());
+        @SuppressWarnings(
+            "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as
+                           // @PolyDet
+        Map.@PolyDet Entry<@PolyDet Field, @PolyDet Object> tmp = entry;
+        tmp.getKey().set(null, entry.getValue());
       } catch (IllegalAccessException e) {
         throw new RandoopBug("unable to save value of field " + entry.getKey());
       }

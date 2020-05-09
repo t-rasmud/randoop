@@ -5,6 +5,7 @@
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
 @SuppressWarnings("determinism") // process is order insensitive, can't be verified
+@SuppressWarnings("determinism") // order of insertion doesn't matter
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
 @SuppressWarnings("determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
 @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
@@ -47,6 +48,12 @@
 @SuppressWarnings("determinism:override.return.invalid") // Other classes that override execute() return @NonDet like the super class. This method returns @Det
 @SuppressWarnings("determinism:override.return.invalid") // Other classes that override toParsableString() return @PolyDet like the super class. This method returns @NonDet
 @SuppressWarnings("determinism:invalid.array.assignment")  // iterating over @PolyDet array to create another
+@SuppressWarnings("determinism") // @PolyDet not resolved correctly with @PolyDet("upDet")
+@SuppressWarnings("determinism") // may create bad alias but fine because only used temporarily here
+@SuppressWarnings("determinism") // get for @PolyDet("upDet") should be @PolyDet("down")
+@SuppressWarnings("determinism") // .class expressions are clearly deterministic
+@SuppressWarnings("determinism") // creating @PolyDet aliases to @Det instances, but okay because all immutable classes
+@SuppressWarnings("determinism") // Class<? extends @Det Object? and Class<? extends @NonDet Object> are the same
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 

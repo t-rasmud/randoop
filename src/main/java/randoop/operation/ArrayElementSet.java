@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -29,7 +30,7 @@ class ArrayElementSet extends CallableOperation {
   @SuppressWarnings("determinism:override.return.invalid")   // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 3
-            : "array element assignment must have array, index and value as arguments";
+        : "array element assignment must have array, index and value as arguments";
     Object array = input[ARRAY];
     int index = (int) input[INDEX];
     Object value = input[VALUE];

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
@@ -22,12 +23,12 @@ import java.util.NoSuchElementException;
  *   ["a2", "b1", "c3"]
  * </pre>
  */
-class ListIterator<T> implements Iterator<List<T>> {
+@PolyDet class ListIterator<T extends @PolyDet Object> implements @PolyDet Iterator<@PolyDet List<T>> {
 
   /** Lists of candidate values for each position in generated lists. */
-  private final List<List<T>> candidates;
+  private final List<@PolyDet List<T>> candidates;
   /** Iterators for each list of candidate values. */
-  private final List<Iterator<T>> iterators;
+  private final List<@PolyDet Iterator<T>> iterators;
   /** The partially constructed next value. */
   private final List<T> currentTypes;
   /** The current position for which to select a value. */
@@ -39,21 +40,25 @@ class ListIterator<T> implements Iterator<List<T>> {
    *
    * @param candidates lists of candidate values for each position in generated lists
    */
-  ListIterator(List<List<T>> candidates) {
+  ListIterator(@PolyDet List<@PolyDet List<T>> candidates) {
     this.candidates = candidates;
-    this.iterators = new ArrayList<>(candidates.size());
-    this.currentTypes = new ArrayList<>(candidates.size());
-    for (List<T> list : candidates) {
-      iterators.add(list.iterator());
+    this.iterators = new @PolyDet ArrayList<>(candidates.size());
+    this.currentTypes = new @PolyDet ArrayList<>(candidates.size());
+    for (@PolyDet("up") List<T> list : candidates) {
+      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @PolyDet List<T> tmp = list;
+      iterators.add(tmp.iterator());
       currentTypes.add(null);
     }
     this.nextList = 0;
   }
 
   @Override
-  public boolean hasNext() {
+  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  public @PolyDet("down") boolean hasNext() {
     while (nextList >= 0 && !iterators.get(nextList).hasNext()) {
-      iterators.set(nextList, candidates.get(nextList).iterator());
+      List<T> tmp = candidates.get(nextList);
+      iterators.set(nextList, tmp.iterator());
       nextList--;
     }
     if (nextList >= 0) {
@@ -64,7 +69,8 @@ class ListIterator<T> implements Iterator<List<T>> {
   }
 
   @Override
-  public List<T> next() {
+  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  public @PolyDet("up") List<T> next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }

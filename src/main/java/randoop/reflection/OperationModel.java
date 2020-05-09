@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
@@ -71,40 +73,43 @@ import randoop.util.MultiMap;
 public class OperationModel {
 
   /** The set of class declaration types for this model. */
-  private Set<ClassOrInterfaceType> classTypes;
+  private Set<@PolyDet ClassOrInterfaceType> classTypes;
 
   /** The set of input types for this model. */
-  private Set<Type> inputTypes;
+  private Set<@PolyDet Type> inputTypes;
 
   /** The set of classes used as goals in the covered-class test filter. */
-  private final LinkedHashSet<Class<?>> coveredClassesGoal;
+  private final LinkedHashSet<@PolyDet Class<?>> coveredClassesGoal;
 
   /** Map for singleton sequences of literals extracted from classes. */
-  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
+  private MultiMap<@PolyDet ClassOrInterfaceType, @PolyDet Sequence> classLiteralMap;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
-  private Set<Sequence> annotatedTestValues;
+  private Set<@PolyDet Sequence> annotatedTestValues;
 
   /** Set of object contracts used to generate tests. */
   private ContractSet contracts;
 
   /** Set of concrete operations extracted from classes. */
-  private final Set<TypedOperation> operations;
+  private final Set<@PolyDet TypedOperation> operations;
 
   /** For debugging only. */
-  private List<Pattern> omitMethods;
+  private List<@PolyDet Pattern> omitMethods;
 
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /** Create an empty model of test context. */
+  @SuppressWarnings(
+      "determinism") // creating @PolyDet aliases to @Det instances, but okay because all immutable
+                     // classes
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
-    classTypes = new TreeSet<>();
-    inputTypes = new TreeSet<>();
-    classLiteralMap = new MultiMap<>();
-    annotatedTestValues = new LinkedHashSet<>();
-    contracts = new ContractSet();
+    classTypes = new @PolyDet TreeSet<>();
+    inputTypes = new @PolyDet TreeSet<>();
+    classLiteralMap = new @PolyDet MultiMap<>();
+    annotatedTestValues = new @PolyDet LinkedHashSet<>();
+    contracts = new @PolyDet ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
     contracts.add(EqualsHashcode.getInstance()); // arity=2
@@ -118,8 +123,8 @@ public class OperationModel {
     contracts.add(CompareToTransitive.getInstance()); // arity=3
     contracts.add(SizeToArrayLength.getInstance()); // arity=1
 
-    coveredClassesGoal = new LinkedHashSet<>();
-    operations = new TreeSet<>();
+    coveredClassesGoal = new @PolyDet LinkedHashSet<>();
+    operations = new @PolyDet TreeSet<>();
   }
 
   /**
@@ -140,18 +145,18 @@ public class OperationModel {
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  public static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitMethods,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassesGoalNames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList,
-      SpecificationCollection operationSpecifications)
+  public static @Det OperationModel createModel(
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det List<Pattern> omitMethods,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassesGoalNames,
+      @Det ClassNameErrorHandler errorHandler,
+      @Det List<String> literalsFileList,
+      @Det SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
+    @Det OperationModel model = new OperationModel();
 
     // for debugging only
     model.omitMethods = omitMethods;
@@ -191,13 +196,13 @@ public class OperationModel {
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassnames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
+  static @Det OperationModel createModel(
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassnames,
+      @Det ClassNameErrorHandler errorHandler,
+      @Det List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
         visibility,
@@ -227,14 +232,14 @@ public class OperationModel {
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  public static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitMethods,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassnames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
+  public static @Det OperationModel createModel(
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det List<Pattern> omitMethods,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassnames,
+      @Det ClassNameErrorHandler errorHandler,
+      @Det List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
         visibility,
@@ -256,22 +261,25 @@ public class OperationModel {
    * @param literalsLevel the level of literals to add
    */
   public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
+      @Det OperationModel this,
+      @Det ComponentManager compMgr,
+      @Det List<@Det String> literalsFile,
+      @Det ClassLiteralsMode literalsLevel) {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
 
     for (String filename : literalsFile) {
-      MultiMap<ClassOrInterfaceType, Sequence> literalmap;
+      @Det MultiMap<ClassOrInterfaceType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
 
-      for (ClassOrInterfaceType type : literalmap.keySet()) {
+      for (@Det ClassOrInterfaceType type : literalmap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
-        for (Sequence seq : literalmap.getValues(type)) {
+        for (@Det Sequence seq : literalmap.getValues(type)) {
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
@@ -301,10 +309,10 @@ public class OperationModel {
    * @return a map from each class type to the set of methods and constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
+  public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable @Det Path file)
       throws OperationParseException {
     if (file != null) {
-      try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
+      try (@Det EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         return OperationModel.readOperations(er);
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
@@ -321,11 +329,11 @@ public class OperationModel {
    * @param er the EntryReader to read from
    * @return contents of the file, as a map of operations
    */
-  private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
-    MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
+  private static MultiMap<Type, TypedClassOperation> readOperations(@Det EntryReader er) {
+    @Det MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
       String sig = line.trim();
-      TypedClassOperation operation =
+      @Det TypedClassOperation operation =
           signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
       if (operation.getInputTypes().size() > 0) {
         operationsMap.add(operation.getInputTypes().get(0), operation);
@@ -343,12 +351,12 @@ public class OperationModel {
    * @return contents of the file, as a map of operations
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(
-      InputStream is, String filename) {
+      @Det InputStream is, @Det String filename) {
     if (is == null) {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
-    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+    try (@Det EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
       return OperationModel.readOperations(er);
     } catch (IOException e) {
       String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
@@ -361,7 +369,7 @@ public class OperationModel {
    *
    * @return the set of class types
    */
-  public Set<ClassOrInterfaceType> getClassTypes() {
+  public Set<@PolyDet ClassOrInterfaceType> getClassTypes() {
     return classTypes;
   }
 
@@ -370,7 +378,7 @@ public class OperationModel {
    *
    * @return the set of covered classes
    */
-  public Set<Class<?>> getCoveredClassesGoal() {
+  public Set<@PolyDet Class<?>> getCoveredClassesGoal() {
     return coveredClassesGoal;
   }
 
@@ -380,7 +388,7 @@ public class OperationModel {
    * @return the set of input types that occur in classes under test
    * @see TypeExtractor
    */
-  public Set<Type> getInputTypes() {
+  public Set<@PolyDet Type> getInputTypes() {
     // TODO this is not used, should it be? or should it even be here?
     return inputTypes;
   }
@@ -390,8 +398,8 @@ public class OperationModel {
    *
    * @return the operations of this model
    */
-  public List<TypedOperation> getOperations() {
-    return new ArrayList<>(operations);
+  public List<@PolyDet TypedOperation> getOperations() {
+    return new @PolyDet ArrayList<>(operations);
   }
 
   /**
@@ -418,7 +426,7 @@ public class OperationModel {
    *
    * @return sequences that get fields annotated with {@code @TestValue}
    */
-  public Set<Sequence> getAnnotatedTestValues() {
+  public Set<@PolyDet Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
   }
 
@@ -445,8 +453,12 @@ public class OperationModel {
   public void logOperations(Writer out) {
     try {
       out.write("Operations: " + Globals.lineSep);
-      for (TypedOperation t : operations) {
-        out.write("  " + t.toString());
+      for (@PolyDet("up") TypedOperation t : operations) {
+        @SuppressWarnings(
+            "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same
+                           // as @PolyDet
+        @PolyDet TypedOperation tmp = t;
+        out.write("  " + tmp.toString());
         out.write(Globals.lineSep);
         out.flush();
       }
@@ -509,13 +521,14 @@ public class OperationModel {
    * @param literalsFileList the list of literals file names
    */
   private void addClassTypes(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      Set<@ClassGetName String> classnames,
-      Set<@ClassGetName String> coveredClassesGoalNames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
+      @Det OperationModel this,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det Set<@ClassGetName String> classnames,
+      @Det Set<@ClassGetName String> coveredClassesGoalNames,
+      @Det ClassNameErrorHandler errorHandler,
+      @Det List<String> literalsFileList) {
+    @Det ReflectionManager mgr = new ReflectionManager(visibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
@@ -601,13 +614,14 @@ public class OperationModel {
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
-      Set<ClassOrInterfaceType> classTypes,
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      SpecificationCollection operationSpecifications) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : classTypes) {
-      OperationExtractor extractor =
+      @Det OperationModel this,
+      @Det Set<ClassOrInterfaceType> classTypes,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det SpecificationCollection operationSpecifications) {
+    @Det ReflectionManager mgr = new ReflectionManager(visibility);
+    for (@Det ClassOrInterfaceType classType : classTypes) {
+      @Det OperationExtractor extractor =
           new OperationExtractor(
               classType,
               reflectionPredicate,
@@ -628,18 +642,19 @@ public class OperationModel {
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
-      Path methodSignatures_file,
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate)
+      @Det OperationModel this,
+      @Det Path methodSignatures_file,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
     if (methodSignatures_file == null) {
       return;
     }
-    try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
+    try (@Det EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
-          TypedClassOperation operation =
+          @Det TypedClassOperation operation =
               signatureToOperation(sig, visibility, reflectionPredicate);
           if (!omitMethodsPredicate.shouldOmit(operation)) {
             operations.add(operation);
@@ -660,7 +675,9 @@ public class OperationModel {
    * @return the method or constructor that the signature represents
    */
   public static TypedClassOperation signatureToOperation(
-      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+      @Det String signature,
+      @Det VisibilityPredicate visibility,
+      @Det ReflectionPredicate reflectionPredicate) {
     AccessibleObject accessibleObject;
     try {
       accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
@@ -681,14 +698,14 @@ public class OperationModel {
   }
 
   /** Creates and adds the Object class default constructor call to the concrete operations. */
-  private void addObjectConstructor() {
+  private void addObjectConstructor(@Det OperationModel this) {
     Constructor<?> objectConstructor;
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
       throw new RandoopBug("unable to load java.lang.Object() constructor", e);
     }
-    TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
+    @Det TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
   }

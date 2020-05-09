@@ -6,6 +6,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
@@ -18,9 +20,9 @@ import randoop.sequence.Sequence;
  */
 public class TestValueExtractor extends DefaultClassVisitor {
 
-  private final Set<Sequence> valueSequences;
+  private final Set<@PolyDet Sequence> valueSequences;
 
-  public TestValueExtractor(Set<Sequence> valueSequences) {
+  public TestValueExtractor(@PolyDet Set<@PolyDet Sequence> valueSequences) {
     this.valueSequences = valueSequences;
   }
 
@@ -32,8 +34,10 @@ public class TestValueExtractor extends DefaultClassVisitor {
    * primitive, String, or an array of primitive or String type.
    */
   @Override
-  public void visit(Field f) {
-    if (f.getAnnotation(TestValue.class) != null) {
+  public void visit(@Det TestValueExtractor this, @Det Field f) {
+    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+    @Det Class<@Det TestValue> tmp = TestValue.class;
+    if (f.getAnnotation(tmp) != null) {
       if (!Modifier.isStatic(f.getModifiers())) {
         String msg =
             "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
@@ -55,9 +59,9 @@ public class TestValueExtractor extends DefaultClassVisitor {
    * @param f the field
    * @return the value(s) in the field
    */
-  private List<Object> getValue(Field f) {
+  private @Det List<Object> getValue(@Det Field f) {
 
-    List<Object> valueList = new ArrayList<>();
+    @Det List<Object> valueList = new ArrayList<>();
 
     Class<?> fieldType = f.getType();
     if (fieldType.isPrimitive()
@@ -111,7 +115,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
    *
    * @param f the field
    */
-  private static void printDetectedAnnotatedFieldMsg(Field f) {
+  private static void printDetectedAnnotatedFieldMsg(@Det Field f) {
     String msg =
         "ANNOTATION: Detected @TestValue-annotated field "
             + f.getType().getCanonicalName()

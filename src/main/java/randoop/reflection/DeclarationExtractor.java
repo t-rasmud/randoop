@@ -1,6 +1,8 @@
 package randoop.reflection;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -8,17 +10,19 @@ import randoop.types.ClassOrInterfaceType;
  * {@link Class} objects.
  */
 public class DeclarationExtractor extends DefaultClassVisitor {
-  private final Set<ClassOrInterfaceType> classDeclarationTypes;
+  private final Set<@PolyDet ClassOrInterfaceType> classDeclarationTypes;
   private ReflectionPredicate reflectionPredicate;
 
   public DeclarationExtractor(
-      Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate reflectionPredicate) {
+      @PolyDet Set<@PolyDet ClassOrInterfaceType> classDeclarationTypes,
+      @PolyDet ReflectionPredicate reflectionPredicate) {
     this.classDeclarationTypes = classDeclarationTypes;
     this.reflectionPredicate = reflectionPredicate;
   }
 
   @Override
-  public void visit(Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(
+      @Det DeclarationExtractor this, @Det Class<?> c, @Det ReflectionManager reflectionManager) {
     if (!reflectionPredicate.test(c)) {
       return;
     }
@@ -27,7 +31,7 @@ public class DeclarationExtractor extends DefaultClassVisitor {
   }
 
   @Override
-  public void visitBefore(Class<?> c) {
+  public void visitBefore(@Det DeclarationExtractor this, @Det Class<?> c) {
     if (!reflectionPredicate.test(c)) {
       return;
     }

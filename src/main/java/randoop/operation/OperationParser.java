@@ -1,7 +1,6 @@
 package randoop.operation;
 
 import java.util.List;
-
 import org.checkerframework.checker.determinism.qual.Det;
 
 /**

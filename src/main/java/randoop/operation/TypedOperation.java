@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -23,10 +26,6 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * Type decorator of {@link Operation} objects. An operation has zero or more input types, and one
@@ -60,7 +59,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param inputTypes the input types
    * @param outputType the output types
    */
-  TypedOperation(@PolyDet CallableOperation operation, @PolyDet TypeTuple inputTypes, Type outputType) {
+  TypedOperation(
+      @PolyDet CallableOperation operation, @PolyDet TypeTuple inputTypes, Type outputType) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -255,7 +255,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det TypedOperation this, @Det ReflectionPredicate reflectionPredicate) {
     return operation.satisfies(reflectionPredicate);
   }
 
@@ -289,7 +289,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
-  public abstract @Det TypedOperation substitute(@Det TypedOperation this, @Det Substitution substitution);
+  public abstract @Det TypedOperation substitute(
+      @Det TypedOperation this, @Det Substitution substitution);
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
@@ -378,7 +379,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible", "determinism:cast.unsafe"})    // process is order insensitive, can't be verified
+  @SuppressWarnings({"determinism:argument.type.incompatible", "determinism:cast.unsafe.constructor.invocation"})    // process is order insensitive, can't be verified
   private static TypedClassOperation getAnonEnumOperation(
       @Det Method method, @Det List<@Det Type> methodParamTypes, @Det Class<?> enumClass) {
     @Det ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
@@ -524,7 +525,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param size the size of the created array
    * @return the array creation operation
    */
-  public static @Det TypedOperation createInitializedArrayCreation(@Det ArrayType arrayType, @Det int size) {
+  public static @Det TypedOperation createInitializedArrayCreation(
+      @Det ArrayType arrayType, @Det int size) {
     List<Type> typeList = new ArrayList<>();
     for (int i = 0; i < size; i++) {
       typeList.add(arrayType.getComponentType());
@@ -608,9 +610,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   @SuppressWarnings("determinism:invalid.array.assignment")    // iterating over @PolyDet array to create another
   private Object[] addNullReceiverIfStatic(Object[] values) {
-    @PolyDet Object @PolyDet[] args = values;
+    @PolyDet Object @PolyDet [] args = values;
     if (this.isStatic()) {
-      args = new Object @PolyDet[values.length + 1];
+      args = new Object @PolyDet [values.length + 1];
       args[0] = null;
       System.arraycopy(values, 0, args, 1, values.length);
     }

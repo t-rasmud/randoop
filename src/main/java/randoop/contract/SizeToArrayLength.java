@@ -2,12 +2,11 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
 public final class SizeToArrayLength extends ObjectContract {

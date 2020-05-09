@@ -1,11 +1,10 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
 
 /** Checks that calling toString() on an object does not throw an exception. */
 public final class ToStringReturnsNormally extends ObjectContract {

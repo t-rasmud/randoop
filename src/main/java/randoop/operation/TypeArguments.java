@@ -1,9 +1,8 @@
 package randoop.operation;
 
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import randoop.types.Type;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * TypeArguments provides static methods for creating and recognizing strings representing the type
@@ -28,11 +27,12 @@ class TypeArguments {
    * @return the array of {@link Class} objects for the type arguments in argStr
    * @throws OperationParseException if a type name in the string is not a valid type
    */
-  static @PolyDet("up") Class<?> @PolyDet("up") [] getTypeArgumentsForString(String argStr) throws OperationParseException {
-    @PolyDet("up") Class<?> @PolyDet("up")[] argTypes = new Class<?> @PolyDet("up")[0];
+  static @PolyDet("up") Class<?> @PolyDet("up") [] getTypeArgumentsForString(String argStr)
+      throws OperationParseException {
+    @PolyDet("up") Class<?> @PolyDet("up") [] argTypes = new Class<?> @PolyDet("up") [0];
     if (argStr.trim().length() > 0) {
       String[] argsStrs = argStr.split(",");
-      argTypes = new Class<?> @PolyDet("up")[argsStrs.length];
+      argTypes = new Class<?> @PolyDet("up") [argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {
         @SuppressWarnings("signature") // exception caught below if type is wrong
         @FqBinaryName String typeName = argsStrs[i].trim();

@@ -2,6 +2,8 @@ package randoop.operation;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -11,7 +13,6 @@ import randoop.types.TypeTuple;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.Det;
-
 /**
  * CallableOperation is an abstract implementation of the Operation interface to provide default
  * implementations of Operation predicates that are false except for a few kinds of operations.
@@ -66,7 +67,7 @@ public abstract class CallableOperation implements Operation {
    * @return false as there is no object to check
    */
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det CallableOperation this, @Det ReflectionPredicate reflectionPredicate) {
     return false;
   }
 
@@ -129,7 +130,7 @@ public abstract class CallableOperation implements Operation {
    * @return a string representation of this operation
    */
   public abstract String toParsableString(
-          Type declaringType, TypeTuple inputTypes, Type outputType);
+      Type declaringType, TypeTuple inputTypes, Type outputType);
 
   public AccessibleObject getReflectionObject() {
     return null;

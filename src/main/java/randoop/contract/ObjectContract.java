@@ -3,6 +3,9 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -18,10 +21,6 @@ import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.TimeoutExceededException;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is

@@ -15,6 +15,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
@@ -54,7 +57,7 @@ public class ReflectionManager {
   private VisibilityPredicate predicate;
 
   /** The visitors to apply. */
-  private ArrayList<ClassVisitor> visitors;
+  private ArrayList<@PolyDet ClassVisitor> visitors;
 
   /**
    * Creates a manager object that uses the given predicate to determine which classes, methods, and
@@ -62,9 +65,9 @@ public class ReflectionManager {
    *
    * @param predicate the predicate to indicate whether classes and class members should be visited
    */
-  public ReflectionManager(VisibilityPredicate predicate) {
+  public ReflectionManager(@PolyDet VisibilityPredicate predicate) {
     this.predicate = predicate;
-    this.visitors = new ArrayList<>();
+    this.visitors = new @PolyDet ArrayList<>();
   }
 
   /**
@@ -84,8 +87,8 @@ public class ReflectionManager {
    *
    * @param c the {@link Class} object to be visited
    */
-  public void apply(Class<?> c) {
-    for (ClassVisitor visitor : visitors) {
+  public void apply(@Det ReflectionManager this, @Det Class<?> c) {
+    for (@Det ClassVisitor visitor : visitors) {
       apply(visitor, c);
     }
   }
@@ -99,7 +102,7 @@ public class ReflectionManager {
    * @param visitor the {@link ClassVisitor} to apply to the class
    * @param c the class
    */
-  public void apply(ClassVisitor visitor, Class<?> c) {
+  public void apply(@Det ReflectionManager this, @Det ClassVisitor visitor, @Det Class<?> c) {
     if (predicate.isVisible(c)) {
       Log.logPrintf("Applying visitors to class %s%n", c.getName());
 
@@ -120,7 +123,7 @@ public class ReflectionManager {
         // getDeclaredMethods (which includes all methods declared by the class itself, but not
         // inherited ones).
 
-        Set<Method> methods = new HashSet<>();
+        @OrderNonDet Set<Method> methods = new HashSet<>();
         for (Method m : ClassDeterministic.getMethods(c)) {
           Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
           methods.add(m);
@@ -156,7 +159,7 @@ public class ReflectionManager {
         // Fields
         // The set of fields declared in class c is needed to ensure we don't
         // collect inherited fields that are shadowed by a local declaration.
-        Set<String> declaredNames = new TreeSet<>();
+        @Det Set<@Det String> declaredNames = new TreeSet<>();
         for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
           declaredNames.add(f.getName());
           if (predicate.isVisible(f)) {
@@ -191,20 +194,28 @@ public class ReflectionManager {
    * @param c the enum class object from which constants and methods are extracted
    */
   @SuppressWarnings("GetClassOnEnum")
-  private void applyToEnum(ClassVisitor visitor, Class<?> c) {
+  private void applyToEnum(
+      @Det ReflectionManager this, @Det ClassVisitor visitor, @Det Class<?> c) {
     // Maps from a name to a set of methods.
-    Map<String, Set<Method>> overrideMethods = new HashMap<>();
-    for (Object obj : c.getEnumConstants()) {
+    @OrderNonDet Map<String, Set<Method>> overrideMethods = new HashMap<>();
+    @SuppressWarnings(
+        "determinism") // Class<? extends @Det Object? and Class<? extends @NonDet Object> are the
+                       // same
+    @Det Class<? extends @Det Object> tmp = c;
+    for (@Det Object obj : tmp.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
-          Set<Method> methodSet = overrideMethods.get(m.getName());
+          @SuppressWarnings(
+              "determinism") // iterating over @OrderNonDet collection to modify another
+          @Det Method tmp2 = m;
+          @Det Set<@Det Method> methodSet = overrideMethods.get(tmp2.getName());
           if (methodSet == null) {
             methodSet = new LinkedHashSet<>();
           }
-          methodSet.add(m);
-          overrideMethods.put(m.getName(), methodSet); // collect any potential overrides
+          methodSet.add(tmp2);
+          overrideMethods.put(tmp2.getName(), methodSet); // collect any potential overrides
         }
       }
     }
@@ -220,7 +231,7 @@ public class ReflectionManager {
     // constant
     for (Method m : ClassDeterministic.getMethods(c)) {
       if (isVisible(m)) {
-        Set<Method> methodSet = overrideMethods.get(m.getName());
+        @Det Set<@Det Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {
           for (Method method : methodSet) {
             applyTo(visitor, method);
@@ -236,7 +247,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param f the field to be visited
    */
-  private void applyTo(ClassVisitor v, Field f) {
+  private void applyTo(@Det ClassVisitor v, @Det Field f) {
     Log.logPrintf("Visiting field %s%n", f.toGenericString());
     v.visit(f);
   }
@@ -251,7 +262,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param c the member class to be visited
    */
-  private void applyTo(ClassVisitor v, Class<?> c) {
+  private void applyTo(@Det ReflectionManager this, @Det ClassVisitor v, @Det Class<?> c) {
     Log.logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
@@ -262,7 +273,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param co the constructor to be visited
    */
-  private void applyTo(ClassVisitor v, Constructor<?> co) {
+  private void applyTo(@Det ClassVisitor v, @Det Constructor<?> co) {
     Log.logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
@@ -273,7 +284,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param m the method to be visited
    */
-  private void applyTo(ClassVisitor v, Method m) {
+  private void applyTo(@Det ClassVisitor v, @Det Method m) {
     Log.logPrintf("ReflectionManager visiting method %s%n", m.toGenericString());
     v.visit(m);
   }
@@ -284,7 +295,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param e the enum value to be visited
    */
-  private void applyTo(ClassVisitor v, Enum<?> e) {
+  private void applyTo(@Det ClassVisitor v, @Det Enum<?> e) {
     Log.logPrintf("Visiting enum %s%n", e);
     v.visit(e);
   }
@@ -295,7 +306,7 @@ public class ReflectionManager {
    * @param v the {@link ClassVisitor}
    * @param c the class to be visited
    */
-  private void visitBefore(ClassVisitor v, Class<?> c) {
+  private void visitBefore(@Det ClassVisitor v, @Det Class<?> c) {
     v.visitBefore(c);
   }
 
@@ -316,7 +327,7 @@ public class ReflectionManager {
    * @return true if the method, each parameter type, and the return type are all visible; and false
    *     otherwise
    */
-  private boolean isVisible(Method m) {
+  private boolean isVisible(@Det Method m) {
     if (!predicate.isVisible(m)) {
       Log.logPrintf("Will not use non-visible method: %s%n", m.toGenericString());
       return false;
@@ -341,7 +352,7 @@ public class ReflectionManager {
    * @param c the constructor
    * @return true if the constructor and each parameter type are visible; false, otherwise
    */
-  private boolean isVisible(Constructor<?> c) {
+  private boolean isVisible(@Det Constructor<?> c) {
     if (!predicate.isVisible(c)) {
       Log.logPrintf("Will not use non-visible constructor: %s%n", c.toGenericString());
       return false;
@@ -362,7 +373,7 @@ public class ReflectionManager {
    * @param type the type to check
    * @return true if the type is visible, false otherwise
    */
-  private boolean isVisible(Type type) {
+  private boolean isVisible(@Det Type type) {
     if (type instanceof GenericArrayType) {
       return isVisible(((GenericArrayType) type).getGenericComponentType());
     } else if (type instanceof ParameterizedType) {

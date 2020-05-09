@@ -1,12 +1,11 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** The contract: {@code o1.equals(o2) ==> o2.equals(o1)}. */
 public final class EqualsSymmetric extends ObjectContract {

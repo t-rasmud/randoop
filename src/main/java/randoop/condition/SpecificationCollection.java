@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.CollectionType;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceCompiler;
@@ -94,18 +96,17 @@ public class SpecificationCollection {
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
    */
-  public static SpecificationCollection create(@PolyDet List<@PolyDet Path> specificationFiles) {
+  public static @Det SpecificationCollection create(@Det List<@Det Path> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
-    @PolyDet MultiMap<@PolyDet OperationSignature, @PolyDet Method> signatureToMethods =
-        new @PolyDet MultiMap<>();
-    @PolyDet Map<@PolyDet AccessibleObject, @PolyDet OperationSpecification> specificationMap =
-        new @PolyDet LinkedHashMap<>();
+    @Det MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
+    @Det Map<@Det AccessibleObject, @Det OperationSpecification> specificationMap =
+        new LinkedHashMap<>();
     for (Path specificationFile : specificationFiles) {
       readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
-    @PolyDet("upDet") Map<@PolyDet AccessibleObject, @PolyDet("upDet") Set<@PolyDet Method>> overridden =
+    @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> overridden =
         buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
   }
@@ -117,20 +118,16 @@ public class SpecificationCollection {
    *     signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
-  private static @PolyDet("upDet") Map<
-          @PolyDet AccessibleObject, @PolyDet("upDet") Set<@PolyDet Method>>
-      buildOverridingMap(
-          MultiMap<@PolyDet OperationSignature, @PolyDet Method> signatureToMethods) {
-    @PolyDet("upDet") Map<AccessibleObject, @PolyDet Set<@PolyDet Method>> overridden =
-        new @PolyDet("upDet") HashMap<>();
-    for (@PolyDet("up") OperationSignature signature : signatureToMethods.keySet()) {
+  @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
+  private static @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> buildOverridingMap(
+      MultiMap<OperationSignature, Method> signatureToMethods) {
+    Map<AccessibleObject, Set<Method>> overridden = new HashMap<>();
+    for (OperationSignature signature : signatureToMethods.keySet()) {
       // This lookup is required because MultiMap does not have an entrySet() method.
-      @SuppressWarnings(
-          "determinism") // may create bad alias but fine because only used temporarily here
-      @PolyDet("up") Set<@PolyDet Method> methods = signatureToMethods.getValues(signature);
+      Set<Method> methods = signatureToMethods.getValues(signature);
       for (Method method : methods) {
         Class<?> declaringClass = method.getDeclaringClass();
-        @PolyDet("upDet") Set<@PolyDet Method> parents = findOverridden(declaringClass, methods);
+        Set<Method> parents = findOverridden(declaringClass, methods);
         overridden.put(method, parents);
       }
     }
@@ -166,9 +163,10 @@ public class SpecificationCollection {
    * @param operation the {@link OperationSignature}
    * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
    */
+  @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/3277
   private static AccessibleObject getAccessibleObject(OperationSignature operation) {
     if (operation.isValid()) {
-      List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
+      List<@ClassGetName @PolyDet String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
       try {
         for (int i = 0; i < argTypes.length; i++) {
@@ -203,9 +201,9 @@ public class SpecificationCollection {
    */
   @SuppressWarnings("unchecked")
   private static void readSpecificationFile(
-      Path specificationFile,
-      Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureToMethods) {
+      @Det Path specificationFile,
+      @Det Map<AccessibleObject, OperationSpecification> specificationMap,
+      @Det MultiMap<OperationSignature, Method> signatureToMethods) {
     if (specificationFile.toString().toLowerCase().endsWith(".zip")) {
       readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
       return;
@@ -216,8 +214,8 @@ public class SpecificationCollection {
       List<OperationSpecification> specificationList =
           gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType());
 
-      for (OperationSpecification specification : specificationList) {
-        OperationSignature operation = specification.getOperation();
+      for (@Det OperationSpecification specification : specificationList) {
+        @Det OperationSignature operation = specification.getOperation();
 
         // Check for bad input
         if (operation == null) {
@@ -232,7 +230,7 @@ public class SpecificationCollection {
         AccessibleObject accessibleObject = getAccessibleObject(operation);
         specificationMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
-          OperationSignature signature = OperationSignature.of(accessibleObject);
+          @Det OperationSignature signature = OperationSignature.of(accessibleObject);
           signatureToMethods.add(signature, (Method) accessibleObject);
         }
       }
@@ -258,10 +256,10 @@ public class SpecificationCollection {
    * @param signatureToMethods side-effected by this method
    */
   private static void readSpecificationZipFile(
-      Path specificationZipFile,
-      final Map<AccessibleObject, OperationSpecification> specificationMap,
-      final MultiMap<OperationSignature, Method> signatureToMethods) {
-    Map<String, ?> myEmptyMap = Collections.emptyMap();
+      @Det Path specificationZipFile,
+      final @Det Map<AccessibleObject, OperationSpecification> specificationMap,
+      final @Det MultiMap<OperationSignature, Method> signatureToMethods) {
+    @Det Map<String, ? extends @Det Object> myEmptyMap = Collections.emptyMap();
     FileSystem zipFS;
     try {
       URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
@@ -317,16 +315,17 @@ public class SpecificationCollection {
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public ExecutableSpecification getExecutableSpecification(Executable executable) {
+  public ExecutableSpecification getExecutableSpecification(
+      @Det SpecificationCollection this, @Det Executable executable) {
 
     // Check if executable already has an ExecutableSpecification object
-    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);
+    @Det ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);
     if (execSpec != null) {
       return execSpec;
     }
 
     // Otherwise, build a new one.
-    OperationSpecification specification = specificationMap.get(executable);
+    @Det OperationSpecification specification = specificationMap.get(executable);
     if (specification == null) {
       execSpec = new ExecutableSpecification();
     } else {
@@ -337,10 +336,10 @@ public class SpecificationCollection {
 
     if (executable instanceof Method) {
       Method method = (Method) executable;
-      Set<Method> parents = overridden.get(executable);
+      @OrderNonDet Set<Method> parents = overridden.get(executable);
       // Parents is null in some tests.  Is it ever null other than that?
       if (parents == null) {
-        Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
+        @Det Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
         if (sigSet != null) {
           // Todo: why isn't this added to the `parents` map?
           parents = findOverridden(method.getDeclaringClass(), sigSet);
@@ -351,7 +350,7 @@ public class SpecificationCollection {
       }
       if (parents != null) {
         for (Method parent : parents) {
-          ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
+          @Det ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
           execSpec.addParent(parentExecSpec);
         }
       }

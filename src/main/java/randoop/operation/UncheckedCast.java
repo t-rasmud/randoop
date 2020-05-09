@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;

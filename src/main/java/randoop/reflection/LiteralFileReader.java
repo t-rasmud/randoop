@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
@@ -61,12 +62,13 @@ public class LiteralFileReader {
    * @param inFile the input file
    * @return the map from types to literal values
    */
-  public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {
+  public static MultiMap<@PolyDet ClassOrInterfaceType, @PolyDet Sequence> parse(String inFile) {
 
-    final MultiMap<ClassOrInterfaceType, Sequence> map = new MultiMap<>();
+    final @PolyDet MultiMap<@PolyDet ClassOrInterfaceType, @PolyDet Sequence> map =
+        new @PolyDet MultiMap<>();
 
-    RecordProcessor processor =
-        new RecordProcessor() {
+    @PolyDet RecordProcessor processor =
+        new @PolyDet RecordProcessor() {
           @Override
           public void processRecord(List<String> lines) {
 
@@ -104,7 +106,7 @@ public class LiteralFileReader {
           }
         };
 
-    RecordListReader reader = new RecordListReader("CLASSLITERALS", processor);
+    @PolyDet RecordListReader reader = new RecordListReader("CLASSLITERALS", processor);
     reader.parse(inFile);
 
     return map;
@@ -126,7 +128,7 @@ public class LiteralFileReader {
     throw new Error(b.toString());
   }
 
-  private static void appendRecord(StringBuilder b, List<String> lines, int i) {
+  private static void appendRecord(StringBuilder b, List<@PolyDet String> lines, int i) {
     // This printout is less than ideal (it does not include the START/END
     // delimiters) and has no line number data, a limitation inherited from
     // RecordProcessor/RecordListReader.

@@ -116,7 +116,7 @@ public interface Operation {
    * @param reflectionPredicate a {@link ReflectionPredicate} to be checked
    * @return result of applying reflectionPredicate to object
    */
-  boolean satisfies(ReflectionPredicate reflectionPredicate);
+  boolean satisfies(@Det Operation this, @Det ReflectionPredicate reflectionPredicate);
 
   /**
    * Returns the name for the operation.
