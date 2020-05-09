@@ -109,7 +109,7 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
-  @SuppressWarnings({"determinism:invariant.cast.unsafe", "determinism:nondeterministic.tostring"})
+  @SuppressWarnings("determinism:nondeterministic.tostring")    // this toString call is probably @PolyDet
   public final Check checkContract(@Det ObjectContract this, @Det ExecutableSequence eseq, @Det Object @Det[] values) {
 
     @Det ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
@@ -196,7 +196,7 @@ public abstract class ObjectContract {
    * @param values the input values
    * @return an ObjectCheck indicating that a contract failed
    */
-  @SuppressWarnings({"determinism:method.invocation.invalid", "determinism:invalid.array.assignment"})
+  @SuppressWarnings({"determinism:method.invocation.invalid", "determinism:invalid.array.assignment"})    // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet, iterating over @PolyDet array to create another
   ObjectCheck failedContract(ExecutableSequence eseq, @PolyDet("use") Object @PolyDet[] values) {
     @PolyDet("use") Variable @PolyDet[] varArray = new @PolyDet("use") Variable @PolyDet[values.length];
     for (int i = 0; i < varArray.length; i++) {
