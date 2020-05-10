@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -50,27 +51,30 @@ public class Bloodhound implements TypedOperationSelector {
    * Map from methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
    */
-  private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
+  private final @PolyDet("upDet") Map<@PolyDet TypedOperation, @PolyDet Double> methodWeights =
+      new @PolyDet("upDet") HashMap<>();
 
   /**
    * Map from methods under test to the number of times they have been recently selected by the
    * {@link ForwardGenerator} to construct a new sequence. This map is cleared every time branch
    * coverage is recomputed.
    */
-  private final Map<TypedOperation, Integer> methodSelectionCounts = new HashMap<>();
+  private final @PolyDet("upDet") Map<@PolyDet TypedOperation, @PolyDet Integer>
+      methodSelectionCounts = new @PolyDet("upDet") HashMap<>();
 
   /**
    * Map from methods under test to the total number of times they have ever been successfully
    * invoked by the {@link AbstractGenerator}. The integer value for a given method is
    * non-decreasing during a run of Randoop.
    */
-  private final Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
+  private final @PolyDet("upDet") Map<@PolyDet TypedOperation, @PolyDet Integer>
+      methodInvocationCounts = new @PolyDet("upDet") HashMap<>();
 
   /**
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
    * random, weighted selections for a method under test.
    */
-  private final SimpleArrayList<TypedOperation> operationSimpleList;
+  private final SimpleArrayList<@PolyDet TypedOperation> operationSimpleList;
 
   /**
    * Parameter for balancing branch coverage and number of times a method was chosen. The name
@@ -122,7 +126,9 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operations list of operations under test
    * @param classesUnderTest set of classes under test
    */
-  public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
+  public Bloodhound(
+      @PolyDet List<@PolyDet TypedOperation> operations,
+      @PolyDet Set<@PolyDet ClassOrInterfaceType> classesUnderTest) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
     this.coverageTracker = new CoverageTracker(classesUnderTest);
 

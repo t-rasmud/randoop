@@ -32,8 +32,13 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.EntryReader;
@@ -101,6 +106,7 @@ import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
+@DefaultQualifier(Det.class)
 public class GenTests extends GenInputsAbstract {
 
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
@@ -176,10 +182,10 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(String[] args) {
+  public boolean handle(@Det GenTests this, @Det String @Det [] args) {
 
     try {
-      String[] nonargs = options.parse(args);
+      @Det String[] nonargs = options.parse(args);
       if (nonargs.length > 0) {
         throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
       }
@@ -201,7 +207,7 @@ public class GenTests extends GenInputsAbstract {
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
-      String[] pa = prop.split("=", 2);
+      @Det String[] pa = prop.split("=", 2);
       if (pa.length != 2) {
         usage("invalid property definition: %s%n", prop);
       }
@@ -236,14 +242,15 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // Get names of classes under test
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName @Det String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
 
     // Get names of classes that must be covered by output tests
-    Set<@ClassGetName String> coveredClassnames =
+    Set<@ClassGetName @Det String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(require_covered_classes);
 
     // Get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
+    Set<@Det String> omitFields =
+        GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
     for (Path omitmethodsFile : GenInputsAbstract.omitmethods_file) {
@@ -255,7 +262,9 @@ public class GenTests extends GenInputsAbstract {
     }
     if (!GenInputsAbstract.omitmethods_no_defaults) {
       String omDefaultsFileName = "/omitmethods-defaults.txt";
-      InputStream inputStream = GenTests.class.getResourceAsStream(omDefaultsFileName);
+      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+      @Det Class<@Det GenTests> tmp = GenTests.class;
+      InputStream inputStream = tmp.getResourceAsStream(omDefaultsFileName);
       omitmethods.addAll(readOmitMethods(inputStream, omDefaultsFileName));
     }
 
@@ -335,7 +344,7 @@ public class GenTests extends GenInputsAbstract {
     assert operationModel != null;
 
     List<TypedOperation> operations = operationModel.getOperations();
-    Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
+    Set<@Det ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
      * Stop if there is only 1 operation. This will be Object().
@@ -356,7 +365,7 @@ public class GenTests extends GenInputsAbstract {
      *   <li>Add any values for TestValue annotated static fields in operationModel
      * </ul>
      */
-    Set<Sequence> components = new LinkedHashSet<>();
+    Set<@Det Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
 
@@ -368,7 +377,7 @@ public class GenTests extends GenInputsAbstract {
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
-    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    Set<@Det TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
@@ -420,7 +429,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    Set<@Det Sequence> excludeSet = new LinkedHashSet<>();
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output
@@ -587,7 +596,9 @@ public class GenTests extends GenInputsAbstract {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
     String sefDefaultsFileName = "/JDK-sef-methods.txt";
     try {
-      InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
+      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+      @Det Class<@Det GenTests> tmp = GenTests.class;
+      InputStream inputStream = tmp.getResourceAsStream(sefDefaultsFileName);
       sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
     } catch (RandoopUsageError e) {
       throw new RandoopBug(
@@ -628,11 +639,12 @@ public class GenTests extends GenInputsAbstract {
    * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
-      List<ExecutableSequence> flakySequences,
-      List<ExecutableSequence> sequences,
-      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
-      OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det GenTests this,
+      @Det List<ExecutableSequence> flakySequences,
+      @Det List<ExecutableSequence> sequences,
+      @Det MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      @Det OmitMethodsPredicate omitMethodsPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
 
     if (flakySequences.isEmpty()) {
       return;
@@ -641,7 +653,7 @@ public class GenTests extends GenInputsAbstract {
     // Exclude methods that were omitted during test generation.
     MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods = new MultiMap<>();
     for (Type t : sideEffectFreeMethodsByType.keySet()) {
-      Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
+      Set<@Det TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
         if (!RegressionCaptureGenerator.isAssertable(
             tco, omitMethodsPredicate, visibilityPredicate)) {
@@ -659,16 +671,16 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
       // How many flaky tests an operation occurs in (regardless of how many times it appears in
       // that test).
-      Map<TypedClassOperation, Integer> testOccurrences =
+      @OrderNonDet Map<@Det TypedClassOperation, @Det Integer> testOccurrences =
           countSequencesPerOperation(sequences, assertableSideEffectFreeMethods);
 
       // How many tests an operation occurs in (regardless of how many times it appears in that
       // flaky test).
-      Map<TypedClassOperation, Integer> flakyOccurrences =
+      @OrderNonDet Map<@Det TypedClassOperation, @Det Integer> flakyOccurrences =
           countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
 
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
-      PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+      PriorityQueue<@Det RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (TypedClassOperation op : flakyOccurrences.keySet()) {
         double tfIdfMetric = flakyOccurrences.get(op) / testOccurrences.get(op);
@@ -701,7 +713,9 @@ public class GenTests extends GenInputsAbstract {
    * @return the sequences corresponding to the test names
    */
   private List<ExecutableSequence> testNamesToSequences(
-      Iterable<String> testNames, List<ExecutableSequence> sequences) {
+      @Det GenTests this,
+      @Det Iterable<String> testNames,
+      @Det List<ExecutableSequence> sequences) {
     List<ExecutableSequence> result = new ArrayList<>();
     for (String testName : testNames) {
       int testNum = Integer.parseInt(testName.substring(TEST_METHOD_NAME_PREFIX.length()));
@@ -721,20 +735,24 @@ public class GenTests extends GenInputsAbstract {
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
-  private Map<TypedClassOperation, Integer> countSequencesPerOperation(
-      List<ExecutableSequence> sequences,
-      MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
+  private @OrderNonDet Map<TypedClassOperation, Integer> countSequencesPerOperation(
+      @Det GenTests this,
+      @Det List<ExecutableSequence> sequences,
+      @Det MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
     // Map from method call operations to number of sequences it occurs in.
-    Map<TypedClassOperation, Integer> numSequencesUsedIn = new HashMap<>();
+    @OrderNonDet Map<@Det TypedClassOperation, @Det Integer> numSequencesUsedIn = new HashMap<>();
 
     for (ExecutableSequence es : sequences) {
-      Set<TypedClassOperation> ops = getOperationsInSequence(es);
+      @OrderNonDet Set<@Det TypedClassOperation> ops = getOperationsInSequence(es);
 
       // The test case consists of a sequence of calls, then assertions over the value produced by
       // the final call.
       // 1. Count up calls in the main sequence of calls.
-      for (TypedClassOperation to : ops) {
-        numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
+      for (@NonDet TypedClassOperation to : ops) {
+        @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+        int ignore =
+            numSequencesUsedIn.merge(
+                to, 1, Integer::sum); // increment value associated with key `to`
       }
 
       // 2. Count up calls that appear in assertions over the final value.
@@ -755,8 +773,8 @@ public class GenTests extends GenInputsAbstract {
    * @param es an ExecutableSequence
    * @return the set of method call operations in {@code es}
    */
-  private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
-    HashSet<TypedClassOperation> ops = new HashSet<>();
+  private @OrderNonDet Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
+    @OrderNonDet HashSet<@Det TypedClassOperation> ops = new HashSet<>();
 
     SimpleList<Statement> statements = es.sequence.statements;
     for (int i = 0; i < statements.size(); i++) {
@@ -775,9 +793,9 @@ public class GenTests extends GenInputsAbstract {
    * @return a version of classpath with relative paths replaced by absolute paths
    */
   private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(java.io.File.pathSeparator);
+    @Det String[] relpaths = classpath.split(java.io.File.pathSeparator);
     int length = relpaths.length;
-    String[] abspaths = new String[length];
+    @Det String[] abspaths = new String[length];
     for (int i = 0; i < length; i++) {
       String rel = relpaths[i];
       String abs;
@@ -807,7 +825,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private void writeTestFiles(
       JUnitCreator junitCreator,
-      List<ExecutableSequence> testSequences,
+      @Det List<ExecutableSequence> testSequences,
       CodeWriter codeWriter,
       String classNamePrefix,
       String testKind) {
@@ -983,7 +1001,7 @@ public class GenTests extends GenInputsAbstract {
    * @param signatures the list of signature strings
    * @return the list of patterns for the signature strings
    */
-  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
+  private List<Pattern> createPatternsFromSignatures(@Det List<String> signatures) {
     List<Pattern> patterns = new ArrayList<>();
     for (String signatureString : signatures) {
       patterns.add(signatureToPattern(signatureString));
@@ -1101,12 +1119,15 @@ public class GenTests extends GenInputsAbstract {
    * @return the predicate
    */
   public Predicate<ExecutableSequence> createTestOutputPredicate(
-      Set<Sequence> excludeSet, Set<Class<?>> coveredClasses, Pattern includePattern) {
+      @Det GenTests this,
+      @Det Set<@Det Sequence> excludeSet,
+      @Det Set<Class<?>> coveredClasses,
+      @Det Pattern includePattern) {
     if (GenInputsAbstract.dont_output_tests) {
       return new AlwaysFalse<>();
     }
 
-    Predicate<ExecutableSequence> baseTest;
+    Predicate<@Det ExecutableSequence> baseTest;
     // Base case: exclude sequences in excludeSet, keep everything else.
     // To exclude something else, add sequence to excludeSet.
     baseTest = new ExcludeTestPredicate(excludeSet);
@@ -1197,7 +1218,9 @@ public class GenTests extends GenInputsAbstract {
    * @param format the string format
    * @param args the arguments
    */
-  private static void usage(String format, Object... args) {
+  @SuppressWarnings("determinism") // we print args, which is a parameter with @RequiresDetString
+  @RequiresDetToString
+  private static void usage(@Det String format, @Det Object @Det ... args) {
     System.out.print("ERROR: ");
     System.out.printf(format, args);
     System.out.println();
@@ -1260,7 +1283,9 @@ public class GenTests extends GenInputsAbstract {
   private Path getResourceDirectoryPath(String resourceDirectory) {
     URI directoryURI;
     try {
-      directoryURI = GenTests.class.getResource(resourceDirectory).toURI();
+      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+      @Det Class<@Det GenTests> tmp = GenTests.class;
+      directoryURI = tmp.getResource(resourceDirectory).toURI();
     } catch (URISyntaxException e) {
       throw new RandoopBug("Error locating directory " + resourceDirectory, e);
     }

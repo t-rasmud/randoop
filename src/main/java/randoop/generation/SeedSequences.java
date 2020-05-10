@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.sequence.Sequence;
 import randoop.types.JavaTypes;
@@ -71,13 +72,15 @@ public final class SeedSequences {
     return SeedSequences.objectsToSeeds(seeds);
   }
 
+  @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
   public static Set<@PolyDet Sequence> objectsToSeeds(List<@PolyDet Object> seeds) {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {
+      Object tmp = seed;
       if (seed == null) {
         seedSequences.add(Sequence.zero(JavaTypes.STRING_TYPE));
       } else {
-        seedSequences.add(Sequence.createSequenceForPrimitive(seed));
+        seedSequences.add(Sequence.createSequenceForPrimitive(tmp));
       }
     }
     return seedSequences;
@@ -89,8 +92,8 @@ public final class SeedSequences {
    * @param type the type
    * @return the set of seed values with the given raw type
    */
-  static Set<Object> getSeeds(Type type) {
-    Set<Object> result = new LinkedHashSet<>();
+  static Set<Object> getSeeds(@Det Type type) {
+    @Det Set<@Det Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
       if (type.isAssignableFromTypeOf(seed)) {
         result.add(seed);

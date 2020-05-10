@@ -11,9 +11,11 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.InternalForm;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
@@ -29,6 +31,7 @@ import randoop.util.ReflectionExecutor;
 
 /** Container for Randoop options. They are stored as static variables, not instance variables. */
 @SuppressWarnings("WeakerAccess")
+@DefaultQualifier(Det.class)
 public abstract class GenInputsAbstract extends CommandHandler {
 
   public GenInputsAbstract(
@@ -951,7 +954,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @return the classes provided via the --classlist command-line argument
    */
   public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
-    Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
+    Set<@ClassGetName @Det String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
       classnames.addAll(getClassnamesFromJarFile(jarFile, visibility));
     }
@@ -976,7 +979,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Set<@ClassGetName String> getClassnamesFromJarFile(
       Path jarFile, VisibilityPredicate visibility) {
     try {
-      Set<@ClassGetName String> classNames = new TreeSet<>();
+      Set<@ClassGetName @Det String> classNames = new TreeSet<>();
       ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()));
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
@@ -1016,7 +1019,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @return the lines in the file, or null if listFile is null
    */
   public static Set<@ClassGetName String> getClassNamesFromFile(Path file) {
-    Set<@ClassGetName String> result = new LinkedHashSet<>();
+    Set<@ClassGetName @Det String> result = new LinkedHashSet<>();
     for (String line : getStringSetFromFile(file, "class names")) {
       if (!Signatures.isClassGetName(line)) {
         throw new RandoopUsageError(
@@ -1052,7 +1055,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
       @Nullable Path listFile, String fileDescription, String commentRegex, String includeRegex) {
-    Set<String> elementSet = new LinkedHashSet<>();
+    Set<@Det String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
         for (String line : er) {

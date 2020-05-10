@@ -3,6 +3,8 @@ package randoop.main;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.util.Util;
@@ -11,6 +13,7 @@ import randoop.util.Util;
  * A command is the first argument given to Randoop. A command handler handles one command. It also
  * takes care of printing the command's documentation.
  */
+@DefaultQualifier(Det.class)
 public abstract class CommandHandler {
 
   public String fcommand;
@@ -38,7 +41,7 @@ public abstract class CommandHandler {
    * @param example the usage example
    * @param options the command line arguments
    */
-  public CommandHandler(
+  public @Det CommandHandler(
       String command,
       String pitch,
       String commandGrammar,
@@ -66,18 +69,18 @@ public abstract class CommandHandler {
     this.foptions = options;
   }
 
-  public final boolean handles(String command) {
+  public final boolean handles(@Det CommandHandler this, String command) {
     return command != null && command.toUpperCase().equals(fcommand.toUpperCase());
   }
 
-  public abstract boolean handle(String[] args);
+  public abstract boolean handle(@Det CommandHandler this, @Det String @Det [] args);
 
   /**
    * Prints out formatted text in (google code) Wiki format.
    *
    * @param out the output stream for printing html formatted usage
    */
-  public final void printHTML(PrintStream out) {
+  public final void printHTML(@Det CommandHandler this, PrintStream out) {
 
     out.println("=== " + fcommand + " ===");
 
@@ -129,7 +132,7 @@ public abstract class CommandHandler {
     }
   }
 
-  public final void usageMessage(PrintStream out) {
+  public final void usageMessage(@Det CommandHandler this, PrintStream out) {
 
     out.println();
 

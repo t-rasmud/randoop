@@ -41,7 +41,7 @@ public class StaticCache {
     for (Field field : declaringClass.getDeclaredFields()) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet Field tmp = field;
       tmp.setAccessible(true);
       int mods = Modifier.fieldModifiers() & tmp.getModifiers();
@@ -63,7 +63,7 @@ public class StaticCache {
       try {
         @SuppressWarnings(
             "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as
-                           // @PolyDet
+        // @PolyDet
         Map.@PolyDet Entry<@PolyDet Field, @PolyDet Object> tmp = entry;
         tmp.getKey().set(null, entry.getValue());
       } catch (IllegalAccessException e) {

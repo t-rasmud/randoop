@@ -131,4 +131,6 @@ public abstract class CallableOperation implements Operation {
   public AccessibleObject getReflectionObject() {
     return null;
   }
+
+  // public abstract String toString();
 }

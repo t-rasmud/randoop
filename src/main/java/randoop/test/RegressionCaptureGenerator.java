@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.lang.reflect.Method;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -45,7 +46,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
+  private MultiMap<@PolyDet Type, @PolyDet TypedClassOperation> sideEffectFreeMethodsByType;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;

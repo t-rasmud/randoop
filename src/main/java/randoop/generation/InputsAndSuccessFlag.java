@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.sequence.Sequence;
 
 /**
@@ -18,15 +19,18 @@ class InputsAndSuccessFlag {
   public boolean success;
 
   /** The sequences that create the inputs. */
-  public List<Sequence> sequences;
+  public List<@PolyDet Sequence> sequences;
 
   /**
    * Same length as {@code sequences}. Each integer is an index into the corresponding sequence, and
    * is a statement that creates/returns a value.
    */
-  public List<Integer> indices;
+  public List<@PolyDet Integer> indices;
 
-  public InputsAndSuccessFlag(boolean success, List<Sequence> sequences, List<Integer> vars) {
+  public InputsAndSuccessFlag(
+      boolean success,
+      @PolyDet List<@PolyDet Sequence> sequences,
+      @PolyDet List<@PolyDet Integer> vars) {
     this.success = success;
     this.sequences = sequences;
     this.indices = vars;

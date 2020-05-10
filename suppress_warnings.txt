@@ -5,12 +5,14 @@
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
 @SuppressWarnings("determinism") // process is order insensitive, can't be verified
+@SuppressWarnings("determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
 @SuppressWarnings("determinism") // order of insertion doesn't matter
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
 @SuppressWarnings("determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
 @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
 @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
 @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
+@SuppressWarnings("determinism") // no unintended aliasing, so safe to treat @Det values as @PolyDet
 @SuppressWarnings("determinism") // this is code randoop is run on
 @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
 @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
@@ -47,8 +49,12 @@
 @SuppressWarnings("determinism") // .class expressions are clearly deterministic
 @SuppressWarnings("determinism") // creating @PolyDet aliases to @Det instances, but okay because all immutable classes
 @SuppressWarnings("determinism") // Class<? extends @Det Object? and Class<? extends @NonDet Object> are the same
+@SuppressWarnings("determinism") // @PolyDet for operations on a @PolyDet("upDet") Map not resolved correctly
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+
+// For generic array issue
+@SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/3277
 
 // For when there's an error on a collection in an extends/implements clause
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134

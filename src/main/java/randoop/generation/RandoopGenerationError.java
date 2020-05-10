@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.operation.TypedOperation;
 
 /** Error class to signal generation errors that should stop Randoop execution. */
@@ -17,7 +18,7 @@ public class RandoopGenerationError extends Error {
    * @param operation the actual operation
    * @param exception the exception thrown during generation
    */
-  RandoopGenerationError(TypedOperation operation, Throwable exception) {
+  RandoopGenerationError(@PolyDet TypedOperation operation, @PolyDet Throwable exception) {
     this.operation = operation;
     this.exception = exception;
   }

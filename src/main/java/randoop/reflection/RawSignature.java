@@ -100,7 +100,7 @@ public class RawSignature {
     RawSignature that = (RawSignature) object;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                       // @PolyDet
+    // @PolyDet
     @PolyDet boolean tmp =
         Objects.equals(this.packageName, that.packageName)
             && this.classname.equals(that.classname)
@@ -126,7 +126,7 @@ public class RawSignature {
     for (Class<?> type : parameterTypes) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet Class<?> tmp = type;
       typeNames.add(tmp.getCanonicalName());
     }

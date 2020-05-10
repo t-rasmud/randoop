@@ -51,4 +51,6 @@ public abstract class ExecutionOutcome {
   public String get_output() {
     return output;
   }
+
+  public abstract String toString();
 }

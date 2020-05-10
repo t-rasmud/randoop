@@ -200,7 +200,7 @@ public class ReflectionManager {
     @OrderNonDet Map<String, Set<Method>> overrideMethods = new HashMap<>();
     @SuppressWarnings(
         "determinism") // Class<? extends @Det Object? and Class<? extends @NonDet Object> are the
-                       // same
+    // same
     @Det Class<? extends @Det Object> tmp = c;
     for (@Det Object obj : tmp.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;

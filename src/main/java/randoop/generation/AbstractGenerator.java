@@ -5,6 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
@@ -61,17 +64,17 @@ public abstract class AbstractGenerator {
   public int num_failed_output_test = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
-  private long startTime = -1;
+  private @NonDet long startTime = -1;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
-  protected Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
+  protected Set<@PolyDet Sequence> subsumed_sequences = new @PolyDet LinkedHashSet<>();
 
   /**
    * Elapsed time since the generator started.
    *
    * @return elapsed time since the generator started
    */
-  private long elapsedTime() {
+  private @NonDet long elapsedTime() {
     return System.currentTimeMillis() - startTime;
   }
 
@@ -83,7 +86,7 @@ public abstract class AbstractGenerator {
    * generate sequences. In other words, statements specifies the universe of operations from which
    * sequences are generated.
    */
-  protected final List<TypedOperation> operations;
+  protected final List<@PolyDet TypedOperation> operations;
 
   /** Container for execution visitors used during execution of sequences. */
   protected ExecutionVisitor executionVisitor;
@@ -124,10 +127,10 @@ public abstract class AbstractGenerator {
    * The list of regression sequences to be output as JUnit tests. May include subsequences of other
    * sequences in the list.
    */
-  public List<ExecutableSequence> outRegressionSeqs;
+  public List<@PolyDet ExecutableSequence> outRegressionSeqs;
 
   /** A filter to determine whether a sequence should be added to the output sequence lists. */
-  public Predicate<ExecutableSequence> outputTest;
+  public Predicate<@PolyDet ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
   protected TestCheckGenerator checkGenerator;
@@ -148,29 +151,29 @@ public abstract class AbstractGenerator {
    *     Can be null.
    */
   public AbstractGenerator(
-      List<TypedOperation> operations,
-      GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
-      IStopper stopper,
-      RandoopListenerManager listenerManager) {
+      @PolyDet List<@PolyDet TypedOperation> operations,
+      GenInputsAbstract.@PolyDet Limits limits,
+      @PolyDet ComponentManager componentManager,
+      @PolyDet IStopper stopper,
+      @PolyDet RandoopListenerManager listenerManager) {
     assert operations != null;
 
     this.limits = limits;
     this.operations = operations;
-    this.executionVisitor = new DummyVisitor();
+    this.executionVisitor = new @PolyDet DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
 
     if (componentManager == null) {
-      this.componentManager = new ComponentManager();
+      this.componentManager = new @PolyDet ComponentManager();
     } else {
       this.componentManager = componentManager;
     }
 
     this.stopper = stopper;
     this.listenerMgr = listenerManager;
-    operationHistory = new DefaultOperationHistoryLogger();
-    outRegressionSeqs = new ArrayList<>();
-    outErrorSeqs = new ArrayList<>();
+    operationHistory = new @PolyDet DefaultOperationHistoryLogger();
+    outRegressionSeqs = new @PolyDet ArrayList<>();
+    outErrorSeqs = new @PolyDet ArrayList<>();
   }
 
   /**
@@ -179,7 +182,7 @@ public abstract class AbstractGenerator {
    *
    * @param outputTest the predicate to be added to object
    */
-  public void setTestPredicate(Predicate<ExecutableSequence> outputTest) {
+  public void setTestPredicate(Predicate<@PolyDet ExecutableSequence> outputTest) {
     if (outputTest == null) {
       throw new IllegalArgumentException("outputTest must be non-null");
     }
@@ -204,7 +207,7 @@ public abstract class AbstractGenerator {
    *
    * @param visitors the list of visitors
    */
-  public void setExecutionVisitor(List<ExecutionVisitor> visitors) {
+  public void setExecutionVisitor(List<@PolyDet ExecutionVisitor> visitors) {
     this.executionVisitor = MultiVisitor.createMultiVisitor(visitors);
   }
 
@@ -226,7 +229,7 @@ public abstract class AbstractGenerator {
    *
    * @return true iff any stopping criterion is met
    */
-  protected boolean shouldStop() {
+  protected @NonDet boolean shouldStop() {
     return (limits.time_limit_millis != 0 && elapsedTime() >= limits.time_limit_millis)
         || (numAttemptedSequences() >= limits.attempted_limit)
         || (numGeneratedSequences() >= limits.generated_limit)
@@ -241,7 +244,7 @@ public abstract class AbstractGenerator {
    *
    * @return a test sequence, may be null
    */
-  public abstract ExecutableSequence step();
+  public abstract ExecutableSequence step(@Det AbstractGenerator this);
 
   /**
    * Returns the count of attempts to generate a sequence so far.
@@ -283,7 +286,7 @@ public abstract class AbstractGenerator {
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
-  public void createAndClassifySequences() {
+  public void createAndClassifySequences(@Det AbstractGenerator this) {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
@@ -309,7 +312,7 @@ public abstract class AbstractGenerator {
 
       num_steps++;
 
-      ExecutableSequence eSeq = step();
+      @Det ExecutableSequence eSeq = step();
 
       if (dump_sequences) {
         Log.logPrintf("%nseq before run:%n%s%n", eSeq);
@@ -389,7 +392,7 @@ public abstract class AbstractGenerator {
    *
    * @return return all generated sequences
    */
-  public abstract LinkedHashSet<Sequence> getAllSequences();
+  public abstract LinkedHashSet<@PolyDet Sequence> getAllSequences();
 
   /**
    * Returns the generated regression test sequences for output. Filters out subsequences.
@@ -397,13 +400,14 @@ public abstract class AbstractGenerator {
    * @return regression test sequences that do not occur in a longer sequence
    */
   // TODO replace this with filtering during generation
-  public List<ExecutableSequence> getRegressionSequences() {
-    List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    subsumed_sequences = new LinkedHashSet<Sequence>();
-    for (ExecutableSequence es : outRegressionSeqs) {
+  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  public List<@PolyDet ExecutableSequence> getRegressionSequences() {
+    @PolyDet List<@PolyDet ExecutableSequence> unique_seqs = new @PolyDet ArrayList<>();
+    subsumed_sequences = new @PolyDet LinkedHashSet<@PolyDet Sequence>();
+    for (@PolyDet("up") ExecutableSequence es : outRegressionSeqs) {
       subsumed_sequences.addAll(es.componentSequences);
     }
-    for (ExecutableSequence es : outRegressionSeqs) {
+    for (@PolyDet("up") ExecutableSequence es : outRegressionSeqs) {
       if (subsumed_sequences.contains(es.sequence)) {
         operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       } else {
@@ -438,7 +442,7 @@ public abstract class AbstractGenerator {
    *
    * @param s the current sequence
    */
-  void setCurrentSequence(Sequence s) {
+  void setCurrentSequence(@Det Sequence s) {
     currSeq = s;
   }
 
@@ -468,4 +472,6 @@ public abstract class AbstractGenerator {
    *     behavior
    */
   public abstract void newRegressionTestHook(Sequence sequence);
+
+  public abstract String toString();
 }

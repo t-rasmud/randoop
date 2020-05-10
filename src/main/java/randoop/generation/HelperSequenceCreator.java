@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
@@ -38,6 +40,7 @@ import randoop.util.SimpleList;
  * <p>The only two methods that are currently externally used are {@link #createArraySequence} and
  * {@link #createCollection}.
  */
+@DefaultQualifier(Det.class)
 class HelperSequenceCreator {
 
   private HelperSequenceCreator() {

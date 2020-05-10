@@ -73,6 +73,9 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
@@ -106,6 +109,7 @@ import randoop.output.PrimitiveAndWrappedTypeVarNameCollector;
  * suite to fail in the same way as the original test suite, the algorithm adds back the original
  * version of the current statement and continues.
  */
+@DefaultQualifier(Det.class)
 public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
@@ -181,9 +185,9 @@ public class Minimize extends CommandHandler {
    * @return true if the command was handled successfully
    */
   @Override
-  public boolean handle(String[] args) {
+  public boolean handle(@Det Minimize this, @Det String @Det [] args) {
     try {
-      String[] nonargs = foptions.parse(args);
+      @Det String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
         throw new RandoopCommandError("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
@@ -339,7 +343,7 @@ public class Minimize extends CommandHandler {
     // expectedOutput is a map from method name to failure stack trace with
     // line numbers removed.
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
-    Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
+    @OrderNonDet Map<@Det String, @Det String> expectedOutput = normalizeJUnitOutput(runResult);
 
     // Minimize the Java test suite.
     minimizeTestSuite(
@@ -383,7 +387,7 @@ public class Minimize extends CommandHandler {
       String packageName,
       Path file,
       String classpath,
-      Map<String, String> expectedOutput,
+      @OrderNonDet Map<@Det String, @Det String> expectedOutput,
       int timeoutLimit)
       throws IOException {
     System.out.println("Minimizing test suite.");
@@ -450,7 +454,7 @@ public class Minimize extends CommandHandler {
       String packageName,
       Path file,
       String classpath,
-      Map<String, String> expectedOutput,
+      @OrderNonDet Map<@Det String, @Det String> expectedOutput,
       int timeoutLimit)
       throws IOException {
     Optional<BlockStmt> oBlockStmt = method.getBody();
@@ -462,10 +466,10 @@ public class Minimize extends CommandHandler {
 
     // Map from primitive variable name to the variable's value extracted
     // from a passing assertion.
-    Map<String, String> primitiveValues = new HashMap<>();
+    @OrderNonDet Map<@Det String, @Det String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
-    Set<String> primitiveAndWrappedTypes = new HashSet<>();
+    @OrderNonDet Set<@Det String> primitiveAndWrappedTypes = new HashSet<>();
     new PrimitiveAndWrappedTypeVarNameCollector().visit(compilationUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
@@ -533,9 +537,9 @@ public class Minimize extends CommandHandler {
    *     variables
    */
   private static void storeValueFromAssertion(
-      Statement currStmt,
-      Map<String, String> primitiveValues,
-      Set<String> primitiveAndWrappedTypeVars) {
+      @Det Statement currStmt,
+      @OrderNonDet Map<String, String> primitiveValues,
+      @OrderNonDet Set<String> primitiveAndWrappedTypeVars) {
     // Check if the statement is an assertion regarding a value that can be
     // used in a simplification later on.
     if (currStmt instanceof ExpressionStmt) {
@@ -606,7 +610,7 @@ public class Minimize extends CommandHandler {
    * @return list of statements, where each is a possible simplification of {@code currStmt}
    */
   private static List<Statement> getStatementReplacements(
-      Statement currStmt, Map<String, String> primitiveValues) {
+      Statement currStmt, @OrderNonDet Map<String, String> primitiveValues) {
     List<Statement> replacements = new ArrayList<>();
 
     // Null represents removal of the statement.
@@ -691,7 +695,7 @@ public class Minimize extends CommandHandler {
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignValueFromPassingAssertion(
-      VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
+      VariableDeclarationExpr vdExpr, @OrderNonDet Map<String, String> primitiveValues) {
     if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not one.
       return null;
@@ -859,11 +863,11 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if write to file fails
    */
   private static CompilationUnit simplifyTypeNames(
-      CompilationUnit compilationUnit,
+      @Det CompilationUnit compilationUnit,
       String packageName,
       Path file,
       String classpath,
-      Map<String, String> expectedOutput,
+      @OrderNonDet Map<@Det String, @Det String> expectedOutput,
       int timeoutLimit,
       boolean verboseOutput)
       throws IOException {
@@ -872,7 +876,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Types that are used in variable declarations.  Contains only one type per simple name.
-    Set<ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
+    Set<@Det ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
     new ClassTypeVisitor().visit(compilationUnit, types);
     CompilationUnit result = compilationUnit;
     for (ClassOrInterfaceType type : types) {
@@ -921,10 +925,10 @@ public class Minimize extends CommandHandler {
    *     expected output
    */
   private static boolean checkCorrectlyMinimized(
-      Path file,
-      String classpath,
-      String packageName,
-      Map<String, String> expectedOutput,
+      @Det Path file,
+      @Det String classpath,
+      @Det String packageName,
+      @OrderNonDet Map<@Det String, @Det String> expectedOutput,
       int timeoutLimit) {
 
     Outputs compilationOutput = compileJavaFile(file, classpath, packageName, timeoutLimit);
@@ -1051,7 +1055,7 @@ public class Minimize extends CommandHandler {
       executionDir = null;
     }
 
-    String[] args = command.split(" ");
+    @Det String[] args = command.split(" ");
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
@@ -1119,11 +1123,11 @@ public class Minimize extends CommandHandler {
    * @return a map from method name to the method's failure stack trace. The stack trace will not
    *     contain any line numbers.
    */
-  private static Map<String, String> normalizeJUnitOutput(String input) {
+  private static @OrderNonDet Map<String, String> normalizeJUnitOutput(String input) {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
 
     String methodName = null;
-    Map<String, String> resultMap = new HashMap<>();
+    @OrderNonDet Map<@Det String, @Det String> resultMap = new HashMap<>();
 
     StringBuilder result = new StringBuilder();
     // JUnit output starts with index 1 for first failure.

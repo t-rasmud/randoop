@@ -2,15 +2,19 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.sequence.ExecutableSequence;
 
+@SuppressWarnings(
+    "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                   // @PolyDet
 public class RandoopListenerManager {
 
-  private List<IEventListener> listeners;
+  private List<@PolyDet IEventListener> listeners;
 
   /** Create a new RandoopListenerManager with no listeners. */
   public RandoopListenerManager() {
-    listeners = new ArrayList<>();
+    listeners = new @PolyDet ArrayList<>();
   }
 
   // As of April 2018, this method is never called in Randoop, so the

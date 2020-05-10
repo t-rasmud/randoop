@@ -1,6 +1,8 @@
 package randoop.generation;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -9,14 +11,14 @@ import randoop.util.Randomness;
 public class UniformRandomMethodSelection implements TypedOperationSelector {
 
   /** The list of methods under test. We will select uniformly at random from this list. */
-  private final List<TypedOperation> operations;
+  private final List<@PolyDet TypedOperation> operations;
 
   /**
    * Create a selector that selects uniformly at random from the given operations.
    *
    * @param operations methods under test
    */
-  public UniformRandomMethodSelection(List<TypedOperation> operations) {
+  public UniformRandomMethodSelection(@PolyDet List<@PolyDet TypedOperation> operations) {
     // Temporary implementation note:  a copy is not made.
     // Doing so causes various system tests to fail due to changes in coverage. We discovered that
     // this was caused by {@link ForwardGenerator} which was removing parameter-less operations
@@ -30,7 +32,7 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
    * @return a random operation
    */
   @Override
-  public TypedOperation selectOperation() {
+  public TypedOperation selectOperation(@Det UniformRandomMethodSelection this) {
     return Randomness.randomMember(this.operations);
   }
 

@@ -1,6 +1,8 @@
 package randoop.main;
 
 import java.util.ConcurrentModificationException;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
@@ -10,6 +12,7 @@ import randoop.util.TimeoutExceededException;
  * Static method {@link #classify} classifies exceptions thrown by a test sequence based on the
  * {@link GenInputsAbstract.BehaviorType} command-line arguments.
  */
+@DefaultQualifier(Det.class)
 public class ExceptionBehaviorClassifier {
 
   private ExceptionBehaviorClassifier() {

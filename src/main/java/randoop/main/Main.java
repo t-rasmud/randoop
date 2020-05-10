@@ -2,6 +2,7 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
@@ -26,27 +27,27 @@ public class Main {
   // The main method simply calls nonStaticMain.
   public static void main(String[] args) {
 
-    Main main = new Main();
+    @Det Main main = new Main();
     main.nonStaticMain(args);
     System.exit(0);
   }
 
   // The real entry point of Main.
-  public void nonStaticMain(String[] args) {
+  public void nonStaticMain(@Det Main this, @Det String @Det [] args) {
 
     if (args.length == 0) args = new String[] {"help"};
 
     String command = args[0];
-    String[] args2 = new String[args.length - 1];
+    @Det String[] args2 = new String[args.length - 1];
     for (int i = 1; i < args.length; i++) {
       args2[i - 1] = args[i];
     }
 
     // Figure out which handler handles this command.
-    CommandHandler handler = null;
+    @Det CommandHandler handler = null;
     List<CommandHandler> allHandlers = new ArrayList<>();
     allHandlers.addAll(handlers);
-    for (CommandHandler h : allHandlers) {
+    for (@Det CommandHandler h : allHandlers) {
       if (h.handles(command)) {
         handler = h;
         break;
@@ -113,12 +114,12 @@ public class Main {
       if (!success) {
         System.out.println();
         System.out.println("Randoop failed.");
-        Sequence lastSequence = AbstractGenerator.currSeq;
+        @Det Sequence lastSequence = AbstractGenerator.currSeq;
         if (lastSequence == null) {
           System.out.println("No sequences generated.");
         } else {
           System.out.println("Last sequence under execution: ");
-          String[] lines = lastSequence.toString().split(Globals.lineSep);
+          @Det String[] lines = lastSequence.toString().split(Globals.lineSep);
           for (String line : lines) {
             System.out.println(line);
           }

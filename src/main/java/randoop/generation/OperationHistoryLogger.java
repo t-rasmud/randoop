@@ -7,6 +7,9 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.operation.TypedOperation;
 
 // TODO: It's weird to call this a "history log" when it is just a summary, printed at the end of
@@ -21,7 +24,9 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   private final PrintWriter writer;
 
   /** A sparse representation for the operation-outcome table. */
-  private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
+  private final @PolyDet("upDet") Map<
+          @PolyDet TypedOperation, @PolyDet Map<@PolyDet OperationOutcome, @PolyDet Integer>>
+      operationMap;
 
   /**
    * Creates an {@link OperationHistoryLogger} that will write to the given {@code PrintWriter}.
@@ -30,15 +35,20 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    */
   public OperationHistoryLogger(PrintWriter writer) {
     this.writer = writer;
-    this.operationMap = new HashMap<>();
+    this.operationMap = new @PolyDet("upDet") HashMap<>();
   }
 
   @Override
-  public void add(TypedOperation operation, OperationOutcome outcome) {
-    Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
-    int count = 0;
+  public void add(
+      @Det OperationHistoryLogger this,
+      @Det TypedOperation operation,
+      @Det OperationOutcome outcome) {
+    @Det Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
+    @Det int count = 0;
     if (outcomeMap == null) {
-      outcomeMap = new EnumMap<OperationOutcome, Integer>(OperationOutcome.class);
+      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+      @Det Class<@Det OperationOutcome> tmp = OperationOutcome.class;
+      outcomeMap = new EnumMap<OperationOutcome, Integer>(tmp);
     } else {
       Integer countInteger = outcomeMap.get(outcome);
       if (countInteger != null) {
@@ -51,18 +61,21 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   }
 
   @Override
-  public void outputTable() {
+  public void outputTable(@Det OperationHistoryLogger this) {
     writer.format("%nOperation History:%n");
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
-      int nameLength = operation.getSignatureString().length();
+      @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+      @Det int nameLength = operation.getSignatureString().length();
       maxNameLength = Math.max(nameLength, maxNameLength);
     }
-    Map<OperationOutcome, String> formatMap = printHeader(maxNameLength);
-    List<TypedOperation> keys = new ArrayList<>(operationMap.keySet());
+    @Det Map<@Det OperationOutcome, @Det String> formatMap = printHeader(maxNameLength);
+    @OrderNonDet List<TypedOperation> keys = new ArrayList<>(operationMap.keySet());
     Collections.sort(keys);
     for (TypedOperation key : keys) {
-      printRow(maxNameLength, formatMap, key, operationMap.get(key));
+      @SuppressWarnings("determinism") // collection clearly sorted above, so deterministic
+      @Det TypedOperation tmp = key;
+      printRow(maxNameLength, formatMap, tmp, operationMap.get(tmp));
     }
     writer.flush();
   }
@@ -74,11 +87,12 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @param firstColumnLength the width to use for the first column
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
-  private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap =
-        new EnumMap<OperationOutcome, String>(OperationOutcome.class);
+  private @Det Map<OperationOutcome, String> printHeader(@Det int firstColumnLength) {
+    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
+    @Det Class<@Det OperationOutcome> tmp = OperationOutcome.class;
+    @Det Map<OperationOutcome, String> formatMap = new EnumMap<OperationOutcome, String>(tmp);
     writer.format("%-" + firstColumnLength + "s", "Operation");
-    for (OperationOutcome outcome : OperationOutcome.values()) {
+    for (@Det OperationOutcome outcome : OperationOutcome.values()) {
       writer.format("\t%" + outcome.name().length() + "s", outcome);
       formatMap.put(outcome, "\t%" + outcome.name().length() + "d");
     }
@@ -101,7 +115,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       TypedOperation operation,
       Map<OperationOutcome, Integer> countMap) {
     writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
-    for (OperationOutcome outcome : OperationOutcome.values()) {
+    for (@Det OperationOutcome outcome : OperationOutcome.values()) {
       Integer count = countMap.get(outcome);
       if (count == null) {
         count = 0;

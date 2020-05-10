@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
@@ -28,9 +29,9 @@ public class Help extends CommandHandler {
   }
 
   @Override
-  public boolean handle(String[] argsWithOptions) {
+  public boolean handle(@Det Help this, @Det String @Det [] argsWithOptions) {
 
-    String[] args = null;
+    @Det String[] args = null;
     try {
       args = foptions.parse(argsWithOptions);
       if (args.length > 1) {
@@ -56,7 +57,7 @@ public class Help extends CommandHandler {
       out.println();
       out.println("Commands:");
       out.println();
-      for (CommandHandler h : Main.handlers) {
+      for (@Det CommandHandler h : Main.handlers) {
         out.println(
             Util.hangingParagraph(
                 h.fcommand + " -- " + h.fpitch, Globals.COLWIDTH, Globals.INDENTWIDTH));
@@ -79,7 +80,7 @@ public class Help extends CommandHandler {
       List<CommandHandler> allHandlers = new ArrayList<>();
       allHandlers.addAll(Main.handlers);
 
-      for (CommandHandler h : allHandlers) {
+      for (@Det CommandHandler h : allHandlers) {
 
         if (h.fcommand.equals(command)) {
           h.usageMessage(out);
@@ -92,7 +93,7 @@ public class Help extends CommandHandler {
     return true;
   }
 
-  protected static void introMessage(PrintStream out) {
+  protected static void introMessage(@Det PrintStream out) {
     out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
     out.println();
     out.println("Randoop is a command-line tool that creates unit tests for Java.");

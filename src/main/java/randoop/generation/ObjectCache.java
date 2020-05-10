@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
@@ -8,7 +10,7 @@ public class ObjectCache {
 
   private StateMatcher sm;
 
-  public ObjectCache(StateMatcher sm) {
+  public ObjectCache(@PolyDet StateMatcher sm) {
     this.sm = sm;
   }
 
@@ -18,10 +20,10 @@ public class ObjectCache {
    * @param eseq the sequence that creates values
    * @param i the index of the value to put in this cache
    */
-  public void setActiveFlags(ExecutableSequence eseq, int i) {
+  public void setActiveFlags(ExecutableSequence eseq, @Det int i) {
 
     assert eseq.getResult(i) instanceof NormalExecution;
-    NormalExecution e = (NormalExecution) eseq.getResult(i);
+    @PolyDet NormalExecution e = (NormalExecution) eseq.getResult(i);
 
     // If runtime value is in object cache, clear active flag.
     if (!this.sm.add(e.getRuntimeValue())) {

@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.sequence.Sequence;
 import randoop.util.SimpleList;
 
@@ -11,5 +12,6 @@ public interface InputSequenceSelector {
    * @param candidates sequences to choose from
    * @return the chosen sequence
    */
-  Sequence selectInputSequence(SimpleList<Sequence> candidates);
+  Sequence selectInputSequence(
+      @Det InputSequenceSelector this, @Det SimpleList<@Det Sequence> candidates);
 }

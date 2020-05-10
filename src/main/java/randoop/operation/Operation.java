@@ -122,4 +122,6 @@ public interface Operation {
    * @return the name for this operation
    */
   String getName();
+
+  String toString();
 }

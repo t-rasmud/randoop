@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -53,7 +55,7 @@ public class ComponentManager {
    */
   // Seeds are all contained in gralComponents. This list is kept to restore seeds if the user calls
   // clearGeneratedSequences().
-  private final Collection<Sequence> gralSeeds;
+  private final Collection<@PolyDet Sequence> gralSeeds;
 
   /**
    * A set of additional components representing literals that should only be used as input to
@@ -75,7 +77,7 @@ public class ComponentManager {
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
-    gralComponents = new SequenceCollection();
+    gralComponents = new @PolyDet SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
 
@@ -86,8 +88,8 @@ public class ComponentManager {
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
    */
-  public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
+  public @Det ComponentManager(@Det Collection<Sequence> generalSeeds) {
+    @Det Set<@Det Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
@@ -112,7 +114,7 @@ public class ComponentManager {
    */
   public void addClassLevelLiteral(ClassOrInterfaceType type, Sequence seq) {
     if (classLiterals == null) {
-      classLiterals = new ClassLiterals();
+      classLiterals = new @PolyDet ClassLiterals();
     }
     classLiterals.addSequence(type, seq);
   }
@@ -126,7 +128,7 @@ public class ComponentManager {
    */
   public void addPackageLevelLiteral(Package pkg, Sequence seq) {
     if (packageLiterals == null) {
-      packageLiterals = new PackageLiterals();
+      packageLiterals = new @PolyDet PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
   }
@@ -136,19 +138,19 @@ public class ComponentManager {
    *
    * @param sequence the sequence
    */
-  public void addGeneratedSequence(Sequence sequence) {
+  public void addGeneratedSequence(@Det ComponentManager this, @Det Sequence sequence) {
     gralComponents.add(sequence);
   }
 
   /**
    * Removes any components sequences added so far, except for seed sequences, which are preserved.
    */
-  void clearGeneratedSequences() {
+  void clearGeneratedSequences(@Det ComponentManager this) {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
   /** @return the set of generated sequences */
-  Set<Sequence> getAllGeneratedSequences() {
+  Set<@PolyDet Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();
   }
 
@@ -158,7 +160,7 @@ public class ComponentManager {
    * @param cls the query type
    * @return the sequences that create values of the given type
    */
-  SimpleList<Sequence> getSequencesForType(Type cls) {
+  SimpleList<Sequence> getSequencesForType(@Det ComponentManager this, @Det Type cls) {
     return gralComponents.getSequencesForType(cls, false, false);
   }
 
@@ -177,7 +179,11 @@ public class ComponentManager {
   // This method is oddly named, since it does not take as input a type.  However, the method
   // extensively uses the operation, so refactoring the method to take a type instead would take
   // some work.
-  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+  SimpleList<Sequence> getSequencesForType(
+      @Det ComponentManager this,
+      @Det TypedOperation operation,
+      @Det int i,
+      @Det boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 
@@ -192,11 +198,11 @@ public class ComponentManager {
     //  * determines sequences from the pool (gralComponents)
     //  * determines literals
 
-    SimpleList<Sequence> result =
+    @Det SimpleList<Sequence> result =
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Compute relevant literals.
-    SimpleList<Sequence> literals = null;
+    @Det SimpleList<Sequence> literals = null;
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
@@ -204,11 +210,11 @@ public class ComponentManager {
       // returned list with literals that appear in class C or in its package.  At most one of
       // classLiterals and packageLiterals is non-null.
 
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      @Det ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
       if (classLiterals != null) {
-        SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+        @Det SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
         if (!sl.isEmpty()) {
           literals = sl;
         }
@@ -217,7 +223,7 @@ public class ComponentManager {
       if (packageLiterals != null) {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
-          SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+          @Det SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           if (!sl.isEmpty()) {
             literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
           }
@@ -244,11 +250,12 @@ public class ComponentManager {
    *
    * @return the sequences for primitive values
    */
-  Set<Sequence> getAllPrimitiveSequences() {
+  Set<Sequence> getAllPrimitiveSequences(@Det ComponentManager this) {
 
-    Set<Sequence> result = new LinkedHashSet<>();
+    @Det Set<@Det Sequence> result = new LinkedHashSet<>();
+    @Det ClassLiterals tmp = classLiterals;
     if (classLiterals != null) {
-      result.addAll(classLiterals.getAllSequences());
+      result.addAll(tmp.getAllSequences());
     }
     if (packageLiterals != null) {
       result.addAll(packageLiterals.getAllSequences());
@@ -265,7 +272,7 @@ public class ComponentManager {
     return gralComponents.getTypeInstantiator();
   }
 
-  public void log() {
+  public void log(@Det ComponentManager this) {
     if (!Log.isLoggingOn()) {
       return;
     }

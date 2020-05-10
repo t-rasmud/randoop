@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -116,9 +117,9 @@ public final class Randomness {
    * @return a randomly selected element from {@code list}
    */
   public static <T extends @Det Object> T randomMemberWeighted(
-      @Det SimpleList<T> list, @Det Map<T, Double> weights) {
+      @Det SimpleList<T> list, @OrderNonDet Map<T, Double> weights) {
 
-    if (list.size() == 0) {
+    if (list.size() == -1) {
       throw new IllegalArgumentException("Empty list");
     }
 
@@ -147,7 +148,7 @@ public final class Randomness {
    * @return a randomly selected element from {@code list}
    */
   public static <T extends @Det Object> T randomMemberWeighted(
-      @Det SimpleList<T> list, @Det Map<T, Double> weights, @Det double totalWeight) {
+      @Det SimpleList<T> list, @OrderNonDet Map<T, Double> weights, @Det double totalWeight) {
 
     if (list.size() == 0) {
       throw new IllegalArgumentException("Empty list");

@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -38,6 +42,7 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
+@DefaultQualifier(Det.class)
 public class ForwardGenerator extends AbstractGenerator {
 
   /**
@@ -47,23 +52,23 @@ public class ForwardGenerator extends AbstractGenerator {
    * <p>This must be ordered by insertion to allow for flaky test history collection in {@link
    * randoop.main.GenTests#printSequenceExceptionError(AbstractGenerator, SequenceExceptionError)}.
    */
-  private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
+  private final LinkedHashSet<@PolyDet Sequence> allSequences = new @PolyDet LinkedHashSet<>();
 
   /** The side-effect-free methods. */
-  private final Set<TypedOperation> sideEffectFreeMethods;
+  private final Set<@PolyDet TypedOperation> sideEffectFreeMethods;
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
    * components as {@link #allSequences}, in the same order, but stores them as strings obtained via
    * the toCodeString() method.
    */
-  private final List<String> allsequencesAsCode = new ArrayList<>();
+  private final List<@PolyDet String> allsequencesAsCode = new @PolyDet ArrayList<>();
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
    * components as {@link #allSequences}, in the same order, but can be accessed by index.
    */
-  private final List<Sequence> allsequencesAsList = new ArrayList<>();
+  private final List<@PolyDet Sequence> allsequencesAsList = new @PolyDet ArrayList<>();
 
   private final TypeInstantiator instantiator;
 
@@ -79,7 +84,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * <p>Each value in the collection is a primitive wrapper or a String.
    */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
+  private Set<@PolyDet Object> runtimePrimitivesSeen = new @PolyDet LinkedHashSet<>();
 
   /**
    * Create a forward generator.
@@ -119,7 +124,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param listenerManager manages notifications for listeners
    * @param classesUnderTest set of classes under test
    */
-  public ForwardGenerator(
+  public @Det ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
@@ -163,7 +168,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sequence the new sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(Sequence sequence) {
+  public void newRegressionTestHook(@PolyDet ForwardGenerator this, @PolyDet Sequence sequence) {
     operationSelector.newRegressionTestHook(sequence);
   }
 
@@ -173,7 +178,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * initially contains a set of primitive sequences; this method puts those primitives in this set.
    */
   // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
+  private void initializeRuntimePrimitivesSeen(@Det ForwardGenerator this) {
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
       es.execute(new DummyVisitor(), new DummyCheckGenerator());
@@ -184,9 +189,9 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public ExecutableSequence step() {
+  public ExecutableSequence step(@Det ForwardGenerator this) {
 
-    long startTime = System.nanoTime();
+    @NonDet long startTime = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
@@ -205,7 +210,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long gentime1 = System.nanoTime() - startTime;
+    @NonDet long gentime1 = System.nanoTime() - startTime;
 
     eSeq.execute(executionVisitor, checkGenerator);
 
@@ -217,7 +222,7 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    long gentime2 = System.nanoTime() - startTime;
+    @NonDet long gentime2 = System.nanoTime() - startTime;
 
     eSeq.gentime = gentime1 + gentime2;
 
@@ -241,7 +246,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public LinkedHashSet<Sequence> getAllSequences() {
+  public @PolyDet LinkedHashSet<@PolyDet Sequence> getAllSequences(@PolyDet ForwardGenerator this) {
     return this.allSequences;
   }
 
@@ -260,7 +265,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence, all of whose indices are initailly marked as active
    */
-  private void determineActiveIndices(ExecutableSequence seq) {
+  private void determineActiveIndices(@Det ForwardGenerator this, @Det ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       Log.logPrintf("Sequence has non-executed statements: excluding from extension pool.%n");
@@ -376,7 +381,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private ExecutableSequence createNewUniqueSequence(@Det ForwardGenerator this) {
 
     Log.logPrintf("-------------------------------------------%n");
 
@@ -530,7 +535,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
-  private void randoopConsistencyTest2(Sequence newSequence) {
+  private void randoopConsistencyTest2(@Det ForwardGenerator this, Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -540,7 +545,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
-  private void randoopConsistencyTests(Sequence newSequence) {
+  private void randoopConsistencyTests(@Det ForwardGenerator this, Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();
@@ -600,7 +605,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return the selected sequences and indices
    */
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+  private InputsAndSuccessFlag selectInputs(@Det ForwardGenerator this, TypedOperation operation) {
 
     // The input types for `operation`.
     TypeTuple inputTypes = operation.getInputTypes();
@@ -820,7 +825,11 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
-  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  VarAndSeq randomVariable(
+      @Det ForwardGenerator this,
+      SimpleList<Sequence> candidates,
+      Type inputType,
+      boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
@@ -885,21 +894,20 @@ public class ForwardGenerator extends AbstractGenerator {
       validResults.add(new VarAndSeq(randomVariable, s));
     }
     if (validResults.size() == 0) {
+      String tmp = isReceiver ? "receiver " : "";
       throw new RandoopBug(
-          String.format(
-              "Failed to select %svariable with input type %s",
-              (isReceiver ? "receiver " : ""), inputType));
+          String.format("Failed to select %svariable with input type %s", tmp, inputType));
     }
     return Randomness.randomMember(validResults);
   }
 
   @Override
-  public int numGeneratedSequences() {
+  public @PolyDet int numGeneratedSequences() {
     return allSequences.size();
   }
 
   @Override
-  public String toString() {
+  public @PolyDet String toString() {
     return "ForwardGenerator("
         + String.join(
             ";" + Globals.lineSep + "    ",

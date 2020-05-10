@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -39,18 +40,20 @@ public class CoverageTracker {
    * where a method's total branches is zero, the uncovered branch ratio is NaN, and this map uses
    * zero instead.
    */
-  private final Map<String, Double> branchCoverageMap = new HashMap<>();
+  private final @PolyDet("upDet") Map<@PolyDet String, @PolyDet Double> branchCoverageMap =
+      new @PolyDet("upDet") HashMap<>();
 
   /** Names of all the classes under test. */
-  private final Set<String> classesUnderTest = new HashSet<>();
+  private final @PolyDet("upDet") Set<@PolyDet String> classesUnderTest =
+      new @PolyDet("upDet") HashSet<>();
 
   /**
    * Initialize the coverage tracker.
    *
    * @param classInterfaceTypes all the classes under test
    */
-  public CoverageTracker(Set<ClassOrInterfaceType> classInterfaceTypes) {
-    for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
+  public CoverageTracker(Set<@PolyDet ClassOrInterfaceType> classInterfaceTypes) {
+    for (@PolyDet ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
       classesUnderTest.add(classOrInterfaceType.getRuntimeClass().getName());
     }
   }

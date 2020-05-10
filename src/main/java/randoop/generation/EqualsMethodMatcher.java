@@ -2,10 +2,11 @@ package randoop.generation;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public class EqualsMethodMatcher implements StateMatcher {
 
-  private final Set<Object> cache = new LinkedHashSet<>();
+  private final Set<@PolyDet Object> cache = new @PolyDet LinkedHashSet<>();
 
   @Override
   public boolean add(Object object) {

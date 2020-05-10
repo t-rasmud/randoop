@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 
@@ -14,7 +15,7 @@ public interface TypedOperationSelector {
    *
    * @return the selected method
    */
-  public abstract TypedOperation selectOperation();
+  public abstract TypedOperation selectOperation(@Det TypedOperationSelector this);
 
   /**
    * Take action based on the given {@link Sequence} was classified as a regression test.

@@ -102,7 +102,7 @@ public class OperationModel {
   /** Create an empty model of test context. */
   @SuppressWarnings(
       "determinism") // creating @PolyDet aliases to @Det instances, but okay because all immutable
-                     // classes
+  // classes
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new @PolyDet TreeSet<>();
@@ -456,7 +456,7 @@ public class OperationModel {
       for (@PolyDet("up") TypedOperation t : operations) {
         @SuppressWarnings(
             "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same
-                           // as @PolyDet
+        // as @PolyDet
         @PolyDet TypedOperation tmp = t;
         out.write("  " + tmp.toString());
         out.write(Globals.lineSep);

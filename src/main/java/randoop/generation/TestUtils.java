@@ -2,6 +2,8 @@ package randoop.generation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
 
@@ -9,6 +11,7 @@ import randoop.main.GenInputsAbstract;
  * Utility methods for setting up selection and operation-history logging in integration tests that
  * use a generator.
  */
+@DefaultQualifier(Det.class)
 public class TestUtils {
 
   // Setting to true causes system test runNoOutputTest to fail.
@@ -38,7 +41,7 @@ public class TestUtils {
    */
   @SuppressWarnings(
       "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
-  public static void setRandoopLog(String file) {
+  public static void setRandoopLog(@Det String file) {
     if (debug) {
       System.out.println("setRandoopLog(" + file + ")");
     }
