@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -155,7 +156,8 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid"})  // Other classes that override execute() return @NonDet like the super class. This method returns @Det
+  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid", "determinism:nondeterministic.tostring"})  // Other classes that override execute() return @NonDet like the super class. This method returns @Det
+  @RequiresDetToString
   public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);

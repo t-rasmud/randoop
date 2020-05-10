@@ -4,6 +4,7 @@ import java.lang.reflect.AccessibleObject;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -78,6 +79,7 @@ public abstract class CallableOperation implements Operation {
    * @param input array containing appropriate inputs to operation
    * @return results of executing this statement
    */
+  @RequiresDetToString
   public abstract @NonDet ExecutionOutcome execute(Object[] input);
 
   /**
