@@ -25,6 +25,7 @@ public class IdentityMultiMap<K extends @PolyDet("use") Object, V extends @PolyD
    * @param key the key
    * @param value the value
    */
+  @SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet in type parameters here
   public void put(K key, V value) {
     @PolyDet Set<V> set = map.get(key);
     if (set == null) {
@@ -40,6 +41,7 @@ public class IdentityMultiMap<K extends @PolyDet("use") Object, V extends @PolyD
    * @param key the key value
    * @return the set of values that correspond to the key, null if none
    */
+  @SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet in type parameters here
   public Set<V> get(K key) {
     return map.get(key);
   }

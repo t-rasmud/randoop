@@ -3,6 +3,8 @@ package randoop;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.Type;
 import randoop.util.CheckpointingMultiMap;
 import randoop.util.CheckpointingSet;
@@ -18,13 +20,13 @@ import randoop.util.SimpleSet;
 public class SubTypeSet {
 
   /** The members of the set. */
-  public ISimpleSet<Type> types;
+  public ISimpleSet<@PolyDet Type> types;
 
   /**
    * Maps a type to all its proper subtypes that are in the set. If the mapped-to list is empty,
    * then the set contains no subtypes of the given type.
    */
-  private IMultiMap<Type, Type> subTypes;
+  private IMultiMap<@PolyDet Type, @PolyDet Type> subTypes;
 
   /** If true, then {@link #mark} and {@link #undoLastStep()} are supported. */
   private boolean supportsCheckpoints;
@@ -32,12 +34,12 @@ public class SubTypeSet {
   public SubTypeSet(boolean supportsCheckpoints) {
     if (supportsCheckpoints) {
       this.supportsCheckpoints = true;
-      this.subTypes = new CheckpointingMultiMap<>();
-      this.types = new CheckpointingSet<>();
+      this.subTypes = new @PolyDet CheckpointingMultiMap<>();
+      this.types = new @PolyDet CheckpointingSet<>();
     } else {
       this.supportsCheckpoints = false;
-      this.subTypes = new MultiMap<>();
-      this.types = new SimpleSet<>();
+      this.subTypes = new @PolyDet MultiMap<>();
+      this.types = new @PolyDet SimpleSet<>();
     }
   }
 
@@ -64,7 +66,7 @@ public class SubTypeSet {
    *
    * @param c the type to be added
    */
-  public void add(Type c) {
+  public void add(@Det SubTypeSet this, @Det Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
     if (types.contains(c)) {
       return;
@@ -79,14 +81,14 @@ public class SubTypeSet {
     }
   }
 
-  private void addQueryType(Type type) {
+  private void addQueryType(@Det SubTypeSet this, @Det Type type) {
     if (type == null) throw new IllegalArgumentException("c cannot be null.");
-    Set<Type> keySet = subTypes.keySet();
+    @Det Set<@Det Type> keySet = subTypes.keySet();
     if (keySet.contains(type)) {
       return;
     }
 
-    Set<Type> compatibleTypes = new LinkedHashSet<>();
+    @Det Set<@Det Type> compatibleTypes = new LinkedHashSet<>();
     for (Type t : types.getElements()) {
       if (type.isAssignableFrom(t)) {
         compatibleTypes.add(t);
@@ -105,7 +107,7 @@ public class SubTypeSet {
    * @param type the query type
    * @return the set of types that can be used in place of the query type
    */
-  public Set<Type> getMatches(Type type) {
+  public Set<Type> getMatches(@Det SubTypeSet this, @Det Type type) {
     if (!subTypes.keySet().contains(type)) {
       addQueryType(type);
     }
@@ -126,7 +128,7 @@ public class SubTypeSet {
    *
    * @return the elements of the set
    */
-  public Set<Type> getElements() {
+  public Set<@PolyDet Type> getElements() {
     return types.getElements();
   }
 }

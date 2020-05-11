@@ -99,14 +99,12 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public String getName() {
-    @SuppressWarnings("determinism") // the annotation for this library method is wrong
     @PolyDet String tmp = super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
     return tmp;
   }
 
   @Override
   public String getUnqualifiedName() {
-    @SuppressWarnings("determinism") // the annotation for this library method is wrong
     @PolyDet String tmp = this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
     return tmp;
   }

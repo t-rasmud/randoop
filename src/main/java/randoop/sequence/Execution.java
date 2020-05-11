@@ -30,7 +30,10 @@ public final class Execution {
   public Execution(Sequence owner) {
     this.outcomes = new @PolyDet ArrayList<>(owner.size());
     for (int i = 0; i < owner.size(); i++) {
-      outcomes.add(NotExecuted.create());
+      @SuppressWarnings(
+          "determinism") // no unintended aliasing, so safe to treat @Det values as @PolyDet
+      @PolyDet NotExecuted tmp = NotExecuted.create();
+      outcomes.add(tmp);
     }
     this.coveredClasses = new @PolyDet LinkedHashSet<>();
   }

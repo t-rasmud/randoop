@@ -129,7 +129,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   private @Det List<ClassOrInterfaceType> getRawTypeInterfaces(@Det NonParameterizedType this) {
     @Det List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Class<?> c : runtimeType.getInterfaces()) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @Det Class<?> tmp = c;
       interfaces.add(NonParameterizedType.forClass(tmp));
     }

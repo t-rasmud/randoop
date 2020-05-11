@@ -12,6 +12,7 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
 @HasQualifierParameter(NonDet.class)
+@SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet in type parameters here
 public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("use") Object>
     implements IMultiMap<T1, T2> {
 
@@ -53,7 +54,7 @@ public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("us
 
   @Override
   public void add(T1 key, T2 value) {
-    Set<T2> values = map.get(key);
+    @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
       values = new @PolyDet LinkedHashSet<>(1);
       map.put(key, values);
@@ -63,7 +64,7 @@ public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("us
 
   @Override
   public void remove(T1 key, T2 value) {
-    Set<T2> values = map.get(key);
+    @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
           "No values where found when trying to remove from multiset. Key: "

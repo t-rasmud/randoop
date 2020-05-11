@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.NoQualifierParameter;
@@ -15,8 +16,7 @@ import org.checkerframework.framework.qual.NoQualifierParameter;
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<
-        T1 extends @PolyDet("use") Object, T2 extends @PolyDet("use") Object>
+public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object>
     implements IMultiMap<T1, T2> {
 
   public static boolean verbose_log = false;
@@ -61,6 +61,8 @@ public class CheckpointingMultiMap<
    * @see randoop.util.IMultiMap#add(T1, T2)
    */
   @Override
+  @SuppressWarnings(
+      "determinism") // this might log something non-deterministic, but could never verify
   public void add(T1 key, T2 value) {
     if (verbose_log) {
       Log.logPrintf("ADD %s -> %s%n", key, value);
@@ -92,6 +94,8 @@ public class CheckpointingMultiMap<
    * @see randoop.util.IMultiMap#remove(T1, T2)
    */
   @Override
+  @SuppressWarnings(
+      "determinism") // this might log something non-deterministic, but could never verify
   public void remove(T1 key, T2 value) {
     if (verbose_log) {
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
@@ -106,7 +110,7 @@ public class CheckpointingMultiMap<
       throw new IllegalArgumentException("args cannot be null.");
     }
 
-    Set<T2> values = map.get(key);
+    @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalArgumentException("Mapping not present: " + key + " -> " + value);
     }
@@ -125,28 +129,30 @@ public class CheckpointingMultiMap<
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
-  public void undoToLastMark() {
+  public void undoToLastMark(@Det CheckpointingMultiMap<T1, T2> this) {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
     }
-    Log.logPrintf("marks: %s%n", marks);
+    @SuppressWarnings(
+        "determinism") // all concrete implementation of type of a deterministic toString
+    @Det String tmp = marks.toString();
+    Log.logPrintf("marks: %s%n", tmp);
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
-    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is
-    // the same as @PolyDet
-    @PolyDet int tmp = marks.remove(marks.size() - 1);
-    steps = tmp;
+    int tmp2 = marks.remove(marks.size() - 1);
+    steps = tmp2;
   }
 
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/143
-  private void undoLastOp() {
+  @SuppressWarnings(
+      "determinism") // this might log something non-deterministic, but could never verify
+  private void undoLastOp(@Det CheckpointingMultiMap<T1, T2> this) {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
-    @SuppressWarnings(
-        "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
+    // @SuppressWarnings(
+    //     "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
     // @PolyDet
-    @PolyDet OpKeyVal last = ops.remove(ops.size() - 1);
-    @PolyDet Ops op = last.op;
+    @Det OpKeyVal last = ops.remove(ops.size() - 1);
+    Ops op = last.op;
     T1 key = last.key;
     T2 val = last.val;
 
@@ -172,7 +178,7 @@ public class CheckpointingMultiMap<
   @Override
   public Set<T2> getValues(T1 key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
-    Set<T2> values = map.get(key);
+    @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
       @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
       @PolyDet Set<T2> tmp = Collections.emptySet();

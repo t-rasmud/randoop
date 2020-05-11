@@ -4,7 +4,7 @@
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
 @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
-@SuppressWarnings("determinism") // process is order insensitive, can't be verified
+@SuppressWarnings("determinism") // process is order insensitive, but can't be verified
 @SuppressWarnings("determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
 @SuppressWarnings("determinism") // order of insertion doesn't matter
 @SuppressWarnings("determinism") // all instances of this class are @NonDet, so @NonDet should be treated the same as @PolyDet
@@ -14,6 +14,7 @@
 @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
 @SuppressWarnings("determinism") // no unintended aliasing, so safe to treat @Det values as @PolyDet
 @SuppressWarnings("determinism") // this is code randoop is run on
+@SuppressWarnings("determinism") // this is from code randoop is run on, so okay to have nondet toString
 @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
 @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
 @SuppressWarnings("determinism") // can't create an @OrderNonDet HashSet here apparently
@@ -37,7 +38,7 @@
 @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
 @SuppressWarnings("determinism") // Tree set constructed from HashSet should be @PolyDet("down")
 @SuppressWarnings("determinism") // library not annotated
-@SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type argumetns
+@SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
 @SuppressWarnings("determinism") // only printed in exceptional circumstances
 @SuppressWarnings("determinism") // Arrays.toString deterministic in this case
 @SuppressWarnings("determinism") // collection clearly sorted above, so deterministic
@@ -48,8 +49,14 @@
 @SuppressWarnings("determinism") // get for @PolyDet("upDet") should be @PolyDet("down")
 @SuppressWarnings("determinism") // .class expressions are clearly deterministic
 @SuppressWarnings("determinism") // creating @PolyDet aliases to @Det instances, but okay because all immutable classes
+@SuppressWarnings("determinism") // okay to call @PolyDet method on @Det value when not mutated
 @SuppressWarnings("determinism") // Class<? extends @Det Object? and Class<? extends @NonDet Object> are the same
 @SuppressWarnings("determinism") // @PolyDet for operations on a @PolyDet("upDet") Map not resolved correctly
+@SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet in type parameters here
+@SuppressWarnings("determinism") // this might log something non-deterministic, but could never verify
+@SuppressWarnings("determinism") // this may produce non-deterministic output, but have to make this method take @PolyDet to override equals
+@SuppressWarnings("determinism") // error in assertion but doesn't matter
+@SuppressWarnings("determinism") // since constructed with empty list, expression is deterministic
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 

@@ -1,5 +1,7 @@
 package randoop;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+
 /** Means that the execution of a statement threw an exception. */
 public class ExceptionalExecution extends ExecutionOutcome {
 
@@ -9,7 +11,7 @@ public class ExceptionalExecution extends ExecutionOutcome {
    * @param exception the exception that was thrown
    * @param executionTime the execution time, in nanoseconds
    */
-  public ExceptionalExecution(Throwable exception, long executionTime) {
+  public ExceptionalExecution(Throwable exception, @NonDet long executionTime) {
     super(executionTime);
     if (exception == null) {
       throw new IllegalArgumentException("exception must be non-null");

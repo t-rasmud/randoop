@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.types.Type;
@@ -130,7 +131,7 @@ public class Variable implements Comparable<Variable> {
    * @param type the type
    * @return the variable name as a string
    */
-  static String classToVariableName(Type type) {
+  static String classToVariableName(@Det Type type) {
     return VariableRenamer.getVariableName(type);
   }
 

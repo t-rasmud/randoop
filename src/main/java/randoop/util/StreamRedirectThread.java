@@ -84,7 +84,6 @@ public class StreamRedirectThread extends Thread {
 
   /** Copy. */
   @Override
-  @SuppressWarnings("determinism") // overriding JDK method but need to be more precise
   public void run(@Det StreamRedirectThread this) {
     try {
       BufferedReader br = new BufferedReader(in, BUFFER_SIZE);

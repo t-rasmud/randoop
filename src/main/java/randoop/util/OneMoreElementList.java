@@ -3,7 +3,6 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public final class OneMoreElementList<T extends @PolyDet Object>
@@ -57,15 +56,16 @@ public final class OneMoreElementList<T extends @PolyDet Object>
   @Override
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
-    @SuppressWarnings(
-        "determinism") // addAll requires @PolyDet("down") but not in the case of just making a copy
     boolean dummy = result.addAll(list.toJDKList());
     result.add(lastElement);
     return result;
   }
 
   @Override
-  public @NonDet String toString() {
-    return toJDKList().toString();
+  public @PolyDet String toString() {
+    @SuppressWarnings(
+        "determinism") // all concrete implementation of type of a deterministic toString
+    @PolyDet String tmp = toJDKList().toString();
+    return tmp;
   }
 }

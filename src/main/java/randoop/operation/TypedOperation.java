@@ -265,7 +265,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param inputVars the list of input variables for this operation
    * @param b the {@code StringBuilder}
    */
-  public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(List<@PolyDet Variable> inputVars, StringBuilder b);
 
   /**
    * Performs this operation using the array of input values. Returns the results of execution as an

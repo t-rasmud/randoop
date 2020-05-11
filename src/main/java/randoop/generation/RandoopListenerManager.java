@@ -7,7 +7,7 @@ import randoop.sequence.ExecutableSequence;
 
 @SuppressWarnings(
     "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                   // @PolyDet
+// @PolyDet
 public class RandoopListenerManager {
 
   private List<@PolyDet IEventListener> listeners;

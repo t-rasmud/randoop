@@ -106,7 +106,6 @@ public class GenericClassType extends ParameterizedType {
   public @Det List<@Det ClassOrInterfaceType> getInterfaces(@Det GenericClassType this) {
     @Det List<@Det ClassOrInterfaceType> interfaceTypes = new @Det ArrayList<>();
     for (Class<?> c : rawType.getInterfaces()) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @Det Class<?> tmp = c;
       interfaceTypes.add(ClassOrInterfaceType.forClass(tmp));
     }
@@ -184,6 +183,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
+  @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
   public List<@PolyDet TypeArgument> getTypeArguments() {
     @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
     for (@PolyDet TypeVariable v : parameters) {
@@ -200,7 +200,6 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet List<@PolyDet TypeVariable> params = super.getTypeParameters();
-    @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
     boolean tmp = params.addAll(parameters);
     return params;
   }

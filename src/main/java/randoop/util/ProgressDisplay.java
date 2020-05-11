@@ -82,8 +82,6 @@ public class ProgressDisplay extends Thread {
   public boolean shouldStop = false;
 
   @Override
-  @SuppressWarnings(
-      "determinism") // TODO: Remove this after figuring out stub files to change receiver type
   public void run(@Det ProgressDisplay this) {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
     while (true) {

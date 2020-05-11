@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -54,7 +55,7 @@ public final class Randomness {
    *
    * @param caller the name of the method that called Randomness.random
    */
-  private static void incrementCallsToRandom(String caller) {
+  private static void incrementCallsToRandom(@Det String caller) {
     totalCallsToRandom++;
     Log.logPrintf(
         "randoop.util.Randomness called by %s: %d calls to Random so far%n",
@@ -81,6 +82,8 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
+  @SuppressWarnings(
+      "determinism") // all concrete implementation of type of a deterministic toString
   public static <T extends @Det Object> T randomMember(@Det List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
@@ -190,6 +193,8 @@ public final class Randomness {
    * @param set the collection from which to select an element
    * @return a randomly-selected member of the set
    */
+  @SuppressWarnings(
+      "determinism") // all concrete implementation of type of a deterministic toString
   public static <T extends @Det Object> T randomSetMember(@Det Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
@@ -253,9 +258,12 @@ public final class Randomness {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;
       if (argument != null) {
-        methodWithArg += "(" + toString(argument) + ")";
+        @SuppressWarnings("determinism") // this uses a parameter with @RequiresDetString
+        String tmp = methodWithArg + "(" + toString(argument) + ")";
+        methodWithArg += tmp;
       }
       try {
+        @SuppressWarnings("determinism") // this uses a parameter with @RequiresDetString
         String msg =
             String.format(
                 "#%d: %s => %s; calls so far %d; called from %s%n",
@@ -275,29 +283,40 @@ public final class Randomness {
    * @return a printed representation of the argument
    * @see #verbosity
    */
-  private static String toString(Object o) {
+  @RequiresDetToString
+  private static @PolyDet("up") String toString(Object o) {
     if (o instanceof Collection<?>) {
-      Collection<?> coll = (Collection<?>) o;
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      @PolyDet Collection<? extends @PolyDet Object> coll = (Collection<? extends @PolyDet Object>) o;
       switch (verbosity) {
         case 1:
           return coll.getClass() + " of size " + coll.size();
         case 2:
-          return coll.toString();
+          @SuppressWarnings(
+              "determinism") // all concrete implementation of type of a deterministic toString
+          @PolyDet("up") String tmp = coll.toString();
+          return tmp;
         default:
           throw new Error("verbosity = " + verbosity);
       }
     } else if (o instanceof SimpleList<?>) {
-      SimpleList<?> sl = (SimpleList<?>) o;
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      @PolyDet SimpleList<? extends @PolyDet Object> sl = (SimpleList<?>) o;
       switch (verbosity) {
         case 1:
           return sl.getClass() + " of size " + sl.size();
         case 2:
-          return sl.toJDKList().toString();
+          @SuppressWarnings(
+              "determinism") // all concrete implementation of type of a deterministic toString
+          @PolyDet("up") String tmp = sl.toJDKList().toString();
+          return tmp;
         default:
           throw new Error("verbosity = " + verbosity);
       }
     } else {
-      return o.toString();
+      @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+      @PolyDet String tmp = o.toString();
+      return tmp;
     }
   }
 }

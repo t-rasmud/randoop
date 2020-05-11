@@ -49,7 +49,6 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    @SuppressWarnings("determinism") // doesn't type check if not using annotated plume-util
     @PolyDet("up") String tmp = UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
     return tmp;
   }

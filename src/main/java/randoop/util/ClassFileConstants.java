@@ -34,6 +34,7 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -127,8 +128,8 @@ public class ClassFileConstants {
    * @return the set of constants of the given type
    * @see #getConstants(String,ConstantSet)
    */
-  public static ConstantSet getConstants(String classname) {
-    @PolyDet ConstantSet result = new @PolyDet ConstantSet();
+  public static ConstantSet getConstants(@Det String classname) {
+    @Det ConstantSet result = new ConstantSet();
     getConstants(classname, result);
     return result;
   }
@@ -141,10 +142,10 @@ public class ClassFileConstants {
    * @return the set of constants with new constants of given type added
    * @see #getConstants(String)
    */
-  public static ConstantSet getConstants(String classname, ConstantSet result) {
+  public static ConstantSet getConstants(@Det String classname, @Det ConstantSet result) {
 
-    @PolyDet ClassParser cp;
-    @PolyDet JavaClass jc;
+    @Det ClassParser cp;
+    @Det JavaClass jc;
     try {
       String classfileBase = classname.replace('.', '/');
       InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class");
@@ -154,12 +155,12 @@ public class ClassFileConstants {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
     @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
-    @ClassGetName @PolyDet String resultClassname = jc.getClassName();
+    @ClassGetName @Det String resultClassname = jc.getClassName();
     result.classname = resultClassname;
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
-    for (Constant c : constant_pool.getConstantPool()) {
+    for (@Det Constant c : constant_pool.getConstantPool()) {
       // System.out.printf ("*Constant = %s%n", c);
       if (c == null
           || c instanceof ConstantClass
@@ -197,7 +198,7 @@ public class ClassFileConstants {
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
       if (il != null) {
-        for (Instruction inst : il.getInstructions()) {
+        for (@Det Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
               // Compare two objects, no literals

@@ -36,7 +36,11 @@ class ExplicitTypeVariable extends TypeVariable {
       return true;
     }
     if (!(obj instanceof ExplicitTypeVariable)) {
-      return isAssignableFrom(null);
+      @SuppressWarnings(
+          "determinism") // this may produce non-deterministic output, but have to make this method
+                         // take @PolyDet to override equals
+      boolean tmp = isAssignableFrom(null);
+      return tmp;
     }
     @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExplicitTypeVariable t = (ExplicitTypeVariable) obj;

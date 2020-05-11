@@ -51,6 +51,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
     }
   }
 
+  @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
   public @PolyDet("up") ListOfLists(@PolyDet List<@PolyDet SimpleList<T>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
@@ -112,7 +113,6 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   }
 
   @Override
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/147
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
     for (@PolyDet("up") SimpleList<T> l : lists) {
@@ -125,7 +125,10 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   }
 
   @Override
-  public @NonDet String toString() {
-    return toJDKList().toString();
+  public @PolyDet String toString() {
+    @SuppressWarnings(
+        "determinism") // all concrete implementation of type of a deterministic toString
+    @PolyDet String tmp = toJDKList().toString();
+    return tmp;
   }
 }

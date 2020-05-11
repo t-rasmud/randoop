@@ -136,6 +136,8 @@ public class Substitution {
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the the substitutions are consistent, false otherwise
    */
+  @SuppressWarnings(
+      "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
   public boolean isConsistentWith(Substitution substitution) {
     for (
     @PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : substitution.map.entrySet()) {

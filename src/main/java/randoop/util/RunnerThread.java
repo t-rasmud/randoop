@@ -1,5 +1,6 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.NoQualifierParameter;
@@ -42,7 +43,7 @@ public class RunnerThread extends Thread {
   }
 
   @Override
-  public final void run() {
+  public final void run(@Det RunnerThread this) {
     if (state != NextCallMustBe.RUN) throw new IllegalStateException();
     runFinished = false;
     executeReflectionCode();
@@ -50,7 +51,8 @@ public class RunnerThread extends Thread {
     this.state = NextCallMustBe.SETUP;
   }
 
-  private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
+  private void executeReflectionCode(@Det RunnerThread this)
+      throws ReflectionCode.ReflectionCodeException {
     code.runReflectionCode();
   }
 

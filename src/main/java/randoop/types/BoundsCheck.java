@@ -2,18 +2,19 @@ package randoop.types;
 
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Predicate to check the type of a substitution for a list of type variables. */
 public class BoundsCheck {
   /** The type variables to check against. */
-  private final List<TypeVariable> typeParameters;
+  private final List<@PolyDet TypeVariable> typeParameters;
 
   /**
    * Creates a {@link BoundsCheck} predicate for a given list of type parameters.
    *
    * @param typeParameters the list of of type parameters to be checked by the predicate
    */
-  public BoundsCheck(List<TypeVariable> typeParameters) {
+  public BoundsCheck(@PolyDet List<@PolyDet TypeVariable> typeParameters) {
     this.typeParameters = typeParameters;
   }
 

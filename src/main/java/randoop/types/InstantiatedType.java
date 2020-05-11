@@ -194,11 +194,15 @@ public class InstantiatedType extends ParameterizedType {
    */
   List<@PolyDet ReferenceType> getReferenceArguments() {
     @PolyDet List<@PolyDet ReferenceType> referenceArgList = new @PolyDet ArrayList<>();
-    for (@PolyDet TypeArgument argument : argumentList) {
-      if (!argument.isWildcard()) {
-        referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
+    for (@PolyDet("up") TypeArgument argument : argumentList) {
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet TypeArgument tmp = argument;
+      if (!tmp.isWildcard()) {
+        referenceArgList.add(((ReferenceArgument) tmp).getReferenceType());
       } else {
-        referenceArgList.add(((WildcardArgument) argument).getWildcardType());
+        referenceArgList.add(((WildcardArgument) tmp).getWildcardType());
       }
     }
     return referenceArgList;
@@ -240,8 +244,12 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> paramSet = new @PolyDet LinkedHashSet<>(super.getTypeParameters());
-    for (@PolyDet TypeArgument argument : argumentList) {
-      @PolyDet List<@PolyDet TypeVariable> params = argument.getTypeParameters();
+    for (@PolyDet("up") TypeArgument argument : argumentList) {
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet TypeArgument tmp = argument;
+      @PolyDet List<@PolyDet TypeVariable> params = tmp.getTypeParameters();
       paramSet.addAll(params);
     }
     return new ArrayList<>(paramSet);
@@ -257,9 +265,13 @@ public class InstantiatedType extends ParameterizedType {
    */
   public Substitution getTypeSubstitution() {
     @PolyDet List<@PolyDet ReferenceType> arguments = new @PolyDet ArrayList<>();
-    for (@PolyDet TypeArgument arg : this.getTypeArguments()) {
-      if (!arg.isWildcard()) {
-        arguments.add(((ReferenceArgument) arg).getReferenceType());
+    for (@PolyDet("up") TypeArgument arg : this.getTypeArguments()) {
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet TypeArgument tmp = arg;
+      if (!tmp.isWildcard()) {
+        arguments.add(((ReferenceArgument) tmp).getReferenceType());
       }
     }
     @PolyDet Substitution substitution = null;
@@ -270,8 +282,10 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  @SuppressWarnings(
+      "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
   public boolean hasWildcard() {
-    for (@PolyDet TypeArgument argument : argumentList) {
+    for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
         return true;
       }
@@ -295,11 +309,13 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  @SuppressWarnings(
+      "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
   public boolean isGeneric() {
     if (super.isGeneric()) { // enclosing type is generic
       return true;
     }
-    for (@PolyDet TypeArgument argument : argumentList) {
+    for (TypeArgument argument : argumentList) {
       if (argument.isGeneric()) {
         return true;
       }

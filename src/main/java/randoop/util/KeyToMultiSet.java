@@ -7,12 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.HasQualifierParameter;
 
 @HasQualifierParameter(NonDet.class)
-public class KeyToMultiSet<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("use") Object> {
+public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Object> {
 
   private final @PolyDet Map<T1, @PolyDet MultiSet<T2>> map;
 
@@ -82,18 +83,20 @@ public class KeyToMultiSet<T1 extends @PolyDet("use") Object, T2 extends @PolyDe
   }
 
   // Removes all keys with an empty set
-  public void clean() {
-    for (@PolyDet Iterator<Entry<T1, @PolyDet MultiSet<T2>>> iter = map.entrySet().iterator();
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  public void clean(@Det KeyToMultiSet<T1, T2> this) {
+    for (@Det Iterator<@Det Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator();
         iter.hasNext(); ) {
-      Entry<T1, @PolyDet MultiSet<T2>> element = iter.next();
+      Entry<T1, MultiSet<T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();
       }
     }
   }
 
-  public void removeAllInstances(Set<T2> values) {
-    for (@PolyDet MultiSet<T2> multiSet : map.values()) {
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  public void removeAllInstances(@Det Set<T2> values) {
+    for (@Det MultiSet<T2> multiSet : map.values()) {
       multiSet.removeAllInstances(values);
     }
   }

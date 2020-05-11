@@ -1,15 +1,17 @@
 package randoop;
 
+import org.checkerframework.checker.determinism.qual.Det;
+
 /** Means that the statement that this outcome represents was not executed. */
 public class NotExecuted extends ExecutionOutcome {
 
-  private static NotExecuted notExecutedSingleton = new NotExecuted();
+  private static @Det NotExecuted notExecutedSingleton = new NotExecuted();
 
   private NotExecuted() {
     super(-1);
   }
 
-  public static NotExecuted create() {
+  public static @Det NotExecuted create() {
     return notExecutedSingleton;
   }
 

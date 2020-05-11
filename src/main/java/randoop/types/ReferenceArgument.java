@@ -79,7 +79,7 @@ public class ReferenceArgument extends TypeArgument {
    * </ul>
    */
   @Override
-  public boolean contains(TypeArgument otherArgument) {
+  public boolean contains(@Det ReferenceArgument this, @Det TypeArgument otherArgument) {
     if (otherArgument.isWildcard()) {
       ParameterBound boundType = ((WildcardArgument) otherArgument).getTypeBound();
       return boundType.equals(new EagerReferenceBound(referenceType));

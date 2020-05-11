@@ -51,7 +51,7 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
       totalWeight += tmp;
       @SuppressWarnings(
           "determinism") // @PolyDet for operations on a @PolyDet("upDet") Map not resolved
-                         // correctly
+      // correctly
       double ignore = weightMap.put(candidate, weight);
     }
     return totalWeight;

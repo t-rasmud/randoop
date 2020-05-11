@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
@@ -234,7 +235,8 @@ public class ExecutableSequence {
    * @param visitor the {@link ExecutionVisitor} that collects checks from results
    * @param gen the check generator for tests
    */
-  public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
+  public void execute(
+      @Det ExecutableSequence this, @Det ExecutionVisitor visitor, @Det TestCheckGenerator gen) {
     // TODO: Setting the third argument to false would mask fewer errors.  Doing so causes 3 Randoop
     // system tests to fail (because some sequence throws an exception before the last statement).
     // One is innocuous:  java.lang.OutOfMemoryError due to creation of a very large object --
@@ -282,7 +284,11 @@ public class ExecutableSequence {
    *     ignoreException==false}
    */
   @SuppressWarnings("SameParameterValue")
-  private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
+  private void execute(
+      @Det ExecutableSequence this,
+      @Det ExecutionVisitor visitor,
+      @Det TestCheckGenerator gen,
+      @Det boolean ignoreException) {
 
     long startTime = System.nanoTime();
     try { // try statement for timing
@@ -294,16 +300,15 @@ public class ExecutableSequence {
       for (int i = 0; i < this.sequence.size(); i++) {
 
         // Collect the input values to i-th statement.
-        @PolyDet Object @PolyDet [] inputValues =
-            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @Det Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
-          @PolyDet TypedOperation operation = this.sequence.getStatement(i).getOperation();
+          @Det TypedOperation operation = this.sequence.getStatement(i).getOperation();
           if (operation.isConstructorCall() || operation.isMethodCall()) {
             // Phase 1 of specification checking:  evaluate guards of the specifications before the
             // call.
-            @PolyDet ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
+            @Det ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
             if (outcomeTable.isInvalidCall()) {
               checks = new InvalidChecks(new InvalidValueCheck(this, i));
               return;
@@ -316,7 +321,7 @@ public class ExecutableSequence {
         executeStatement(sequence, executionResults.outcomes, i, inputValues);
 
         // make sure statement executed
-        @PolyDet ExecutionOutcome statementResult = getResult(i);
+        @Det ExecutionOutcome statementResult = getResult(i);
         if (statementResult instanceof NotExecuted) {
           throw new Error("Unexecuted statement in sequence: " + this.toString());
         }
@@ -328,6 +333,9 @@ public class ExecutableSequence {
             break;
           } else {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
+            @SuppressWarnings(
+                "determinism") // this is from code randoop is run on, so okay to have nondet
+                               // toString
             String msg =
                 String.format(
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
@@ -382,6 +390,7 @@ public class ExecutableSequence {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
+  @SuppressWarnings("determinism") // error in assertion but doesn't matter
   private static Object[] getRuntimeValuesForVars(
       List<@PolyDet Variable> vars, List<@PolyDet ExecutionOutcome> execution) {
     @PolyDet Object @PolyDet [] runtimeObjects = new Object @PolyDet [vars.size()];
@@ -400,11 +409,11 @@ public class ExecutableSequence {
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
-      Sequence s,
-      @PolyDet List<@PolyDet ExecutionOutcome> outcome,
-      @PolyDet int index,
-      Object[] inputVariables) {
-    @PolyDet Statement statement = s.getStatement(index);
+      @Det Sequence s,
+      @Det List<ExecutionOutcome> outcome,
+      @Det int index,
+      @Det Object @Det [] inputVariables) {
+    @Det Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
     // we don't capture its output as well.
@@ -421,7 +430,7 @@ public class ExecutableSequence {
       // assert ((statement.isMethodCall() && !statement.isStatic()) ?
       // inputVariables[0] != null : true);
 
-      @PolyDet ExecutionOutcome r;
+      @Det ExecutionOutcome r;
       try {
         r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {

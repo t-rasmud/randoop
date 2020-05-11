@@ -1,5 +1,6 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -56,7 +57,7 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  public final void runReflectionCode() throws ReflectionCodeException {
+  public final void runReflectionCode(@Det ReflectionCode this) throws ReflectionCodeException {
     this.setHasStarted();
     runReflectionCodeRaw();
     this.setHasRun();
@@ -69,7 +70,8 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  protected abstract void runReflectionCodeRaw() throws ReflectionCodeException;
+  protected abstract void runReflectionCodeRaw(@Det ReflectionCode this)
+      throws ReflectionCodeException;
 
   public Object getReturnValue() {
     if (!hasRun()) {
@@ -120,4 +122,6 @@ public abstract class ReflectionCode {
       super(cause);
     }
   }
+
+  public abstract String toString();
 }

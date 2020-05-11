@@ -60,7 +60,7 @@ public abstract class TypeArgument {
    * @param otherArgument the other {@code TypeArgument}
    * @return true if this argument contains the other argument
    */
-  public abstract boolean contains(TypeArgument otherArgument);
+  public abstract boolean contains(@Det TypeArgument this, @Det TypeArgument otherArgument);
 
   /**
    * The type parameters for this type argument.

@@ -2,6 +2,8 @@ package randoop;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.sequence.ExecutableSequence;
 
 /**
@@ -19,7 +21,7 @@ import randoop.sequence.ExecutableSequence;
 public class MultiVisitor implements ExecutionVisitor {
 
   // The list of visitors.
-  private final List<ExecutionVisitor> visitors = new ArrayList<>();
+  private final List<@PolyDet ExecutionVisitor> visitors = new @PolyDet ArrayList<>();
 
   public MultiVisitor() {}
 
@@ -29,7 +31,8 @@ public class MultiVisitor implements ExecutionVisitor {
    * @param visitors the visitors to compose
    * @return a visitor that has the effect of all the visitors in the argument
    */
-  public static ExecutionVisitor createMultiVisitor(List<ExecutionVisitor> visitors) {
+  public static @Det ExecutionVisitor createMultiVisitor(
+      @Det List<@Det ExecutionVisitor> visitors) {
     switch (visitors.size()) {
       case 0:
         return new DummyVisitor();
@@ -45,33 +48,35 @@ public class MultiVisitor implements ExecutionVisitor {
    * given during construction of this MultiVisitor.
    */
   @Override
-  public void initialize(ExecutableSequence eseq) {
-    for (ExecutionVisitor visitor : visitors) {
+  public void initialize(@Det MultiVisitor this, @Det ExecutableSequence eseq) {
+    for (@Det ExecutionVisitor visitor : visitors) {
       visitor.initialize(eseq);
     }
   }
 
-  public MultiVisitor(List<ExecutionVisitor> visitors) {
+  public @Det MultiVisitor(@Det List<@Det ExecutionVisitor> visitors) {
     this.visitors.addAll(visitors);
   }
 
   @Override
-  public void visitAfterStatement(ExecutableSequence eseq, int i) {
-    for (ExecutionVisitor visitor : visitors) {
+  public void visitAfterStatement(
+      @Det MultiVisitor this, @Det ExecutableSequence eseq, @Det int i) {
+    for (@Det ExecutionVisitor visitor : visitors) {
       visitor.visitAfterStatement(eseq, i);
     }
   }
 
   @Override
-  public void visitBeforeStatement(ExecutableSequence eseq, int i) {
-    for (ExecutionVisitor visitor : visitors) {
+  public void visitBeforeStatement(
+      @Det MultiVisitor this, @Det ExecutableSequence eseq, @Det int i) {
+    for (@Det ExecutionVisitor visitor : visitors) {
       visitor.visitBeforeStatement(eseq, i);
     }
   }
 
   @Override
-  public void visitAfterSequence(ExecutableSequence eseq) {
-    for (ExecutionVisitor visitor : visitors) {
+  public void visitAfterSequence(@Det MultiVisitor this, @Det ExecutableSequence eseq) {
+    for (@Det ExecutionVisitor visitor : visitors) {
       visitor.visitAfterSequence(eseq);
     }
   }

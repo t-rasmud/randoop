@@ -60,7 +60,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // the annotation for this library method is wrong
     @PolyDet String tmp = "(" + UtilPlume.join(list, ", ") + ")";
     return tmp;
   }

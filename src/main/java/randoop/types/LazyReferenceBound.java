@@ -81,9 +81,11 @@ class LazyReferenceBound extends ReferenceBound {
       parameters.add((TypeVariable) getBoundType());
     } else if (getBoundType().isParameterized()) {
       for (
-      @PolyDet ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
-        if (argType.isVariable()) {
-          parameters.add((TypeVariable) argType);
+      @PolyDet("up") ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
+        @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+        @PolyDet ReferenceType tmp = argType;
+        if (tmp.isVariable()) {
+          parameters.add((TypeVariable) tmp);
         }
       }
     }

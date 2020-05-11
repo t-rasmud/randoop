@@ -1,5 +1,6 @@
 package randoop;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.sequence.ExecutableSequence;
 
 /**
@@ -18,7 +19,7 @@ public interface ExecutionVisitor {
    * @param eseq the code sequence to be visited
    * @param i the position of statement to visit
    */
-  void visitBeforeStatement(ExecutableSequence eseq, int i);
+  void visitBeforeStatement(@Det ExecutionVisitor this, @Det ExecutableSequence eseq, @Det int i);
 
   /**
    * Invoked by ExecutableSequence.execute after the i-th statement executes.
@@ -28,7 +29,7 @@ public interface ExecutionVisitor {
    * @param eseq the code sequence to be visited
    * @param i the position of statement to visit
    */
-  void visitAfterStatement(ExecutableSequence eseq, int i);
+  void visitAfterStatement(@Det ExecutionVisitor this, @Det ExecutableSequence eseq, @Det int i);
 
   /**
    * Called before execution of a sequence, to allow the visitor to perform any initialization steps
@@ -36,12 +37,12 @@ public interface ExecutionVisitor {
    *
    * @param eseq the code sequence to be visited
    */
-  void initialize(ExecutableSequence eseq);
+  void initialize(@Det ExecutionVisitor this, @Det ExecutableSequence eseq);
 
   /**
    * Called after execution of a sequence.
    *
    * @param eseq the visited code sequence
    */
-  void visitAfterSequence(ExecutableSequence eseq);
+  void visitAfterSequence(@Det ExecutionVisitor this, @Det ExecutableSequence eseq);
 }

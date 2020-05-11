@@ -62,7 +62,10 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   }
 
   @Override
-  public @PolyDet("up") String toString() {
+  @SuppressWarnings(
+      "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                     // @PolyDet
+  public String toString() {
     return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
   }
 }

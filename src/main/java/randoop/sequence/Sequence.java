@@ -98,11 +98,12 @@ public final class Sequence {
    * @param c the type for initialized variable
    * @return the sequence consisting of the initialization
    */
+  @SuppressWarnings(
+      "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                     // @PolyDet
   public static Sequence zero(Type c) {
-    return new @PolyDet Sequence()
-        .extend(
-            TypedOperation.createNullOrZeroInitializationForType(c),
-            new @PolyDet ArrayList<@PolyDet Variable>());
+    return new Sequence()
+        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
 
   /**
@@ -809,6 +810,8 @@ public final class Sequence {
       }
       Type inputType = operation.getInputTypes().get(i);
       if (!inputType.isAssignableFrom(newRefConstraint)) {
+        @SuppressWarnings(
+            "determinism") // all concrete implementation of type of a deterministic toString
         String msg =
             String.format(
                     "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
@@ -1123,7 +1126,7 @@ public final class Sequence {
    * @param index the statement position in this sequence
    * @return the sequence containing the index position
    */
-  @PolyDet Sequence getSubsequence(int index) {
+  @Det Sequence getSubsequence(@Det Sequence this, @Det int index) {
     return new Sequence(statements.getSublist(index));
   }
 
@@ -1275,7 +1278,9 @@ public final class Sequence {
       if (!(o instanceof RelativeNegativeIndex)) {
         return false;
       }
-      return this.index == ((RelativeNegativeIndex) o).index;
+      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
+      boolean tmp = (this.index == ((RelativeNegativeIndex) o).index);
+      return tmp;
     }
 
     @Override

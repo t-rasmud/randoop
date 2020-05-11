@@ -3,11 +3,9 @@ package randoop.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.framework.qual.HasQualifierParameter;
 
-@HasQualifierParameter(NonDet.class)
 public class MultiSet<T extends @PolyDet Object> {
 
   private final @PolyDet Map<T, Integer> frequencyMap;
@@ -42,7 +40,8 @@ public class MultiSet<T extends @PolyDet Object> {
     return frequencyMap.isEmpty();
   }
 
-  public void removeAllInstances(Set<T> values) {
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  public void removeAllInstances(@Det Set<T> values) {
     for (T value : values) {
       frequencyMap.remove(value);
     }

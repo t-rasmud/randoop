@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
@@ -8,7 +9,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
  */
-public class CheckpointingSet<T extends @PolyDet("use") Object> implements ISimpleSet<T> {
+public class CheckpointingSet<T extends @PolyDet Object> implements ISimpleSet<T> {
 
   public final @PolyDet CheckpointingMultiMap<T, @PolyDet Boolean> map;
 
@@ -58,7 +59,7 @@ public class CheckpointingSet<T extends @PolyDet("use") Object> implements ISimp
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
-  public void undoToLastMark() {
+  public void undoToLastMark(@Det CheckpointingSet<T> this) {
     map.undoToLastMark();
   }
 

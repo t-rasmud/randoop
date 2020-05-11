@@ -1,7 +1,7 @@
 package randoop.util;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
@@ -59,19 +59,19 @@ public final class ReflectionExecutor {
     excep_exec_count = 0;
   }
 
-  public static int normalExecs() {
+  public static @NonDet int normalExecs() {
     return normal_exec_count;
   }
 
-  public static int excepExecs() {
+  public static @NonDet int excepExecs() {
     return excep_exec_count;
   }
 
-  public static double normalExecAvgMillis() {
+  public static @NonDet double normalExecAvgMillis() {
     return ((normal_exec_duration / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
-  public static double excepExecAvgMillis() {
+  public static @NonDet double excepExecAvgMillis() {
     return ((excep_exec_duration / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
@@ -82,12 +82,12 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @return the execution result
    */
-  public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
+  public static ExecutionOutcome executeReflectionCode(@Det ReflectionCode code) {
     long start = System.nanoTime();
     if (usethreads) {
       try {
         executeReflectionCodeThreaded(code);
-      } catch (@PolyDet TimeoutExceededException e) {
+      } catch (TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(e, call_timeout * 1000);
       }
@@ -120,10 +120,10 @@ public final class ReflectionExecutor {
    * @throws TimeoutExceededException if execution times out
    */
   @SuppressWarnings({"deprecation", "DeprecatedThreadMethods"})
-  private static void executeReflectionCodeThreaded(ReflectionCode code)
+  private static void executeReflectionCodeThreaded(@Det ReflectionCode code)
       throws TimeoutExceededException {
 
-    RunnerThread runnerThread = new RunnerThread(null);
+    @Det RunnerThread runnerThread = new RunnerThread(null);
     runnerThread.setup(code);
 
     try {
@@ -159,7 +159,7 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    */
-  private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
+  private static void executeReflectionCodeUnThreaded(@Det ReflectionCode code) {
     try {
       code.runReflectionCode();
       return;

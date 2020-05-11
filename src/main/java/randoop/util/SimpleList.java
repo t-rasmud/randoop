@@ -1,7 +1,6 @@
 package randoop.util;
 
 import java.util.List;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -32,7 +31,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
  * the new statement in a {@code OneMoreElementList}, which takes up only 2 references in memory
  * (and constant creation time).
  */
-public interface SimpleList<T extends @NonDet Object> {
+public interface SimpleList<T extends @PolyDet Object> {
 
   /**
    * Return the number of elements in this list.
@@ -75,4 +74,6 @@ public interface SimpleList<T extends @NonDet Object> {
    * @return {@link java.util.List} for this list
    */
   public abstract List<T> toJDKList();
+
+  public abstract String toString();
 }

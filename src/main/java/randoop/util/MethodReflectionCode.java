@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
@@ -26,8 +27,8 @@ public final class MethodReflectionCode extends ReflectionCode {
    * @param inputs the arguments that the method is applied to
    */
   @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
-  public MethodReflectionCode(
-      @PolyDet Method method, @PolyDet Object receiver, @PolyDet Object @PolyDet [] inputs) {
+  public @Det MethodReflectionCode(
+      @Det Method method, @Det Object receiver, @Det Object @Det [] inputs) {
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
@@ -49,12 +50,15 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @SuppressWarnings("Finally")
   @Override
-  public void runReflectionCodeRaw() {
+  public void runReflectionCodeRaw(@Det MethodReflectionCode this) {
     Log.logPrintf("runReflectionCodeRaw: %s%n", method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, retval);
+        @SuppressWarnings(
+            "determinism") // this is from code randoop is run on, so okay to have nondet toString
+        @Det String tmp = retval.toString();
+        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, tmp);
       } catch (OutOfMemoryError e) {
         Log.logPrintf("runReflectionCodeRaw(%s) => [value too large to print]%n", method);
       }

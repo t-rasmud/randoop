@@ -67,7 +67,7 @@ public abstract class ObjectContract {
    * @return false if the contract is violated, true otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
-  public abstract @PolyDet("up") boolean evaluate(Object... objects) throws Throwable;
+  public abstract @PolyDet boolean evaluate(Object... objects) throws Throwable;
 
   /**
    * A string that will be inserted as a comment in the test before the code corresponding to this
