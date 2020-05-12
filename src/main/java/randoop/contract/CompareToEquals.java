@@ -23,13 +23,17 @@ public class CompareToEquals extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
-  public @PolyDet("up") boolean evaluate(Object... objects) {
+  public boolean evaluate(Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
     if (o1 instanceof Comparable) {
       Comparable compObj1 = (Comparable) o1;
-      return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet boolean tmp = (compObj1.compareTo(o2) == 0) == o1.equals(o2);
+      return tmp;
     }
     return true;
   }

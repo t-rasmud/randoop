@@ -189,6 +189,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
+  @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
   public ExecutableSequence step(@Det ForwardGenerator this) {
 
     @NonDet long startTime = System.nanoTime();
@@ -265,6 +266,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence, all of whose indices are initailly marked as active
    */
+  @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
   private void determineActiveIndices(@Det ForwardGenerator this, @Det ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
@@ -399,7 +401,8 @@ public class ForwardGenerator extends AbstractGenerator {
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
-            String opName = operation.getOperation().getReflectionObject().toString();
+            @SuppressWarnings("determinism") // AccessibleObject toString is actually deterministic
+            @Det String opName = operation.getOperation().getReflectionObject().toString();
             throw new RandoopInstantiationError(opName, e);
           }
         } else {
@@ -810,7 +813,7 @@ public class ForwardGenerator extends AbstractGenerator {
     final Variable var;
     final Sequence seq;
 
-    VarAndSeq(Variable var, Sequence seq) {
+    VarAndSeq(@PolyDet Variable var, @PolyDet Sequence seq) {
       this.var = var;
       this.seq = seq;
     }

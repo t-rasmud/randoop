@@ -78,7 +78,10 @@ public class ComponentManager {
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new @PolyDet SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    @SuppressWarnings("determinism") // empty collection clearly assignable to anything
+    @PolyDet Collection<@PolyDet Sequence> tmp =
+        Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    gralSeeds = tmp;
   }
 
   /**
@@ -126,9 +129,10 @@ public class ComponentManager {
    * @param pkg the package to add for the sequence
    * @param seq the sequence
    */
-  public void addPackageLevelLiteral(Package pkg, Sequence seq) {
+  public void addPackageLevelLiteral(
+      @Det ComponentManager this, @Det Package pkg, @Det Sequence seq) {
     if (packageLiterals == null) {
-      packageLiterals = new @PolyDet PackageLiterals();
+      packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
   }
@@ -250,6 +254,7 @@ public class ComponentManager {
    *
    * @return the sequences for primitive values
    */
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
   Set<Sequence> getAllPrimitiveSequences(@Det ComponentManager this) {
 
     @Det Set<@Det Sequence> result = new LinkedHashSet<>();

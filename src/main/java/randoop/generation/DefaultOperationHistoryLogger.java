@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.operation.TypedOperation;
 
 /**
@@ -7,12 +8,15 @@ import randoop.operation.TypedOperation;
  */
 public class DefaultOperationHistoryLogger implements OperationHistoryLogInterface {
   @Override
-  public void add(TypedOperation operation, OperationOutcome outcome) {
+  public void add(
+      @Det DefaultOperationHistoryLogger this,
+      @Det TypedOperation operation,
+      @Det OperationOutcome outcome) {
     // these methods don't do anything
   }
 
   @Override
-  public void outputTable() {
+  public void outputTable(@Det DefaultOperationHistoryLogger this) {
     // these methods don't do anything
   }
 }

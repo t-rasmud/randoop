@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -52,7 +53,7 @@ public class SequenceExceptionError extends Error {
    *
    * @return the string representation of the statement
    */
-  public String getStatement() {
+  public String getStatement(@Det SequenceExceptionError this) {
     return testSequence.statementToCodeString(position);
   }
 
@@ -61,7 +62,7 @@ public class SequenceExceptionError extends Error {
    *
    * @return the full test sequence as a string
    */
-  public String getSequence() {
+  public String getSequence(@Det SequenceExceptionError this) {
     return testSequence.toCodeString();
   }
 
@@ -70,7 +71,7 @@ public class SequenceExceptionError extends Error {
    *
    * @return the input sequence from which exception was thrown
    */
-  public Sequence getSubsequence() {
+  public Sequence getSubsequence(@Det SequenceExceptionError this) {
     return testSequence.sequence.getSubsequence(position);
   }
 }

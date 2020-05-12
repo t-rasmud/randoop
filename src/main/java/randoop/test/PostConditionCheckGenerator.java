@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
@@ -21,7 +22,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
    *
    * @param postConditions the post-condition to be tested in generated {@link TestChecks}
    */
-  public PostConditionCheckGenerator(List<ExecutableBooleanExpression> postConditions) {
+  public PostConditionCheckGenerator(List<@PolyDet ExecutableBooleanExpression> postConditions) {
     this.postConditions = postConditions;
   }
 

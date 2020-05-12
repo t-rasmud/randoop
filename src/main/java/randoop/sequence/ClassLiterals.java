@@ -20,6 +20,7 @@ import randoop.util.SimpleList;
  *
  * <p>These are used preferentially as arguments to methods of class C.
  */
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
 public class ClassLiterals extends MappedSequences<@PolyDet ClassOrInterfaceType> {
 
   @Override

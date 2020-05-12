@@ -75,6 +75,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
@@ -470,7 +471,9 @@ public class Minimize extends CommandHandler {
 
     // Find all the names of the primitive and wrapped types.
     @OrderNonDet Set<@Det String> primitiveAndWrappedTypes = new HashSet<>();
-    new PrimitiveAndWrappedTypeVarNameCollector().visit(compilationUnit, primitiveAndWrappedTypes);
+    @SuppressWarnings("determinism") // okay for set to be @OrderNonDet because visit only inserts
+    @PolyDet Set<@PolyDet String> tmp = primitiveAndWrappedTypes;
+    new PrimitiveAndWrappedTypeVarNameCollector().visit(compilationUnit, tmp);
 
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
@@ -834,9 +837,11 @@ public class Minimize extends CommandHandler {
   }
 
   /** Sorts a type by its simple name. */
-  private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
+  private static class ClassOrInterfaceTypeComparator
+      implements Comparator<@PolyDet ClassOrInterfaceType> {
     @Override
-    public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
+    public @PolyDet int compare(
+        @PolyDet ClassOrInterfaceType o1, @PolyDet ClassOrInterfaceType o2) {
       return o1.toString().compareTo(o2.toString());
     }
   }
@@ -863,11 +868,11 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if write to file fails
    */
   private static CompilationUnit simplifyTypeNames(
-      @Det CompilationUnit compilationUnit,
+      CompilationUnit compilationUnit,
       String packageName,
       Path file,
       String classpath,
-      @OrderNonDet Map<@Det String, @Det String> expectedOutput,
+      @OrderNonDet Map<String, String> expectedOutput,
       int timeoutLimit,
       boolean verboseOutput)
       throws IOException {
@@ -877,7 +882,9 @@ public class Minimize extends CommandHandler {
 
     // Types that are used in variable declarations.  Contains only one type per simple name.
     Set<@Det ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
-    new ClassTypeVisitor().visit(compilationUnit, types);
+    @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+    @PolyDet Set<@PolyDet ClassOrInterfaceType> tmp = types;
+    new @Det ClassTypeVisitor().visit(compilationUnit, tmp);
     CompilationUnit result = compilationUnit;
     for (ClassOrInterfaceType type : types) {
       // Copy and modify the compilation unit.
@@ -1235,9 +1242,10 @@ public class Minimize extends CommandHandler {
   }
 
   /** Sorts ImportDeclaration objects by their name. */
-  private static class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+  private static class ImportDeclarationComparator
+      implements Comparator<@PolyDet ImportDeclaration> {
     @Override
-    public int compare(ImportDeclaration o1, ImportDeclaration o2) {
+    public @PolyDet int compare(@PolyDet ImportDeclaration o1, @PolyDet ImportDeclaration o2) {
       return o1.getName().toString().compareTo(o2.getName().toString());
     }
   }
@@ -1306,7 +1314,7 @@ public class Minimize extends CommandHandler {
      * @param errout error output
      * @return an Outputs object representing a failed execution
      */
-    static Outputs failure(CommandLine command, String errout) {
+    static @Det Outputs failure(CommandLine command, String errout) {
       return new Outputs(command.toString(), 1, "", errout);
     }
 
@@ -1315,7 +1323,7 @@ public class Minimize extends CommandHandler {
      *
      * @return true if the command succeeded
      */
-    public boolean isSuccess() {
+    public @PolyDet boolean isSuccess() {
       return exitValue == 0;
     }
 
@@ -1324,7 +1332,7 @@ public class Minimize extends CommandHandler {
      *
      * @return true if the command failed
      */
-    public boolean isFailure() {
+    public @PolyDet boolean isFailure() {
       return !isSuccess();
     }
 
@@ -1333,7 +1341,7 @@ public class Minimize extends CommandHandler {
      *
      * @return a verbose multi-line string representation of this object, for dbugging
      */
-    public String diagnostics() {
+    public String diagnostics(@Det Outputs this) {
       return String.join(
           Globals.lineSep,
           "command: " + command,

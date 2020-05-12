@@ -274,7 +274,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param input array containing appropriate inputs to operation
    * @return results of executing this statement
    */
-  public @NonDet ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
     assert input.length == inputTypes.size()
         : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 

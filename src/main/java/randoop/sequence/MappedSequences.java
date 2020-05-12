@@ -19,6 +19,7 @@ import randoop.util.SimpleList;
  * components when testing a specific class.
  */
 @CollectionType
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
 public class MappedSequences<T extends @PolyDet Object> {
 
   private Map<T, @PolyDet SequenceCollection> map;
@@ -33,12 +34,12 @@ public class MappedSequences<T extends @PolyDet Object> {
    * @param key the key value
    * @param seq the sequence
    */
-  public void addSequence(T key, Sequence seq) {
+  public void addSequence(@Det MappedSequences<T> this, T key, @Det Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
-    @PolyDet SequenceCollection c = map.get(key);
+    @Det SequenceCollection c = map.get(key);
     if (c == null) {
-      c = new @PolyDet SequenceCollection();
+      c = new SequenceCollection();
       map.put(key, c);
     }
     c.add(seq);
@@ -57,10 +58,9 @@ public class MappedSequences<T extends @PolyDet Object> {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
-    @PolyDet SequenceCollection c = map.get(key);
+    @Det SequenceCollection c = map.get(key);
     if (c == null) {
-      @SuppressWarnings("determinism") // empty list clearly assignable to anything
-      @PolyDet SimpleList<@PolyDet Sequence> tmp = emptyList;
+      @Det SimpleList<Sequence> tmp = emptyList;
       return tmp;
     }
     return map.get(key).getSequencesForType(desiredType, true, false);

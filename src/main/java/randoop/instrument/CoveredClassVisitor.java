@@ -3,6 +3,8 @@ package randoop.instrument;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionVisitor;
 import randoop.sequence.ExecutableSequence;
 
@@ -13,14 +15,14 @@ import randoop.sequence.ExecutableSequence;
 public class CoveredClassVisitor implements ExecutionVisitor {
 
   /** The classes to be polled. */
-  private Set<Class<?>> classes;
+  private Set<@PolyDet Class<?>> classes;
 
   /**
    * Creates a visitor to poll the given classes for coverage by sequence executions.
    *
    * @param classes the set of classes to poll for coverage by a sequence
    */
-  public CoveredClassVisitor(Set<Class<?>> classes) {
+  public CoveredClassVisitor(@PolyDet Set<@PolyDet Class<?>> classes) {
     this.classes = classes;
   }
 
@@ -30,7 +32,7 @@ public class CoveredClassVisitor implements ExecutionVisitor {
    * <p>Registers each class covered with the sequence execution results.
    */
   @Override
-  public void visitAfterSequence(ExecutableSequence eseq) {
+  public void visitAfterSequence(@Det CoveredClassVisitor this, @Det ExecutableSequence eseq) {
     for (Class<?> c : classes) {
       if (checkAndReset(c)) {
         eseq.addCoveredClass(c);
@@ -64,17 +66,19 @@ public class CoveredClassVisitor implements ExecutionVisitor {
 
   // unimplemented visitor methods
   @Override
-  public void visitBeforeStatement(ExecutableSequence eseq, int i) {
+  public void visitBeforeStatement(
+      @Det CoveredClassVisitor this, @Det ExecutableSequence eseq, @Det int i) {
     // Not doing anything before
   }
 
   @Override
-  public void visitAfterStatement(ExecutableSequence eseq, int i) {
+  public void visitAfterStatement(
+      @Det CoveredClassVisitor this, @Det ExecutableSequence eseq, @Det int i) {
     // Not doing anything after
   }
 
   @Override
-  public void initialize(ExecutableSequence eseq) {
+  public void initialize(@Det CoveredClassVisitor this, @Det ExecutableSequence eseq) {
     // No initialization
   }
 }

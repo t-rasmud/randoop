@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -7,10 +8,11 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
  * (represented as single-element sequences) that can be used as inputs to classes in the given
  * package.
  */
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
 public class PackageLiterals extends MappedSequences<@PolyDet Package> {
 
   @Override
-  public void addSequence(Package key, Sequence seq) {
+  public void addSequence(@Det PackageLiterals this, @Det Package key, @Det Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (!seq.isNonreceiver()) {
       throw new IllegalArgumentException("seq is not a primitive sequence");

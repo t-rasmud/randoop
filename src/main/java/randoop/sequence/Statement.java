@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
@@ -104,7 +105,11 @@ public final class Statement {
    * @param b the {@code StringBuilder} to which code text is appended
    * @see Sequence#appendCode(StringBuilder, int)
    */
-  public void appendCode(Variable variable, List<@PolyDet Variable> inputs, StringBuilder b) {
+  public void appendCode(
+      @Det Statement this,
+      @Det Variable variable,
+      @Det List<@Det Variable> inputs,
+      @Det StringBuilder b) {
     Type type = operation.getOutputType();
     if (!type.isVoid()) {
       if (operation.isUncheckedCast()) {
@@ -165,7 +170,7 @@ public final class Statement {
    * @param inputs list of objects to use as inputs to execution
    * @return object representing outcome of computation
    */
-  public ExecutionOutcome execute(Object[] inputs) {
+  public @Det ExecutionOutcome execute(@Det Object @Det [] inputs) {
     return operation.execute(inputs);
   }
 

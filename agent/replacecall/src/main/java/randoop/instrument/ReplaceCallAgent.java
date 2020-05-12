@@ -313,7 +313,6 @@ public class ReplaceCallAgent {
     if (exclusionFilePath != null) {
       args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    @SuppressWarnings("determinism") // library not annotated
     String tmp = UtilPlume.join(args, ",");
     return tmp;
   }

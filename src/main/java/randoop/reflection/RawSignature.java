@@ -174,7 +174,7 @@ public class RawSignature {
    *     same as the number of parameter types in this signature
    * @return the parameter declarations for this signature using the given parameter names
    */
-  public @PolyDet("up") String getDeclarationArguments(List<String> parameterNames) {
+  public @PolyDet("up") String getDeclarationArguments(List<@PolyDet String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
           String.format(

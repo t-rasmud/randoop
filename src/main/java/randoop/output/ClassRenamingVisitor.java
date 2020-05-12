@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.apache.commons.io.FilenameUtils;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.main.Minimize;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
@@ -59,6 +61,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
    * @param newClassName the new class name
    * @return the newly-created file
    */
+  @DefaultQualifier(Det.class)
   public static Path copyAndRename(Path file, String newClassName) {
 
     CompilationUnit compilationUnit;
@@ -93,6 +96,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
    * @param newClassName the new class name
    * @return the newly-created file
    */
+  @DefaultQualifier(Det.class)
   public static Path copyAndRename(
       Path file, CompilationUnit compilationUnit, String oldClassName, String newClassName) {
 

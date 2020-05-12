@@ -27,6 +27,7 @@ import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
@@ -95,13 +96,14 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @see ReplaceCallAgent
    */
   @Override
-  public byte[] transform(
+  @DefaultQualifier(Det.class)
+  public @Det byte[] transform(
       @Det CallReplacementTransformer this,
-      @Det ClassLoader loader,
-      @Det String className,
-      @Det Class<?> classBeingRedefined,
-      @Det ProtectionDomain protectionDomain,
-      @Det byte @Det [] classfileBuffer)
+      ClassLoader loader,
+      String className,
+      Class<?> classBeingRedefined,
+      ProtectionDomain protectionDomain,
+      @Det byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
     debug_transform.log("loader: %s, className: %s%n", loader, className);
@@ -547,6 +549,7 @@ public class CallReplacementTransformer extends InstructionListUtils
         debug_transform.log(
             "getReplacementInstruction: EXIT Exception thrown due to wrong instruction type in %s.%s%n",
             mg.getClassName(), mg.getName());
+        @SuppressWarnings("determinism") // only printed in exceptional circumstances
         String msg =
             String.format(
                 "Unexpected invoke instruction %s in %s.%s",

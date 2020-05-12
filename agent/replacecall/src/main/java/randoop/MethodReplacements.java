@@ -3,6 +3,9 @@ package randoop;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.OrderNonDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
 /**
  * Class used to communicate values from the replacecall agent to Randoop.
@@ -26,9 +29,10 @@ import java.util.List;
  * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omitmethods}
  * patterns before starting generation.
  */
+@DefaultQualifier(Det.class)
 public class MethodReplacements {
   /** The list of signature strings. */
-  private static List<String> signatureList = new ArrayList<>();
+  private static @OrderNonDet List<String> signatureList = new @OrderNonDet ArrayList<>();
 
   /** The string with the path to the replacecall agent. */
   private static String agentPath;
@@ -44,7 +48,7 @@ public class MethodReplacements {
    *
    * @param sigList the method signature list
    */
-  public static synchronized void setReplacedMethods(List<String> sigList) {
+  public static synchronized void setReplacedMethods(@OrderNonDet List<@Det String> sigList) {
     signatureList = new ArrayList<>(sigList);
   }
 
@@ -54,6 +58,7 @@ public class MethodReplacements {
    * @return the list of signature strings set by {@link #setReplacedMethods(List)}, or the empty
    *     list if that method hasn't been called
    */
+  @SuppressWarnings("determinism") // collection clearly sorted, so deterministic
   public static synchronized List<String> getSignatureList() {
     List<String> result = new ArrayList<>(signatureList);
     Collections.sort(result);

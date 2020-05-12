@@ -126,6 +126,9 @@ public class ExecutableSequence {
   }
 
   @Override
+  @SuppressWarnings(
+      "determinism") // this may produce non-deterministic output when calling appendCode, but have
+                     // to make this method take @PolyDet to override equals
   public String toString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < sequence.size(); i++) {
@@ -161,8 +164,8 @@ public class ExecutableSequence {
    *
    * @return the sequence as a string
    */
-  private List<@PolyDet String> toCodeLines() {
-    @PolyDet List<@PolyDet String> lines = new @PolyDet ArrayList<>();
+  private List<String> toCodeLines(@Det ExecutableSequence this) {
+    @Det List<String> lines = new ArrayList<>();
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
@@ -181,14 +184,14 @@ public class ExecutableSequence {
         // Print exception check first, if present.
         // This makes its pre-statement part the last pre-statement part,
         // and its post-statement part the first post-statement part.
-        @PolyDet Check exObs = checks.getExceptionCheck();
+        @Det Check exObs = checks.getExceptionCheck();
         if (exObs != null) {
           oneStatement.insert(0, exObs.toCodeStringPreStatement());
           oneStatement.append(exObs.toCodeStringPostStatement());
         }
 
         // Print the rest of the checks.
-        for (@PolyDet("up") Check d : checks.checks()) {
+        for (@Det Check d : checks.checks()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
           oneStatement.append(Globals.lineSep).append(d.toCodeStringPostStatement());
         }
@@ -208,7 +211,7 @@ public class ExecutableSequence {
    *
    * @return the sequence as a string
    */
-  public String toCodeString() {
+  public String toCodeString(@Det ExecutableSequence this) {
     StringBuilder b = new StringBuilder();
     for (String line : toCodeLines()) {
       b.append(line).append(Globals.lineSep);
@@ -222,7 +225,7 @@ public class ExecutableSequence {
    * @param i the statement index
    * @return the string representation of the statement
    */
-  public String statementToCodeString(int i) {
+  public String statementToCodeString(@Det ExecutableSequence this, @Det int i) {
     StringBuilder oneStatement = new StringBuilder();
     sequence.appendCode(oneStatement, i);
     return oneStatement.toString();
@@ -335,7 +338,7 @@ public class ExecutableSequence {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
             @SuppressWarnings(
                 "determinism") // this is from code randoop is run on, so okay to have nondet
-                               // toString
+            // toString
             String msg =
                 String.format(
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",

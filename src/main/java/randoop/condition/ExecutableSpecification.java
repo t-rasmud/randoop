@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -79,8 +80,9 @@ public class ExecutableSpecification {
    * @return the table with entries for this operation
    * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
-  public ExpectedOutcomeTable checkPrestate(@Det ExecutableSpecification this, Object[] args) {
-    @PolyDet ExpectedOutcomeTable table = new @PolyDet ExpectedOutcomeTable();
+  @DefaultQualifier(Det.class)
+  public ExpectedOutcomeTable checkPrestate(@Det ExecutableSpecification this, @Det Object[] args) {
+    ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.checkPrestate(args, table);
     for (@Det ExecutableSpecification execSpec : parentList) {
       execSpec.checkPrestate(args, table);
@@ -104,11 +106,12 @@ public class ExecutableSpecification {
    * @param args the argument values; always includes a receiver (null for static methods)
    * @param table the table to which the created entry is to be added
    */
+  @DefaultQualifier(Det.class)
   private void checkPrestate(
-      @Det ExecutableSpecification this, Object[] args, ExpectedOutcomeTable table) {
+      @Det ExecutableSpecification this, @Det Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreExpressions(args);
     List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
-    @PolyDet ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
+    ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
     table.add(preconditionCheck, postCondition, throwsClauses);
   }
 
@@ -120,8 +123,9 @@ public class ExecutableSpecification {
    * @param args the argument values
    * @return false if any local precondition fails on the argument values, true if all succeed
    */
-  private boolean checkPreExpressions(@Det ExecutableSpecification this, Object[] args) {
-    for (@Det ExecutableBooleanExpression preCondition : preExpressions) {
+  @DefaultQualifier(Det.class)
+  private boolean checkPreExpressions(@Det ExecutableSpecification this, @Det Object[] args) {
+    for (ExecutableBooleanExpression preCondition : preExpressions) {
       if (!preCondition.check(args)) {
         return false;
       }
@@ -136,11 +140,12 @@ public class ExecutableSpecification {
    * @param args the argument values
    * @return the set of exceptions for which the guard expression evaluated to true
    */
-  private @Det List<ThrowsClause> checkGuardThrowsPairs(
-      @Det ExecutableSpecification this, Object[] args) {
+  @DefaultQualifier(Det.class)
+  private List<ThrowsClause> checkGuardThrowsPairs(
+      @Det ExecutableSpecification this, @Det Object[] args) {
     List<ThrowsClause> throwsClauses = new ArrayList<>();
-    for (@Det GuardThrowsPair pair : guardThrowsPairs) {
-      @Det ExecutableBooleanExpression guard = pair.guard;
+    for (GuardThrowsPair pair : guardThrowsPairs) {
+      ExecutableBooleanExpression guard = pair.guard;
       if (guard.check(args)) {
         throwsClauses.add(pair.throwsClause);
       }
@@ -157,10 +162,11 @@ public class ExecutableSpecification {
    * @return the property for the first {@link GuardPropertyPair} for which the guard expression
    *     evaluates to true; null if there is none
    */
-  private @PolyDet ExecutableBooleanExpression checkGuardPropertyPairs(
-      @Det ExecutableSpecification this, Object[] args) {
-    for (@Det GuardPropertyPair gpPair : guardPropertyPairs) {
-      @Det ExecutableBooleanExpression guard = gpPair.guard;
+  @DefaultQualifier(Det.class)
+  private ExecutableBooleanExpression checkGuardPropertyPairs(
+      @Det ExecutableSpecification this, @Det Object[] args) {
+    for (GuardPropertyPair gpPair : guardPropertyPairs) {
+      ExecutableBooleanExpression guard = gpPair.guard;
       if (guard.check(args)) {
         return gpPair.property.addPrestate(args);
       }

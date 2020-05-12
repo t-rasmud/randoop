@@ -1,12 +1,13 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.Type;
 
 /** A dummy variable, to ensure that parameter lists are the expected length. */
 public class DummyVariable extends Variable {
 
   /** The only DummyVariable that exists. */
-  public static final DummyVariable DUMMY = new DummyVariable();
+  public static final @Det DummyVariable DUMMY = new DummyVariable();
 
   /** Create a DummyVariable. */
   private DummyVariable() {}

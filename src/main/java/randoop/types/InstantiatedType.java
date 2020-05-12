@@ -197,7 +197,7 @@ public class InstantiatedType extends ParameterizedType {
     for (@PolyDet("up") TypeArgument argument : argumentList) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet TypeArgument tmp = argument;
       if (!tmp.isWildcard()) {
         referenceArgList.add(((ReferenceArgument) tmp).getReferenceType());
@@ -247,7 +247,7 @@ public class InstantiatedType extends ParameterizedType {
     for (@PolyDet("up") TypeArgument argument : argumentList) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet TypeArgument tmp = argument;
       @PolyDet List<@PolyDet TypeVariable> params = tmp.getTypeParameters();
       paramSet.addAll(params);
@@ -268,7 +268,7 @@ public class InstantiatedType extends ParameterizedType {
     for (@PolyDet("up") TypeArgument arg : this.getTypeArguments()) {
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet TypeArgument tmp = arg;
       if (!tmp.isWildcard()) {
         arguments.add(((ReferenceArgument) tmp).getReferenceType());

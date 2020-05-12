@@ -120,13 +120,16 @@ public class SpecificationTranslator {
         poststateExpressionSignature.getDeclarationArguments(parameterNames);
 
     @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap = createReplacementMap(parameterNames);
-    return new SpecificationTranslator(
-        prestateExpressionSignature,
-        prestateExpressionDeclarations,
-        poststateExpressionSignature,
-        poststateExpressionDeclarations,
-        replacementMap,
-        compiler);
+    @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/179
+    @PolyDet SpecificationTranslator tmp =
+        new SpecificationTranslator(
+            prestateExpressionSignature,
+            prestateExpressionDeclarations,
+            poststateExpressionSignature,
+            poststateExpressionDeclarations,
+            replacementMap,
+            compiler);
+    return tmp;
   }
 
   /**

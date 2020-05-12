@@ -2,7 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
-import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
@@ -75,7 +75,7 @@ public abstract class CallableOperation implements Operation {
    * @param input array containing appropriate inputs to operation
    * @return results of executing this statement
    */
-  public abstract @NonDet ExecutionOutcome execute(Object[] input);
+  public abstract @Det ExecutionOutcome execute(@Det Object @Det [] input);
 
   /**
    * Produces a Java source code representation of this statement and appends it to the given

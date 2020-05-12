@@ -29,6 +29,7 @@ public class RandoopGenerationError extends Error {
    *
    * @return the name of the reflection object for the operation
    */
+  @SuppressWarnings("determinism") // AccessibleObject toString is actually deterministic
   public String getOperationName() {
     return operation.getOperation().getReflectionObject().toString();
   }

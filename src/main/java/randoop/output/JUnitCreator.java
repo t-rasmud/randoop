@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.main.GenTests;
@@ -180,16 +181,19 @@ public class JUnitCreator {
    * @param sequences the contents of the test methods
    * @return the CompilationUnit for a test class
    */
-  public @PolyDet("up") CompilationUnit createTestClass(
-      String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
+  public CompilationUnit createTestClass(
+      @Det JUnitCreator this,
+      @Det String testClassName,
+      @Det NameGenerator methodNameGen,
+      @Det List<ExecutableSequence> sequences) {
     this.classMethodCounts.put(testClassName, sequences.size());
 
-    @PolyDet("up") CompilationUnit compilationUnit = new @PolyDet("up") CompilationUnit();
+    CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackageDeclaration(new PackageDeclaration(new Name(packageName)));
     }
 
-    @PolyDet NodeList<@PolyDet ImportDeclaration> imports = new @PolyDet NodeList<>();
+    NodeList<ImportDeclaration> imports = new NodeList<>();
     if (afterEachBody != null) {
       imports.add(new ImportDeclaration(new Name("org.junit.After"), false, false));
     }
@@ -210,14 +214,13 @@ public class JUnitCreator {
     // class declaration
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(PUBLIC, false, testClassName);
-    @PolyDet NodeList<@PolyDet AnnotationExpr> annotations =
-        new
-        @PolyDet NodeList<>(
+    NodeList<AnnotationExpr> annotations =
+        new NodeList<>(
             new SingleMemberAnnotationExpr(
                 new Name("FixMethodOrder"), new NameExpr("MethodSorters.NAME_ASCENDING")));
     classDeclaration.setAnnotations(annotations);
 
-    @PolyDet NodeList<@PolyDet BodyDeclaration<?>> bodyDeclarations = new @PolyDet NodeList<>();
+    NodeList<BodyDeclaration<?>> bodyDeclarations = new NodeList<>();
     // // add debug field
     // VariableDeclarator debugVariable = javaParser.parseVariableDeclarationExpr("boolean
     // debug=false;");
@@ -261,14 +264,14 @@ public class JUnitCreator {
       }
     }
 
-    for (@PolyDet("up") ExecutableSequence eseq : sequences) {
-      @PolyDet MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
+    for (@Det ExecutableSequence eseq : sequences) {
+      @Det MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
       if (testMethod != null) {
         bodyDeclarations.add(testMethod);
       }
     }
     classDeclaration.setMembers(bodyDeclarations);
-    @PolyDet("up") NodeList<@PolyDet TypeDeclaration<?>> types = new NodeList<>(classDeclaration);
+    NodeList<TypeDeclaration<?>> types = new NodeList<>(classDeclaration);
     compilationUnit.setTypes(types);
 
     return compilationUnit;
@@ -283,23 +286,25 @@ public class JUnitCreator {
    * @return the {@code String} for the test method
    */
   private MethodDeclaration createTestMethod(
-      String className, String methodName, ExecutableSequence testSequence) {
+      @Det JUnitCreator this,
+      @Det String className,
+      @Det String methodName,
+      @Det ExecutableSequence testSequence) {
     MethodDeclaration method = new MethodDeclaration(PUBLIC, new VoidType(), methodName);
-    @PolyDet NodeList<@PolyDet AnnotationExpr> annotations =
-        new @PolyDet NodeList<>(new MarkerAnnotationExpr(new Name("Test")));
+    NodeList<AnnotationExpr> annotations =
+        new NodeList<>(new MarkerAnnotationExpr(new Name("Test")));
     method.setAnnotations(annotations);
 
     @SuppressWarnings("deprecation") // new ClassOrInterfaceDeclaration dose not handle generics
-    @PolyDet NodeList<@PolyDet ReferenceType> throwsList =
-        new @PolyDet NodeList<>(new ClassOrInterfaceType("Throwable"));
+    NodeList<ReferenceType> throwsList = new NodeList<>(new ClassOrInterfaceType("Throwable"));
     method.setThrownExceptions(throwsList);
 
     BlockStmt body = new BlockStmt();
-    @PolyDet NodeList<@PolyDet Statement> statements = new @PolyDet NodeList<>();
+    NodeList<Statement> statements = new NodeList<>();
     FieldAccessExpr field = new FieldAccessExpr(new NameExpr("System"), "out");
     MethodCallExpr call = new MethodCallExpr(field, "format");
 
-    @PolyDet NodeList<@PolyDet Expression> arguments = new @PolyDet NodeList<>();
+    NodeList<Expression> arguments = new NodeList<>();
     arguments.add(new StringLiteralExpr("%n%s%n"));
     arguments.add(new StringLiteralExpr(className + "." + methodName));
     call.setArguments(arguments);
@@ -308,7 +313,7 @@ public class JUnitCreator {
     // TODO make sequence generate list of JavaParser statements
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
     // try {
-    @PolyDet BlockStmt sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    @Det BlockStmt sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
     statements.addAll(sequenceBlock.getStatements());
     // }
     // catch (ParseException e) {
@@ -393,15 +398,18 @@ public class JUnitCreator {
    * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
-  public @PolyDet("up") String createTestDriver(
-      String driverName, Iterable<String> testClassNames, int numMethods) {
+  public String createTestDriver(
+      @Det JUnitCreator this,
+      @Det String driverName,
+      @Det Iterable<@Det String> testClassNames,
+      @Det int numMethods) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackageDeclaration(new PackageDeclaration(new Name(packageName)));
     }
 
     MethodDeclaration mainMethod = new MethodDeclaration(PUBLIC_STATIC, new VoidType(), "main");
-    @PolyDet NodeList<@PolyDet Parameter> parameters = new @PolyDet NodeList<>();
+    NodeList<Parameter> parameters = new NodeList<>();
     @SuppressWarnings("deprecation") // new ClassOrInterfaceType does not handle generics
     Parameter parameter = new Parameter(new ClassOrInterfaceType("String"), "args");
     parameter.setVarArgs(true);
@@ -410,15 +418,15 @@ public class JUnitCreator {
 
     mainMethod.getParameters().get(0).setVarArgs(true);
 
-    @PolyDet("up") NodeList<@PolyDet("up") Statement> bodyStatements = new @PolyDet("up") NodeList<>();
+    NodeList<Statement> bodyStatements = new NodeList<>();
 
     String failureVariableName = "hadFailure";
     Statement hadFailureDecl =
         javaParser.parseStatement("boolean " + failureVariableName + " = false;").getResult().get();
     bodyStatements.add(hadFailureDecl);
 
-    @PolyDet NameGenerator instanceNameGen = new @PolyDet NameGenerator("t");
-    @PolyDet NameGenerator methodNameGen =
+    @Det NameGenerator instanceNameGen = new NameGenerator("t");
+    @Det NameGenerator methodNameGen =
         new NameGenerator(GenTests.TEST_METHOD_NAME_PREFIX, 1, numMethods);
     for (String testClass : testClassNames) {
       if (beforeAllBody != null) {
@@ -445,9 +453,8 @@ public class JUnitCreator {
           new VariableDeclarator(
               testClassType,
               testVariable,
-              new ObjectCreationExpr(
-                  null, testClassType, new @PolyDet("up") NodeList<Expression>()));
-      @PolyDet("up") NodeList<@PolyDet("up") VariableDeclarator> variableList = new NodeList<>(variableDecl);
+              new ObjectCreationExpr(null, testClassType, new NodeList<Expression>()));
+      NodeList<VariableDeclarator> variableList = new NodeList<>(variableDecl);
       @SuppressWarnings("deprecation") // "new ClassOrInterfaceType()" does not handle generics
       VariableDeclarationExpr variableExpr = new VariableDeclarationExpr(variableList);
       bodyStatements.add(new ExpressionStmt(variableExpr));
@@ -463,9 +470,8 @@ public class JUnitCreator {
         String methodName = methodNameGen.next();
 
         TryStmt tryStmt = new TryStmt();
-        @PolyDet NodeList<@PolyDet Statement> tryStatements =
-            new
-            @PolyDet NodeList<>(
+        NodeList<Statement> tryStatements =
+            new NodeList<>(
                 new ExpressionStmt(new MethodCallExpr(new NameExpr(testVariable), methodName)));
         BlockStmt tryBlock = new BlockStmt();
 
@@ -514,13 +520,13 @@ public class JUnitCreator {
     BlockStmt body = new BlockStmt();
     body.setStatements(bodyStatements);
     mainMethod.setBody(body);
-    @PolyDet NodeList<@PolyDet BodyDeclaration<?>> bodyDeclarations = new @PolyDet NodeList<>(mainMethod);
+    NodeList<BodyDeclaration<?>> bodyDeclarations = new NodeList<>(mainMethod);
 
     ClassOrInterfaceDeclaration driverClass =
         new ClassOrInterfaceDeclaration(PUBLIC, false, driverName);
     driverClass.setMembers(bodyDeclarations);
 
-    @PolyDet NodeList<@PolyDet TypeDeclaration<?>> types = new NodeList<>(driverClass);
+    NodeList<TypeDeclaration<?>> types = new NodeList<>(driverClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }

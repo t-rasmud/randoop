@@ -34,6 +34,7 @@
 @SuppressWarnings("determinism") // can pass @Det receiver to @PolyDet method setUpperBound here because no chance of aliasing.
 @SuppressWarnings("determinism") // method doesn't mutate so safe to call
 @SuppressWarnings("determinism") // empty list clearly assignable to anything
+@SuppressWarnings("determinism") // empty collection clearly assignable to anything
 @SuppressWarnings("determinism") // okay to treat cache as @PolyDet
 @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
 @SuppressWarnings("determinism") // Tree set constructed from HashSet should be @PolyDet("down")
@@ -54,11 +55,13 @@
 @SuppressWarnings("determinism") // @PolyDet for operations on a @PolyDet("upDet") Map not resolved correctly
 @SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet in type parameters here
 @SuppressWarnings("determinism") // this might log something non-deterministic, but could never verify
-@SuppressWarnings("determinism") // this may produce non-deterministic output, but have to make this method take @PolyDet to override equals
+@SuppressWarnings("determinism") // this may produce non-deterministic output, but have to make this method take @PolyDet to override this method
 @SuppressWarnings("determinism") // error in assertion but doesn't matter
 @SuppressWarnings("determinism") // since constructed with empty list, expression is deterministic
+@SuppressWarnings("determinism") // AccessibleObject toString is actually deterministic
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+@SuppressWarnings("determinism") // the nondeterministic output printed here is expected
 
 // For generic array issue
 @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/3277
@@ -87,5 +90,8 @@
 @SuppressWarnings("determinism") // The getInterfaces call in the loop is
 // @OrderNonDet, but upon inspection it seems the logic is independent of order.
 
-// TODO: addAll
+// For collection check on classes
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
 
+// For constructor error
+@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/179

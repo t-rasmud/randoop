@@ -207,7 +207,8 @@ public abstract class AbstractGenerator {
    *
    * @param visitors the list of visitors
    */
-  public void setExecutionVisitor(List<@PolyDet ExecutionVisitor> visitors) {
+  public void setExecutionVisitor(
+      @Det AbstractGenerator this, @Det List<ExecutionVisitor> visitors) {
     this.executionVisitor = MultiVisitor.createMultiVisitor(visitors);
   }
 
@@ -286,6 +287,7 @@ public abstract class AbstractGenerator {
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
+  @SuppressWarnings("determinism") // the nondeterministic printed output here is expected
   public void createAndClassifySequences(@Det AbstractGenerator this) {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");

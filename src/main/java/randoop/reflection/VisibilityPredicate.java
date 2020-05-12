@@ -51,6 +51,8 @@ public abstract class VisibilityPredicate {
    */
   public abstract boolean isVisible(Field f);
 
+  // public abstract String toString();
+
   /** AnyVisibilityPredicate is a {@link VisibilityPredicate} that always returns true. */
   public static class AnyVisibilityPredicate extends VisibilityPredicate {
 

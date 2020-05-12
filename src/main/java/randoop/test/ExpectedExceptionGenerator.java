@@ -1,6 +1,7 @@
 package randoop.test;
 
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
@@ -31,7 +32,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    *     exception thrown by the operation in the final statement of the sequence. Each list of
    *     expected exceptions must be satisfied.
    */
-  public ExpectedExceptionGenerator(List<List<ThrowsClause>> exceptionSets) {
+  public ExpectedExceptionGenerator(List<@PolyDet List<@PolyDet ThrowsClause>> exceptionSets) {
     this.exceptionSets = exceptionSets;
   }
 

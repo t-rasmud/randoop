@@ -100,7 +100,7 @@ public final class Sequence {
    */
   @SuppressWarnings(
       "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                     // @PolyDet
+  // @PolyDet
   public static Sequence zero(Type c) {
     return new Sequence()
         .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
@@ -342,7 +342,7 @@ public final class Sequence {
    * @return a string containing Java code for this sequence
    */
   @SideEffectFree
-  public String toCodeString() {
+  public String toCodeString(@Det Sequence this) {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       // Don't dump primitive initializations, if using literals.
@@ -366,7 +366,7 @@ public final class Sequence {
    *
    * @return a string containing Java code for this sequence
    */
-  private String toFullCodeString() {
+  private String toFullCodeString(@Det Sequence this) {
     // XXX can we do this so that substitutions don't happen?
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -376,6 +376,9 @@ public final class Sequence {
   }
 
   @Override
+  @SuppressWarnings(
+      "determinism") // this may produce non-deterministic output, but have to make this method take
+                     // @PolyDet to override this method
   public String toString() {
     return toCodeString();
   }
@@ -851,7 +854,7 @@ public final class Sequence {
    * @param b the {@link StringBuilder} to which the code is appended
    * @param index the position of the statement to print in this {@code Sequence}
    */
-  public void appendCode(StringBuilder b, int index) {
+  public void appendCode(@Det Sequence this, @Det StringBuilder b, @Det int index) {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
     getStatement(index).appendCode(getVariable(index), getInputs(index), b);
@@ -1131,7 +1134,7 @@ public final class Sequence {
   }
 
   /** Write this sequence to the Randoop log. */
-  public void log() {
+  public void log(@Det Sequence this) {
     if (!Log.isLoggingOn()) {
       return;
     }

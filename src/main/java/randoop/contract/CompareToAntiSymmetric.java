@@ -23,7 +23,7 @@ public class CompareToAntiSymmetric extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
-  public @PolyDet("up") boolean evaluate(Object... objects) {
+  public boolean evaluate(Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
@@ -32,8 +32,12 @@ public class CompareToAntiSymmetric extends ObjectContract {
       Comparable compObj1 = (Comparable) o1;
       Comparable compObj2 = (Comparable) o2;
 
-      return Math.signum(compObj1.compareTo(compObj2))
-          == -Math.signum(compObj2.compareTo(compObj1));
+      @SuppressWarnings(
+          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
+                         // @PolyDet
+      @PolyDet boolean tmp =
+          Math.signum(compObj1.compareTo(compObj2)) == -Math.signum(compObj2.compareTo(compObj1));
+      return tmp;
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;
