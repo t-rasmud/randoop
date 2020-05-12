@@ -23,9 +23,8 @@ public final class SizeToArrayLength extends ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     if (o instanceof Collection) {
-      @SuppressWarnings("determinism:invariant.cast.unsafe")
-      @PolyDet("up") Collection<? extends @PolyDet("up") Object> c =
-          (Collection<? extends @PolyDet("up") Object>) o;
+      @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+      @PolyDet("up") Collection<? extends @PolyDet("up") Object> c = (Collection<? extends @PolyDet("up") Object>) o;
       assert c != null;
       return c.size() == c.toArray().length;
     }
@@ -46,7 +45,7 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det SizeToArrayLength this) {
     return "x0.toArray().length == x0.size()";
   }
 
@@ -56,7 +55,7 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det SizeToArrayLength this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

@@ -3,6 +3,7 @@ package randoop.contract;
 import java.util.Collections;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -28,7 +29,7 @@ public final class EnumValue extends ObjectContract {
     if (!(obj instanceof EnumValue)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     EnumValue enumValue = (EnumValue) obj;
     return value.equals(enumValue.value);
   }
@@ -49,8 +50,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
-  public TypeTuple getInputTypes() {
+  public @Det TypeTuple getInputTypes(@Det EnumValue this) {
     return new TypeTuple(Collections.singletonList(type));
   }
 
@@ -61,7 +61,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EnumValue this) {
     return null;
   }
 
@@ -70,7 +70,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EnumValue this) {
     String valueName = getValueName();
     StringBuilder b = new StringBuilder();
     b.append("org.junit.Assert.assertTrue(");

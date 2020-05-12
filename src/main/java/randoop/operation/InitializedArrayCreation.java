@@ -85,11 +85,12 @@ public final class InitializedArrayCreation extends CallableOperation {
   /** {@inheritDoc} */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+      @Det InitializedArrayCreation this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     if (inputVars.size() > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + inputVars.size() + ", capacity: " + length);
@@ -103,7 +104,6 @@ public final class InitializedArrayCreation extends CallableOperation {
         b.append(", ");
       }
 
-      @SuppressWarnings("determinism:method.invocation.invalid")
       String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }
@@ -123,7 +123,7 @@ public final class InitializedArrayCreation extends CallableOperation {
     if (!(o instanceof InitializedArrayCreation)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     InitializedArrayCreation otherArrayDecl = (InitializedArrayCreation) o;
     return this.elementType.equals(otherArrayDecl.elementType)
         && this.length == otherArrayDecl.length;

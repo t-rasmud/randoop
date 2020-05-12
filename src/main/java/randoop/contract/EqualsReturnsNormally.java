@@ -45,7 +45,7 @@ public final class EqualsReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsReturnsNormally this) {
     return "x0.equals() throws no Exception.";
   }
 
@@ -55,7 +55,7 @@ public final class EqualsReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsReturnsNormally this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

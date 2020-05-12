@@ -84,7 +84,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (!(obj instanceof TypedOperation)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     TypedOperation op = (TypedOperation) obj;
     return getOperation().equals(op.getOperation())
         && inputTypes.equals(op.inputTypes)
@@ -153,7 +153,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public String toString() {
+  @SuppressWarnings("determinism:override.receiver.invalid")    // overriding JDK method but need to be more precise
+  public String toString(@Det TypedOperation this) {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
     return getName() + " : " + inputTypes + " -> " + outputType + specString;
   }
@@ -249,12 +250,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public Object getValue() {
+  public Object getValue(@Det TypedOperation this) {
     return operation.getValue();
   }
 
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det TypedOperation this, @Det ReflectionPredicate reflectionPredicate) {
     return operation.satisfies(reflectionPredicate);
   }
 
@@ -265,7 +266,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param inputVars the list of input variables for this operation
    * @param b the {@code StringBuilder}
    */
-  public abstract void appendCode(List<@PolyDet Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(@Det TypedOperation this, @Det List<@Det Variable> inputVars, @Det StringBuilder b);
 
   /**
    * Performs this operation using the array of input values. Returns the results of execution as an
@@ -378,6 +379,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
+  @SuppressWarnings({"determinism:argument.type.incompatible", "determinism:cast.unsafe.constructor.invocation"})    // process is order insensitive, can't be verified
   private static TypedClassOperation getAnonEnumOperation(
       @Det Method method, @Det List<@Det Type> methodParamTypes, @Det Class<?> enumClass) {
     @Det ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
@@ -388,11 +390,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
-    for (@Det Method m : enumClass.getMethods()) {
+    for (Method m : enumClass.getMethods()) {
       if (m.getName().equals(method.getName())
           && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
         @Det List<@Det Type> paramTypes = new ArrayList<>();
-        @Det MethodCall op = new MethodCall(m);
+        MethodCall op = new MethodCall(m);
         if (!op.isStatic()) {
           paramTypes.add(enumType);
         }
@@ -422,7 +424,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
           i++;
         }
         if (i == methodParamTypes.size()) {
-          return new TypedClassOperation(op, enumType, inputTypes, outputType);
+          return new @Det TypedClassOperation(op, enumType, inputTypes, outputType);
         }
       }
     }
@@ -589,7 +591,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
    */
-  public ExpectedOutcomeTable checkPrestate(@Det TypedOperation this, @Det Object @Det [] values) {
+  public ExpectedOutcomeTable checkPrestate(@Det TypedOperation this, @Det Object @Det[] values) {
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
@@ -606,7 +608,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the corresponding operation array for checking a {@link
    *     randoop.condition.ExecutableBooleanExpression}
    */
-  @SuppressWarnings("determinism:invalid.array.assignment")
+  @SuppressWarnings("determinism:invalid.array.assignment")    // iterating over @PolyDet array to create another
   private Object[] addNullReceiverIfStatic(Object[] values) {
     @PolyDet Object @PolyDet [] args = values;
     if (this.isStatic()) {

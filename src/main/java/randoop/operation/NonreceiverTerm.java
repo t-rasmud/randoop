@@ -104,7 +104,7 @@ public final class NonreceiverTerm extends CallableOperation {
     if (!(o instanceof NonreceiverTerm)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     NonreceiverTerm other = (NonreceiverTerm) o;
 
     return this.type.equals(other.type) && Objects.equals(this.value, other.value);
@@ -126,7 +126,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override getName() return @PolyDet like the super class. This method returns @NonDet
   public @NonDet String getName() {
     return this.toString();
   }
@@ -137,7 +137,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
@@ -153,12 +153,13 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param b {@link StringBuilder} to which string representation is appended
    */
   @Override
-  public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+  @SuppressWarnings("determinism:nondeterministic.tostring")    // this toString call is @Det
+  public void appendCode(@Det NonreceiverTerm this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     b.append(Value.toCodeString(getValue()));
   }
 
@@ -168,7 +169,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return value of this {@link NonreceiverTerm}
    */
   @Override
-  public Object getValue() {
+  public @Det Object getValue(@Det NonreceiverTerm this) {
     return value;
   }
 
@@ -240,9 +241,8 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return string representation of primitive, String or null value
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
-  public @NonDet String toParsableString(
-      Type declaringType, TypeTuple inputTypes, Type outputType) {
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override toParseab;eString() return @PolyDet like the super class. This method returns @NonDet
+  public @NonDet String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
 
     String valStr;
     if (value == null) {

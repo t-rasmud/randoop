@@ -42,7 +42,7 @@ public final class PrimValue extends ObjectContract {
     if (!(o instanceof PrimValue)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     PrimValue other = (PrimValue) o;
     return value.equals(other.value);
   }
@@ -99,7 +99,8 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  @SuppressWarnings("determinism:nondeterministic.tostring")    // this toString call is @Det; value is a primitive or String (see comment on field)
+  public String toCodeString(@Det PrimValue this) {
 
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
@@ -146,7 +147,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det PrimValue this) {
     return null;
   }
 }

@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -86,11 +87,12 @@ public final class MethodCall extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder sb) {
+      @Det MethodCall this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
@@ -123,7 +125,6 @@ public final class MethodCall extends CallableOperation {
         sb.append("(").append(inputTypes.get(i).getName()).append(")");
       }
 
-      @SuppressWarnings("determinism:method.invocation.invalid")
       String param = getArgumentString(inputVars.get(i));
       sb.append(param);
     }
@@ -138,7 +139,7 @@ public final class MethodCall extends CallableOperation {
     if (!(o instanceof MethodCall)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }
@@ -155,8 +156,9 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
-  public @PolyDet("up") ExecutionOutcome execute(Object[] input) {
+  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid", "determinism:nondeterministic.tostring"})  // Other classes that override execute() return @NonDet like the super class. This method returns @Det
+  @RequiresDetToString
+  public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
@@ -169,7 +171,7 @@ public final class MethodCall extends CallableOperation {
       paramsStartIndex = 1;
     }
 
-    @PolyDet("up") Object @PolyDet("up") [] params = new @PolyDet("up") Object @PolyDet("up") [paramsLength];
+    @Det Object @Det[] params = new @Det Object @Det[paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
@@ -181,7 +183,7 @@ public final class MethodCall extends CallableOperation {
       }
     }
 
-    @PolyDet("up") MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
+    @Det MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
     return ReflectionExecutor.executeReflectionCode(code);
   }
@@ -318,7 +320,7 @@ public final class MethodCall extends CallableOperation {
    * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det MethodCall this, @Det ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(method);
   }
 }

@@ -56,10 +56,7 @@ public class FieldSet extends CallableOperation {
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  @SuppressWarnings({
-    "determinism:override.return.invalid",
-    "determinism:method.invocation.invalid"
-  })
+  @SuppressWarnings({"determinism:override.return.invalid", "determinism:method.invocation.invalid"})    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet, method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
 
     Object instance = null;
@@ -99,18 +96,18 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+          @Det FieldSet this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
 
     // variable/value to be assigned is either only or second entry in list
     int index = inputVars.size() - 1;
-    @SuppressWarnings("determinism:method.invocation.invalid")
     String rhs = getArgumentString(inputVars.get(index));
     b.append(rhs);
   }
@@ -194,7 +191,7 @@ public class FieldSet extends CallableOperation {
     if (!(obj instanceof FieldSet)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     FieldSet s = (FieldSet) obj;
     return field.equals(s.field);
   }
@@ -223,7 +220,7 @@ public class FieldSet extends CallableOperation {
    * @return true only if the field used in this setter satisfies predicate.canUse
    */
   @Override
-  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(@Det FieldSet this, @Det ReflectionPredicate reflectionPredicate) {
     return field.satisfies(reflectionPredicate);
   }
 }

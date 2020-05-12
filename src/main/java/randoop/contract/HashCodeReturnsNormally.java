@@ -44,7 +44,7 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det HashCodeReturnsNormally this) {
     return "x0.hashCode() throws no Exception.";
   }
 
@@ -54,7 +54,7 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det HashCodeReturnsNormally this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

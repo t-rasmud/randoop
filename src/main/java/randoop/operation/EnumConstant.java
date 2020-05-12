@@ -38,7 +38,7 @@ public class EnumConstant extends CallableOperation {
     if (!(obj instanceof EnumConstant)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")
+    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
     EnumConstant e = (EnumConstant) obj;
     return equalsEnumConstant(e);
   }
@@ -74,7 +74,7 @@ public class EnumConstant extends CallableOperation {
    * @return a {@link NormalExecution} object holding the value of the enum constant
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
@@ -87,11 +87,12 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<@PolyDet Variable> inputVars,
-      StringBuilder b) {
+          @Det EnumConstant this,
+          @Det Type declaringType,
+          @Det TypeTuple inputTypes,
+          @Det Type outputType,
+          @Det List<@Det Variable> inputVars,
+          @Det StringBuilder b) {
     b.append(declaringType.getName()).append(".").append(this.value.name());
   }
 
@@ -209,7 +210,7 @@ public class EnumConstant extends CallableOperation {
    * @return value of enum constant
    */
   @Override
-  public Object getValue() {
+  public Object getValue(@Det EnumConstant this) {
     return value();
   }
 

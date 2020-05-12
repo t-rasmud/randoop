@@ -46,7 +46,7 @@ public final class ToStringReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det ToStringReturnsNormally this) {
     return "x0.toString() throws no Exception.";
   }
 
@@ -56,7 +56,7 @@ public final class ToStringReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det ToStringReturnsNormally this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

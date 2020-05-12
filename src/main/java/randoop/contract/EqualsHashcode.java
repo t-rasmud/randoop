@@ -18,7 +18,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")
+  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override evaluate() return @PolyDet("up") like the super class. This method calls JDK hashCode()
   public @NonDet boolean evaluate(Object... objects) {
 
     Object o1 = objects[0];
@@ -42,7 +42,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsHashcode this) {
     return "equals-hashcode on x0 and x1";
   }
 
@@ -52,7 +52,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsHashcode this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

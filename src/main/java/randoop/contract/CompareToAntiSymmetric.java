@@ -58,7 +58,7 @@ public class CompareToAntiSymmetric extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det CompareToAntiSymmetric this) {
     return "compareTo-anti-symmetric on x0 and x1";
   }
 
@@ -68,7 +68,7 @@ public class CompareToAntiSymmetric extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det CompareToAntiSymmetric this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");
