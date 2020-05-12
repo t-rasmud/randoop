@@ -279,8 +279,8 @@ public class SpecificationCollection {
               }
 
               @Override
-              public FileVisitResult preVisitDirectory(
-                  @Det Path dir, @Det BasicFileAttributes attrs) throws IOException {
+              public FileVisitResult preVisitDirectory(@Det Path dir, BasicFileAttributes attrs)
+                  throws IOException {
                 if (dir.endsWith("__MACOSX")) {
                   return FileVisitResult.SKIP_SUBTREE;
                 }
