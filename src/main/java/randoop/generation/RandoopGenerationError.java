@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.operation.TypedOperation;
 
@@ -39,7 +40,7 @@ public class RandoopGenerationError extends Error {
    *
    * @return the {@code String} representation of the operation
    */
-  public String getInstantiatedOperation() {
+  public String getInstantiatedOperation(@Det RandoopGenerationError this) {
     return operation.toString();
   }
 

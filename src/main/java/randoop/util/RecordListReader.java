@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 
@@ -47,7 +48,7 @@ public class RecordListReader {
     this.endMarker = "END " + recordType;
   }
 
-  public void parse(String inFile) {
+  public void parse(@Det RecordListReader this, @Det String inFile) {
     if (inFile == null || inFile.length() == 0) {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
     }
@@ -62,7 +63,7 @@ public class RecordListReader {
     parse(reader);
   }
 
-  public void parse(Path inFile) {
+  public void parse(@Det RecordListReader this, @Det Path inFile) {
     if (inFile == null) {
       throw new IllegalArgumentException("Null input file");
     }
@@ -77,7 +78,7 @@ public class RecordListReader {
     parse(reader);
   }
 
-  public void parse(BufferedReader reader) {
+  public void parse(@Det RecordListReader this, @Det BufferedReader reader) {
 
     String line;
     try {
@@ -85,7 +86,7 @@ public class RecordListReader {
       while (line != null) {
         line = line.trim();
         if (line.startsWith(startMarker)) {
-          @PolyDet List<@PolyDet String> oneRecord = readOneRecord(reader);
+          @Det List<@Det String> oneRecord = readOneRecord(reader);
           processor.processRecord(oneRecord);
         } else {
           throw new IllegalArgumentException("Expected \"" + startMarker + "\" but got " + line);

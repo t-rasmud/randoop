@@ -2,6 +2,8 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -23,7 +25,7 @@ public class ReflectionArrayCreation extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det ReflectionArrayCreation this, @Det Object @Det [] input) {
     long startTime = System.currentTimeMillis();
     assert input.length == 0;
     Object arrayObject = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
@@ -37,7 +39,9 @@ public class ReflectionArrayCreation extends CallableOperation {
   }
 
   @Override
+  @DefaultQualifier(Det.class)
   public void appendCode(
+      @Det ReflectionArrayCreation this,
       Type declaringType,
       TypeTuple inputTypes,
       Type outputType,

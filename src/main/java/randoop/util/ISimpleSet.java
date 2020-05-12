@@ -52,5 +52,5 @@ public interface ISimpleSet<T extends @PolyDet("use") Object> {
    * @return a String representation of this set
    */
   @Override
-  @NonDet String toString();
+  String toString();
 }

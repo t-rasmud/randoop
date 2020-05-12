@@ -575,7 +575,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /** Adds a shutdown hook that prints out {@link #replacementMap}, if debug logging is enabled. */
-  void addMapFileShutdownHook() {
+  void addMapFileShutdownHook(@Det CallReplacementTransformer this) {
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread() {

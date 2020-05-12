@@ -46,9 +46,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     }
     @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     TypeTuple tuple = (TypeTuple) obj;
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet boolean tmp = list.equals(tuple.list);
     return tmp;
   }

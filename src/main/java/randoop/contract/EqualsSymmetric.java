@@ -18,12 +18,14 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   @Override
-  public @PolyDet("up") boolean evaluate(Object... objects) {
+  public boolean evaluate(Object... objects) {
 
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o2.equals(o1);
+    @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @PolyDet boolean tmp = !o1.equals(o2) || o2.equals(o1);
+    return tmp;
   }
 
   @Override

@@ -71,7 +71,7 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   // The argument array contains a single Integer.
-  public @NonDet ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det ArrayCreation this, @Det Object @Det [] input) {
     assert input.length == 1 : "requires array dimension as input";
     int length = ((Integer) input[0]).intValue();
     long startTime = System.currentTimeMillis();

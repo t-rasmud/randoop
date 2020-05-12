@@ -11,6 +11,7 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -275,11 +276,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param input array containing appropriate inputs to operation
    * @return results of executing this statement
    */
-  public @Det ExecutionOutcome execute(@Det Object @Det [] input) {
+  @RequiresDetToString
+  public @Det ExecutionOutcome execute(@Det TypedOperation this, @Det Object @Det [] input) {
     assert input.length == inputTypes.size()
         : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 
-    return this.getOperation().execute(input);
+    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+    @Det ExecutionOutcome tmp = this.getOperation().execute(input);
+    return tmp;
   }
 
   /**

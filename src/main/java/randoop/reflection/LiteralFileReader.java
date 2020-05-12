@@ -2,7 +2,9 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
@@ -62,14 +64,16 @@ public class LiteralFileReader {
    * @param inFile the input file
    * @return the map from types to literal values
    */
-  public static MultiMap<@PolyDet ClassOrInterfaceType, @PolyDet Sequence> parse(String inFile) {
+  @DefaultQualifier(Det.class)
+  public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {
 
-    final @PolyDet MultiMap<@PolyDet ClassOrInterfaceType, @PolyDet Sequence> map =
-        new @PolyDet MultiMap<>();
+    final MultiMap<ClassOrInterfaceType, Sequence> map =
+        new MultiMap<>();
 
-    @PolyDet RecordProcessor processor =
-        new @PolyDet RecordProcessor() {
+    RecordProcessor processor =
+        new RecordProcessor() {
           @Override
+          @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/2433
           public void processRecord(List<String> lines) {
 
             if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {
@@ -106,7 +110,7 @@ public class LiteralFileReader {
           }
         };
 
-    @PolyDet RecordListReader reader = new RecordListReader("CLASSLITERALS", processor);
+    RecordListReader reader = new RecordListReader("CLASSLITERALS", processor);
     reader.parse(inFile);
 
     return map;

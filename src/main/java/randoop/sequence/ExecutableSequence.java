@@ -13,6 +13,7 @@ import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -411,6 +412,7 @@ public class ExecutableSequence {
 
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
+  @RequiresDetToString
   private static void executeStatement(
       @Det Sequence s,
       @Det List<ExecutionOutcome> outcome,
@@ -435,7 +437,9 @@ public class ExecutableSequence {
 
       @Det ExecutionOutcome r;
       try {
-        r = statement.execute(inputVariables);
+        @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+        @Det ExecutionOutcome tmp = statement.execute(inputVariables);
+        r = tmp;
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
       }

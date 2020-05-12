@@ -21,7 +21,8 @@ public class EqualsTransitive extends ObjectContract {
   }
 
   @Override
-  public @PolyDet("up") boolean evaluate(Object... objects) {
+  @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+  public boolean evaluate(Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
     Object o3 = objects[2];

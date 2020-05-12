@@ -118,11 +118,13 @@ public final class NonreceiverTerm extends CallableOperation {
 
   /** Returns string representation of this NonreceiverTerm. */
   @Override
-  public @NonDet String toString() {
+  public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
-    return Objects.toString(value);
+    @SuppressWarnings("determinism") // this toString call is @Det; value is a String, primitive, or class (see comment on field)
+    @PolyDet String tmp = Objects.toString(value);
+    return tmp;
   }
 
   @Override

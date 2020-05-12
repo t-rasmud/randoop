@@ -338,8 +338,7 @@ public class ReflectionManager {
     }
     for (Type p : m.getGenericParameterTypes()) {
       if (!isVisible(p)) {
-        @SuppressWarnings(
-            "determinism") // all concrete implementation of type of a deterministic toString
+        @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
         @Det String tmp = p.toString();
         Log.logPrintf(
             "Will not use method with non-visible parameter %s: %s%n", tmp, m.toGenericString());
@@ -362,8 +361,7 @@ public class ReflectionManager {
     }
     for (Type p : c.getGenericParameterTypes()) {
       if (!isVisible(p)) {
-        @SuppressWarnings(
-            "determinism") // all concrete implementation of type of a deterministic toString
+        @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
         @Det String tmp = p.toString();
         Log.logPrintf(
             "Will not use constructor with non-visible parameter %s: %s%n",

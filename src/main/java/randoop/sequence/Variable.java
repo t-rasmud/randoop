@@ -102,7 +102,9 @@ public class Variable implements Comparable<Variable> {
    * @return the name of this variable as a string
    */
   public String getName() {
-    return getName(classToVariableName(getType()), index);
+    @SuppressWarnings("determinism") // @Det receiver required but use of @PolyDet here is unavoidable
+    String tmp = getName(classToVariableName(getType()), index);
+    return tmp;
   }
 
   /**

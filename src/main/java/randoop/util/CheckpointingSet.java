@@ -64,7 +64,9 @@ public class CheckpointingSet<T extends @PolyDet Object> implements ISimpleSet<T
   }
 
   @Override
-  public @NonDet String toString() {
-    return map.keySet().toString();
+  public String toString() {
+    @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
+    @PolyDet String tmp = map.keySet().toString();
+    return tmp;
   }
 }

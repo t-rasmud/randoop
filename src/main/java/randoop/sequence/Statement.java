@@ -5,6 +5,7 @@ import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
@@ -170,8 +171,11 @@ public final class Statement {
    * @param inputs list of objects to use as inputs to execution
    * @return object representing outcome of computation
    */
+  @RequiresDetToString
   public @Det ExecutionOutcome execute(@Det Object @Det [] inputs) {
-    return operation.execute(inputs);
+    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+    @Det ExecutionOutcome tmp = operation.execute(inputs);
+    return tmp;
   }
 
   /**
@@ -210,7 +214,7 @@ public final class Statement {
    *
    * @return true if statement represents null initialization, and false otherwise
    */
-  public boolean isNullInitialization() {
+  public boolean isNullInitialization(@Det Statement this) {
     return isNonreceivingInitialization() && operation.getValue() == null;
   }
 
@@ -224,9 +228,11 @@ public final class Statement {
   // Do not use the short output format if the value is null, because
   // the variable type may disambiguate among overloaded methods.
   // (It would be even nicer to add a cast where the null is used.)
-  public String getInlinedForm() {
+  public @NonDet String getInlinedForm(@Det Statement this) {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
-      return Value.toCodeString(operation.getValue());
+      @SuppressWarnings("determinism") // we used Object with @NonDet toString, but that's reflected in return value
+      @NonDet String tmp = Value.toCodeString(operation.getValue());
+      return tmp;
     }
     return null;
   }
@@ -240,7 +246,7 @@ public final class Statement {
    *
    * @return value of term in statement (rhs of assignment/initialization) if any
    */
-  public Object getValue() {
+  public Object getValue(@Det Statement this) {
     return operation.getValue();
   }
 

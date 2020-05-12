@@ -82,8 +82,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  @SuppressWarnings(
-      "determinism") // all concrete implementation of type of a deterministic toString
+  @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
   public static <T extends @Det Object> T randomMember(@Det List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
@@ -193,8 +192,7 @@ public final class Randomness {
    * @param set the collection from which to select an element
    * @return a randomly-selected member of the set
    */
-  @SuppressWarnings(
-      "determinism") // all concrete implementation of type of a deterministic toString
+  @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
   public static <T extends @Det Object> T randomSetMember(@Det Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
@@ -292,8 +290,7 @@ public final class Randomness {
         case 1:
           return coll.getClass() + " of size " + coll.size();
         case 2:
-          @SuppressWarnings(
-              "determinism") // all concrete implementation of type of a deterministic toString
+          @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
           @PolyDet("up") String tmp = coll.toString();
           return tmp;
         default:
@@ -306,8 +303,7 @@ public final class Randomness {
         case 1:
           return sl.getClass() + " of size " + sl.size();
         case 2:
-          @SuppressWarnings(
-              "determinism") // all concrete implementation of type of a deterministic toString
+          @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
           @PolyDet("up") String tmp = sl.toJDKList().toString();
           return tmp;
         default:

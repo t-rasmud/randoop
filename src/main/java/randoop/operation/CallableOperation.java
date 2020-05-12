@@ -3,6 +3,7 @@ package randoop.operation;
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExecutionOutcome;
@@ -80,7 +81,7 @@ public abstract class CallableOperation implements Operation {
    * @return results of executing this statement
    */
   @RequiresDetToString
-  public abstract @Det ExecutionOutcome execute(@Det Object @Det [] input);
+  public abstract @Det ExecutionOutcome execute(@Det CallableOperation this, @Det Object @Det [] input);
 
   /**
    * Produces a Java source code representation of this statement and appends it to the given
@@ -109,7 +110,7 @@ public abstract class CallableOperation implements Operation {
    * @param variable the variable for which the argument string is constructed
    * @return the argument string for the variable
    */
-  String getArgumentString(Variable variable) {
+  @NonDet String getArgumentString(@Det Variable variable) {
     String index = variable.getName();
     if (variable.shouldInlineLiterals()) {
       String shortIndex = variable.getDeclaringStatement().getInlinedForm();

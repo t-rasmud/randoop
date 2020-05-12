@@ -164,8 +164,7 @@ public final class ConstructorCall extends CallableOperation {
    * @see TypedOperation#execute(Object[])
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det ConstructorCall this, @Det Object @Det [] statementInput) {
 
     // if this is a constructor from a non-static inner class, then first argument must
     // be a superclass object that is non-null.  If null, then code should throw NPE, but
@@ -179,7 +178,7 @@ public final class ConstructorCall extends CallableOperation {
         return new ExceptionalExecution(new NullPointerException(message), 0);
       }
     }
-    @PolyDet ConstructorReflectionCode code =
+    @Det ConstructorReflectionCode code =
         new ConstructorReflectionCode(this.constructor, statementInput);
 
     return ReflectionExecutor.executeReflectionCode(code);

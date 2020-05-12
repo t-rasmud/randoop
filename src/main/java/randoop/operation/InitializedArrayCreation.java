@@ -62,7 +62,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @return {@link NormalExecution} object containing constructed array
    */
   @Override
-  public @NonDet ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det InitializedArrayCreation this, @Det Object @Det [] statementInput) {
     if (statementInput.length > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + statementInput.length + ", capacity: " + length);

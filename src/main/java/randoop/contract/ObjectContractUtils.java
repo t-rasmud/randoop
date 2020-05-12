@@ -1,5 +1,6 @@
 package randoop.contract;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
@@ -21,8 +22,8 @@ public class ObjectContractUtils {
    * @param objs the list of values to substitute for variables
    * @return the outcome from the execution
    */
-  public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
-    @PolyDet ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
+  public static ExecutionOutcome execute(final @Det ObjectContract c, final @Det Object @Det ... objs) {
+    @Det ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
     return ReflectionExecutor.executeReflectionCode(refl);
   }
 

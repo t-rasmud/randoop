@@ -2,6 +2,7 @@ package randoop.operation;
 
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -54,15 +55,17 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * that would be thrown in JVM execution is also thrown.
    */
   @Override
-  public @NonDet ExecutionOutcome execute(Object[] input) {
-    ExecutionOutcome outcome = super.execute(input);
+  @RequiresDetToString
+  public @Det ExecutionOutcome execute(@Det TypedClassOperationWithCast this, @Det Object @Det [] input) {
+    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+    @Det ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
-      NormalExecution execution = (NormalExecution) outcome;
+      @Det NormalExecution execution = (NormalExecution) outcome;
       Object result = null;
       try {
         result = getOutputType().getRuntimeClass().cast(execution.getRuntimeValue());
       } catch (ClassCastException e) {
-        return new @NonDet ExceptionalExecution(e, 0);
+        return new ExceptionalExecution(e, 0);
       }
       if (result != null) {
         return new NormalExecution(result, execution.getExecutionTime());

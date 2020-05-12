@@ -53,7 +53,7 @@ public class SubTypeSet {
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
-  public void undoLastStep() {
+  public void undoLastStep(@Det SubTypeSet this) {
     if (!supportsCheckpoints) {
       throw new RuntimeException("Operation not supported.");
     }

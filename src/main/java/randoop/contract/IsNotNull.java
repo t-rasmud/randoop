@@ -31,7 +31,8 @@ public final class IsNotNull extends ObjectContract {
   }
 
   @Override
-  public @PolyDet("up") boolean evaluate(Object... objects) throws Throwable {
+  @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+  public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
     return objects[0] != null;
   }

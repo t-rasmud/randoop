@@ -22,7 +22,7 @@
 @SuppressWarnings("determinism") // overriding JDK method but need to be more precise
 @SuppressWarnings("determinism") // type is immutable, so safe to treat @Det as a subtype of @PolyDet
 @SuppressWarnings("determinism") // getComponentType is annotated as returning @Det, when it should be @PolyDet in the JDK
-@SuppressWarnings("determinism") // all concrete implementation of type of a deterministic toString
+@SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
 @SuppressWarnings("determinism") // method not annotated in JDK but probably returns @PolyDet
 @SuppressWarnings("determinism") // second argument expects @OrderNonDet becaus of Map annotation
 @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
@@ -66,6 +66,8 @@
 @SuppressWarnings("determinism") // error in assertion but doesn't matter
 @SuppressWarnings("determinism") // since constructed with empty list, expression is deterministic
 @SuppressWarnings("determinism") // AccessibleObject toString is actually deterministic
+@SuppressWarnings("determinism") // @Det receiver required but use of @PolyDet here is unavoidable
+@SuppressWarnings("determinism") // we used Object with @NonDet toString, but that's reflected in return value
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 @SuppressWarnings("determinism") // the nondeterministic output printed here is expected

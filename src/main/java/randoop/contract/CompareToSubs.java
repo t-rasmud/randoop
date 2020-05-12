@@ -24,7 +24,7 @@ public class CompareToSubs extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
-  public @PolyDet("up") boolean evaluate(Object... objects) {
+  public boolean evaluate(Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
     Object o3 = objects[2];
@@ -35,8 +35,10 @@ public class CompareToSubs extends ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      return compObj1.compareTo(compObj2) != 0
+      @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+      @PolyDet boolean tmp = compObj1.compareTo(compObj2) != 0
           || Math.signum(compObj1.compareTo(compObj3)) == Math.signum(compObj2.compareTo(compObj3));
+      return tmp;
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;

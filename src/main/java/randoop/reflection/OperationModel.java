@@ -430,7 +430,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
-  public void log() {
+  public void log(@Det OperationModel this) {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
     }
@@ -441,7 +441,7 @@ public class OperationModel {
    *
    * @param out the PrintStream on which to produce output
    */
-  public void logOperations(PrintStream out) {
+  public void logOperations(@Det OperationModel this, @Det PrintStream out) {
     logOperations(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8))));
   }
 
@@ -450,15 +450,11 @@ public class OperationModel {
    *
    * @param out the Writer on which to produce output
    */
-  public void logOperations(Writer out) {
+  public void logOperations(@Det OperationModel this, @Det Writer out) {
     try {
       out.write("Operations: " + Globals.lineSep);
-      for (@PolyDet("up") TypedOperation t : operations) {
-        @SuppressWarnings(
-            "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same
-        // as @PolyDet
-        @PolyDet TypedOperation tmp = t;
-        out.write("  " + tmp.toString());
+      for (@Det TypedOperation t : operations) {
+        out.write("  " + t.toString());
         out.write(Globals.lineSep);
         out.flush();
       }
@@ -468,7 +464,7 @@ public class OperationModel {
   }
 
   /** Print a verbose representation of the model, if logging is enabled. */
-  public void dumpModel() {
+  public void dumpModel(@Det OperationModel this) {
     if (Log.isLoggingOn()) {
       dumpModel(GenInputsAbstract.log);
     }
@@ -479,7 +475,7 @@ public class OperationModel {
    *
    * @param out the PrintStream on which to produce output
    */
-  public void dumpModel(PrintStream out) {
+  public void dumpModel(@Det OperationModel this, @Det PrintStream out) {
     dumpModel(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8))));
   }
 
@@ -488,7 +484,8 @@ public class OperationModel {
    *
    * @param out the Writer on which to produce output
    */
-  public void dumpModel(Writer out) {
+  @SuppressWarnings("determinism") // all concrete implementation of these interfaces have a deterministic toString
+  public void dumpModel(@Det OperationModel this, @Det Writer out) {
     try {
       out.write(String.format("Model with hashcode %s:%n", hashCode()));
       out.write(String.format("  classTypes = %s%n", classTypes));
