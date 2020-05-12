@@ -40,7 +40,7 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det EqualsToNullRetFalse this) {
     return "!x0.equals(null)";
   }
 
@@ -50,7 +50,7 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det EqualsToNullRetFalse this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

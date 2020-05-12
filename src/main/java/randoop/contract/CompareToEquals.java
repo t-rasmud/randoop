@@ -53,7 +53,7 @@ public class CompareToEquals extends ObjectContract {
   }
 
   @Override
-  public String toCommentString() {
+  public String toCommentString(@Det CompareToEquals this) {
     return "compareTo-equals on x0 and x1";
   }
 
@@ -63,7 +63,7 @@ public class CompareToEquals extends ObjectContract {
   }
 
   @Override
-  public String toCodeString() {
+  public String toCodeString(@Det CompareToEquals this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");

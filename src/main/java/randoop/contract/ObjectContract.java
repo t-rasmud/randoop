@@ -76,7 +76,7 @@ public abstract class ObjectContract {
    *
    * @return the comment string representation of this contract
    */
-  public abstract String toCommentString();
+  public abstract @Det String toCommentString(@Det ObjectContract this);
 
   /**
    * A string that can be used as Java source code and will result in the expression being
@@ -89,7 +89,7 @@ public abstract class ObjectContract {
    *
    * @return the code string representation of this contract; must be non-null
    */
-  public abstract String toCodeString();
+  public abstract String toCodeString(@Det ObjectContract this);
 
   // TODO: how is this different than toString, in terms of contract and in
   // terms of intended use?
@@ -108,10 +108,10 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
-  @SuppressWarnings("determinism:invariant.cast.unsafe")
-  public final Check checkContract(ExecutableSequence eseq, Object[] values) {
+  @SuppressWarnings("determinism:nondeterministic.tostring")    // this toString call is probably @PolyDet
+  public final Check checkContract(@Det ObjectContract this, @Det ExecutableSequence eseq, @Det Object @Det[] values) {
 
-    @PolyDet ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
+    @Det ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
 
     if (Log.isLoggingOn()) {
       // Commented out because it makes the logs too big.  Uncomment when debugging this code.
@@ -144,7 +144,7 @@ public abstract class ObjectContract {
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
 
-      @PolyDet BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
+      @Det BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
       Log.logPrintf("  ExceptionBehaviorClassifier.classify(e, eseq) => %s%n", eseqBehavior);
 
       if (eseqBehavior == BehaviorType.EXPECTED) {
@@ -195,9 +195,9 @@ public abstract class ObjectContract {
    * @param values the input values
    * @return an ObjectCheck indicating that a contract failed
    */
-  @SuppressWarnings("determinism:method.invocation.invalid")
-  ObjectCheck failedContract(ExecutableSequence eseq, @PolyDet("use") Object @PolyDet [] values) {
-    @PolyDet("use") Variable @PolyDet [] varArray = new @PolyDet("use") Variable @PolyDet [values.length];
+  @SuppressWarnings({"determinism:method.invocation.invalid", "determinism:invalid.array.assignment"})    // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet, iterating over @PolyDet array to create another
+  ObjectCheck failedContract(ExecutableSequence eseq, @PolyDet("use") Object @PolyDet[] values) {
+    @PolyDet("use") Variable @PolyDet[] varArray = new @PolyDet("use") Variable @PolyDet[values.length];
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);
       // Note: the following alternative to the above line slightly improves coverage
