@@ -23,7 +23,8 @@ public final class EqualsToNullRetFalse extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     // noinspection ObjectEqualsNull
-    @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
     @PolyDet boolean tmp = !o.equals(null);
     return tmp;
   }

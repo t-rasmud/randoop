@@ -23,8 +23,10 @@ public final class SizeToArrayLength extends ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     if (o instanceof Collection) {
-      @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
-      @PolyDet("up") Collection<? extends @PolyDet("up") Object> c = (Collection<? extends @PolyDet("up") Object>) o;
+      @SuppressWarnings(
+          "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
+      @PolyDet("up") Collection<? extends @PolyDet("up") Object> c =
+          (Collection<? extends @PolyDet("up") Object>) o;
       assert c != null;
       return c.size() == c.toArray().length;
     }

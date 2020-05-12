@@ -31,7 +31,7 @@ public class CompareToEquals extends ObjectContract {
       Comparable compObj1 = (Comparable) o1;
       @SuppressWarnings(
           "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-                         // @PolyDet
+      // @PolyDet
       @PolyDet boolean tmp = (compObj1.compareTo(o2) == 0) == o1.equals(o2);
       return tmp;
     }

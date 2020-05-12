@@ -2,7 +2,6 @@ package randoop.util;
 
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Processes a single record given by RecordListReader. */
 public interface RecordProcessor {

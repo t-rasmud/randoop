@@ -484,7 +484,9 @@ public class OperationModel {
    *
    * @param out the Writer on which to produce output
    */
-  @SuppressWarnings("determinism") // all concrete implementation of these interfaces have a deterministic toString
+  @SuppressWarnings(
+      "determinism") // all concrete implementation of these interfaces have a deterministic
+                     // toString
   public void dumpModel(@Det OperationModel this, @Det Writer out) {
     try {
       out.write(String.format("Model with hashcode %s:%n", hashCode()));

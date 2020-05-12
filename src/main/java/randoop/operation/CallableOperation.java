@@ -4,7 +4,6 @@ import java.lang.reflect.AccessibleObject;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
@@ -12,9 +11,6 @@ import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 /**
  * CallableOperation is an abstract implementation of the Operation interface to provide default
  * implementations of Operation predicates that are false except for a few kinds of operations.
@@ -69,7 +65,8 @@ public abstract class CallableOperation implements Operation {
    * @return false as there is no object to check
    */
   @Override
-  public boolean satisfies(@Det CallableOperation this, @Det ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(
+      @Det CallableOperation this, @Det ReflectionPredicate reflectionPredicate) {
     return false;
   }
 
@@ -81,7 +78,8 @@ public abstract class CallableOperation implements Operation {
    * @return results of executing this statement
    */
   @RequiresDetToString
-  public abstract @Det ExecutionOutcome execute(@Det CallableOperation this, @Det Object @Det [] input);
+  public abstract @Det ExecutionOutcome execute(
+      @Det CallableOperation this, @Det Object @Det [] input);
 
   /**
    * Produces a Java source code representation of this statement and appends it to the given
@@ -94,12 +92,12 @@ public abstract class CallableOperation implements Operation {
    * @param b the {@link StringBuilder} to which code is added
    */
   public abstract void appendCode(
-          @Det CallableOperation this,
-          @Det Type declaringType,
-          @Det TypeTuple inputTypes,
-          @Det Type outputType,
-          @Det List<@Det Variable> inputVars,
-          @Det StringBuilder b);
+      @Det CallableOperation this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b);
 
   /**
    * Returns the variable as a string to be used as an argument to an operation. Determines if the

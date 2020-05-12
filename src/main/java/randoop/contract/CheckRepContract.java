@@ -37,7 +37,8 @@ public final class CheckRepContract extends ObjectContract {
     if (!(o instanceof CheckRepContract)) {
       return false; // I collected the results of get_value()
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     CheckRepContract other = (CheckRepContract) o;
     return checkRepMethod.equals(other.checkRepMethod);
   }

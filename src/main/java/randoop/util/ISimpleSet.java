@@ -1,7 +1,6 @@
 package randoop.util;
 
 import java.util.Set;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public interface ISimpleSet<T extends @PolyDet("use") Object> {

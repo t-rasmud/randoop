@@ -25,7 +25,8 @@ public class ReflectionArrayCreation extends CallableOperation {
   }
 
   @Override
-  public @Det ExecutionOutcome execute(@Det ReflectionArrayCreation this, @Det Object @Det [] input) {
+  public @Det ExecutionOutcome execute(
+      @Det ReflectionArrayCreation this, @Det Object @Det [] input) {
     long startTime = System.currentTimeMillis();
     assert input.length == 0;
     Object arrayObject = Array.newInstance(this.elementType.getRuntimeClass(), this.length);

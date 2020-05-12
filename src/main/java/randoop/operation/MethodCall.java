@@ -139,7 +139,8 @@ public final class MethodCall extends CallableOperation {
     if (!(o instanceof MethodCall)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }
@@ -156,9 +157,15 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  @SuppressWarnings({"determinism:override.return.invalid", "determinism:override.param.invalid", "determinism:override.receiver.invalid", "determinism:nondeterministic.tostring"})  // Other classes that override execute() return @NonDet like the super class. This method returns @Det
+  @SuppressWarnings({
+    "determinism:override.return.invalid",
+    "determinism:override.param.invalid",
+    "determinism:override.receiver.invalid",
+    "determinism:nondeterministic.tostring"
+  }) // Other classes that override execute() return @NonDet like the super class. This method
+     // returns @Det
   @RequiresDetToString
-  public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det[] input) {
+  public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det [] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
@@ -171,7 +178,7 @@ public final class MethodCall extends CallableOperation {
       paramsStartIndex = 1;
     }
 
-    @Det Object @Det[] params = new @Det Object @Det[paramsLength];
+    @Det Object @Det [] params = new @Det Object @Det [paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {

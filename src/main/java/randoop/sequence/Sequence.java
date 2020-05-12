@@ -378,7 +378,7 @@ public final class Sequence {
   @Override
   @SuppressWarnings(
       "determinism") // this may produce non-deterministic output, but have to make this method take
-                     // @PolyDet to override this method
+  // @PolyDet to override this method
   public String toString() {
     return toCodeString();
   }
@@ -813,7 +813,9 @@ public final class Sequence {
       }
       Type inputType = operation.getInputTypes().get(i);
       if (!inputType.isAssignableFrom(newRefConstraint)) {
-        @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
+        @SuppressWarnings(
+            "determinism") // all concrete implementation of this interface have a deterministic
+                           // toString
         String msg =
             String.format(
                     "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
@@ -887,10 +889,10 @@ public final class Sequence {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       @PolyDet Statement sk = getStatement(i);
-      @SuppressWarnings("determinism") // @Det receiver required but use of @PolyDet here is unavoidable
+      @SuppressWarnings(
+          "determinism") // @Det receiver required but use of @PolyDet here is unavoidable
       @PolyDet String tmp = Variable.classToVariableName(sk.getOutputType());
-      b.append(
-          sk.toParsableString(tmp + i, getInputs(i)));
+      b.append(sk.toParsableString(tmp + i, getInputs(i)));
       b.append(statementSep);
     }
     return b.toString();

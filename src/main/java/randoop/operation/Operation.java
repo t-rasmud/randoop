@@ -1,9 +1,8 @@
 package randoop.operation;
 
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.reflection.ReflectionPredicate;
 import randoop.types.Type;
-
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * Operation represents the constructs that can occur in a statement as part of a test sequence.

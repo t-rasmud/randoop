@@ -2,8 +2,8 @@ package randoop.contract;
 
 import java.util.Collections;
 import java.util.Objects;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -29,7 +29,8 @@ public final class EnumValue extends ObjectContract {
     if (!(obj instanceof EnumValue)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     EnumValue enumValue = (EnumValue) obj;
     return value.equals(enumValue.value);
   }

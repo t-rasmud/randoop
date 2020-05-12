@@ -129,7 +129,7 @@ public class ExecutableSequence {
   @Override
   @SuppressWarnings(
       "determinism") // this may produce non-deterministic output when calling appendCode, but have
-                     // to make this method take @PolyDet to override equals
+  // to make this method take @PolyDet to override equals
   public String toString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < sequence.size(); i++) {

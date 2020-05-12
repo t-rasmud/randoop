@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.framework.qual.DefaultQualifier;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
@@ -67,13 +67,13 @@ public class LiteralFileReader {
   @DefaultQualifier(Det.class)
   public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {
 
-    final MultiMap<ClassOrInterfaceType, Sequence> map =
-        new MultiMap<>();
+    final MultiMap<ClassOrInterfaceType, Sequence> map = new MultiMap<>();
 
     RecordProcessor processor =
         new RecordProcessor() {
           @Override
-          @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/2433
+          @SuppressWarnings(
+              "determinism") // https://github.com/typetools/checker-framework/issues/2433
           public void processRecord(List<String> lines) {
 
             if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {

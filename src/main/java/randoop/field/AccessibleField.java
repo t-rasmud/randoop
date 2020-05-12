@@ -91,7 +91,8 @@ public class AccessibleField {
     if (!(obj instanceof AccessibleField)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")  // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     AccessibleField f = (AccessibleField) obj;
     return this.field.equals(f.field);
   }
@@ -161,7 +162,8 @@ public class AccessibleField {
    * @param reflectionPredicate the {@link ReflectionPredicate} to check this.field against
    * @return true if this.field satisfies predicate.canUse(field)
    */
-  public boolean satisfies(@Det AccessibleField this, @Det ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(
+      @Det AccessibleField this, @Det ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(field);
   }
 

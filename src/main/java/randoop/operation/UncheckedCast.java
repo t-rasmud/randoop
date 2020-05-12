@@ -1,15 +1,12 @@
 package randoop.operation;
 
 import java.util.List;
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.Det;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /**
  * An {@link Operation} to perform an explicit cast. NOTE: there is no actual checking of the types
@@ -39,7 +36,9 @@ class UncheckedCast extends CallableOperation {
    * @return the value cast to the type of this cast
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
+  @SuppressWarnings(
+      "determinism:override.return.invalid") // Other classes that override execute() return @NonDet
+                                             // like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
     return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);

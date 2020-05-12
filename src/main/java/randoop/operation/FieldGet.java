@@ -48,7 +48,9 @@ public class FieldGet extends CallableOperation {
    * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")    // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
+  @SuppressWarnings(
+      "determinism:override.return.invalid") // Other classes that override execute() return @NonDet
+                                             // like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] statementInput) {
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
@@ -56,7 +58,9 @@ public class FieldGet extends CallableOperation {
 
     try {
 
-      @SuppressWarnings("determinism:method.invocation.invalid")    // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @SuppressWarnings(
+          "determinism:method.invocation.invalid") // method parameters can't be @OrderNonDet so
+                                                   // @PolyDet("up") is the same as @PolyDet
       Object value = field.getValue(input);
       return new NormalExecution(value, 0);
 
@@ -75,12 +79,12 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public void appendCode(
-          @Det FieldGet this,
-          @Det Type declaringType,
-          @Det TypeTuple inputTypes,
-          @Det Type outputType,
-          @Det List<@Det Variable> inputVars,
-          @Det StringBuilder b) {
+      @Det FieldGet this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
@@ -108,7 +112,8 @@ public class FieldGet extends CallableOperation {
     if (!(obj instanceof FieldGet)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     FieldGet s = (FieldGet) obj;
     return field.equals(s.field);
   }

@@ -24,7 +24,8 @@ public class CompareToReflexive extends ObjectContract {
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     // Get first and only object
-    @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
     @PolyDet Object o1 = objects[0];
     assert o1 != null;
 

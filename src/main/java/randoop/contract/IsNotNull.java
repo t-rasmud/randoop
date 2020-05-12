@@ -2,7 +2,6 @@ package randoop.contract;
 
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
@@ -31,7 +30,8 @@ public final class IsNotNull extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+  @SuppressWarnings(
+      "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
     return objects[0] != null;

@@ -230,7 +230,9 @@ public final class Statement {
   // (It would be even nicer to add a cast where the null is used.)
   public @NonDet String getInlinedForm(@Det Statement this) {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
-      @SuppressWarnings("determinism") // we used Object with @NonDet toString, but that's reflected in return value
+      @SuppressWarnings(
+          "determinism") // we used Object with @NonDet toString, but that's reflected in return
+                         // value
       @NonDet String tmp = Value.toCodeString(operation.getValue());
       return tmp;
     }

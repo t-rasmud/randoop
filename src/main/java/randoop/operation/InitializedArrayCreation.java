@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -62,7 +61,8 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @return {@link NormalExecution} object containing constructed array
    */
   @Override
-  public @Det ExecutionOutcome execute(@Det InitializedArrayCreation this, @Det Object @Det [] statementInput) {
+  public @Det ExecutionOutcome execute(
+      @Det InitializedArrayCreation this, @Det Object @Det [] statementInput) {
     if (statementInput.length > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + statementInput.length + ", capacity: " + length);
@@ -123,7 +123,8 @@ public final class InitializedArrayCreation extends CallableOperation {
     if (!(o instanceof InitializedArrayCreation)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     InitializedArrayCreation otherArrayDecl = (InitializedArrayCreation) o;
     return this.elementType.equals(otherArrayDecl.elementType)
         && this.length == otherArrayDecl.length;

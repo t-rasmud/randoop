@@ -23,7 +23,8 @@ public final class EqualsSymmetric extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
     @PolyDet boolean tmp = !o1.equals(o2) || o2.equals(o1);
     return tmp;
   }

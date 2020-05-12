@@ -30,7 +30,8 @@ class TypedTermOperation extends TypedOperation {
   }
 
   @Override
-  public void appendCode(@Det TypedTermOperation this, @Det List<@Det Variable> inputVars, @Det StringBuilder b) {
+  public void appendCode(
+      @Det TypedTermOperation this, @Det List<@Det Variable> inputVars, @Det StringBuilder b) {
     this.getOperation().appendCode(null, getInputTypes(), getOutputType(), inputVars, b);
   }
 

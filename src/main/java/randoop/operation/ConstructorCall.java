@@ -86,7 +86,7 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public void appendCode(
-          @Det ConstructorCall this,
+      @Det ConstructorCall this,
       @Det Type declaringType,
       @Det TypeTuple inputTypes,
       @Det Type outputType,
@@ -139,7 +139,8 @@ public final class ConstructorCall extends CallableOperation {
     if (!(o instanceof ConstructorCall)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     ConstructorCall other = (ConstructorCall) o;
     return this.constructor.equals(other.constructor);
   }
@@ -164,7 +165,8 @@ public final class ConstructorCall extends CallableOperation {
    * @see TypedOperation#execute(Object[])
    */
   @Override
-  public @Det ExecutionOutcome execute(@Det ConstructorCall this, @Det Object @Det [] statementInput) {
+  public @Det ExecutionOutcome execute(
+      @Det ConstructorCall this, @Det Object @Det [] statementInput) {
 
     // if this is a constructor from a non-static inner class, then first argument must
     // be a superclass object that is non-null.  If null, then code should throw NPE, but
@@ -293,7 +295,8 @@ public final class ConstructorCall extends CallableOperation {
    *     ReflectionPredicate#test(Constructor)} implemented by predicate.
    */
   @Override
-  public boolean satisfies(@Det ConstructorCall this, @Det ReflectionPredicate reflectionPredicate) {
+  public boolean satisfies(
+      @Det ConstructorCall this, @Det ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(constructor);
   }
 }

@@ -24,7 +24,8 @@ public final class EqualsReflexive extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     // noinspection EqualsWithItself
-    @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+    @SuppressWarnings(
+        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
     @PolyDet boolean tmp = o.equals(o);
     return tmp;
   }

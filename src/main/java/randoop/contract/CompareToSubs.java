@@ -35,9 +35,12 @@ public class CompareToSubs extends ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      @SuppressWarnings("determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
-      @PolyDet boolean tmp = compObj1.compareTo(compObj2) != 0
-          || Math.signum(compObj1.compareTo(compObj3)) == Math.signum(compObj2.compareTo(compObj3));
+      @SuppressWarnings(
+          "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
+      @PolyDet boolean tmp =
+          compObj1.compareTo(compObj2) != 0
+              || Math.signum(compObj1.compareTo(compObj3))
+                  == Math.signum(compObj2.compareTo(compObj3));
       return tmp;
     }
     // If the compare to operation can't be done, the statement is trivially true

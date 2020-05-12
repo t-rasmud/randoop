@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -9,9 +10,6 @@ import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 
 /** Created by bjkeller on 8/19/16. */
 class ArrayElementSet extends CallableOperation {
@@ -27,7 +25,9 @@ class ArrayElementSet extends CallableOperation {
   }
 
   @Override
-  @SuppressWarnings("determinism:override.return.invalid")   // Other classes that override execute() return @NonDet like the super class. This method returns @PolyDet
+  @SuppressWarnings(
+      "determinism:override.return.invalid") // Other classes that override execute() return @NonDet
+                                             // like the super class. This method returns @PolyDet
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 3
         : "array element assignment must have array, index and value as arguments";
@@ -45,12 +45,12 @@ class ArrayElementSet extends CallableOperation {
 
   @Override
   public void appendCode(
-          @Det ArrayElementSet this,
-          @Det Type declaringType,
-          @Det TypeTuple inputTypes,
-          @Det Type outputType,
-          @Det List<@Det Variable> inputVars,
-          @Det StringBuilder b) {
+      @Det ArrayElementSet this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
 
     b.append(inputVars.get(ARRAY).getName()).append("[");
     @Det Variable indexVariable = inputVars.get(INDEX);

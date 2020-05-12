@@ -2,7 +2,6 @@ package randoop.util;
 
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
@@ -65,7 +64,9 @@ public class CheckpointingSet<T extends @PolyDet Object> implements ISimpleSet<T
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
+    @SuppressWarnings(
+        "determinism") // all concrete implementation of this interface have a deterministic
+                       // toString
     @PolyDet String tmp = map.keySet().toString();
     return tmp;
   }

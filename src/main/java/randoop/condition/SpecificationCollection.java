@@ -269,7 +269,8 @@ public class SpecificationCollection {
             root,
             new SimpleFileVisitor<Path>() {
               @Override
-              @SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/2433
+              @SuppressWarnings(
+                  "determinism") // https://github.com/typetools/checker-framework/issues/2433
               public FileVisitResult visitFile(@Det Path file, @Det BasicFileAttributes attrs)
                   throws IOException {
                 // You can do anything you want with the path here
@@ -278,8 +279,8 @@ public class SpecificationCollection {
               }
 
               @Override
-              public FileVisitResult preVisitDirectory(@Det Path dir, @Det BasicFileAttributes attrs)
-                  throws IOException {
+              public FileVisitResult preVisitDirectory(
+                  @Det Path dir, @Det BasicFileAttributes attrs) throws IOException {
                 if (dir.endsWith("__MACOSX")) {
                   return FileVisitResult.SKIP_SUBTREE;
                 }
@@ -351,7 +352,8 @@ public class SpecificationCollection {
       }
       if (parents != null) {
         for (Method parent : parents) {
-          @Det ExecutableSpecification parentExecSpec = getExecutableSpecification(parent); execSpec.addParent(parentExecSpec);
+          @Det ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
+          execSpec.addParent(parentExecSpec);
         }
       }
     }

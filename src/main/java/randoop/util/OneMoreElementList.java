@@ -63,7 +63,9 @@ public final class OneMoreElementList<T extends @PolyDet Object>
 
   @Override
   public @PolyDet String toString() {
-    @SuppressWarnings("determinism") // all concrete implementation of this interface have a deterministic toString
+    @SuppressWarnings(
+        "determinism") // all concrete implementation of this interface have a deterministic
+                       // toString
     @PolyDet String tmp = toJDKList().toString();
     return tmp;
   }

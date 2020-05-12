@@ -1,7 +1,6 @@
 package randoop.operation;
 
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -56,7 +55,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    */
   @Override
   @RequiresDetToString
-  public @Det ExecutionOutcome execute(@Det TypedClassOperationWithCast this, @Det Object @Det [] input) {
+  public @Det ExecutionOutcome execute(
+      @Det TypedClassOperationWithCast this, @Det Object @Det [] input) {
     @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
     @Det ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {

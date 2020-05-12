@@ -3,8 +3,8 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -12,9 +12,6 @@ import randoop.types.ArrayType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.determinism.qual.Det;
 /**
  * {@code ArrayCreation} is a {@link Operation} representing the construction of a one-dimensional
  * array of a given type. The operation takes a length argument and creates an array of that size.
@@ -49,7 +46,8 @@ public class ArrayCreation extends CallableOperation {
     if (!(obj instanceof ArrayCreation)) {
       return false;
     }
-    @SuppressWarnings("determinism:invariant.cast.unsafe")    // casting here doesn't change the determinism type
+    @SuppressWarnings(
+        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     ArrayCreation arrayCreation = (ArrayCreation) obj;
     return this.elementType.equals(arrayCreation.elementType)
         && this.dimensions == arrayCreation.dimensions;
@@ -82,12 +80,12 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public void appendCode(
-          @Det ArrayCreation this,
-          @Det Type declaringType,
-          @Det TypeTuple inputTypes,
-          @Det Type outputType,
-          @Det List<@Det Variable> inputVars,
-          @Det StringBuilder b) {
+      @Det ArrayCreation this,
+      @Det Type declaringType,
+      @Det TypeTuple inputTypes,
+      @Det Type outputType,
+      @Det List<@Det Variable> inputVars,
+      @Det StringBuilder b) {
     @Det Variable inputVar = inputVars.get(0);
     b.append("new").append(" ").append(this.elementType.getName());
     b.append("[ ");
