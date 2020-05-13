@@ -18,7 +18,9 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   @Override
   protected void runReflectionCodeRaw() {
     try {
-      retval = c.evaluate(objs);
+      @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
+      @PolyDet Object tmp = c.evaluate(objs);
+      retval = tmp;
     } catch (Throwable e) {
       exceptionThrown = e;
     }

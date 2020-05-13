@@ -21,12 +21,10 @@ public class CompareToReflexive extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes", "SelfComparison"})
   @Override
-  public boolean evaluate(Object... objects) {
+  public @PolyDet("up") boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     // Get first and only object
-    @SuppressWarnings(
-        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
-    @PolyDet Object o1 = objects[0];
+    Object o1 = objects[0];
     assert o1 != null;
 
     if (o1 instanceof Comparable) {

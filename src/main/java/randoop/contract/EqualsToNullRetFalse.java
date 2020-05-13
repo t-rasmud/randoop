@@ -18,14 +18,12 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public @PolyDet("up") boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
     // noinspection ObjectEqualsNull
-    @SuppressWarnings(
-        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
-    @PolyDet boolean tmp = !o.equals(null);
+    boolean tmp = !o.equals(null);
     return tmp;
   }
 
