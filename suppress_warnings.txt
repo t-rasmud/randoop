@@ -68,6 +68,9 @@
 @SuppressWarnings("determinism") // AccessibleObject toString is actually deterministic
 @SuppressWarnings("determinism") // @Det receiver required but use of @PolyDet here is unavoidable
 @SuppressWarnings("determinism") // we used Object with @NonDet toString, but that's reflected in return value
+@SuppressWarnings("determinism") // this can't be run with --deterministic randoop option
+@SuppressWarnings("determinism") // call to executeSequence has @RequiresDetToString but fine to pass Object[] because it comes from code randoop is run on
+@SuppressWarnings("determinism") // upon inspection, adding parents in nondeterministic order is okay
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 @SuppressWarnings("determinism") // the nondeterministic output printed here is expected
@@ -104,3 +107,6 @@
 
 // For constructor error
 @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/179
+
+// For receivers on anonymous classes
+@SuppressWarnings("determinism") // https://github.com/typetools/checker-framework/issues/2433

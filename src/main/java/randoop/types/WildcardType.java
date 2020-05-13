@@ -48,6 +48,7 @@ class WildcardType extends ParameterType {
    * @param type the {@code java.lang.reflect.WildcardType} object
    * @return a {@link WildcardType} with the bounds from the given reflection type
    */
+  @SuppressWarnings("determinism") // upon inspection, use of HashSet here okay
   public static @Det WildcardType forType(java.lang.reflect.@Det WildcardType type) {
     // Note: every wildcard has an upper bound, so need to check lower first
     if (type.getLowerBounds().length > 0) {

@@ -473,7 +473,7 @@ public abstract class AbstractGenerator {
    * @param sequence the new test sequence that was classified as a regression test, i.e., normal
    *     behavior
    */
-  public abstract void newRegressionTestHook(Sequence sequence);
+  public abstract void newRegressionTestHook(@Det AbstractGenerator this, @Det Sequence sequence);
 
   public abstract String toString();
 }

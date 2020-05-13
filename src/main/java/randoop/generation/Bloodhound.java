@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -42,6 +45,7 @@ import randoop.util.SimpleArrayList;
  * consistent with the description in the GRT paper. We believe our implementation, which uses the
  * first definition, is likely what was intended by the authors of the GRT paper.
  */
+@DefaultQualifier(Det.class)
 public class Bloodhound implements TypedOperationSelector {
 
   /** Coverage tracker used to get branch coverage information of methods under test. */
@@ -95,7 +99,7 @@ public class Bloodhound implements TypedOperationSelector {
   private static final long t = 50000;
 
   /** {@code System.currentTimeMillis()} when branch coverage was last updated. */
-  private long lastUpdateTime = 0;
+  private @NonDet long lastUpdateTime = 0;
 
   /**
    * Branch coverage is recomputed after this many successful invocations (= this many new tests
@@ -126,9 +130,9 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operations list of operations under test
    * @param classesUnderTest set of classes under test
    */
-  public Bloodhound(
-      @PolyDet List<@PolyDet TypedOperation> operations,
-      @PolyDet Set<@PolyDet ClassOrInterfaceType> classesUnderTest) {
+  public @Det Bloodhound(
+      @Det List<TypedOperation> operations,
+      @Det Set<ClassOrInterfaceType> classesUnderTest) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
     this.coverageTracker = new CoverageTracker(classesUnderTest);
 
@@ -147,12 +151,12 @@ public class Bloodhound implements TypedOperationSelector {
    * @return the chosen {@code TypedOperation} for the new sequence
    */
   @Override
-  public TypedOperation selectOperation() {
+  public TypedOperation selectOperation(@Det Bloodhound this) {
     // Periodically collect branch coverage and recompute weights for all methods under test.
     updateBranchCoverageMaybe();
 
     // Make a random, weighted choice for the next method.
-    TypedOperation selectedOperation =
+    @Det TypedOperation selectedOperation =
         Randomness.randomMemberWeighted(
             operationSimpleList, methodWeights, totalWeightOfMethodsUnderTest);
 
@@ -177,13 +181,15 @@ public class Bloodhound implements TypedOperationSelector {
    *       branchCoverageInteral} successful invocations (of any method under test).
    * </ul>
    */
-  private void updateBranchCoverageMaybe() {
+  private void updateBranchCoverageMaybe(@Det Bloodhound this) {
     boolean shouldUpdateBranchCoverage;
 
     switch (GenInputsAbstract.bloodhound_update_mode) {
       case TIME:
-        long currentTime = System.currentTimeMillis();
-        shouldUpdateBranchCoverage = currentTime - lastUpdateTime >= t;
+        @NonDet long currentTime = System.currentTimeMillis();
+        @SuppressWarnings("determinism") // this can't be run with --deterministic randoop option
+        @Det boolean tmp = currentTime - lastUpdateTime >= t;
+        shouldUpdateBranchCoverage = tmp;
 
         // Update the last update time if we decide that it's time to update branch coverage
         // information.
@@ -225,7 +231,7 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /** For debugging, print all method weights to standard output. */
-  private void logMethodWeights() {
+  private void logMethodWeights(@Det Bloodhound this) {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
       for (TypedOperation typedOperation : new TreeSet<>(methodWeights.keySet())) {
@@ -239,7 +245,7 @@ public class Bloodhound implements TypedOperationSelector {
    * Computes and updates weights in {@code methodWeights} map for all methods under test.
    * Recomputes the {@code totalWeightOfMethodsUnderTest} to avoid problems with round-off error.
    */
-  private void updateWeightsForAllOperations() {
+  private void updateWeightsForAllOperations(@Det Bloodhound this) {
     double totalWeight = 0;
     for (TypedOperation operation : operationSimpleList) {
       totalWeight += updateWeight(operation);
@@ -262,7 +268,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation method to compute weight for
    * @return the updated weight for the given operation
    */
-  private double updateWeight(TypedOperation operation) {
+  private double updateWeight(@Det Bloodhound this, TypedOperation operation) {
     // Remove type arguments, because Jacoco does not include type arguments when naming a method.
     String methodName = operation.getName().replaceAll("<.*>\\.", ".");
 
@@ -359,10 +365,10 @@ public class Bloodhound implements TypedOperationSelector {
    *
    * @param operation the method under test that was successfully invoked
    */
-  public void incrementSuccessfulInvocationCount(TypedOperation operation) {
+  public void incrementSuccessfulInvocationCount(@Det Bloodhound this, TypedOperation operation) {
     totalSuccessfulInvocations += 1;
     CollectionsPlume.incrementMap(methodInvocationCounts, operation);
-    int numSuccessfulInvocations = methodInvocationCounts.get(operation);
+    @Det int numSuccessfulInvocations = methodInvocationCounts.get(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
 
@@ -373,7 +379,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param sequence newly-created sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(Sequence sequence) {
+  public void newRegressionTestHook(@Det Bloodhound this, Sequence sequence) {
     incrementSuccessfulInvocationCount(sequence.getOperation());
   }
 }

@@ -168,7 +168,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sequence the new sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(@PolyDet ForwardGenerator this, @PolyDet Sequence sequence) {
+  public void newRegressionTestHook(@Det ForwardGenerator this, Sequence sequence) {
     operationSelector.newRegressionTestHook(sequence);
   }
 

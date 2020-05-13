@@ -67,24 +67,28 @@ allprojects {
         // 'org.checkerframework.checker.nullness.NullnessChecker',
         // 'org.checkerframework.checker.signature.SignatureChecker',
         'org.checkerframework.checker.determinism.DeterminismChecker'
+		// 'org.checkerframework.checker.
+		// 'org.checkerframework.common.util.count.AnnotationStatistics'
       ]
       extraJavacArgs = [
       // '-Werror',
       // '-AcheckPurityAnnotations',
       '-ArequirePrefixInWarningSuppressions',
         '-AwarnUnneededSuppressions',
-        '-AskipDefs=randoop.test|randoop.generation.Bloodhound|randoop.generation.CoverageTracker',
+        '-AskipDefs=randoop.test',
+		// '-Aannotations',
+		// '-Anolocations',
         // '-AonlyDefs=randoop.sequence.TupleSequence$',
         // '-AonlyDefs=randoop.reflection.RecordListReader$',
-        // '-AonlyDefs=randoop.contract.ObjectContractUtils$',
+        // '-AonlyDefs=randoop.generation.Bloodhound$',
         // '-AonlyDefs=randoop.util.RunnerThread',
         // '-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop.*',
         '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log,java.version,sun.boot.class.path,java.home',
         // '-Astubs=NodeList.astub:BodyDeclaration.astub:ClassOrInterfaceDeclaration.astub:TypeDeclaration.astub:MethodDeclaration.astub:MethodCallExpr.astub:BlockStmt.astub:CompilationUnit.astub:VariableDeclarationExpr.astub:UtilPlume.astub:Thread.astub:Runnable.astub:ClassFileTransformer.astub',
-	'-Astubs=javaparser.astub:utilplume.astub:jdk.astub',
+        // '-Astubs=javaparser.astub:utilplume.astub:jdk.astub',
         // '-Astubs=Thread.astub',
         // '-Astubs=GenericVisitor2.astub',
-        '-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid',
+        '-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid,determinism:type.anno.before.modifier',
         '-Xmaxwarns', '10000',
         '-Xmaxerrs', '10000',
       ]
@@ -243,7 +247,7 @@ dependencies {
 /*
  * Configuration for compilation.
  */
-compileJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileJava.options.compilerArgs = ['-g',/* '-Werror', */'-Xlint','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
 compileCoveredTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
 compileReplacecallTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']

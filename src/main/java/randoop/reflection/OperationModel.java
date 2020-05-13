@@ -684,10 +684,12 @@ public class OperationModel {
       throw new RandoopUsageError("Could not parse signature " + signature, e);
     }
     if (accessibleObject == null) {
-      throw new Error(
+      @SuppressWarnings("determinism") // there is a determinism bug here, currently being fixed
+      Error tmp = new Error(
           String.format(
               "accessibleObject is null for %s, typically due to predicates: %s, %s",
               signature, visibility, reflectionPredicate));
+      throw tmp;
     }
     if (accessibleObject instanceof Constructor) {
       return TypedOperation.forConstructor((Constructor) accessibleObject);

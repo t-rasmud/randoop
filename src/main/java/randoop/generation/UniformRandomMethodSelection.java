@@ -43,5 +43,5 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
    * @param sequence newly-created sequence that was classified as a regression test
    */
   @Override
-  public void newRegressionTestHook(Sequence sequence) {}
+  public void newRegressionTestHook(@Det UniformRandomMethodSelection this, @Det Sequence sequence) {}
 }

@@ -682,9 +682,11 @@ public class GenTests extends GenInputsAbstract {
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
       PriorityQueue<@Det RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
-      for (TypedClassOperation op : flakyOccurrences.keySet()) {
-        double tfIdfMetric = flakyOccurrences.get(op) / testOccurrences.get(op);
-        RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
+      for (@NonDet TypedClassOperation op : flakyOccurrences.keySet()) {
+        @SuppressWarnings("determinism") // there is a determinism bug here, currently being fixed
+        @Det TypedClassOperation tmp = op;
+        double tfIdfMetric = flakyOccurrences.get(tmp) / testOccurrences.get(tmp);
+        RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, tmp);
         methodHeuristicPriorityQueue.add(rankedMethod);
       }
 

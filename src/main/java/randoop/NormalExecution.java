@@ -2,6 +2,7 @@ package randoop;
 
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /**
  * Means that the statement that this result represents completed normally.
@@ -42,7 +43,9 @@ public class NormalExecution extends ExecutionOutcome {
   public String toString() {
     String value;
     try {
-      value = Objects.toString(result);
+      @SuppressWarnings("determinism") // this is from code randoop is run on
+      @PolyDet String tmp = Objects.toString(result);
+      value = tmp;
     } catch (Throwable t) {
       value = "???";
     }

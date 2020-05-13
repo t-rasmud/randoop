@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
@@ -106,6 +107,7 @@ public class CoverageTracker {
    * sequences. Coverage data is now collected and the {@code branchCoverageMap} field is updated to
    * contain the updated coverage information of each method branch.
    */
+  @SuppressWarnings("determinism") // there is a determinism bug here, currently being fixed
   public void updateBranchCoverageMap() {
     // Collect coverage information. This updates the executionData object and gives us updated
     // coverage information for all of the classes under test.
@@ -117,7 +119,9 @@ public class CoverageTracker {
     // For each class that is under test, summarize the branch coverage information
     // produced by Jacoco and store it in the coverageBuilder local variable.
     for (String className : classesUnderTest) {
-      String resource = getResourceFromClassName(className);
+      @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+      @PolyDet String tmp = className;
+      String resource = getResourceFromClassName(tmp);
       InputStream original = getClass().getResourceAsStream(resource);
       try {
         analyzer.analyzeClass(original, className);
@@ -179,6 +183,7 @@ public class CoverageTracker {
    * @param methodName name of the method to examine
    * @return uncovered branch ratio associated with the method
    */
+  @SuppressWarnings("determinism") // get for @PolyDet("upDet") should be @PolyDet("down")
   public Double getBranchCoverageForMethod(String methodName) {
     return this.branchCoverageMap.get(methodName);
   }
@@ -186,7 +191,7 @@ public class CoverageTracker {
   /** An {@link ISessionInfoVisitor} that does nothing. */
   private static class DummySessionInfoVisitor implements ISessionInfoVisitor {
     /** Singleton instance of this class. */
-    public static final DummySessionInfoVisitor instance = new DummySessionInfoVisitor();
+    public static final @Det DummySessionInfoVisitor instance = new DummySessionInfoVisitor();
 
     /** Initializes the session info visitor. */
     private DummySessionInfoVisitor() {}

@@ -12,6 +12,8 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
+import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import randoop.main.RandoopBug;
 
 /**
@@ -30,6 +32,7 @@ import randoop.main.RandoopBug;
  * @see CoveredClassAgent
  * @see #modifyClass(CtClass)
  */
+@DefaultQualifier(Det.class)
 public class CoveredClassTransformer implements ClassFileTransformer {
 
   /** the class pool used to load class files */
@@ -48,15 +51,16 @@ public class CoveredClassTransformer implements ClassFileTransformer {
    * classes, interfaces and any "frozen" classes that have already been loaded.
    */
   @Override
-  public byte[] transform(
+  public @Det byte[] transform(
+      @Det CoveredClassTransformer this,
       ClassLoader loader,
       String className,
       Class<?> classBeingRedefined,
       ProtectionDomain protectionDomain,
-      byte[] classfileBuffer)
+      @Det byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
-    byte[] bytecode;
+    @Det byte[] bytecode;
 
     String qualifiedName = className.replace('/', '.');
 
@@ -134,7 +138,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
    * @param cc the {@code javassist.CtClass} object
    * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    */
-  private void modifyClass(CtClass cc) {
+  private void modifyClass(@Det CoveredClassTransformer this, CtClass cc) {
     // add static field
     String flagFieldName = "randoop_classUsedFlag";
     try {
@@ -173,7 +177,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     // add static method that polls and resets the covered flag
     try {
       String methodName = "randoop_checkAndReset";
-      CtMethod pollMethod = new CtMethod(CtClass.booleanType, methodName, new CtClass[0], cc);
+      CtMethod pollMethod = new CtMethod(CtClass.booleanType, methodName, new @Det CtClass @Det [0], cc);
       pollMethod.setBody(
           "{"
               + "boolean state = "

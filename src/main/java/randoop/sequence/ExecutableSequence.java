@@ -287,7 +287,7 @@ public class ExecutableSequence {
    * @throws Error if execution of the sequence throws an exception and {@code
    *     ignoreException==false}
    */
-  @SuppressWarnings("SameParameterValue")
+  @SuppressWarnings({"SameParameterValue", "determinism"}) // call to executeSequence has @RequiresDetToString but fine to pass Object[] because it comes from code randoop is run on
   private void execute(
       @Det ExecutableSequence this,
       @Det ExecutionVisitor visitor,

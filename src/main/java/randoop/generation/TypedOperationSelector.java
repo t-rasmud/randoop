@@ -22,5 +22,5 @@ public interface TypedOperationSelector {
    *
    * @param sequence newly created sequence that was classified as a regression test
    */
-  public abstract void newRegressionTestHook(Sequence sequence);
+  public abstract void newRegressionTestHook(@Det TypedOperationSelector this, @Det Sequence sequence);
 }

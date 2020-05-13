@@ -352,6 +352,7 @@ public class SpecificationCollection {
       }
       if (parents != null) {
         for (Method parent : parents) {
+          @SuppressWarnings("determinism") // upon inspection, adding parents in nondeterministic order is okay
           @Det ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
           execSpec.addParent(parentExecSpec);
         }
