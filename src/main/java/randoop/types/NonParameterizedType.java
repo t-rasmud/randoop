@@ -62,7 +62,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     if (!(obj instanceof NonParameterizedType)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     NonParameterizedType other = (NonParameterizedType) obj;
     return super.equals(obj) && this.runtimeType.equals(other.runtimeType);
   }

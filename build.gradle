@@ -88,7 +88,7 @@ allprojects {
         // '-Astubs=javaparser.astub:utilplume.astub:jdk.astub',
         // '-Astubs=Thread.astub',
         // '-Astubs=GenericVisitor2.astub',
-        '-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid,determinism:type.anno.before.modifier',
+        '-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid,determinism:type.anno.before.modifier,determinism:invariant.cast.unsafe',
         '-Xmaxwarns', '10000',
         '-Xmaxerrs', '10000',
       ]

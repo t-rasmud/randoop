@@ -85,8 +85,6 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (!(obj instanceof TypedOperation)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     TypedOperation op = (TypedOperation) obj;
     return getOperation().equals(op.getOperation())
         && inputTypes.equals(op.inputTypes)

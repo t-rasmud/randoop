@@ -38,8 +38,6 @@ public class EnumConstant extends CallableOperation {
     if (!(obj instanceof EnumConstant)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     EnumConstant e = (EnumConstant) obj;
     return equalsEnumConstant(e);
   }

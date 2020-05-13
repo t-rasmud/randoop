@@ -286,7 +286,6 @@ public final class Randomness {
   @RequiresDetToString
   private static @PolyDet("up") String toString(Object o) {
     if (o instanceof Collection<?>) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       @PolyDet Collection<? extends @PolyDet Object> coll = (Collection<? extends @PolyDet Object>) o;
       switch (verbosity) {
         case 1:
@@ -301,7 +300,6 @@ public final class Randomness {
           throw new Error("verbosity = " + verbosity);
       }
     } else if (o instanceof SimpleList<?>) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       @PolyDet SimpleList<? extends @PolyDet Object> sl = (SimpleList<?>) o;
       switch (verbosity) {
         case 1:

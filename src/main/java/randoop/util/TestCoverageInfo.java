@@ -107,7 +107,6 @@ public class TestCoverageInfo {
           NoSuchFieldException {
     Field f = clazz.getDeclaredField("randoopCoverageInfo");
     f.setAccessible(true);
-    @SuppressWarnings("determinism") // Casting here doesn't change the determinism type
     TestCoverageInfo tmp = (TestCoverageInfo) f.get(null);
     return tmp;
   }

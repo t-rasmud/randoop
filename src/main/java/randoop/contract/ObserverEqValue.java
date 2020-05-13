@@ -41,8 +41,6 @@ public final class ObserverEqValue extends ObjectContract {
     if (!(o instanceof ObserverEqValue)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     ObserverEqValue other = (ObserverEqValue) o;
     return observer.equals(other.observer) && Objects.equals(value, other.value);
   }

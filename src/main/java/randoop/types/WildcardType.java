@@ -74,7 +74,6 @@ class WildcardType extends ParameterType {
     if (!(obj instanceof WildcardType)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     WildcardType otherType = (WildcardType) obj;
     return otherType.hasUpperBound == this.hasUpperBound && super.equals(otherType);
   }

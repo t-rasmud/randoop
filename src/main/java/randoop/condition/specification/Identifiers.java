@@ -137,7 +137,6 @@ public class Identifiers {
     if (!(object instanceof Identifiers)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Identifiers other = (Identifiers) object;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as

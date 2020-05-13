@@ -51,7 +51,6 @@ public class ThrowsClause {
     if (!(object instanceof ThrowsClause)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ThrowsClause other = (ThrowsClause) object;
     return this.exceptionType.equals(other.exceptionType) && this.comment.equals(other.comment);
   }

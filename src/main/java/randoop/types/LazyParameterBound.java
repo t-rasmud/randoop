@@ -44,7 +44,6 @@ class LazyParameterBound extends ParameterBound {
     if (!(obj instanceof LazyParameterBound)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     LazyParameterBound b = (LazyParameterBound) obj;
     return this.boundType.equals(b.boundType);
   }

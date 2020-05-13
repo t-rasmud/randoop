@@ -42,7 +42,6 @@ public class Variable implements Comparable<Variable> {
     if (!(o instanceof Variable)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Variable other = (Variable) o;
     // Two values are equal only if they are owned by the
     // same sequence, where "same" means the same reference.

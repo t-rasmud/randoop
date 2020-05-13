@@ -112,7 +112,6 @@ public class ExecutableBooleanExpression {
     if (!(object instanceof ExecutableBooleanExpression)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExecutableBooleanExpression other = (ExecutableBooleanExpression) object;
     return this.expressionMethod.equals(other.expressionMethod)
         && this.comment.equals(other.comment)

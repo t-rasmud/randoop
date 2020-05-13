@@ -112,8 +112,6 @@ public class FieldGet extends CallableOperation {
     if (!(obj instanceof FieldGet)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     FieldGet s = (FieldGet) obj;
     return field.equals(s.field);
   }

@@ -44,7 +44,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     if (!(obj instanceof TypeTuple)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     TypeTuple tuple = (TypeTuple) obj;
     @PolyDet boolean tmp = list.equals(tuple.list);
     return tmp;
@@ -125,7 +124,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
       // @PolyDet
       @PolyDet Type tmp = type;
       if (tmp.isReferenceType()) {
-        @SuppressWarnings("determinism") // casting here doesn't change the determinism type
         boolean ignore = paramSet.addAll(((ReferenceType) tmp).getTypeParameters());
       }
     }
@@ -137,9 +135,9 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
    *
    * @return true if there is at least one wildcard occurrence
    */
+  @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
   public boolean hasWildcard() {
     for (Type type : list) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       @PolyDet Type tmp = (ParameterizedType) type;
       if (type.isParameterized() && tmp.hasWildcard()) {
         return true;

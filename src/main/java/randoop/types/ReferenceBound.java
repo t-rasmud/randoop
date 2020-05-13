@@ -37,7 +37,6 @@ public abstract class ReferenceBound extends ParameterBound {
     if (!(obj instanceof ReferenceBound)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ReferenceBound bound = (ReferenceBound) obj;
     return this.boundType.equals(bound.boundType);
   }

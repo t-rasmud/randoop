@@ -91,8 +91,6 @@ public class AccessibleField {
     if (!(obj instanceof AccessibleField)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     AccessibleField f = (AccessibleField) obj;
     return this.field.equals(f.field);
   }

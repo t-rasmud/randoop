@@ -74,7 +74,6 @@ public class Postcondition extends SpecificationClause {
     if (!(object instanceof Postcondition)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Postcondition other = (Postcondition) object;
     return super.equals(other)
         && ((this.property != null

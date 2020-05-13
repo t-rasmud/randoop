@@ -105,7 +105,6 @@ public class ArrayType extends ReferenceType {
     if (!(obj instanceof ArrayType)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ArrayType t = (ArrayType) obj;
     return componentType.equals(t.componentType) && runtimeClass.equals(t.runtimeClass);
   }
@@ -148,7 +147,6 @@ public class ArrayType extends ReferenceType {
    */
   public Type getElementType() {
     if (componentType.isArray()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       Type tmp = ((ArrayType) componentType).getElementType();
       return tmp;
     }
@@ -173,7 +171,6 @@ public class ArrayType extends ReferenceType {
   @Override
   public List<@PolyDet TypeVariable> getTypeParameters() {
     if (componentType.isReferenceType()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       @PolyDet List<@PolyDet TypeVariable> tmp = ((ReferenceType) componentType).getTypeParameters();
       return tmp;
     } else {
@@ -273,13 +270,11 @@ public class ArrayType extends ReferenceType {
    *
    * @return the non-parameterized form of this array type
    */
-  public ArrayType getRawTypeArray() {
-    @PolyDet Type rawElementType;
+  public @Det ArrayType getRawTypeArray(@Det ArrayType this) {
+    @Det Type rawElementType;
     if (this.componentType.isArray()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       Type tmp = (rawElementType = ((ArrayType) componentType).getRawTypeArray());
     } else if (this.componentType.isClassOrInterfaceType()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       Type tmp = (rawElementType = ((ClassOrInterfaceType) componentType).getRawtype());
     } else {
       return this;
@@ -290,7 +285,6 @@ public class ArrayType extends ReferenceType {
   public int getDimensions() {
     int dimensions = 1;
     if (componentType.isArray()) {
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       int tmp = (dimensions += ((ArrayType) componentType).getDimensions());
     }
     return dimensions;

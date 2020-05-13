@@ -239,7 +239,6 @@ public class OperationSignature {
     if (!(object instanceof OperationSignature)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     OperationSignature other = (OperationSignature) object;
     @SuppressWarnings(
         "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet

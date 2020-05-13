@@ -49,7 +49,6 @@ class IntersectionTypeBound extends ParameterBound {
     if (!(obj instanceof IntersectionTypeBound)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     IntersectionTypeBound b = (IntersectionTypeBound) obj;
     @SuppressWarnings(
         "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as

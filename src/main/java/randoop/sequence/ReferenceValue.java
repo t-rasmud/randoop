@@ -43,7 +43,6 @@ public final class ReferenceValue {
     if (!(obj instanceof ReferenceValue)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ReferenceValue refValue = (ReferenceValue) obj;
     return this.type.equals(refValue.type) && this.value == refValue.value;
   }

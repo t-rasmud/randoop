@@ -109,7 +109,6 @@ public class Substitution {
     if (!(obj instanceof Substitution)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Substitution s = (Substitution) obj;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as

@@ -73,7 +73,6 @@ class CaptureTypeVariable extends TypeVariable {
     if (!(obj instanceof CaptureTypeVariable)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
     return this.varID == variable.varID
         && this.wildcard.equals(variable.wildcard)

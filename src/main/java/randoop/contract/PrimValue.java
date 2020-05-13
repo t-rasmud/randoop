@@ -42,8 +42,6 @@ public final class PrimValue extends ObjectContract {
     if (!(o instanceof PrimValue)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     PrimValue other = (PrimValue) o;
     return value.equals(other.value);
   }

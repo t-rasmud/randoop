@@ -106,7 +106,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (!(obj instanceof ClassOrInterfaceType)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ClassOrInterfaceType otherType = (ClassOrInterfaceType) obj;
     return !(this.isNestedClass() && otherType.isNestedClass())
         || this.enclosingType.equals(otherType.enclosingType);

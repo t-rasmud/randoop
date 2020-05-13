@@ -47,7 +47,6 @@ public class ReferenceArgument extends TypeArgument {
     if (!(obj instanceof ReferenceArgument)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ReferenceArgument referenceArgument = (ReferenceArgument) obj;
     return this.referenceType.equals(referenceArgument.referenceType);
   }

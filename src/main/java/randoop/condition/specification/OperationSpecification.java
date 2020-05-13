@@ -215,7 +215,6 @@ public class OperationSpecification {
     if (!(object instanceof OperationSpecification)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     OperationSpecification other = (OperationSpecification) object;
     @SuppressWarnings(
         "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as

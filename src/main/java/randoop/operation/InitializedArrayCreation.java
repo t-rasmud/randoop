@@ -123,8 +123,6 @@ public final class InitializedArrayCreation extends CallableOperation {
     if (!(o instanceof InitializedArrayCreation)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     InitializedArrayCreation otherArrayDecl = (InitializedArrayCreation) o;
     return this.elementType.equals(otherArrayDecl.elementType)
         && this.length == otherArrayDecl.length;

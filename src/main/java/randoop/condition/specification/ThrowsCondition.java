@@ -73,7 +73,6 @@ public class ThrowsCondition extends SpecificationClause {
     if (!(object instanceof ThrowsCondition)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ThrowsCondition other = (ThrowsCondition) object;
     return super.equals(other) && this.exceptionType.equals(other.exceptionType);
   }

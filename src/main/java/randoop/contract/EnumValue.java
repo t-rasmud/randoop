@@ -29,8 +29,6 @@ public final class EnumValue extends ObjectContract {
     if (!(obj instanceof EnumValue)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     EnumValue enumValue = (EnumValue) obj;
     return value.equals(enumValue.value);
   }

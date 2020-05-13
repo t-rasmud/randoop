@@ -154,7 +154,6 @@ public class MethodSignature implements Comparable<MethodSignature> {
     if (!(obj instanceof MethodSignature)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     MethodSignature md = (MethodSignature) obj;
     return this.classname.equals(md.classname)
         && this.name.equals(md.name)

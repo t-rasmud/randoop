@@ -68,7 +68,6 @@ public abstract class AbstractBooleanExpression {
     if (!(object instanceof AbstractBooleanExpression)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     AbstractBooleanExpression other = (AbstractBooleanExpression) object;
     return this.description.equals(other.description)
         && this.conditionSource.equals(other.conditionSource);

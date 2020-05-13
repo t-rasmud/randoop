@@ -592,7 +592,6 @@ public final class Sequence {
     if (!(o instanceof Sequence)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     @PolyDet Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
@@ -1284,7 +1283,6 @@ public final class Sequence {
       if (!(o instanceof RelativeNegativeIndex)) {
         return false;
       }
-      @SuppressWarnings("determinism") // casting here doesn't change the determinism type
       boolean tmp = (this.index == ((RelativeNegativeIndex) o).index);
       return tmp;
     }

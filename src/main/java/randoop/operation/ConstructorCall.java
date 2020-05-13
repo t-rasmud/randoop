@@ -139,8 +139,6 @@ public final class ConstructorCall extends CallableOperation {
     if (!(o instanceof ConstructorCall)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     ConstructorCall other = (ConstructorCall) o;
     return this.constructor.equals(other.constructor);
   }

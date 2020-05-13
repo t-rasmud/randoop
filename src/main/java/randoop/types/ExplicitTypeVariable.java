@@ -42,7 +42,6 @@ class ExplicitTypeVariable extends TypeVariable {
       boolean tmp = isAssignableFrom(null);
       return tmp;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExplicitTypeVariable t = (ExplicitTypeVariable) obj;
     return variable.equals(t.variable) && super.equals(t);
   }

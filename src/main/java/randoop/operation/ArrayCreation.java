@@ -46,8 +46,6 @@ public class ArrayCreation extends CallableOperation {
     if (!(obj instanceof ArrayCreation)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     ArrayCreation arrayCreation = (ArrayCreation) obj;
     return this.elementType.equals(arrayCreation.elementType)
         && this.dimensions == arrayCreation.dimensions;

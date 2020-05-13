@@ -57,7 +57,6 @@ public class InstantiatedType extends ParameterizedType {
     if (!(obj instanceof InstantiatedType)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     InstantiatedType other = (InstantiatedType) obj;
     @SuppressWarnings(
         "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as

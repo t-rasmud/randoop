@@ -527,7 +527,6 @@ public class ExecutableSequence {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
-        @SuppressWarnings("determinism") // casting here doesn't change the determinism type
         boolean ignore = refValues.add(new ReferenceValue((ReferenceType) type, value));
         variableMap.put(value, variable);
       }
@@ -683,7 +682,6 @@ public class ExecutableSequence {
     if (!(obj instanceof ExecutableSequence)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     ExecutableSequence that = (ExecutableSequence) obj;
     return this.sequence.equals(that.sequence) && Objects.equals(this.checks, that.checks);
   }

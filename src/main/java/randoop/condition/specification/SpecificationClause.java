@@ -65,7 +65,6 @@ public abstract class SpecificationClause {
     if (!(object instanceof SpecificationClause)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     SpecificationClause other = (SpecificationClause) object;
     return this.description.equals(other.description)
         && ((this.guard != null && this.guard.equals(other.guard))

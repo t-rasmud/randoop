@@ -55,7 +55,6 @@ public class GenericClassType extends ParameterizedType {
     if (!(obj instanceof GenericClassType)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     GenericClassType t = (GenericClassType) obj;
     return this.rawType.equals(t.rawType);
   }

@@ -69,7 +69,6 @@ public final class Statement {
     if (!(obj instanceof Statement)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     Statement s = (Statement) obj;
     if (!operation.equals(s.operation)) {
       return false;

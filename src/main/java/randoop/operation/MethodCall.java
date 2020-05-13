@@ -139,8 +139,6 @@ public final class MethodCall extends CallableOperation {
     if (!(o instanceof MethodCall)) {
       return false;
     }
-    @SuppressWarnings(
-        "determinism:invariant.cast.unsafe") // casting here doesn't change the determinism type
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }

@@ -54,7 +54,6 @@ class WildcardArgument extends TypeArgument {
     if (!(obj instanceof WildcardArgument)) {
       return false;
     }
-    @SuppressWarnings("determinism") // casting here doesn't change the determinism type
     WildcardArgument wildcardArgument = (WildcardArgument) obj;
     return this.argumentType.equals(wildcardArgument.argumentType);
   }
