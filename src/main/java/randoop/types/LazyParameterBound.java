@@ -55,7 +55,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public String toString(@PolyDet LazyParameterBound this) {
-    @SuppressWarnings("determinism") // this toString call is probably @PolyDet
+    @SuppressWarnings("determinism") // all concrete implementations of this interface have a deterministic toString
     @PolyDet String tmp = boundType.toString();
     return tmp;
   }
