@@ -13,7 +13,7 @@
 @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @OrderNonDet
 @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
 @SuppressWarnings("determinism") // no unintended aliasing, so safe to treat @Det values as @PolyDet
-@SuppressWarnings("determinism") // this is code randoop is run on
+@SuppressWarnings("determinism") // this is from code randoop is run on
 @SuppressWarnings("determinism") // this is from code randoop is run on, so okay to have nondet toString
 @SuppressWarnings("determinism") // the toString of a PrintStream is @PolyDet
 @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
@@ -71,6 +71,8 @@
 @SuppressWarnings("determinism") // this can't be run with --deterministic randoop option
 @SuppressWarnings("determinism") // call to executeSequence has @RequiresDetToString but fine to pass Object[] because it comes from code randoop is run on
 @SuppressWarnings("determinism") // upon inspection, adding parents in nondeterministic order is okay
+@SuppressWarnings("determinism") // there is a determinism bug here, currently being fixed
+@SuppressWarnings("determinism") // upon inspection, use of HashSet here okay
 
 @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
 @SuppressWarnings("determinism") // the nondeterministic output printed here is expected
