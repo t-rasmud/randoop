@@ -53,20 +53,17 @@ public class FileCompiler {
     compilerOptions.add(destinationDir.toString());
     compilerOptions.add("-XDuseUnsharedTable");
 
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+    @PolyDet DiagnosticCollector<@PolyDet JavaFileObject> diagnostics = new @PolyDet DiagnosticCollector<>();
     StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-    @SuppressWarnings("determinism") // library not annotated
-    Iterable<? extends JavaFileObject> filesToCompile =
+    @PolyDet Iterable<? extends @PolyDet JavaFileObject> filesToCompile =
         fileManager.getJavaFileObjectsFromFiles(sourceFiles);
 
-    @SuppressWarnings("determinism") // library not annotated
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, filesToCompile);
 
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
-      @SuppressWarnings("determinism") // library not annotated
-      FileCompilerException tmp =
+      @PolyDet FileCompilerException tmp =
           new FileCompilerException(
               "Compilation failed", sourceFiles, compilerOptions, diagnostics);
       throw tmp;

@@ -157,10 +157,9 @@ public class SequenceCompiler {
     @PolyDet List<@PolyDet JavaFileObject> sources = new @PolyDet ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
-    @SuppressWarnings("determinism") // library not annotated
     JavaCompiler.CompilationTask task =
         compiler.getTask(
-            null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
+            null, fileManager, diagnostics, new ArrayList<@PolyDet String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
     return (succeeded != null && succeeded);
   }
