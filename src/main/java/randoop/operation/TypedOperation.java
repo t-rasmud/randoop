@@ -385,9 +385,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *     enumClass}
    */
   @SuppressWarnings({
-    "determinism:argument.type.incompatible",
-    "determinism:cast.unsafe.constructor.invocation"
-  }) // process is order insensitive, can't be verified
+    "determinism:argument.type.incompatible", // process is order insensitive
+    "determinism:cast.unsafe.constructor.invocation" // process is order insensitive
+  })
   private static TypedClassOperation getAnonEnumOperation(
       @Det Method method, @Det List<@Det Type> methodParamTypes, @Det Class<?> enumClass) {
     @Det ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);

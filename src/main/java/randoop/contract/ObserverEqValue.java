@@ -51,9 +51,9 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @SuppressWarnings({
-    "determinism:nondeterministic.tostring"
-  }) // this toString call is porbably @PolyDet; value is a primitive or String (see comment on
-     // field)
+    "determinism:nondeterministic.tostring" // this toString call is probabl @PolyDet; value is a
+    // primitive or String (see comment on field)
+  })
   public ObserverEqValue(@PolyDet TypedOperation observer, Object value) {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
@@ -90,7 +90,7 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   @SuppressWarnings(
       "determinism:nondeterministic.tostring") // this toString call is @Det; value is a primitive
-                                               // or String (see comment on field)
+  // or String (see comment on field)
   public String toCodeString(@Det ObserverEqValue this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
@@ -161,8 +161,8 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   @SuppressWarnings(
       "determinism:override.receiver.invalid") // Other classes that override get_observer_Str()
-                                               // take @PolyDet parameter the super class. This
-                                               // method requires @Det
+  // take @PolyDet parameter the super class. This
+  // method requires @Det
   public String get_observer_str(@Det ObserverEqValue this) {
     return observer.toString();
   }

@@ -198,10 +198,9 @@ public abstract class ObjectContract {
    * @return an ObjectCheck indicating that a contract failed
    */
   @SuppressWarnings({
-    "determinism:method.invocation.invalid",
-    "determinism:invalid.array.assignment"
-  }) // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet, iterating
-     // over @PolyDet array to create another
+    "determinism:method.invocation.invalid", // @PolyDet("up") is the same as @PolyDet
+    "determinism:invalid.array.assignment" // iterating over @PolyDet array to create another
+  })
   ObjectCheck failedContract(ExecutableSequence eseq, @PolyDet("use") Object @PolyDet [] values) {
     @PolyDet("use") Variable @PolyDet [] varArray = new @PolyDet("use") Variable @PolyDet [values.length];
     for (int i = 0; i < varArray.length; i++) {
