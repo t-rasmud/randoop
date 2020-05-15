@@ -107,9 +107,6 @@ public class JavaFileWriter implements CodeWriter {
     }
     String[] split = packageName.split("\\.");
     for (String s : split) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet String tmp = s;
       dir = new java.io.File(dir.toFile(), tmp).toPath();
     }

@@ -89,8 +89,6 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    @SuppressWarnings("determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is
-    // the same as @PolyDet
     @PolyDet String tmp =
         "Call to "
             + method

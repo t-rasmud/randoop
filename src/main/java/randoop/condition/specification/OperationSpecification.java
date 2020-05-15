@@ -216,9 +216,6 @@ public class OperationSpecification {
       return false;
     }
     OperationSpecification other = (OperationSpecification) object;
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet boolean tmp =
         this.operation.equals(other.operation)
             && this.identifiers.equals(other.identifiers)

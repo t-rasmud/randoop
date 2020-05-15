@@ -39,9 +39,6 @@ public class TestCoverageInfo {
     int totalBranches = 0;
     for (Map.Entry<@PolyDet String, @PolyDet Set<@PolyDet Integer>> entry :
         methodToIndices.entrySet()) {
-      @SuppressWarnings(
-          "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet String methodSignature = entry.getKey();
       @PolyDet BranchCov covAndTot = getCoverageInfo(methodSignature);
       int branchesCovered = covAndTot.covered;

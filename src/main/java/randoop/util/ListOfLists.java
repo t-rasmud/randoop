@@ -31,9 +31,8 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   private @PolyDet int totalelements;
 
   @SuppressWarnings({
-    "unchecked",
-    "determinism"
-  }) // heap pollution warning, https://github.com/t-rasmud/checker-framework/issues/147
+    "unchecked"
+  }) // heap pollution warning
   public @PolyDet("up") ListOfLists(@PolyDet SimpleList<T> @PolyDet ... lists) {
     this.lists = new @PolyDet("up") ArrayList<>(lists.length);
     for (@PolyDet("up") SimpleList<T> sl : lists) {
@@ -101,9 +100,6 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
         // Recurse.
-        @SuppressWarnings(
-            "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-        // @PolyDet
         @PolyDet SimpleList<T> tmp = lists.get(i).getSublist(index - previousListSize);
         return tmp;
       }

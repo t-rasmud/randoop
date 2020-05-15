@@ -142,9 +142,6 @@ public class ExecutableSequence {
       }
       if ((i == sequence.size() - 1) && (checks != null)) {
         for (@PolyDet("up") Check check : checks.checks()) {
-          @SuppressWarnings(
-              "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the
-          // same as @PolyDet
           @PolyDet Check tmp = check;
           b.append(Globals.lineSep);
           b.append(tmp.toString());
@@ -505,7 +502,6 @@ public class ExecutableSequence {
     addReferenceValue(outputVariable, outputValue, values);
 
     for (@PolyDet("up") Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet Variable tmp = inputVariable;
       Object inputValue = getValue(tmp.index);
       addReferenceValue(tmp, inputValue, values);
@@ -542,9 +538,6 @@ public class ExecutableSequence {
   public List<@PolyDet ReferenceValue> getInputValues() {
     @PolyDet("upDet") Set<@PolyDet Integer> skipSet = new @PolyDet("upDet") HashSet<>();
     for (@PolyDet("up") Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet int tmp2 = inputVariable.index;
       skipSet.add(tmp2);
     }
@@ -583,9 +576,6 @@ public class ExecutableSequence {
    * @return a variable that has the given value
    */
   public Variable getVariable(Object value) {
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet Variable tmp = variableMap.get(value).iterator().next();
     return tmp;
   }

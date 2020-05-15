@@ -150,7 +150,6 @@ public class SpecificationCollection {
     for (Method method : methods) {
       Class<?> declaringClass = method.getDeclaringClass();
       if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
-        @SuppressWarnings("determinism") // order of insertion doesn't matter
         boolean ignore = parents.add(method);
       }
     }

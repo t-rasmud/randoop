@@ -517,7 +517,6 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);
       if (matcher.matches()) {
-        @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/179
         @PolyDet Match tmp = new Match(line, matcher.group(1));
         return tmp;
       }

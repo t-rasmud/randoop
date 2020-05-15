@@ -30,9 +30,6 @@ public class GenericClassType extends ParameterizedType {
     this.parameters = new @PolyDet ArrayList<>();
 
     for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      @SuppressWarnings(
-          "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet TypeVariable variable = TypeVariable.forType(v);
       this.parameters.add(variable);
     }

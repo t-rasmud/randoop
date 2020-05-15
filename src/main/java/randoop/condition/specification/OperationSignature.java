@@ -224,7 +224,6 @@ public class OperationSignature {
   private static List<@ClassGetName @PolyDet String> getTypeNames(Class<?>[] classes) {
     @PolyDet List<@ClassGetName @PolyDet String> parameterTypes = new @PolyDet ArrayList<>();
     for (Class<?> aClass : classes) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet Class<?> tmp = aClass;
       parameterTypes.add(tmp.getName());
     }
@@ -240,8 +239,6 @@ public class OperationSignature {
       return false;
     }
     OperationSignature other = (OperationSignature) object;
-    @SuppressWarnings(
-        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
     @PolyDet boolean tmp =
         this.classname.equals(other.classname)
             && this.name.equals(other.name)

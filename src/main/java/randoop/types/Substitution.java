@@ -68,9 +68,7 @@ public class Substitution {
     assert parameters.size() == arguments.length
         : "parameters=" + parameters + "  arguments=" + Arrays.toString(arguments);
     for (int i = 0; i < parameters.size(); i++) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet TypeVariable tmp1 = parameters.get(i);
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet ReferenceType tmp2 = arguments[i];
       put(tmp1, tmp2);
     }
@@ -88,9 +86,7 @@ public class Substitution {
     this();
     assert parameters.size() == arguments.size();
     for (int i = 0; i < parameters.size(); i++) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet TypeVariable tmp1 = parameters.get(i);
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet ReferenceType tmp2 = arguments.get(i);
       put(tmp1, tmp2);
     }
@@ -110,9 +106,6 @@ public class Substitution {
       return false;
     }
     Substitution s = (Substitution) obj;
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet boolean tmp = map.equals(s.map);
     return tmp;
   }

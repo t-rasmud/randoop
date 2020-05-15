@@ -58,9 +58,6 @@ public class FieldGet extends CallableOperation {
 
     try {
 
-      @SuppressWarnings(
-          "determinism:method.invocation.invalid") // method parameters can't be @OrderNonDet so
-                                                   // @PolyDet("up") is the same as @PolyDet
       Object value = field.getValue(input);
       return new NormalExecution(value, 0);
 

@@ -159,14 +159,8 @@ public final class Sequence {
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     @PolyDet List<@PolyDet Variable> inputs = new @PolyDet ArrayList<>();
     for (int index : elementsSequence.getOutputIndices()) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       boolean ignore = inputs.add(elementsSequence.sequence.getVariable(index));
     }
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet Sequence tmp = elementsSequence.sequence.extend(operation, inputs);
     return tmp;
   }
@@ -205,8 +199,6 @@ public final class Sequence {
    * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(TypedOperation operation, Variable... inputs) {
-    @SuppressWarnings(
-        "determinism") // varargs can't be @OrderNonDet so @PolyDet("up") same as @PolyDet
     @PolyDet Sequence tmp = extend(operation, Arrays.asList(inputs));
     return tmp;
   }
@@ -325,9 +317,6 @@ public final class Sequence {
     @PolyDet List<@PolyDet Variable> inputsAsVariables = new @PolyDet ArrayList<>();
     for (
     @PolyDet("up") RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet Variable tmp = getVariableForInput(statementIndex, relIndex);
       inputsAsVariables.add(tmp);
     }
@@ -841,7 +830,6 @@ public final class Sequence {
   public List<@PolyDet Integer> getInputsAsAbsoluteIndices(int i) {
     @PolyDet List<@PolyDet Integer> inputsAsVariables = new @PolyDet ArrayList<>();
     for (@PolyDet("up") RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet int tmp = getVariableForInput(i, relIndex).index;
       inputsAsVariables.add(tmp);
     }

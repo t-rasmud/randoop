@@ -63,7 +63,6 @@ public final class CollectionsExt {
       Collection<? extends @PolyDet("use") Object> c) {
     @PolyDet List<@PolyDet String> lines = new @PolyDet ArrayList<>(c.size());
     for (Object each : c) {
-      @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another
       @PolyDet String tmp = String.valueOf(each);
       lines.add(tmp);
     }

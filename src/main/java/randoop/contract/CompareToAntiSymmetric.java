@@ -32,9 +32,6 @@ public class CompareToAntiSymmetric extends ObjectContract {
       Comparable compObj1 = (Comparable) o1;
       Comparable compObj2 = (Comparable) o2;
 
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet boolean tmp =
           Math.signum(compObj1.compareTo(compObj2)) == -Math.signum(compObj2.compareTo(compObj1));
       return tmp;

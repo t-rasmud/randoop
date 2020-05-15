@@ -158,9 +158,6 @@ public class SpecificationTranslator {
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = renamedPackage(declaringClass.getPackage());
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet RawSignature tmp = getRawSignature(packageName, receiverType, parameterTypes, returnType);
     return tmp;
   }
@@ -243,7 +240,6 @@ public class SpecificationTranslator {
       List<@PolyDet String> parameterNames) {
     @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap = new @PolyDet("upDet") HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       String ignore = replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
     return replacementMap;
@@ -282,7 +278,6 @@ public class SpecificationTranslator {
       List<@PolyDet Precondition> preconditions) {
     @PolyDet List<@PolyDet ExecutableBooleanExpression> guardExpressions = new @PolyDet ArrayList<>();
     for (@PolyDet("up") Precondition precondition : preconditions) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet Precondition tmp = precondition;
       try {
         guardExpressions.add(create(tmp.getGuard()));
@@ -310,7 +305,6 @@ public class SpecificationTranslator {
       List<Postcondition> postconditions) {
     @PolyDet ArrayList<@PolyDet GuardPropertyPair> returnConditions = new @PolyDet ArrayList<>();
     for (@PolyDet("up") Postcondition postcondition : postconditions) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       @PolyDet Postcondition tmp = postcondition;
       try {
         @PolyDet ExecutableBooleanExpression guard = create(tmp.getGuard());

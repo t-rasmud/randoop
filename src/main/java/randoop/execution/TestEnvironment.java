@@ -106,7 +106,6 @@ public class TestEnvironment {
     }
 
     for (Map.@PolyDet("up") Entry<@PolyDet Path, @PolyDet String> entry : agentMap.entrySet()) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
       Map.@PolyDet Entry<@PolyDet Path, @PolyDet String> tmp = entry;
       String args = tmp.getValue();
       command.add(getJavaagentOption(tmp.getKey(), args));

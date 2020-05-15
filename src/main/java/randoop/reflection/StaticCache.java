@@ -39,9 +39,6 @@ public class StaticCache {
   /** Saves the state for the class in this object. Only saves non-final static fields. */
   public void saveState() {
     for (Field field : declaringClass.getDeclaredFields()) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet Field tmp = field;
       tmp.setAccessible(true);
       int mods = Modifier.fieldModifiers() & tmp.getModifiers();
@@ -61,9 +58,6 @@ public class StaticCache {
   public void restoreState() {
     for (Map.@PolyDet("up") Entry<@PolyDet Field, @PolyDet Object> entry : valueMap.entrySet()) {
       try {
-        @SuppressWarnings(
-            "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as
-        // @PolyDet
         Map.@PolyDet Entry<@PolyDet Field, @PolyDet Object> tmp = entry;
         tmp.getKey().set(null, entry.getValue());
       } catch (IllegalAccessException e) {

@@ -31,14 +31,12 @@ public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("us
     map.put(key, new LinkedHashSet<T2>(values));
   }
 
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
   public void addAll(@PolyDet("use") Map<? extends T1, ? extends T2> m) {
     for (T1 t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
   public void addAll(T1 key, @PolyDet("use") Collection<? extends T2> values) {
     for (T2 t2 : values) {
       add(key, t2);

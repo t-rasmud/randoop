@@ -24,9 +24,6 @@ public class PrimitiveAndWrappedTypeVarNameCollector
   @SuppressWarnings("unchecked")
   public void visit(VariableDeclarationExpr n, Set<@PolyDet String> variableNames) {
     for (VariableDeclarator vd : n.getVariables()) {
-      @SuppressWarnings(
-          "determinism") // iterated collection can't be @OrderNonDet so @PolyDet("up") is the same
-      // as @PolyDet
       @PolyDet VariableDeclarator tmp = vd;
       Type t = tmp.getType();
       if (t instanceof PrimitiveType

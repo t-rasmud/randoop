@@ -104,9 +104,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
    * @return the component type at the position
    */
   public Type get(int i) {
-    @SuppressWarnings(
-        "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @PolyDet Type tmp = list.get(i);
     return tmp;
   }
@@ -119,9 +116,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> paramSet = new @PolyDet LinkedHashSet<>();
     for (Type type : this.list) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet Type tmp = type;
       if (tmp.isReferenceType()) {
         boolean ignore = paramSet.addAll(((ReferenceType) tmp).getTypeParameters());
@@ -135,7 +129,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
    *
    * @return true if there is at least one wildcard occurrence
    */
-  @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
   public boolean hasWildcard() {
     for (Type type : list) {
       @PolyDet Type tmp = (ParameterizedType) type;
@@ -193,9 +186,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     }
     int result = 0;
     for (int i = 0; i < this.size() && result == 0; i++) {
-      @SuppressWarnings(
-          "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-      // @PolyDet
       @PolyDet int tmp = list.get(i).compareTo(tuple.list.get(i));
       result = tmp;
     }
