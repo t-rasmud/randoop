@@ -143,10 +143,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
-  @SuppressWarnings(
-      "determinism:override.return.invalid") // Other classes that override execute() return @NonDet
-                                             // like the super class. This method returns @PolyDet
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det NonreceiverTerm this, @Det Object @Det [] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
   }

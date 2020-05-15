@@ -25,10 +25,7 @@ class ArrayElementSet extends CallableOperation {
   }
 
   @Override
-  @SuppressWarnings(
-      "determinism:override.return.invalid") // Other classes that override execute() return @NonDet
-                                             // like the super class. This method returns @PolyDet
-  public ExecutionOutcome execute(Object[] input) {
+  public @Det ExecutionOutcome execute(@Det ArrayElementSet this, @Det Object @Det [] input) {
     assert input.length == 3
         : "array element assignment must have array, index and value as arguments";
     Object array = input[ARRAY];
@@ -38,9 +35,9 @@ class ArrayElementSet extends CallableOperation {
     try {
       Array.set(array, index, value);
     } catch (Throwable thrown) {
-      return new @PolyDet ExceptionalExecution(thrown, 0);
+      return new ExceptionalExecution(thrown, 0);
     }
-    return new @PolyDet NormalExecution(null, 0);
+    return new NormalExecution(null, 0);
   }
 
   @Override

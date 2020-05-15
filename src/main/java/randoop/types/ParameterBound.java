@@ -152,10 +152,7 @@ public abstract class ParameterBound {
       @PolyDet("upDet") Set<java.lang.reflect.@PolyDet("down") TypeVariable<?>> recursiveSet =
           new HashSet<>(variableSet);
       recursiveSet.add(variable);
-      for (java.lang.reflect.Type boundType : variable.getBounds()) {
-        @SuppressWarnings(
-            "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-        // elements
+      for (java.lang.reflect. @PolyDet("down") Type boundType : variable.getBounds()) {
         java.lang.reflect.@PolyDet("down") Type tmp = boundType;
         if (hasTypeVariable(tmp, recursiveSet)) {
           return true;
@@ -163,11 +160,8 @@ public abstract class ParameterBound {
       }
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        @SuppressWarnings(
-            "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-        // elements
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect. @PolyDet("down") ParameterizedType) type;
+      for (java.lang.reflect. @PolyDet("down") Type argType : pt.getActualTypeArguments()) {
         java.lang.reflect.@PolyDet("down") Type tmp = argType;
         if (hasTypeVariable(tmp, variableSet)) {
           return true;
@@ -176,19 +170,13 @@ public abstract class ParameterBound {
     }
     if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
-      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
-        @SuppressWarnings(
-            "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-        // elements
+      for (java.lang.reflect. @PolyDet("down") Type boundType : wt.getUpperBounds()) {
         java.lang.reflect.@PolyDet("down") Type tmp = boundType;
         if (hasTypeVariable(tmp, variableSet)) {
           return true;
         }
       }
-      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
-        @SuppressWarnings(
-            "determinism") // iterating over a @PolyDet("down") collection should give @PolyDet
-        // elements
+      for (java.lang.reflect. @PolyDet("down") Type boundType : wt.getLowerBounds()) {
         java.lang.reflect.@PolyDet("down") Type tmp = boundType;
         if (hasTypeVariable(tmp, variableSet)) {
           return true;

@@ -48,10 +48,7 @@ public class FieldGet extends CallableOperation {
    * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
-  @SuppressWarnings(
-      "determinism:override.return.invalid") // Other classes that override execute() return @NonDet
-                                             // like the super class. This method returns @PolyDet
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det FieldGet this, @Det Object @Det [] statementInput) {
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -64,7 +61,7 @@ public class FieldGet extends CallableOperation {
     } catch (RandoopBug | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
-      return new @PolyDet ExceptionalExecution(thrown, 0);
+      return new ExceptionalExecution(thrown, 0);
     }
   }
 

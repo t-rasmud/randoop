@@ -56,13 +56,7 @@ public class FieldSet extends CallableOperation {
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  @SuppressWarnings({
-    "determinism:override.return.invalid",
-    "determinism:method.invocation.invalid"
-  }) // Other classes that override execute() return @NonDet like the super class. This method
-     // returns @PolyDet, method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-     // @PolyDet
-  public ExecutionOutcome execute(Object[] statementInput) {
+  public @Det ExecutionOutcome execute(@Det FieldSet this, Object @Det [] statementInput) {
 
     Object instance = null;
     Object input = statementInput[0];
@@ -76,10 +70,10 @@ public class FieldSet extends CallableOperation {
     } catch (RandoopBug | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
-      return new @PolyDet ExceptionalExecution(thrown, 0);
+      return new ExceptionalExecution(thrown, 0);
     }
 
-    return new @PolyDet NormalExecution(null, 0);
+    return new NormalExecution(null, 0);
   }
 
   /**
