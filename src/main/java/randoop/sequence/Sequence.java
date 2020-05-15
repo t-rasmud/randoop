@@ -98,10 +98,7 @@ public final class Sequence {
    * @param c the type for initialized variable
    * @return the sequence consisting of the initialization
    */
-  @SuppressWarnings(
-      "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-  // @PolyDet
-  public static Sequence zero(Type c) {
+  public static @Det Sequence zero(@Det Type c) {
     return new Sequence()
         .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
