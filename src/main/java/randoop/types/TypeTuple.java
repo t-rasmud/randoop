@@ -192,7 +192,6 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     return result;
   }
 
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
   private static class TypeIterator implements Iterator<@PolyDet Type> {
 
     private Iterator<@PolyDet Type> iterator;

@@ -115,9 +115,9 @@ public class ComponentManager {
    * @param type the class literal to add for the sequence
    * @param seq the sequence
    */
-  public void addClassLevelLiteral(ClassOrInterfaceType type, Sequence seq) {
+  public void addClassLevelLiteral(@Det ComponentManager this, @Det ClassOrInterfaceType type, @Det Sequence seq) {
     if (classLiterals == null) {
-      classLiterals = new @PolyDet ClassLiterals();
+      classLiterals = new ClassLiterals();
     }
     classLiterals.addSequence(type, seq);
   }
@@ -254,7 +254,6 @@ public class ComponentManager {
    *
    * @return the sequences for primitive values
    */
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   Set<Sequence> getAllPrimitiveSequences(@Det ComponentManager this) {
 
     @Det Set<@Det Sequence> result = new LinkedHashSet<>();

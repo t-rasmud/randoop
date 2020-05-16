@@ -20,11 +20,10 @@ import randoop.util.SimpleList;
  *
  * <p>These are used preferentially as arguments to methods of class C.
  */
-@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
-public class ClassLiterals extends MappedSequences<@PolyDet ClassOrInterfaceType> {
+public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
 
   @Override
-  public void addSequence(ClassOrInterfaceType key, Sequence seq) {
+  public void addSequence(@Det ClassLiterals this, @Det ClassOrInterfaceType key, @Det Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (!seq.isNonreceiver()) {
       throw new IllegalArgumentException("seq is not a primitive sequence");

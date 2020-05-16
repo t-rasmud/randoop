@@ -19,8 +19,7 @@ import randoop.util.SimpleList;
  * components when testing a specific class.
  */
 @CollectionType
-@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
-public class MappedSequences<T extends @PolyDet Object> {
+public class MappedSequences<T extends @Det Object> {
 
   private Map<T, @PolyDet SequenceCollection> map;
 
@@ -79,10 +78,9 @@ public class MappedSequences<T extends @PolyDet Object> {
    *
    * @return the set of all sequence objects in this set of collections
    */
-  public Set<@PolyDet Sequence> getAllSequences() {
-    @PolyDet Set<@PolyDet Sequence> result = new @PolyDet LinkedHashSet<>();
-    for (@PolyDet("up") SequenceCollection c : map.values()) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+  public @Det Set<Sequence> getAllSequences(@Det MappedSequences<T> this) {
+    @Det Set<@Det Sequence> result = new LinkedHashSet<>();
+    for (@Det SequenceCollection c : map.values()) {
       boolean ignore = result.addAll(c.getAllSequences());
     }
     return result;

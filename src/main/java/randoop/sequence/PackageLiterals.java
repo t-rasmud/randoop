@@ -8,8 +8,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
  * (represented as single-element sequences) that can be used as inputs to classes in the given
  * package.
  */
-@SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/134
-public class PackageLiterals extends MappedSequences<@PolyDet Package> {
+public class PackageLiterals extends MappedSequences<@Det Package> {
 
   @Override
   public void addSequence(@Det PackageLiterals this, @Det Package key, @Det Sequence seq) {
