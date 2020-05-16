@@ -133,8 +133,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
     }
-    @SuppressWarnings(
-        "determinism") // all concrete implementation of type of a deterministic toString
+    @SuppressWarnings("determinism") // all implementation toString methods deterministic
     @Det String tmp = marks.toString();
     Log.logPrintf("marks: %s%n", tmp);
     for (int i = 0; i < steps; i++) {
@@ -144,13 +143,9 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
     steps = tmp2;
   }
 
-  @SuppressWarnings(
-      "determinism") // this might log something non-deterministic, but could never verify
+  @SuppressWarnings("determinism") // this might log something non-deterministic, but could never verify
   private void undoLastOp(@Det CheckpointingMultiMap<T1, T2> this) {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
-    // @SuppressWarnings(
-    //     "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
     @Det OpKeyVal last = ops.remove(ops.size() - 1);
     Ops op = last.op;
     T1 key = last.key;
@@ -180,7 +175,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
-      @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
+      @SuppressWarnings("determinism") // valid rule relaxation: need to treat @Det collection as @PolyDet
       @PolyDet Set<T2> tmp = Collections.emptySet();
     }
     return values;

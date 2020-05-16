@@ -269,8 +269,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  @SuppressWarnings(
-      "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
+  @SuppressWarnings("determinism") // @PolyDet("up") is the same as @PolyDet
   public boolean hasWildcard() {
     for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
@@ -297,7 +296,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   @SuppressWarnings(
-      "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
+      "determinism") // process is order insensitive: safe to treat @PolyDet("up") as @PolyDet
   public boolean isGeneric() {
     if (super.isGeneric()) { // enclosing type is generic
       return true;

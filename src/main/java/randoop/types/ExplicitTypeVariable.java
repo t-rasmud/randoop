@@ -37,8 +37,7 @@ class ExplicitTypeVariable extends TypeVariable {
     }
     if (!(obj instanceof ExplicitTypeVariable)) {
       @SuppressWarnings(
-          "determinism") // this may produce non-deterministic output, but have to make this method
-      // take @PolyDet to override equals
+          "determinism") // forced overriding
       boolean tmp = isAssignableFrom(null);
       return tmp;
     }

@@ -117,8 +117,7 @@ class CaptureTypeVariable extends TypeVariable {
    * @param substitution the capture conversion substitution
    */
   @SuppressWarnings(
-      "determinism") // can pass @Det receiver to @PolyDet method setUpperBound here because no
-  // chance of aliasing.
+      "determinism") // valid rule relaxation: can pass @Det receiver to @PolyDet method setUpperBound here because no chance of aliasing.
   public void convert(
       @Det CaptureTypeVariable this,
       @Det TypeVariable typeParameter,

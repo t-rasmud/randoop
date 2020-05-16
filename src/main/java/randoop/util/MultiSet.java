@@ -40,7 +40,7 @@ public class MultiSet<T extends @PolyDet Object> {
     return frequencyMap.isEmpty();
   }
 
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   public void removeAllInstances(@Det Set<T> values) {
     for (T value : values) {
       frequencyMap.remove(value);

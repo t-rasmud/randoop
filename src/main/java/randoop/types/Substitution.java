@@ -129,7 +129,7 @@ public class Substitution {
    * @return true if the the substitutions are consistent, false otherwise
    */
   @SuppressWarnings(
-      "determinism") // process is order insensitive, so safe to treat @PolyDet("up") as @PolyDet
+      "determinism") // process is order insensitive: safe to treat @PolyDet("up") as @PolyDet
   public boolean isConsistentWith(Substitution substitution) {
     for (
     @PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : substitution.map.entrySet()) {
@@ -181,21 +181,19 @@ public class Substitution {
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
-  @SuppressWarnings(
-      "determinism") // @PolyDet("use") same as @PolyDet so for each loop assignment compatible
+  @SuppressWarnings("determinism") // @PolyDet("up") is the same as @PolyDet
   public Substitution extend(@PolyDet("use") Substitution other) {
     Substitution result = new Substitution(this);
     for (
     @PolyDet("down") Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : other.map.entrySet()) {
-      @SuppressWarnings(
-          "determinism") // The fact the function requiredEntry is @Det is clearly not an issue
+      @SuppressWarnings("determinism") // that requiredEntry is @Det is clearly not an issue
       ReferenceType ignore = result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     for (
     @PolyDet("down") Entry<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> entry :
         other.rawMap.entrySet()) {
       @SuppressWarnings(
-          "determinism") // The fact the function requiredEntry is @Det is clearly not an issue
+          "determinism") // that requiredEntry is @Det is clearly not an issue
       ReferenceType ignore =
           result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }

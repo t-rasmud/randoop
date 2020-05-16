@@ -50,7 +50,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
     }
   }
 
-  @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @OrderNonDet collection to create another
   public @PolyDet("up") ListOfLists(@PolyDet List<@PolyDet SimpleList<T>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
@@ -112,9 +112,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
     for (@PolyDet("up") SimpleList<T> l : lists) {
-      @SuppressWarnings(
-          "determinism") // addAll requires @PolyDet("down") but not in the case of just making a
-      // copy
+      @SuppressWarnings("determinism") // valid rule relaxation: addAll requires @PolyDet("down") but not in the case of just making a copy
       boolean dummy = result.addAll(l.toJDKList());
     }
     return result;
@@ -123,7 +121,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   @Override
   public @PolyDet String toString() {
     @SuppressWarnings(
-        "determinism") // all concrete implementation of type of a deterministic toString
+        "determinism") // all implementation toString methods deterministic
     @PolyDet String tmp = toJDKList().toString();
     return tmp;
   }

@@ -105,7 +105,7 @@ public class ExecutableSequence {
       new @PolyDet IdentityMultiMap<>();
 
   /** The subsequences that were concatenated to create this sequence. */
-  @SuppressWarnings("determinism") // empty list clearly assignable to anything
+  @SuppressWarnings("determinism") // valid rule relaxation: empty list clearly assignable to anything
   public List<@PolyDet Sequence> componentSequences = Collections.emptyList();
 
   /**
@@ -128,7 +128,7 @@ public class ExecutableSequence {
 
   @Override
   @SuppressWarnings(
-      "determinism") // this may produce non-deterministic output when calling appendCode, but have
+      "determinism") // forced overriding: this may produce non-deterministic output when calling appendCode, but have
   // to make this method take @PolyDet to override equals
   public String toString() {
     StringBuilder b = new StringBuilder();
@@ -284,7 +284,7 @@ public class ExecutableSequence {
    * @throws Error if execution of the sequence throws an exception and {@code
    *     ignoreException==false}
    */
-  @SuppressWarnings({"SameParameterValue", "determinism"}) // call to executeSequence has @RequiresDetToString but fine to pass Object[] because it comes from code randoop is run on
+  @SuppressWarnings({"SameParameterValue", "determinism"}) // (ignore) error is from code randoop is run on: call to executeSequence has @RequiresDetToString but fine to pass Object[] because it comes from code randoop is run on
   private void execute(
       @Det ExecutableSequence this,
       @Det ExecutionVisitor visitor,
@@ -334,9 +334,7 @@ public class ExecutableSequence {
             break;
           } else {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
-            @SuppressWarnings(
-                "determinism") // this is from code randoop is run on, so okay to have nondet
-            // toString
+            @SuppressWarnings("determinism") // (ignore) error is from code randoop is run on: okay to have nondet toString
             String msg =
                 String.format(
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
@@ -399,9 +397,9 @@ public class ExecutableSequence {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
       assert execution.get(creatingStatementIdx) instanceof NormalExecution
           : execution.get(creatingStatementIdx).getClass();
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
       @PolyDet NormalExecution ne = (NormalExecution) execution.get(creatingStatementIdx);
-      @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
+      @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so assignment valid
       Object ignore = (runtimeObjects[j] = ne.getRuntimeValue());
     }
     return runtimeObjects;
@@ -434,7 +432,7 @@ public class ExecutableSequence {
 
       @Det ExecutionOutcome r;
       try {
-        @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+        @SuppressWarnings("determinism") // uses parameter with @RequiresDetToString
         @Det ExecutionOutcome tmp = statement.execute(inputVariables);
         r = tmp;
       } catch (SequenceExecutionException e) {

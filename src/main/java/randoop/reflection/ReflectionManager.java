@@ -208,7 +208,7 @@ public class ReflectionManager {
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
           @SuppressWarnings(
-              "determinism") // iterating over @OrderNonDet collection to modify another
+              "determinism") // collection mutated with other collection: iterating over @OrderNonDet collection to modify another
           @Det Method tmp2 = m;
           @Det Set<@Det Method> methodSet = overrideMethods.get(tmp2.getName());
           if (methodSet == null) {
@@ -338,9 +338,7 @@ public class ReflectionManager {
     }
     for (Type p : m.getGenericParameterTypes()) {
       if (!isVisible(p)) {
-        @SuppressWarnings(
-            "determinism") // all concrete implementation of this interface have a deterministic
-                           // toString
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic
         @Det String tmp = p.toString();
         Log.logPrintf(
             "Will not use method with non-visible parameter %s: %s%n", tmp, m.toGenericString());
@@ -363,9 +361,7 @@ public class ReflectionManager {
     }
     for (Type p : c.getGenericParameterTypes()) {
       if (!isVisible(p)) {
-        @SuppressWarnings(
-            "determinism") // all concrete implementation of this interface have a deterministic
-                           // toString
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic
         @Det String tmp = p.toString();
         Log.logPrintf(
             "Will not use constructor with non-visible parameter %s: %s%n",

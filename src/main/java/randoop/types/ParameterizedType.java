@@ -38,8 +38,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     @Det GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
       cached = new GenericClassType(typeClass);
-      // @SuppressWarnings("determinism") // second argument expects @OrderNonDet becaus of Map
-      // annotation
       @Det GenericClassType tmp = cache.put(typeClass, cached);
     }
     return cached;

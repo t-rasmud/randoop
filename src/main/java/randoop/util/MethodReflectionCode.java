@@ -55,8 +55,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        @SuppressWarnings(
-            "determinism") // this is from code randoop is run on, so okay to have nondet toString
+        @SuppressWarnings("determinism") // (ignore) error is from code randoop is run on: okay to have nondet toString
         @Det String tmp = retval.toString();
         Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, tmp);
       } catch (OutOfMemoryError e) {

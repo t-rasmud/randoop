@@ -27,8 +27,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
 
   @Override
   @SuppressWarnings(
-      "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-  // @PolyDet
+      "determinism") // @PolyDet("up") is the same as @PolyDet
   public String toString() {
     return "Check of ObjectContract " + c + " args: " + Arrays.toString(objs) + status();
   }

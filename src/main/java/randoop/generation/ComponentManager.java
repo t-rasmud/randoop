@@ -78,7 +78,7 @@ public class ComponentManager {
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new @PolyDet SequenceCollection();
-    @SuppressWarnings("determinism") // aliasing okay because not mutated: empty collection clearly assignable to anything
+    @SuppressWarnings("determinism") // valid rule relaxation: empty collection clearly assignable to anything
     @PolyDet Collection<@PolyDet Sequence> tmp =
         Collections.unmodifiableSet(Collections.<Sequence>emptySet());
     gralSeeds = tmp;

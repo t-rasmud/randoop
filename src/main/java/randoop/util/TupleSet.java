@@ -52,7 +52,7 @@ public class TupleSet<E extends @PolyDet Object> {
    * @param elements the list of elements
    * @return a tuple set formed by extending the tuples with the elements of the given list
    */
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   public TupleSet<E> extend(@Det TupleSet<E> this, @Det List<E> elements) {
     List<List<E>> tupleList = new ArrayList<>(tuples.size() * elements.size());
     for (List<E> tuple : tuples) {
@@ -79,7 +79,7 @@ public class TupleSet<E extends @PolyDet Object> {
    * @param elements the list of elements
    * @return a tuple set formed by inserting elements of the given list into the tuples of this set
    */
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   public TupleSet<E> exhaustivelyExtend(List<E> elements) {
     List<List<E>> tupleList = new ArrayList<>(tuples.size() * (tupleLength + 1));
     for (List<E> tuple : tuples) {
@@ -100,7 +100,7 @@ public class TupleSet<E extends @PolyDet Object> {
    * @param e the element to insert
    * @return a new list with the element inserted at the end
    */
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   private List<E> extendTuple(List<E> tuple, E e) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     boolean dummy = extTuple.addAll(tuple);
@@ -117,7 +117,7 @@ public class TupleSet<E extends @PolyDet Object> {
    * @param i the position where element is to be inserted
    * @return a new list with the element inserted at the given position
    */
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   private List<E> insertInTuple(List<E> tuple, E e, int i) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     // It's a bit inefficient to insert then shift; a better implementation could avoid that.

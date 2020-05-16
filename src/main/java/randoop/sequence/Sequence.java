@@ -141,14 +141,14 @@ public final class Sequence {
       TypedOperation operation,
       @PolyDet List<@PolyDet Sequence> inputSequences,
       @PolyDet List<@PolyDet Integer> indexes) {
-    @SuppressWarnings("determinism") // method doesn't mutate so safe to call
+    @SuppressWarnings("determinism") // valid rule relaxation: method doesn't mutate so safe to call
     @PolyDet("up") Sequence inputSequence = Sequence.concatenate(inputSequences);
     @PolyDet("up") List<@PolyDet("up") Variable> inputs = new @PolyDet("up") ArrayList<>();
     for (Integer inputIndex : indexes) {
       @PolyDet("up") Variable v = inputSequence.getVariable(inputIndex);
       inputs.add(v);
     }
-    @SuppressWarnings("determinism") // method doesn't mutate inputs so safe to call
+    @SuppressWarnings("determinism") // valid rule relaxation: method doesn't mutate inputs so safe to call
     @PolyDet("up") Sequence tmp = inputSequence.extend(operation, inputs);
     return tmp;
   }
@@ -178,7 +178,7 @@ public final class Sequence {
     for (@PolyDet("up") Variable v : inputVariables) {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
-    @SuppressWarnings("determinism") // method doesn't mutate so safe to call
+    @SuppressWarnings("determinism") // valid rule relaxation: method doesn't mutate so safe to call
     @PolyDet("up") Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
@@ -363,7 +363,7 @@ public final class Sequence {
 
   @Override
   @SuppressWarnings(
-      "determinism") // this may produce non-deterministic output, but have to make this method take
+      "determinism") // forced overriding: this may produce non-deterministic output, but have to make this method take
   // @PolyDet to override this method
   public String toString() {
     return toCodeString();
@@ -798,9 +798,7 @@ public final class Sequence {
       }
       Type inputType = operation.getInputTypes().get(i);
       if (!inputType.isAssignableFrom(newRefConstraint)) {
-        @SuppressWarnings(
-            "determinism") // all concrete implementation of this interface have a deterministic
-                           // toString
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic
         String msg =
             String.format(
                     "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
@@ -873,8 +871,7 @@ public final class Sequence {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       @PolyDet Statement sk = getStatement(i);
-      @SuppressWarnings(
-          "determinism") // @Det receiver required but use of @PolyDet here is unavoidable
+      @SuppressWarnings("determinism") // forced overriding
       @PolyDet String tmp = Variable.classToVariableName(sk.getOutputType());
       b.append(sk.toParsableString(tmp + i, getInputs(i)));
       b.append(statementSep);

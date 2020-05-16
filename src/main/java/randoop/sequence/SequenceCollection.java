@@ -256,7 +256,7 @@ public class SequenceCollection {
   public @PolyDet Set<@PolyDet Sequence> getAllSequences() {
     @PolyDet Set<@PolyDet Sequence> result = new @PolyDet LinkedHashSet<>();
     for (@PolyDet("up") SimpleArrayList<@PolyDet Sequence> a : sequenceMap.values()) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
       boolean ignore = result.addAll(a);
     }
     return result;

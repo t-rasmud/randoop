@@ -97,7 +97,7 @@ public final class PrimitiveTypes {
    * @param typeName the name of the type
    * @return the {@code Class<?>} object for the type, or null
    */
-  @SuppressWarnings("determinism") // Okay to call @PolyDet method on @Det map when not mutated
+  @SuppressWarnings("determinism") // valid rule relaxation: okay to call @PolyDet method on @Det map when not mutated
   public static Class<?> classForName(String typeName) {
     return nameToClass.get(typeName);
   }
@@ -127,7 +127,7 @@ public final class PrimitiveTypes {
    * @param c the {@code Class<?>}
    * @return true if the {@code Class<?>} is a boxed primitive, false otherwise
    */
-  @SuppressWarnings("determinism") // okay to call @PolyDet method on @Det map when not mutated
+  @SuppressWarnings("determinism") // valid rule relaxation: okay to call @PolyDet method on @Det map when not mutated
   public static boolean isBoxedPrimitive(Class<?> c) {
     return boxedToPrimitive.containsKey(c);
   }
@@ -154,7 +154,7 @@ public final class PrimitiveTypes {
    * @param cls the {@code Class} object for the primitive type
    * @return the boxed type for the primitive type, or null if the given type is not primitive
    */
-  @SuppressWarnings("determinism") // okay to call @PolyDet method on @Det map when not mutated
+  @SuppressWarnings("determinism") // valid rule relaxation: okay to call @PolyDet method on @Det map when not mutated
   static Class<?> toBoxedType(Class<?> cls) {
     return primitiveToBoxed.get(cls);
   }
@@ -165,7 +165,7 @@ public final class PrimitiveTypes {
    * @param c the {@code Class<?>} type
    * @return the primitive type for the boxed type, or null if given type is not a boxed primitive
    */
-  @SuppressWarnings("determinism") // okay to call @PolyDet method on @Det map when not mutated
+  @SuppressWarnings("determinism") // valid rule relaxation: okay to call @PolyDet method on @Det map when not mutated
   static Class<?> toUnboxedType(Class<?> c) {
     return boxedToPrimitive.get(c);
   }

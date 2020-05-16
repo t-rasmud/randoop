@@ -104,7 +104,7 @@ class IntersectionTypeBound extends ParameterBound {
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet List<@PolyDet TypeVariable> paramList = new @PolyDet ArrayList<>();
     for (ParameterBound b : boundList) {
-      @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
+      @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so addAll can take @PolyDet
       boolean ignore = paramList.addAll(b.getTypeParameters());
     }
     return paramList;

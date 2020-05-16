@@ -172,7 +172,7 @@ public final class Statement {
    */
   @RequiresDetToString
   public @Det ExecutionOutcome execute(@Det Object @Det [] inputs) {
-    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+    @SuppressWarnings("determinism") // uses parameter with @RequiresDetToString
     @Det ExecutionOutcome tmp = operation.execute(inputs);
     return tmp;
   }
@@ -229,9 +229,7 @@ public final class Statement {
   // (It would be even nicer to add a cast where the null is used.)
   public @NonDet String getInlinedForm(@Det Statement this) {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
-      @SuppressWarnings(
-          "determinism") // we used Object with @NonDet toString, but that's reflected in return
-                         // value
+      @SuppressWarnings("determinism") // uses @NonDet toString, but effect reflected in return value
       @NonDet String tmp = Value.toCodeString(operation.getValue());
       return tmp;
     }

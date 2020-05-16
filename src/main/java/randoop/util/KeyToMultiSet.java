@@ -66,7 +66,7 @@ public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
   public Set<T2> getVariables(T1 key) {
     @PolyDet MultiSet<T2> values = map.get(key);
     if (values == null) {
-      @SuppressWarnings("determinism") // need to treat @Det collection as @PolyDet
+      @SuppressWarnings("determinism") // valid rule relaxation: need to treat @Det collection as @PolyDet
       @PolyDet Set<T2> tmp = Collections.emptySet();
     }
     return values.getElements();
@@ -81,7 +81,7 @@ public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
   }
 
   // Removes all keys with an empty set
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   public void clean(@Det KeyToMultiSet<T1, T2> this) {
     for (@Det Iterator<@Det Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator();
         iter.hasNext(); ) {
@@ -92,7 +92,7 @@ public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
     }
   }
 
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   public void removeAllInstances(@Det Set<T2> values) {
     for (@Det MultiSet<T2> multiSet : map.values()) {
       multiSet.removeAllInstances(values);

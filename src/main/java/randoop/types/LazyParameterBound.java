@@ -55,7 +55,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public String toString(@PolyDet LazyParameterBound this) {
-    @SuppressWarnings("determinism") // all concrete implementations of this interface have a deterministic toString
+    @SuppressWarnings("determinism") // all implementation toString methods deterministic
     @PolyDet String tmp = boundType.toString();
     return tmp;
   }
@@ -163,7 +163,7 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      @SuppressWarnings("determinism") // Upon inspection, forTypes returns @PolyDet("up") because
+      @SuppressWarnings("determinism") // upon inspection, not a bug: forTypes returns @PolyDet("up") because
       // of the second argument, not the first. So as long as the second argument is @Det, the
       // result should be @Det, even if the first argument is @OrderNonDet.
       @Det ParameterBound bound =
@@ -194,7 +194,7 @@ class LazyParameterBound extends ParameterBound {
    * @param type the {@code Type} reference
    * @return the list of type variables in the given type
    */
-  @SuppressWarnings("determinism") // no unintended aliasing, so addAll can take @PolyDet
+  @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so addAll can take @PolyDet
   private static List<@PolyDet TypeVariable> getTypeParameters(java.lang.reflect.Type type) {
     @PolyDet List<@PolyDet TypeVariable> variableList = new @PolyDet ArrayList<>();
     if (type instanceof java.lang.reflect.TypeVariable) {

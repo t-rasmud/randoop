@@ -83,7 +83,7 @@ public final class Randomness {
    * @return a randomly-chosen member of the list
    */
   @SuppressWarnings(
-      "determinism") // all concrete implementation of this interface have a deterministic toString
+      "determinism") // all implementation toString methods deterministic
   public static <T extends @Det Object> T randomMember(@Det List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
@@ -194,7 +194,7 @@ public final class Randomness {
    * @return a randomly-selected member of the set
    */
   @SuppressWarnings(
-      "determinism") // all concrete implementation of this interface have a deterministic toString
+      "determinism") // all implementation toString methods deterministic
   public static <T extends @Det Object> T randomSetMember(@Det Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
@@ -258,12 +258,12 @@ public final class Randomness {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;
       if (argument != null) {
-        @SuppressWarnings("determinism") // this uses a parameter with @RequiresDetString
+        @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
         String tmp = methodWithArg + "(" + toString(argument) + ")";
         methodWithArg += tmp;
       }
       try {
-        @SuppressWarnings("determinism") // this uses a parameter with @RequiresDetString
+        @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
         String msg =
             String.format(
                 "#%d: %s => %s; calls so far %d; called from %s%n",
@@ -292,8 +292,7 @@ public final class Randomness {
           return coll.getClass() + " of size " + coll.size();
         case 2:
           @SuppressWarnings(
-              "determinism") // all concrete implementation of this interface have a deterministic
-                             // toString
+              "determinism") // all implementation toString methods deterministic
           @PolyDet("up") String tmp = coll.toString();
           return tmp;
         default:
@@ -306,15 +305,14 @@ public final class Randomness {
           return sl.getClass() + " of size " + sl.size();
         case 2:
           @SuppressWarnings(
-              "determinism") // all concrete implementation of this interface have a deterministic
-                             // toString
+              "determinism") // all implementation toString methods deterministic
           @PolyDet("up") String tmp = sl.toJDKList().toString();
           return tmp;
         default:
           throw new Error("verbosity = " + verbosity);
       }
     } else {
-      @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+      @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
       @PolyDet String tmp = o.toString();
       return tmp;
     }

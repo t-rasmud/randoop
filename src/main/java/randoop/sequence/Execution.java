@@ -31,7 +31,7 @@ public final class Execution {
     this.outcomes = new @PolyDet ArrayList<>(owner.size());
     for (int i = 0; i < owner.size(); i++) {
       @SuppressWarnings(
-          "determinism") // no unintended aliasing, so safe to treat @Det values as @PolyDet
+          "determinism") // valid rule relaxation: no unintended aliasing, so safe to treat @Det values as @PolyDet
       @PolyDet NotExecuted tmp = NotExecuted.create();
       outcomes.add(tmp);
     }

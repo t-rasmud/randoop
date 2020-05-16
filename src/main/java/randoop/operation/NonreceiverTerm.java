@@ -152,7 +152,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param b {@link StringBuilder} to which string representation is appended
    */
   @Override
-  @SuppressWarnings("determinism:nondeterministic.tostring") // this toString call is @Det
+  @SuppressWarnings("determinism:nondeterministic.tostring") // underlying value toString is deterministic
   public void appendCode(
       @Det NonreceiverTerm this,
       @Det Type declaringType,

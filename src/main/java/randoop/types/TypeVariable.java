@@ -44,9 +44,7 @@ public abstract class TypeVariable extends ParameterType {
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
     @PolyDet("upDet") Set<java.lang.reflect.@PolyDet TypeVariable<?>> variableSet = new @PolyDet("upDet") HashSet<>();
     variableSet.add(v);
-    @SuppressWarnings(
-        "determinism") // method receiver can't be @OrderNonDet so @PolyDet("up") is the same as
-    // @PolyDet
+    @SuppressWarnings("determinism") // @PolyDet("up") is the same as @PolyDet
     @PolyDet TypeVariable tmp =
         new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
     return tmp;

@@ -64,9 +64,7 @@ public class ArrayType extends ReferenceType {
    * @param type the {@link java.lang.reflect.Type} reference
    * @return the {@code Type} for the array type
    */
-  @SuppressWarnings(
-      "determinism") // getComponentType is annotated as returning @Det, when it should be @PolyDet
-  // in the JDK
+  @SuppressWarnings("determinism") // incorrect jdk annotation: getComponentType is annotated as returning @Det, when it should be @PolyDet in the JDK
   public static ArrayType forType(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;

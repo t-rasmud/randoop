@@ -179,7 +179,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
   public List<@PolyDet TypeArgument> getTypeArguments() {
     @PolyDet List<@PolyDet TypeArgument> argumentList = new @PolyDet ArrayList<>();
     for (@PolyDet TypeVariable v : parameters) {

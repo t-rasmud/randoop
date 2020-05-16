@@ -5,7 +5,7 @@ import java.util.List;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import randoop.sequence.ExecutableSequence;
 
-@SuppressWarnings("determinism") // @PolyDet("up") same as @PolyDet
+@SuppressWarnings("determinism") // @PolyDet("up") is the same as @PolyDet
 public class RandoopListenerManager {
 
   private List<@PolyDet IEventListener> listeners;

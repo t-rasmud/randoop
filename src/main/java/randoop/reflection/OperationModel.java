@@ -101,8 +101,7 @@ public class OperationModel {
 
   /** Create an empty model of test context. */
   @SuppressWarnings(
-      "determinism") // creating @PolyDet aliases to @Det instances, but okay because all immutable
-  // classes
+      "determinism") // valid rule relaxation: creating @PolyDet aliases to @Det instances, but okay because all immutable classes
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new @PolyDet TreeSet<>();
@@ -484,9 +483,7 @@ public class OperationModel {
    *
    * @param out the Writer on which to produce output
    */
-  @SuppressWarnings(
-      "determinism") // all concrete implementation of these interfaces have a deterministic
-                     // toString
+  @SuppressWarnings("determinism") // all implementation toString methods deterministic: all concrete implementation of these interfaces have a deterministic toString
   public void dumpModel(@Det OperationModel this, @Det Writer out) {
     try {
       out.write(String.format("Model with hashcode %s:%n", hashCode()));
@@ -684,7 +681,7 @@ public class OperationModel {
       throw new RandoopUsageError("Could not parse signature " + signature, e);
     }
     if (accessibleObject == null) {
-      @SuppressWarnings("determinism") // there is a determinism bug here, currently being fixed
+      @SuppressWarnings("determinism") // (ignore) there is a determinism bug here, currently being fixed
       Error tmp = new Error(
           String.format(
               "accessibleObject is null for %s, typically due to predicates: %s, %s",

@@ -15,6 +15,8 @@ valid use of Collections.sort
 uses a parameter with @RequiresDetToString
 error is from from code randoop is run on
 overriding JDK method but need to be more precise
+all implementation toString methods deterministic
+Class<? extends @Det Object? and Class<? extends @NonDet Object> are the same
 
 @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
 @SuppressWarnings("determinism") // iterated collection can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet

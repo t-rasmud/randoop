@@ -681,7 +681,7 @@ public class GenTests extends GenInputsAbstract {
       PriorityQueue<@Det RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (@NonDet TypedClassOperation op : flakyOccurrences.keySet()) {
-        @SuppressWarnings("determinism") // there is a determinism bug here, currently being fixed
+        @SuppressWarnings("determinism") // (ignore) there is a determinism bug here, currently being fixed
         @Det TypedClassOperation tmp = op;
         double tfIdfMetric = flakyOccurrences.get(tmp) / testOccurrences.get(tmp);
         RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, tmp);

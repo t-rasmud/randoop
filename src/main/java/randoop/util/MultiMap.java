@@ -12,8 +12,7 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
 @HasQualifierParameter(NonDet.class)
-@SuppressWarnings("determinism") // @PolyDet("use") same as @PolyDet in type parameters here
-public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("use") Object>
+public class MultiMap<T1 extends @PolyDet Object, T2 extends @PolyDet Object>
     implements IMultiMap<T1, T2> {
 
   private final @PolyDet Map<T1, @PolyDet Set<T2>> map;
@@ -26,24 +25,24 @@ public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("us
     map = new @PolyDet LinkedHashMap<>(initialCapacity);
   }
 
-  public void put(T1 key, @PolyDet("use") Collection<? extends T2> values) {
+  public void put(T1 key, @PolyDet Collection<? extends T2> values) {
     if (contains(key)) remove(key);
     map.put(key, new LinkedHashSet<T2>(values));
   }
 
-  public void addAll(@PolyDet("use") Map<? extends T1, ? extends T2> m) {
+  public void addAll(@PolyDet Map<? extends T1, ? extends T2> m) {
     for (T1 t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
-  public void addAll(T1 key, @PolyDet("use") Collection<? extends T2> values) {
+  public void addAll(T1 key, @PolyDet Collection<? extends T2> values) {
     for (T2 t2 : values) {
       add(key, t2);
     }
   }
 
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to modify another
   public void addAll(MultiMap<T1, T2> mmap) {
     for (Map.Entry<T1, @PolyDet Set<T2>> entry : mmap.map.entrySet()) {
       addAll(entry.getKey(), entry.getValue());
@@ -74,7 +73,7 @@ public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("us
   }
 
   public void remove(T1 key) {
-    Set<T2> values = map.get(key);
+    @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
           "No values where found when trying to remove from multiset. Key: " + key);
@@ -83,7 +82,7 @@ public class MultiMap<T1 extends @PolyDet("use") Object, T2 extends @PolyDet("us
   }
 
   @Override
-  @SuppressWarnings("determinism") // Collections.emptySet doesn't type check but is clearly valid
+  @SuppressWarnings("determinism") // valid rule relaxation: Collections.emptySet doesn't type check but is clearly valid
   public Set<T2> getValues(T1 key) {
     Set<T2> values = map.get(key);
     if (values == null) {

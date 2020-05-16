@@ -49,7 +49,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw() {
     try {
-      @SuppressWarnings("determinism") // this is code randoop is run on
+      @SuppressWarnings("determinism") // (ignore) error is from code randoop is run on
       @PolyDet Object tmp = this.constructor.newInstance(this.inputs);
       this.retval = tmp;
     } catch (InvocationTargetException e) {
@@ -63,8 +63,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   @SuppressWarnings(
-      "determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as
-  // @PolyDet
+      "determinism") // @PolyDet("up") is the same as @PolyDet
   public String toString() {
     return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
   }
