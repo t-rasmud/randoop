@@ -35,7 +35,6 @@ public class TestValueExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(@Det TestValueExtractor this, @Det Field f) {
-    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
     @Det Class<@Det TestValue> tmp = TestValue.class;
     if (f.getAnnotation(tmp) != null) {
       if (!Modifier.isStatic(f.getModifiers())) {

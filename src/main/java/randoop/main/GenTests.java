@@ -262,7 +262,6 @@ public class GenTests extends GenInputsAbstract {
     }
     if (!GenInputsAbstract.omitmethods_no_defaults) {
       String omDefaultsFileName = "/omitmethods-defaults.txt";
-      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
       @Det Class<@Det GenTests> tmp = GenTests.class;
       InputStream inputStream = tmp.getResourceAsStream(omDefaultsFileName);
       omitmethods.addAll(readOmitMethods(inputStream, omDefaultsFileName));
@@ -596,7 +595,6 @@ public class GenTests extends GenInputsAbstract {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
     String sefDefaultsFileName = "/JDK-sef-methods.txt";
     try {
-      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
       @Det Class<@Det GenTests> tmp = GenTests.class;
       InputStream inputStream = tmp.getResourceAsStream(sefDefaultsFileName);
       sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
@@ -1285,7 +1283,6 @@ public class GenTests extends GenInputsAbstract {
   private Path getResourceDirectoryPath(String resourceDirectory) {
     URI directoryURI;
     try {
-      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
       @Det Class<@Det GenTests> tmp = GenTests.class;
       directoryURI = tmp.getResource(resourceDirectory).toURI();
     } catch (URISyntaxException e) {

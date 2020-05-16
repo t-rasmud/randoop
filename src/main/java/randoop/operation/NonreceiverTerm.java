@@ -129,11 +129,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   @Override
-  @SuppressWarnings(
-      "determinism:override.return.invalid") // Other classes that override getName() return
-                                             // @PolyDet like the super class. This method returns
-                                             // @NonDet
-  public @NonDet String getName() {
+  public String getName() {
     return this.toString();
   }
 
@@ -247,14 +243,10 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return string representation of primitive, String or null value
    */
   @Override
-  @SuppressWarnings(
-      "determinism:override.return.invalid") // Other classes that override toParseab;eString()
-                                             // return @PolyDet like the super class. This method
-                                             // returns @NonDet
-  public @NonDet String toParsableString(
+  public String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType) {
 
-    String valStr;
+    @PolyDet String valStr;
     if (value == null) {
       valStr = "null";
     } else if (type.equals(JavaTypes.CHAR_TYPE)) {
@@ -262,7 +254,9 @@ public final class NonreceiverTerm extends CallableOperation {
     } else if (type.equals(JavaTypes.CLASS_TYPE)) {
       valStr = ((Class<?>) value).getName() + ".class";
     } else {
-      valStr = value.toString();
+      @SuppressWarnings("determinism") // this toString call is @Det; value is a primitive or String (see comment on field)
+      @PolyDet String tmp = value.toString();
+      valStr = tmp;
       if (type.isString()) {
         valStr = "\"" + StringEscapeUtils.escapeJava(valStr) + "\"";
       }

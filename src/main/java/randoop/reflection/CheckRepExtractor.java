@@ -39,7 +39,6 @@ class CheckRepExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(@Det CheckRepExtractor this, @Det Method m) {
-    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
     @Det Class<@Det CheckRep> tmp = CheckRep.class;
     if (m.getAnnotation(tmp) != null) {
       if (Modifier.isStatic(m.getModifiers())) {

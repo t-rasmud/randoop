@@ -46,7 +46,6 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     @Det Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
     @Det int count = 0;
     if (outcomeMap == null) {
-      @SuppressWarnings("determinism") // .class expressions are clearly deterministic
       @Det Class<@Det OperationOutcome> tmp = OperationOutcome.class;
       outcomeMap = new EnumMap<OperationOutcome, Integer>(tmp);
     } else {
@@ -88,7 +87,6 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private @Det Map<OperationOutcome, String> printHeader(@Det int firstColumnLength) {
-    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
     @Det Class<@Det OperationOutcome> tmp = OperationOutcome.class;
     @Det Map<OperationOutcome, String> formatMap = new EnumMap<OperationOutcome, String>(tmp);
     writer.format("%-" + firstColumnLength + "s", "Operation");

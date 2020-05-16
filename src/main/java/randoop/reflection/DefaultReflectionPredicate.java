@@ -101,7 +101,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    @SuppressWarnings("determinism") // .class expressions are clearly deterministic
     @Det Class<@Det CheckRep> tmp = CheckRep.class;
     if (m.getAnnotation(tmp) != null) {
       return false;
