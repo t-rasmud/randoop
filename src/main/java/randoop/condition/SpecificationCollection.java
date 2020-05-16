@@ -118,7 +118,7 @@ public class SpecificationCollection {
    *     signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
-  @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to create another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @OrderNonDet collection to create another
   private static @OrderNonDet Map<AccessibleObject, @OrderNonDet Set<Method>> buildOverridingMap(
       MultiMap<OperationSignature, Method> signatureToMethods) {
     Map<AccessibleObject, Set<Method>> overridden = new HashMap<>();
@@ -351,7 +351,7 @@ public class SpecificationCollection {
       }
       if (parents != null) {
         for (Method parent : parents) {
-          @SuppressWarnings("determinism") // upon inspection, adding parents in nondeterministic order is okay
+          @SuppressWarnings("determinism") // upon inspection, not a bug: adding parents in nondeterministic order is okay
           @Det ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
           execSpec.addParent(parentExecSpec);
         }

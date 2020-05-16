@@ -15,7 +15,7 @@ public class OptionsCache {
   private final List<@PolyDet StaticCache> cacheList;
 
   /** Creates an object for caching the state of command-line arguments. */
-  @SuppressWarnings("determinism") // no unintended aliasing, so safe to treat @Det as @PolyDet
+  @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so safe to treat @Det as @PolyDet
   public OptionsCache() {
     cacheList = new @PolyDet ArrayList<>();
     cacheList.add(new StaticCache(GenInputsAbstract.class));

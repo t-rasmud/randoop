@@ -78,7 +78,7 @@ public class ComponentManager {
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new @PolyDet SequenceCollection();
-    @SuppressWarnings("determinism") // empty collection clearly assignable to anything
+    @SuppressWarnings("determinism") // aliasing okay because not mutated: empty collection clearly assignable to anything
     @PolyDet Collection<@PolyDet Sequence> tmp =
         Collections.unmodifiableSet(Collections.<Sequence>emptySet());
     gralSeeds = tmp;
@@ -254,7 +254,7 @@ public class ComponentManager {
    *
    * @return the sequences for primitive values
    */
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   Set<Sequence> getAllPrimitiveSequences(@Det ComponentManager this) {
 
     @Det Set<@Det Sequence> result = new LinkedHashSet<>();

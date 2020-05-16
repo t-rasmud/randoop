@@ -749,7 +749,7 @@ public class GenTests extends GenInputsAbstract {
       // the final call.
       // 1. Count up calls in the main sequence of calls.
       for (@NonDet TypedClassOperation to : ops) {
-        @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+        @SuppressWarnings("determinism") // process is order insensitive
         int ignore =
             numSequencesUsedIn.merge(
                 to, 1, Integer::sum); // increment value associated with key `to`
@@ -1218,7 +1218,7 @@ public class GenTests extends GenInputsAbstract {
    * @param format the string format
    * @param args the arguments
    */
-  @SuppressWarnings("determinism") // we print args, which is a parameter with @RequiresDetString
+  @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
   @RequiresDetToString
   private static void usage(@Det String format, @Det Object @Det ... args) {
     System.out.print("ERROR: ");

@@ -119,7 +119,7 @@ public class CoverageTracker {
     // For each class that is under test, summarize the branch coverage information
     // produced by Jacoco and store it in the coverageBuilder local variable.
     for (String className : classesUnderTest) {
-      @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+      @SuppressWarnings("determinism") // process is order insensitive
       @PolyDet String tmp = className;
       String resource = getResourceFromClassName(tmp);
       InputStream original = getClass().getResourceAsStream(resource);

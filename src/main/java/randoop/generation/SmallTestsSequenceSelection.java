@@ -46,7 +46,7 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
       if (weight == null) {
         weight = 1 / (double) candidate.size();
       }
-      @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+      @SuppressWarnings("determinism") // process is order insensitive
       @PolyDet double tmp = weight;
       totalWeight += tmp;
       @SuppressWarnings(

@@ -57,7 +57,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
   @RequiresDetToString
   public @Det ExecutionOutcome execute(
       @Det TypedClassOperationWithCast this, @Det Object @Det [] input) {
-    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+    @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
     @Det ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       @Det NormalExecution execution = (NormalExecution) outcome;

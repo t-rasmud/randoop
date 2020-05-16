@@ -43,7 +43,7 @@ public class NormalExecution extends ExecutionOutcome {
   public String toString() {
     String value;
     try {
-      @SuppressWarnings("determinism") // this is from code randoop is run on
+      @SuppressWarnings("determinism") // error is from from code randoop is run on
       @PolyDet String tmp = Objects.toString(result);
       value = tmp;
     } catch (Throwable t) {

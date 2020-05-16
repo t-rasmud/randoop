@@ -153,8 +153,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  @SuppressWarnings(
-      "determinism:override.receiver.invalid") // overriding JDK method but need to be more precise
+  @SuppressWarnings("determinism:override.receiver.invalid") // overriding JDK method but need to be more precise
   public String toString(@Det TypedOperation this) {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
     return getName() + " : " + inputTypes + " -> " + outputType + specString;
@@ -282,7 +281,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     assert input.length == inputTypes.size()
         : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 
-    @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+    @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
     @Det ExecutionOutcome tmp = this.getOperation().execute(input);
     return tmp;
   }
@@ -617,7 +616,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *     randoop.condition.ExecutableBooleanExpression}
    */
   @SuppressWarnings(
-      "determinism:invalid.array.assignment") // iterating over @PolyDet array to create another
+      "determinism:invalid.array.assignment") // collection mutated with other collection: iterating over @PolyDet array to create another
   private Object[] addNullReceiverIfStatic(Object[] values) {
     @PolyDet Object @PolyDet [] args = values;
     if (this.isStatic()) {

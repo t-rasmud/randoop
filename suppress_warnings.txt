@@ -1,3 +1,21 @@
+collection mutated with other collection
+@PolyDet not resolved correctly with @PolyDet("upDet")
+forced overriding
+@PolyDet("up") is the same as @PolyDet
+underlying value toString is deterministic
+expected nondeterminism
+process is order insensitive
+this can't be run with --deterministic randoop option
+valid rule relaxation: aliasing okay because not mutated
+@PolyDet not instantiated correctly in type arguments
+there is a determinism bug here, currently being fixed
+get for @PolyDet("upDet") should be @PolyDet("down")
+AccessibleObject toString is actually deterministic
+valid use of Collections.sort
+uses a parameter with @RequiresDetToString
+error is from from code randoop is run on
+overriding JDK method but need to be more precise
+
 @SuppressWarnings("determinism") // method parameters can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
 @SuppressWarnings("determinism") // iterated collection can't be @OrderNonDet so @PolyDet("up") is the same as @PolyDet
 @SuppressWarnings("determinism") // iterating over @OrderNonDet collection to modify another

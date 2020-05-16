@@ -155,7 +155,7 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  @SuppressWarnings("determinism") // this is a parameter with @RequiresDetString
+  @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
   @RequiresDetToString
   public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det [] input) {
 

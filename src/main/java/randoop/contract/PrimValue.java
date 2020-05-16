@@ -99,8 +99,7 @@ public final class PrimValue extends ObjectContract {
 
   @Override
   @SuppressWarnings(
-      "determinism:nondeterministic.tostring") // this toString call is @Det; value is a primitive
-                                               // or String (see comment on field)
+      "determinism:nondeterministic.tostring") // underlying value toString is deterministic: this toString call is @Det; value is a primitive or String (see comment on field)
   public String toCodeString(@Det PrimValue this) {
 
     StringBuilder b = new StringBuilder();

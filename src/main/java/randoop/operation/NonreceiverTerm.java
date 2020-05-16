@@ -121,9 +121,7 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
-    @SuppressWarnings(
-        "determinism") // this toString call is @Det; value is a String, primitive, or class (see
-                       // comment on field)
+    @SuppressWarnings("determinism") // underlying value toString is deterministic: value is a String, primitive, or class (see comment on field)
     @PolyDet String tmp = Objects.toString(value);
     return tmp;
   }
@@ -254,7 +252,7 @@ public final class NonreceiverTerm extends CallableOperation {
     } else if (type.equals(JavaTypes.CLASS_TYPE)) {
       valStr = ((Class<?>) value).getName() + ".class";
     } else {
-      @SuppressWarnings("determinism") // this toString call is @Det; value is a primitive or String (see comment on field)
+      @SuppressWarnings("determinism") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
       @PolyDet String tmp = value.toString();
       valStr = tmp;
       if (type.isString()) {

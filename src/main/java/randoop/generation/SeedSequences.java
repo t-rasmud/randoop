@@ -72,7 +72,7 @@ public final class SeedSequences {
     return SeedSequences.objectsToSeeds(seeds);
   }
 
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
   public static Set<@PolyDet Sequence> objectsToSeeds(List<@PolyDet Object> seeds) {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {

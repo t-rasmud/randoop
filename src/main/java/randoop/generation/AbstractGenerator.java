@@ -287,7 +287,7 @@ public abstract class AbstractGenerator {
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
-  @SuppressWarnings("determinism") // the nondeterministic printed output here is expected
+  @SuppressWarnings("determinism") // expected nondeterminism: the nondeterministic printed output here is expected
   public void createAndClassifySequences(@Det AbstractGenerator this) {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
@@ -402,7 +402,7 @@ public abstract class AbstractGenerator {
    * @return regression test sequences that do not occur in a longer sequence
    */
   // TODO replace this with filtering during generation
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to modify another
   public List<@PolyDet ExecutableSequence> getRegressionSequences() {
     @PolyDet List<@PolyDet ExecutableSequence> unique_seqs = new @PolyDet ArrayList<>();
     subsumed_sequences = new @PolyDet LinkedHashSet<@PolyDet Sequence>();

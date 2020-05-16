@@ -64,7 +64,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     writer.format("%nOperation History:%n");
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
-      @SuppressWarnings("determinism") // process is order insensitive, but can't be verified
+      @SuppressWarnings("determinism") // process is order insensitive
       @Det int nameLength = operation.getSignatureString().length();
       maxNameLength = Math.max(nameLength, maxNameLength);
     }
@@ -72,7 +72,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     @OrderNonDet List<TypedOperation> keys = new ArrayList<>(operationMap.keySet());
     Collections.sort(keys);
     for (TypedOperation key : keys) {
-      @SuppressWarnings("determinism") // collection clearly sorted above, so deterministic
+      @SuppressWarnings("determinism") // valid use of Collections.sort
       @Det TypedOperation tmp = key;
       printRow(maxNameLength, formatMap, tmp, operationMap.get(tmp));
     }

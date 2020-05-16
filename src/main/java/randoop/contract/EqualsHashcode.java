@@ -19,7 +19,7 @@ public final class EqualsHashcode extends ObjectContract {
 
   @Override
   @SuppressWarnings(
-      "determinism:override.return.invalid") // Other classes that override evaluate() return
+      "determinism:override.return.invalid") // forced overriding: Other classes that override evaluate() return
                                              // @PolyDet("up") like the super class. This method
                                              // calls JDK hashCode()
   public @NonDet boolean evaluate(Object... objects) {

@@ -189,7 +189,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+  @SuppressWarnings("determinism") // expected nondeterminism: logging the environment
   public ExecutableSequence step(@Det ForwardGenerator this) {
 
     @NonDet long startTime = System.nanoTime();
@@ -266,7 +266,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence, all of whose indices are initailly marked as active
    */
-  @SuppressWarnings("determinism") // logging the environment is expected nondeterminism
+  @SuppressWarnings("determinism") // expected nondeterminism: logging the environment
   private void determineActiveIndices(@Det ForwardGenerator this, @Det ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {

@@ -471,7 +471,7 @@ public class Minimize extends CommandHandler {
 
     // Find all the names of the primitive and wrapped types.
     @OrderNonDet Set<@Det String> primitiveAndWrappedTypes = new HashSet<>();
-    @SuppressWarnings("determinism") // okay for set to be @OrderNonDet because visit only inserts
+    @SuppressWarnings("determinism") // valid rule relaxation: okay for set to be @OrderNonDet because visit only inserts
     @PolyDet Set<@PolyDet String> tmp = primitiveAndWrappedTypes;
     new PrimitiveAndWrappedTypeVarNameCollector().visit(compilationUnit, tmp);
 
@@ -882,7 +882,7 @@ public class Minimize extends CommandHandler {
 
     // Types that are used in variable declarations.  Contains only one type per simple name.
     Set<@Det ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
-    @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments here
+    @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
     @PolyDet Set<@PolyDet ClassOrInterfaceType> tmp = types;
     new @Det ClassTypeVisitor().visit(compilationUnit, tmp);
     CompilationUnit result = compilationUnit;

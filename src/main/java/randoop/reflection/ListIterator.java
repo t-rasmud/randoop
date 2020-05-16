@@ -45,7 +45,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
     this.iterators = new @PolyDet ArrayList<>(candidates.size());
     this.currentTypes = new @PolyDet ArrayList<>(candidates.size());
     for (@PolyDet("up") List<T> list : candidates) {
-      @SuppressWarnings("determinism") // iterating over @PolyDet collection to create another
+      @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
       @PolyDet List<T> tmp = list;
       iterators.add(tmp.iterator());
       currentTypes.add(null);
@@ -54,7 +54,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
   }
 
   @Override
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to modify another
   public @PolyDet("down") boolean hasNext() {
     while (nextList >= 0 && !iterators.get(nextList).hasNext()) {
       List<T> tmp = candidates.get(nextList);
@@ -69,7 +69,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
   }
 
   @Override
-  @SuppressWarnings("determinism") // iterating over @PolyDet collection to modify another
+  @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to modify another
   public @PolyDet("up") List<T> next() {
     if (!hasNext()) {
       throw new NoSuchElementException();

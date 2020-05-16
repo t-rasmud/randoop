@@ -108,8 +108,7 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
-  @SuppressWarnings(
-      "determinism:nondeterministic.tostring") // this toString call is probably @PolyDet
+  @SuppressWarnings("determinism:nondeterministic.tostring") // enum toString is deterministic
   public final Check checkContract(
       @Det ObjectContract this, @Det ExecutableSequence eseq, @Det Object @Det [] values) {
 
@@ -199,7 +198,7 @@ public abstract class ObjectContract {
    */
   @SuppressWarnings({
     "determinism:method.invocation.invalid", // @PolyDet("up") is the same as @PolyDet
-    "determinism:invalid.array.assignment" // iterating over @PolyDet array to create another
+    "determinism:invalid.array.assignment" // collection mutated with other collection: iterating over @PolyDet array to create another
   })
   ObjectCheck failedContract(ExecutableSequence eseq, @PolyDet("use") Object @PolyDet [] values) {
     @PolyDet("use") Variable @PolyDet [] varArray = new @PolyDet("use") Variable @PolyDet [values.length];
