@@ -75,5 +75,6 @@ public interface SimpleList<T extends @PolyDet Object> {
    */
   public abstract List<T> toJDKList();
 
+  @Override
   public abstract String toString();
 }

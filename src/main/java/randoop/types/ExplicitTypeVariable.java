@@ -51,20 +51,18 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String toString() {
-    @SuppressWarnings("determinism") // method not annotated in JDK but probably returns @PolyDet
-    @PolyDet String tmp = variable.toString();
-    return tmp;
+  public String getFqName() {
+    return variable.getName();
   }
 
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return variable.getName();
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
@@ -72,7 +70,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 

@@ -113,12 +113,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String toString() {
-    return componentType + "[]";
-  }
-
-  @Override
-  public @Det ArrayType substitute(@Det ArrayType this, @Det Substitution substitution) {
+  public ArrayType substitute(@Det ArrayType this, @Det Substitution substitution) {
     Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);
@@ -152,8 +147,13 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
-    return componentType.getName() + "[]";
+  public String getFqName() {
+    return componentType.getFqName() + "[]";
+  }
+
+  @Override
+  public String getBinaryName() {
+    return componentType.getBinaryName() + "[]";
   }
 
   @Override
@@ -205,8 +205,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean isGeneric() {
-    return componentType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return componentType.isGeneric(ignoreWildcards);
   }
 
   /**
@@ -252,6 +252,11 @@ public class ArrayType extends ReferenceType {
     return componentType.hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return componentType.hasCaptureVariable();
+  }
+
   /**
    * Indicates whether this array type has a parameterized element type.
    *
@@ -271,9 +276,9 @@ public class ArrayType extends ReferenceType {
   public @Det ArrayType getRawTypeArray(@Det ArrayType this) {
     @Det Type rawElementType;
     if (this.componentType.isArray()) {
-      Type tmp = (rawElementType = ((ArrayType) componentType).getRawTypeArray());
+      rawElementType = ((ArrayType) componentType).getRawTypeArray();
     } else if (this.componentType.isClassOrInterfaceType()) {
-      Type tmp = (rawElementType = ((ClassOrInterfaceType) componentType).getRawtype());
+      rawElementType = ((ClassOrInterfaceType) componentType).getRawtype();
     } else {
       return this;
     }
@@ -283,7 +288,7 @@ public class ArrayType extends ReferenceType {
   public int getDimensions() {
     int dimensions = 1;
     if (componentType.isArray()) {
-      int tmp = (dimensions += ((ArrayType) componentType).getDimensions());
+      dimensions += ((ArrayType) componentType).getDimensions();
     }
     return dimensions;
   }

@@ -26,7 +26,6 @@ import org.apache.bcel.generic.ObjectType;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
@@ -250,7 +249,7 @@ public class ReplacementFileReader {
       @DotSeparatedIdentifiers @Det String replacement)
       throws ReplacementException, IOException, ClassNotFoundException {
 
-    String replacementClassPath = replacement.replace('.', java.io.File.separatorChar) + ".class";
+    String replacementClassPath = replacement.replace('.', '/') + ".class";
     URL resource = ClassLoader.getSystemResource(replacementClassPath);
 
     // If the resource exists, then the replacement is a class.
@@ -306,8 +305,8 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsForClass(
       @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
-      @ClassGetName @Det String originalClassname,
-      @ClassGetName @Det String replacementClassname)
+      @BinaryName @Det String originalClassname,
+      @BinaryName @Det String replacementClassname)
       throws ClassNotFoundException, ReplacementException {
 
     // Check that replacement class exists
@@ -381,14 +380,14 @@ public class ReplacementFileReader {
 
     if (ReplaceCallAgent.debug) {
       System.err.println("javaVersion: " + System.getProperty("java.version"));
+      System.err.println("javaHome: " + System.getProperty("java.home"));
       System.err.println("bootclasspath: " + System.getProperty("sun.boot.class.path"));
-      System.err.println("javaHome: " + System.getProperty("java.class.path"));
-      System.err.println("classpath: " + System.getProperty("java.home"));
+      System.err.println("classpath: " + System.getProperty("java.class.path"));
     }
 
     // We will only process the first occurance found; the boot classpath
     // is searched prior to the system classpath.
-    String replacementPackagePath = replacementPackage.replace('.', java.io.File.separatorChar);
+    String replacementPackagePath = replacementPackage.replace('.', '/');
     URL url = ClassLoader.getSystemResource(replacementPackagePath);
     if (url == null) {
       String msg =
@@ -521,7 +520,7 @@ public class ReplacementFileReader {
     if (c != null) {
       return c;
     }
-    String classFilename = classname.replace('.', java.io.File.separatorChar) + ".class";
+    String classFilename = classname.replace('.', '/') + ".class";
     InputStream is = ClassLoader.getSystemResourceAsStream(classFilename);
     if (is == null) {
       return null; // class not found
@@ -535,6 +534,7 @@ public class ReplacementFileReader {
       return c;
     } catch (Exception e) {
       if (ReplaceCallAgent.debug) {
+        System.out.println("Problem in getJavaClassFromClassname:");
         e.printStackTrace();
       }
       throw new ReplacementException("Error reading class file: " + classFilename, e);

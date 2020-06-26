@@ -56,7 +56,7 @@ public final class OneMoreElementList<T extends @PolyDet Object>
   @Override
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
-    boolean dummy = result.addAll(list.toJDKList());
+    result.addAll(list.toJDKList());
     result.add(lastElement);
     return result;
   }

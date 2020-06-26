@@ -26,7 +26,7 @@ import org.checkerframework.framework.qual.DefaultQualifier;
  * <p>This list is set by {@link randoop.instrument.ReplaceCallAgent#premain(String,
  * Instrumentation)} before the {@link randoop.instrument.CallReplacementTransformer} is added to
  * the class loader, and the method {@link #setReplacedMethods(List)} should only be called at that
- * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omitmethods}
+ * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omit-methods}
  * patterns before starting generation.
  */
 @DefaultQualifier(Det.class)

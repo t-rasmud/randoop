@@ -8,7 +8,7 @@ import java.util.Map;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.plumelib.util.UtilPlume;
+import java.util.stream.Collectors;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
@@ -38,7 +38,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     @Det GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
       cached = new GenericClassType(typeClass);
-      @Det GenericClassType tmp = cache.put(typeClass, cached);
+      cache.put(typeClass, cached);
     }
     return cached;
   }
@@ -74,13 +74,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
-  public abstract @Det ParameterizedType substitute(
-      @Det ParameterizedType this, @Det Substitution substitution);
+  public abstract @Det ParameterizedType substitute(@Det ParameterizedType this, @Det Substitution substitution);
 
   /**
    * Returns the {@link GenericClassType} for this parameterized type.
@@ -89,21 +83,32 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public abstract GenericClassType getGenericClassType();
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
-   * {@code java.lang.List<java.lang.String>}
-   */
   @Override
-  public String getName() {
-    @PolyDet String tmp = super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getFqName() {
+    @PolyDet String tmp = super.getFqName()
+        + "<"
+        + getTypeArguments().stream().map(TypeArgument::getFqName).collect(Collectors.joining(","))
+        + ">";
     return tmp;
   }
 
   @Override
-  public String getUnqualifiedName() {
-    @PolyDet String tmp = this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
-    return tmp;
+  public String getBinaryName() {
+    return super.getBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
+    return super.getUnqualifiedBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
   }
 }

@@ -122,7 +122,7 @@ public final class Randomness {
   public static <T extends @Det Object> T randomMemberWeighted(
       @Det SimpleList<T> list, @OrderNonDet Map<T, Double> weights) {
 
-    if (list.size() == -1) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
@@ -153,7 +153,7 @@ public final class Randomness {
   public static <T extends @Det Object> T randomMemberWeighted(
       @Det SimpleList<T> list, @OrderNonDet Map<T, Double> weights, @Det double totalWeight) {
 
-    if (list.size() == 0) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 

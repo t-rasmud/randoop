@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
@@ -66,7 +65,7 @@ public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
   public Set<T2> getVariables(T1 key) {
     @PolyDet MultiSet<T2> values = map.get(key);
     if (values == null) {
-      @SuppressWarnings("determinism") // valid rule relaxation: need to treat @Det collection as @PolyDet
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // valid rule relaxation: need to treat @Det collection as @PolyDet
       @PolyDet Set<T2> tmp = Collections.emptySet();
     }
     return values.getElements();
@@ -81,11 +80,9 @@ public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
   }
 
   // Removes all keys with an empty set
-  @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   public void clean(@Det KeyToMultiSet<T1, T2> this) {
-    for (@Det Iterator<@Det Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator();
-        iter.hasNext(); ) {
-      Entry<T1, MultiSet<T2>> element = iter.next();
+    for (@Det Iterator<Map. @Det Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+      Map.Entry<T1, MultiSet<T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();
       }

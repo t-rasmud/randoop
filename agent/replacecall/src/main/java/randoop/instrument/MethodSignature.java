@@ -11,8 +11,8 @@ import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.framework.qual.HasQualifierParameter;
+import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
@@ -31,7 +31,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   /** The fully-qualified class name. */
   private final String classname;
 
-  /** The method name. */
+  /** The simple method name. */
   private final String name;
 
   /** The parameter types. */
@@ -88,10 +88,10 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * types.
    *
    * @param fullMethodName fully-qualified name of method
-   * @param params fully-qualified names of parameter types
+   * @param params binary names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, @BinaryName String[] params) {
+  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
     if (dotPos < 1) {
       throw new IllegalArgumentException(
@@ -101,8 +101,9 @@ public class MethodSignature implements Comparable<MethodSignature> {
     String methodName = fullMethodName.substring(dotPos + 1);
     @PolyDet Type @PolyDet [] paramTypes = new @PolyDet Type @PolyDet [params.length];
     for (int i = 0; i < params.length; i++) {
+      // TODO: This seems incorrect, since it doesn't handle arrays.
       @SuppressWarnings("determinism") // no unintended aliasing, so assignment valid
-      Type ignore = (paramTypes[i] = BcelUtil.classnameToType(params[i]));
+      Type ignore = (paramTypes[i] = BcelUtil.fqBinaryNameToType(params[i]));
     }
 
     return new MethodSignature(classname, methodName, paramTypes);
@@ -133,14 +134,14 @@ public class MethodSignature implements Comparable<MethodSignature> {
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
-    @BinaryName @PolyDet String @PolyDet [] parameters =
+    @FqBinaryName @PolyDet String @PolyDet [] parameters =
         paramString.isEmpty()
             ? new @PolyDet String @PolyDet [0]
             : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
-      if (!Signatures.isBinaryName(parameter)) {
+      if (!Signatures.isFqBinaryName(parameter)) {
         throw new IllegalArgumentException(
-            "Bad parameter \"" + parameter + "\" in signature: " + signature);
+            "Bad parameter type \"" + parameter + "\" in signature: " + signature);
       }
     }
     return MethodSignature.of(fullMethodName, parameters);

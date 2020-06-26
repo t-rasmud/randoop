@@ -150,7 +150,7 @@ public class SpecificationCollection {
     for (Method method : methods) {
       Class<?> declaringClass = method.getDeclaringClass();
       if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
-        boolean ignore = parents.add(method);
+        parents.add(method);
       }
     }
     return parents;
@@ -240,6 +240,7 @@ public class SpecificationCollection {
       e.setFile(specificationFile);
       throw e;
     } catch (Throwable e) {
+      System.out.println("Bad specification file:");
       e.printStackTrace();
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
     }

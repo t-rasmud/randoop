@@ -23,7 +23,7 @@ public abstract class ExecutionOutcome {
   String output = null;
 
   /** @param executionTime the execution time, in nanoseconds */
-  public ExecutionOutcome(@NonDet long executionTime) {
+  protected ExecutionOutcome(@NonDet long executionTime) {
     this.executionTime = executionTime;
   }
 
@@ -54,5 +54,6 @@ public abstract class ExecutionOutcome {
     return output;
   }
 
+  @Override
   public abstract String toString();
 }

@@ -121,9 +121,8 @@ public final class Sequence {
       type = ((NonParameterizedType) type).toPrimitive();
     }
 
-    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
-      throw new IllegalArgumentException(
-          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOk((String) value)) {
+      throw new StringTooLongException((String) value);
     }
 
     return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
@@ -156,7 +155,7 @@ public final class Sequence {
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     @PolyDet List<@PolyDet Variable> inputs = new @PolyDet ArrayList<>();
     for (int index : elementsSequence.getOutputIndices()) {
-      boolean ignore = inputs.add(elementsSequence.sequence.getVariable(index));
+      inputs.add(elementsSequence.sequence.getVariable(index));
     }
     @PolyDet Sequence tmp = elementsSequence.sequence.extend(operation, inputs);
     return tmp;
@@ -691,11 +690,10 @@ public final class Sequence {
     if (possibleVars.isEmpty()) {
       @Det Statement lastStatement = this.statements.get(this.statements.size() - 1);
       @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/178
-      RandoopBug tmp =
-          new RandoopBug(
-              String.format(
-                  "Failed to select %svariable with input type %s from statement %s",
-                  (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      RandoopBug tmp = new RandoopBug(
+          String.format(
+              "In rVFTLS, no candidates for %svariable with input type %s from statement %s",
+              (onlyReceivers ? "receiver " : ""), type, lastStatement));
       throw tmp;
     }
     if (possibleVars.size() == 1) {
@@ -801,12 +799,8 @@ public final class Sequence {
         @SuppressWarnings("determinism") // all implementation toString methods deterministic
         String msg =
             String.format(
-                    "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
-                    i,
-                    inputType,
-                    inputType.getClass(),
-                    newRefConstraint,
-                    newRefConstraint.getClass())
+                    "Mismatch at %dth argument:%n  %s%n is not assignable from%n  %s%n",
+                    i, Log.toStringAndClass(inputType), Log.toStringAndClass(newRefConstraint))
                 + String.format(
                     "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
                     this, operation, inputVariables);
@@ -1096,7 +1090,7 @@ public final class Sequence {
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
       Type declaringType = statements.get(i).getDeclaringClass();
-      if (declaringType != null && classNames.matcher(declaringType.getName()).matches()) {
+      if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
       }
     }

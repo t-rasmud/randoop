@@ -1,7 +1,7 @@
 package randoop.util;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.determinism.qual.Det;
@@ -71,7 +71,7 @@ public class ProgressDisplay extends Thread {
         + ", failing inputs="
         + generator.num_failing_sequences
         + (withTime
-            ? ("      (" + new Date() + "     " + Util.usedMemory(false) + "MB used)")
+            ? ("      (" + Instant.now() + "     " + Util.usedMemory(false) + "MB used)")
             : "");
   }
 

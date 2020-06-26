@@ -49,7 +49,7 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    @PolyDet("up") String tmp = UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
+    @PolyDet("up") String tmp = UtilPlume.joinLines(toStringLines(c)) + Globals.lineSep;
     return tmp;
   }
 

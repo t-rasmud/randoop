@@ -11,6 +11,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
@@ -129,7 +130,10 @@ public abstract class AbstractGenerator {
    */
   public List<@PolyDet ExecutableSequence> outRegressionSeqs;
 
-  /** A filter to determine whether a sequence should be added to the output sequence lists. */
+  /**
+   * A filter to determine whether a sequence should be added to the output sequence lists. Returns
+   * true if the sequence should be output.
+   */
   public Predicate<@PolyDet ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
@@ -150,9 +154,9 @@ public abstract class AbstractGenerator {
    * @param listenerManager manager that stores and calls any listeners to use during generation.
    *     Can be null.
    */
-  public AbstractGenerator(
+  protected AbstractGenerator(
       @PolyDet List<@PolyDet TypedOperation> operations,
-      GenInputsAbstract.@PolyDet Limits limits,
+      GenInputsAbstract. @PolyDet Limits limits,
       @PolyDet ComponentManager componentManager,
       @PolyDet IStopper stopper,
       @PolyDet RandoopListenerManager listenerManager) {
@@ -338,7 +342,15 @@ public abstract class AbstractGenerator {
 
       num_sequences_generated++;
 
-      if (outputTest.test(eSeq)) {
+      boolean test;
+      try {
+        test = outputTest.test(eSeq);
+      } catch (Throwable t) {
+        System.out.printf(
+            "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
+        throw t;
+      }
+      if (test) {
         // Classify the sequence
         if (eSeq.hasInvalidBehavior()) {
           invalidSequenceCount++;
@@ -475,5 +487,6 @@ public abstract class AbstractGenerator {
    */
   public abstract void newRegressionTestHook(@Det AbstractGenerator this, @Det Sequence sequence);
 
+  @Override
   public abstract String toString();
 }

@@ -103,7 +103,7 @@ public class TupleSet<E extends @PolyDet Object> {
   @SuppressWarnings("determinism") // @PolyDet not instantiated correctly in type arguments
   private List<E> extendTuple(List<E> tuple, E e) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
-    boolean dummy = extTuple.addAll(tuple);
+    extTuple.addAll(tuple);
     extTuple.add(e);
     return extTuple;
   }
@@ -121,7 +121,7 @@ public class TupleSet<E extends @PolyDet Object> {
   private List<E> insertInTuple(List<E> tuple, E e, int i) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
     // It's a bit inefficient to insert then shift; a better implementation could avoid that.
-    boolean dummy = extTuple.addAll(tuple);
+    extTuple.addAll(tuple);
     extTuple.add(i, e);
     return extTuple;
   }

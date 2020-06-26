@@ -155,7 +155,7 @@ public class Identifiers {
         + "\""
         + ", \"parameters\": "
         + "[ \""
-        + UtilPlume.join(parameters, "\", \"")
+        + UtilPlume.join("\", \"", parameters)
         + "\"]"
         + ", \"returnName\": "
         + "\""

@@ -6,7 +6,6 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -14,6 +13,7 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -21,16 +21,14 @@ import randoop.types.TypeTuple;
  *
  * <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
  * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution
- * context). Randoop creates an instance of this contract when, during execution of a sequence, it
- * determines that the above property holds. The property thus represents a <i>regression</i> as it
- * captures the behavior of the code when it is executed.
+ * context).
  */
 public final class ObserverEqValue extends ObjectContract {
 
   /** The observer method. */
   public TypedOperation observer;
 
-  /** The run-time value of the observer. This variable holds a primitive value or String. */
+  /** The run-time result of calling the observer: a primitive value or String. */
   public Object value;
 
   @Override
@@ -50,16 +48,23 @@ public final class ObserverEqValue extends ObjectContract {
     return Objects.hash(observer, value);
   }
 
+  /**
+   * Create a new ObserverEqValue.
+   *
+   * @param observer the observer method
+   * @param value the run-time result of calling the observer: a primitive value or String
+   */
   @SuppressWarnings("determinism:nondeterministic.tostring") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
   public ObserverEqValue(@PolyDet TypedOperation observer, Object value) {
-    assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
+    assert observer.isMethodCall() || observer.isConstructorCall()
+        : "Observer must be MethodCall or ConstructorCall, got " + observer;
     this.observer = observer;
     this.value = value;
     if (!isLiteralValue(value)) {
       throw new RandoopBug(
           String.format(
-              "Cannot represent %s [%s] as a literal; observer = %s",
-              value, value.getClass(), observer));
+              "Cannot represent %s as a literal; observer = %s",
+              Log.toStringAndClass(value), observer));
     }
   }
 
@@ -89,9 +94,6 @@ public final class ObserverEqValue extends ObjectContract {
       "determinism:nondeterministic.tostring") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
   public String toCodeString(@Det ObserverEqValue this) {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)")
-        .append(Globals.lineSep);
 
     // It might be nicer to call TypedOperation.getOperation().appendCode(...) to obtain the printed
     // representation, but this works for this simple case.
@@ -109,7 +111,7 @@ public final class ObserverEqValue extends ObjectContract {
     }
 
     if (value == null) {
-      b.append(String.format("assertNull(\"%s == null\", %s);", call, call));
+      b.append(String.format("org.junit.Assert.assertNull(\"%s == null\", %s);", call, call));
     } else if (observer.getOutputType().runtimeClassIs(boolean.class)) {
       assert value.equals(true) || value.equals(false);
       if (value.equals(true)) {
@@ -121,7 +123,7 @@ public final class ObserverEqValue extends ObjectContract {
         && !value.equals(Double.NaN)
         && !value.equals(Float.NaN)) {
       b.append(
-          String.format("org.junit.Assert.assertTrue(%s == %s);", call, Value.toCodeString(value)));
+          String.format("org.junit.Assert.assertEquals(%s, %s);", call, Value.toCodeString(value)));
     } else { // string
       // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
@@ -165,6 +167,7 @@ public final class ObserverEqValue extends ObjectContract {
 
   @Override
   public String toString() {
-    return String.format("<ObserverEqValue %s, value = '%s'", observer, value);
+    return String.format(
+        "<ObserverEqValue %s, value = '%s'", observer, Log.toStringAndClass(value));
   }
 }

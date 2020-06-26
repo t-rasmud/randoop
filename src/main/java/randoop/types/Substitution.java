@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -131,16 +130,13 @@ public class Substitution {
   @SuppressWarnings(
       "determinism") // process is order insensitive: safe to treat @PolyDet("up") as @PolyDet
   public boolean isConsistentWith(Substitution substitution) {
-    for (
-    @PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : substitution.map.entrySet()) {
+    for (Map. @PolyDet Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : substitution.map.entrySet()) {
       if (this.map.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
         return false;
       }
     }
-    for (
-    @PolyDet Entry<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> entry :
-        substitution.rawMap.entrySet()) {
+    for (Map. @PolyDet Entry<java.lang.reflect. @PolyDet Type, @PolyDet ReferenceType> entry : substitution.rawMap.entrySet()) {
       if (this.rawMap.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
         return false;
@@ -184,18 +180,14 @@ public class Substitution {
   @SuppressWarnings("determinism") // @PolyDet("up") is the same as @PolyDet
   public Substitution extend(@PolyDet("use") Substitution other) {
     Substitution result = new Substitution(this);
-    for (
-    @PolyDet("down") Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : other.map.entrySet()) {
-      @SuppressWarnings("determinism") // that requiredEntry is @Det is clearly not an issue
+    for (Map.@PolyDet("down") Entry<@PolyDet TypeVariable, @PolyDet ReferenceType> entry : other.map.entrySet()) {
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // that requiredEntry is @Det is clearly not an issue
       ReferenceType ignore = result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
-    for (
-    @PolyDet("down") Entry<java.lang.reflect.@PolyDet Type, @PolyDet ReferenceType> entry :
-        other.rawMap.entrySet()) {
+    for (Map. @PolyDet("down") Entry<java.lang.reflect. @PolyDet Type, @PolyDet ReferenceType> entry : other.rawMap.entrySet()) {
       @SuppressWarnings(
-          "determinism") // that requiredEntry is @Det is clearly not an issue
-      ReferenceType ignore =
-          result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+      {"determinism", "UnusedVariable"}) // that requiredEntry is @Det is clearly not an issue
+      ReferenceType ignore = result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
   }
@@ -233,7 +225,7 @@ public class Substitution {
 
   /** Print the entries of this substitution to standard out on multiple lines. */
   public void print(@Det Substitution this) {
-    for (Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
     }
   }

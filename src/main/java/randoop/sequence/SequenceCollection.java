@@ -156,9 +156,9 @@ public class SequenceCollection {
     for (int i = 0; i < formalTypes.size(); i++) {
       @Det Variable argument = arguments.get(i);
       assert formalTypes.get(i).isAssignableFrom(argument.getType())
-          : formalTypes.get(i).getName()
+          : formalTypes.get(i).getBinaryName()
               + " should be assignable from "
-              + argument.getType().getName();
+              + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
         typesAndSupertypes.add(type);
@@ -256,7 +256,7 @@ public class SequenceCollection {
   public @PolyDet Set<@PolyDet Sequence> getAllSequences() {
     @PolyDet Set<@PolyDet Sequence> result = new @PolyDet LinkedHashSet<>();
     for (@PolyDet("up") SimpleArrayList<@PolyDet Sequence> a : sequenceMap.values()) {
-      @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // collection mutated with other collection: iterating over @PolyDet collection to create another
       boolean ignore = result.addAll(a);
     }
     return result;

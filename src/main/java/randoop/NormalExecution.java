@@ -1,8 +1,7 @@
 package randoop;
 
-import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.NonDet;
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import randoop.util.Log;
 
 /**
  * Means that the statement that this result represents completed normally.
@@ -36,21 +35,12 @@ public class NormalExecution extends ExecutionOutcome {
   }
 
   /**
-   * This method avoids calling toString() of code under test, which may have arbitrary behavior. We
-   * use this method in randoop.test.SequenceTests.
+   * randoop.test.SequenceTests uses this method.
+   *
+   * <p>Note that toString() of code under test may have arbitrary behavior.
    */
   @Override
   public String toString() {
-    String value;
-    try {
-      @SuppressWarnings("determinism") // (ignore) error is from code randoop is run on
-      @PolyDet String tmp = Objects.toString(result);
-      value = tmp;
-    } catch (Throwable t) {
-      value = "???";
-    }
-    return String.format(
-        "[NormalExecution %s%s]",
-        value, (result == null ? "" : (" [of class " + result.getClass().getName() + "]")));
+    return String.format("[NormalExecution %s]", Log.toStringAndClass(result));
   }
 }

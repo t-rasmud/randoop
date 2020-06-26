@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -53,9 +52,6 @@ public final class IsNull extends ObjectContract {
   @Override
   public String toCodeString(@Det IsNull this) {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append(
-        "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
     b.append("org.junit.Assert.assertNull(x0);");
     return b.toString();
   }

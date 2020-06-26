@@ -27,7 +27,10 @@ public class RawSignature {
   /** The name of the declaring class of the method. */
   private final String classname;
 
-  /** The method name; for a constructor, same as the classname. */
+  /**
+   * The method name; for a constructor, same as the classname, except for inner classes where it
+   * differs.
+   */
   private final String name;
 
   /** The method parameter types. */
@@ -127,7 +130,7 @@ public class RawSignature {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(typeNames, ",")
+        + UtilPlume.join(",", typeNames)
         + ")";
   }
 
@@ -183,7 +186,7 @@ public class RawSignature {
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + UtilPlume.join(paramDeclarations, ", ") + ")";
+    return "(" + UtilPlume.join(", ", paramDeclarations) + ")";
   }
 
   /**

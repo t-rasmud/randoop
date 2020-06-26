@@ -54,7 +54,7 @@ public abstract class VisibilityPredicate {
   // public abstract String toString();
 
   /** AnyVisibilityPredicate is a {@link VisibilityPredicate} that always returns true. */
-  public static class AnyVisibilityPredicate extends VisibilityPredicate {
+  private static class AnyVisibilityPredicate extends VisibilityPredicate {
 
     /**
      * {@inheritDoc}
@@ -95,13 +95,18 @@ public abstract class VisibilityPredicate {
     public boolean isVisible(Field f) {
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "AnyVisibilityPredicate";
+    }
   }
 
   /**
    * PublicVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case that
    * the class/method/constructor/field is public.
    */
-  public static class PublicVisibilityPredicate extends VisibilityPredicate {
+  private static class PublicVisibilityPredicate extends VisibilityPredicate {
 
     /**
      * {@inheritDoc}
@@ -149,6 +154,11 @@ public abstract class VisibilityPredicate {
      */
     private boolean isVisible(int mods) {
       return Modifier.isPublic(mods);
+    }
+
+    @Override
+    public String toString() {
+      return "PublicVisibilityPredicate";
     }
   }
 
@@ -243,13 +253,18 @@ public abstract class VisibilityPredicate {
       return Modifier.isPublic(mods)
           || (packageName.equals(otherPackageName) && !Modifier.isPrivate(mods));
     }
+
+    @Override
+    public String toString() {
+      return "PackageVisibilityPredicate(" + packageName + ")";
+    }
   }
 
   /**
    * NotPrivateVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case
    * that the class/method/constructor/field is not declared to be private.
    */
-  public static class NotPrivateVisibilityPredicate extends VisibilityPredicate {
+  private static class NotPrivateVisibilityPredicate extends VisibilityPredicate {
 
     /**
      * {@inheritDoc}
@@ -301,6 +316,11 @@ public abstract class VisibilityPredicate {
      */
     private boolean isVisible(int mods) {
       return !Modifier.isPrivate(mods);
+    }
+
+    @Override
+    public String toString() {
+      return "NotPrivateVisibilityPredicate";
     }
   }
 }

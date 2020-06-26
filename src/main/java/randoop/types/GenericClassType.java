@@ -61,11 +61,6 @@ public class GenericClassType extends ParameterizedType {
     return Objects.hash(rawType);
   }
 
-  @Override
-  public String toString() {
-    return this.getName();
-  }
-
   /**
    * Instantiates this generic class using the substitution to replace the type parameters.
    *
@@ -178,6 +173,8 @@ public class GenericClassType extends ParameterizedType {
     return ClassOrInterfaceType.forType(superclass).substitute(substitution);
   }
 
+  // TODO: When would one want to call this?  Should we move getTypeArguments from
+  // ParameterizedType to InstantiatedType?
   @Override
   @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
   public List<@PolyDet TypeArgument> getTypeArguments() {
@@ -196,7 +193,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet List<@PolyDet TypeVariable> params = super.getTypeParameters();
-    boolean tmp = params.addAll(parameters);
+    params.addAll(parameters);
     return params;
   }
 
@@ -258,7 +255,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 

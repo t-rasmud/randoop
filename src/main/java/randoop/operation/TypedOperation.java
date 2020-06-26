@@ -12,6 +12,7 @@ import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
+import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -156,7 +157,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   @SuppressWarnings("determinism:override.receiver.invalid") // overriding JDK method but need to be more precise
   public String toString(@Det TypedOperation this) {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
-    return getName() + " : " + inputTypes + " -> " + outputType + specString;
+    return UtilPlume.escapeJava(getName()) + " : " + inputTypes + " -> " + outputType + specString;
   }
 
   @Override
@@ -215,8 +216,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @return true if the operation is generic, false if not
    */
-  public boolean isGeneric() {
-    return inputTypes.isGeneric() || outputType.isGeneric();
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * output types are generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true if the operation is generic, false if not
+   */
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return inputTypes.isGeneric(ignoreWildcards) || outputType.isGeneric(ignoreWildcards);
   }
 
   @Override
@@ -511,7 +524,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedOperation createPrimitiveInitialization(Type type, @Det Object value) {
     Type valueType = Type.forValue(value);
-    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getName();
+    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getBinaryName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 
@@ -652,6 +665,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   /** Comparator used for sorting by ranking. */
   public static final Comparator<RankedTypeOperation> compareRankedTypeOperation =
-      (RankedTypeOperation t, RankedTypeOperation t1) ->
-          Double.valueOf(t.ranking).compareTo(t1.ranking);
+      (RankedTypeOperation t, RankedTypeOperation t1) -> {
+        int rankingComparison = Double.valueOf(t.ranking).compareTo(t1.ranking);
+        if (rankingComparison != 0) {
+          return rankingComparison;
+        }
+        return t.operation.getName().compareTo(t1.operation.getName());
+      };
 }

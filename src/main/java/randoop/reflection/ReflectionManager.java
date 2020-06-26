@@ -104,7 +104,7 @@ public class ReflectionManager {
    */
   public void apply(@Det ReflectionManager this, @Det ClassVisitor visitor, @Det Class<?> c) {
     if (predicate.isVisible(c)) {
-      Log.logPrintf("Applying visitors to class %s%n", c.getName());
+      Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
       visitBefore(visitor, c); // perform any previsit steps
 
@@ -112,11 +112,17 @@ public class ReflectionManager {
         applyToEnum(visitor, c);
       } else {
 
-        Log.logPrintf(
-            "ReflectionManager.apply%n  %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
-            c,
-            ClassDeterministic.getMethods(c).length,
-            ClassDeterministic.getDeclaredMethods(c).length);
+        try {
+          Log.logPrintf(
+              "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %s%n",
+              c,
+              ClassDeterministic.getMethods(c).length,
+              ClassDeterministic.getDeclaredMethods(c).length,
+              visitor);
+        } catch (Throwable e) {
+          throw new Error(
+              String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c), e);
+        }
 
         // Methods
         // Need to call both getMethods (which returns only public methods) and also
@@ -285,7 +291,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(@Det ClassVisitor v, @Det Method m) {
-    Log.logPrintf("ReflectionManager visiting method %s%n", m.toGenericString());
+    Log.logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 

@@ -61,7 +61,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public String toString() {
-    @PolyDet String tmp = UtilPlume.join(boundList, " & ");
+    @PolyDet String tmp = UtilPlume.join(" & ", boundList);
     return tmp;
   }
 
@@ -104,7 +104,7 @@ class IntersectionTypeBound extends ParameterBound {
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet List<@PolyDet TypeVariable> paramList = new @PolyDet ArrayList<>();
     for (ParameterBound b : boundList) {
-      @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so addAll can take @PolyDet
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // valid rule relaxation: no unintended aliasing, so addAll can take @PolyDet
       boolean ignore = paramList.addAll(b.getTypeParameters());
     }
     return paramList;
@@ -121,9 +121,19 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
     for (ParameterBound b : boundList) {
-      if (b.isGeneric()) {
+      if (b.hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    for (ParameterBound b : boundList) {
+      if (b.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

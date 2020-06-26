@@ -56,7 +56,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
 
   @Override
   public String toString() {
-    @PolyDet String tmp = "(" + UtilPlume.join(list, ", ") + ")";
+    @PolyDet String tmp = "(" + UtilPlume.join(", ", list) + ")";
     return tmp;
   }
 
@@ -118,7 +118,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     for (Type type : this.list) {
       @PolyDet Type tmp = type;
       if (tmp.isReferenceType()) {
-        boolean ignore = paramSet.addAll(((ReferenceType) tmp).getTypeParameters());
+        paramSet.addAll(((ReferenceType) tmp).getTypeParameters());
       }
     }
     return new ArrayList<>(paramSet);
@@ -133,6 +133,20 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     for (Type type : list) {
       @PolyDet Type tmp = (ParameterizedType) type;
       if (type.isParameterized() && tmp.hasWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Indicates whether any of the types in this type tuple contains a capture variable.
+   *
+   * @return true if there is at least one capture variable occurrence
+   */
+  public boolean hasCaptureVariable() {
+    for (Type type : list) {
+      if (type.isParameterized() && ((ParameterizedType) type).hasCaptureVariable()) {
         return true;
       }
     }
@@ -160,11 +174,12 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
   /**
    * Indicates whether the tuple has any generic components.
    *
+   * @param ignoreWildcards if true, disregard wildcards when checking for generics
    * @return true if any component of tuple is generic, false if none are
    */
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     for (Type type : list) {
-      if (type.isGeneric()) {
+      if (type.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

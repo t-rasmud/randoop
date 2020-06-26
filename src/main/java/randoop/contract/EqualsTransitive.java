@@ -58,7 +58,7 @@ public class EqualsTransitive extends ObjectContract {
   public String toCodeString(@Det EqualsTransitive this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// This assertion (transitivity of equals) fails ");
+    b.append("// Transitivity of equals");
     b.append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");

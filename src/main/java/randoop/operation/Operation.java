@@ -124,5 +124,6 @@ public interface Operation {
    */
   String getName();
 
+  @Override
   String toString();
 }

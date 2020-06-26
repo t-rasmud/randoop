@@ -93,14 +93,14 @@ class TypeExtractor extends DefaultClassVisitor {
    */
   private void addIfConcrete(@Det Type type) {
     @Det ParameterizedType tmp = (ParameterizedType) type;
-    if (!type.isVoid() && !type.isGeneric() && !(type.isParameterized() && (tmp).hasWildcard())) {
+    if (!type.isVoid() && !type.isGeneric() && !(type.isParameterized() && tmp.hasWildcard())) {
       if (!predicate.isVisible(type.getRuntimeClass())) {
         return;
       }
       if (type.isPrimitive()) {
         type = ((PrimitiveType) type).toBoxedPrimitive();
       }
-      Log.logPrintf("Adding %s as candidate parameter type%n", type);
+      Log.logPrintf("Adding %s [%s] as candidate parameter type%n", type, type.getClass());
       inputTypes.add(type);
     }
   }

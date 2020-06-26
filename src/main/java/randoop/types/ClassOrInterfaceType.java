@@ -1,13 +1,17 @@
 package randoop.types;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import java.util.Queue;
+import randoop.util.Log;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -34,7 +38,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
    * static type).
    */
-  private ClassOrInterfaceType enclosingType = null;
+  protected ClassOrInterfaceType enclosingType = null;
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -131,7 +135,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * enclosing class of the given type.
    *
    * @param substitution the substitution to apply to the enclosing type
-   * @param type the type to which resulting enclosing type is to be added
+   * @param type the type to which resulting enclosing type is to be added; will be side-effected
    * @return the type with enclosing type added if needed
    */
   final @Det ClassOrInterfaceType substitute(
@@ -151,7 +155,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Applies capture conversion to the enclosing type of this type and adds the result as the
    * enclosing class of the given type.
    *
-   * @param type this type with capture conversion applied
+   * @param type this type with capture conversion applied; will be side-effected
    * @return the type with converted enclosing type
    */
   final @Det ClassOrInterfaceType applyCaptureConversion(
@@ -179,21 +183,35 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
       }
-      return enclosingType.getName() + "." + this.getSimpleName();
+      return enclosingType.getFqName() + "." + this.getSimpleName();
     }
     return this.getCanonicalName();
   }
 
   @Override
-  public String getUnqualifiedName() {
+  public String getBinaryName() {
+    if (this.isNestedClass()) {
+      if (this.isStatic()) {
+        // HACK
+        return enclosingType.getBinaryName().replaceAll("<[^<]*>$", "")
+            + "$"
+            + this.getSimpleName();
+      }
+      return enclosingType.getBinaryName() + "$" + this.getSimpleName();
+    }
+    return getRuntimeClass().getName();
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
     String prefix = "";
     if (this.isNestedClass()) {
-      prefix = enclosingType.getUnqualifiedName() + ".";
+      prefix = enclosingType.getUnqualifiedBinaryName() + "$";
     }
     return prefix + this.getSimpleName();
   }
@@ -219,6 +237,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
     }
     return c.getPackage();
+  }
+
+  /**
+   * Return the package part of a type name, including the final period. Returns the empty string
+   * for a type in the unnamed package.
+   *
+   * @return the package part of a type name, or ""
+   */
+  String getPackagePrefix() {
+    Package pkg = getPackage();
+    if (pkg == null) {
+      return "";
+    } else {
+      return pkg.getName() + ".";
+    }
   }
 
   /**
@@ -331,12 +364,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     @Det ClassOrInterfaceType superclass = this.getSuperclass();
     if (superclass != null) {
       supertypes.add(superclass);
-      boolean ignore = supertypes.addAll(superclass.getSuperTypes());
+      supertypes.addAll(superclass.getSuperTypes());
     }
     for (@Det ClassOrInterfaceType interfaceType : this.getInterfaces()) {
       @Det ClassOrInterfaceType tmp = interfaceType;
       supertypes.add(tmp);
-      boolean ignore = supertypes.addAll(tmp.getSuperTypes());
+      supertypes.addAll(tmp.getSuperTypes());
     }
     return supertypes;
   }
@@ -355,8 +388,28 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     @Det List<@Det ClassOrInterfaceType> supertypes = new ArrayList<>();
     @Det ClassOrInterfaceType superclass = this.getSuperclass();
     supertypes.add(superclass);
-    boolean ignore = supertypes.addAll(this.getInterfaces());
+    supertypes.addAll(this.getInterfaces());
     return supertypes;
+  }
+
+  /**
+   * Return all supertypes of this type, including itself.
+   *
+   * @return all supertypes of this type, including itself
+   */
+  public Collection<ClassOrInterfaceType> getAllSupertypesInclusive() {
+    LinkedHashSet<ClassOrInterfaceType> result = new LinkedHashSet<>();
+
+    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>();
+    worklist.add(this);
+    while (!worklist.isEmpty()) {
+      ClassOrInterfaceType type = worklist.remove();
+      if (result.add(type)) {
+        // result did not already contain the element
+        worklist.addAll(type.getImmediateSupertypes());
+      }
+    }
+    return result;
   }
 
   /**
@@ -367,8 +420,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isAbstract();
 
   @Override
-  public boolean isGeneric() {
-    return this.isMemberClass() && enclosingType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return this.isMemberClass() && enclosingType.isGeneric(ignoreWildcards);
   }
 
   /**
@@ -394,11 +447,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is a member of another class. (see <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
-   * 8.5</a>)
+   * Indicate whether this class is a nested class.
    *
-   * @return true if this class is a member class, false otherwise
+   * @return true iff this class is a nested class
    */
   public final boolean isNestedClass() {
     return enclosingType != null;
@@ -407,7 +458,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Indicate whether this class is a member of another class. (see <a
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
-   * 8.5</a>)
+   * 8.5</a>).
    *
    * @return true if this class is a member class, false otherwise
    */
@@ -475,8 +526,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (@Det ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          String tmp = String.format("  iface: %s [%s]%n", iface, iface.getClass());
-          System.out.print(tmp);
+          System.out.printf("  iface: %s%n", Log.toStringAndClass(iface));
         }
 
         if (iface.equals(otherType)) {
@@ -516,12 +566,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return false;
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
   /**
    * Sets the enclosing type for this class type.
    *
    * @param enclosingType the type for the class enclosing the declaration of this type
    */
-  private void setEnclosingType(ClassOrInterfaceType enclosingType) {
+  protected void setEnclosingType(ClassOrInterfaceType enclosingType) {
     this.enclosingType = enclosingType;
   }
 

@@ -40,7 +40,7 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
     @Det Set<ClassOrInterfaceType> superClasses = hashedSuperClasses.get(key);
     if (superClasses == null) {
       superClasses = getSuperClasses(key);
-      @SuppressWarnings("determinism") // okay to treat cache as @PolyDet
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // okay to treat cache as @PolyDet
       Set<ClassOrInterfaceType> ignore = hashedSuperClasses.put(key, superClasses);
     }
     List<SimpleList<Sequence>> listOfLists = new ArrayList<>();

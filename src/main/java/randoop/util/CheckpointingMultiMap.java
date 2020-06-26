@@ -101,7 +101,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
     remove_bare(key, value);
-    Object dummy = ops.add(new @PolyDet OpKeyVal(Ops.REMOVE, key, value));
+    ops.add(new @PolyDet OpKeyVal(Ops.REMOVE, key, value));
     steps++;
   }
 
@@ -175,7 +175,7 @@ public class CheckpointingMultiMap<T1 extends @PolyDet Object, T2 extends @PolyD
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     @PolyDet Set<T2> values = map.get(key);
     if (values == null) {
-      @SuppressWarnings("determinism") // valid rule relaxation: need to treat @Det collection as @PolyDet
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // valid rule relaxation: need to treat @Det collection as @PolyDet
       @PolyDet Set<T2> tmp = Collections.emptySet();
     }
     return values;

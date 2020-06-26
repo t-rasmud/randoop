@@ -49,7 +49,7 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
       @SuppressWarnings("determinism") // process is order insensitive
       @PolyDet double tmp = weight;
       totalWeight += tmp;
-      @SuppressWarnings("determinism") // @PolyDet for operations on a @PolyDet("upDet") Map not resolved
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // @PolyDet for operations on a @PolyDet("upDet") Map not resolved
       double ignore = weightMap.put(candidate, weight);
     }
     return totalWeight;

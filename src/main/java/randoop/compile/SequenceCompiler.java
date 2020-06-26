@@ -1,9 +1,14 @@
 package randoop.compile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -17,6 +22,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
@@ -68,26 +74,10 @@ public class SequenceCompiler {
               + Globals.lineSep
               + "Classpath:"
               + Globals.lineSep
-              + classpathToString());
+              + ReflectionPlume.classpathToString());
     }
 
     this.fileManager = compiler.getStandardFileManager(null, null, null);
-  }
-
-  // TODO: Use the version of this method in ReflectionPlume.java (in org.plumelib/reflection-util).
-  /**
-   * Returns the classpath as a multi-line string.
-   *
-   * @return the classpath as a multi-line string
-   */
-  public static String classpathToString() {
-    StringJoiner result = new StringJoiner(Globals.lineSep);
-    ClassLoader cl = ClassLoader.getSystemClassLoader();
-    URL[] urls = ((URLClassLoader) cl).getURLs();
-    for (URL url : urls) {
-      result.add(url.getFile());
-    }
-    return result.toString();
   }
 
   /**
@@ -102,6 +92,18 @@ public class SequenceCompiler {
       final String packageName, final String classname, final String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     boolean result = compile(packageName, classname, javaSource, diagnostics);
+
+    // Compilation can create multiple .class files; this only deletes the main one.
+    Path dir = Paths.get((packageName == null) ? "." : packageName.replace(".", "/"));
+    try {
+      Files.delete(dir.resolve(classname + ".class"));
+    } catch (NoSuchFileException e) {
+      // Nothing to do, but I wonder why the file doesn't exist.
+    } catch (IOException e) {
+      System.out.printf(
+          "Unable to delete %s: %s%n", dir.resolve(classname + ".class").toAbsolutePath(), e);
+    }
+
     if (!result
         && debugCompilationFailure != null
         && javaSource.contains(debugCompilationFailure)) {
@@ -153,7 +155,7 @@ public class SequenceCompiler {
       final String classname,
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
-    String classFileName = classname + CompileUtil.JAVA_EXTENSION;
+    String classFileName = classname + ".java";
     @PolyDet List<@PolyDet JavaFileObject> sources = new @PolyDet ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
@@ -190,7 +192,7 @@ public class SequenceCompiler {
    *
    * @param directory the directory containing the .class file (possibly in a package-named
    *     subdirectory)
-   * @param className the fully-qualified name of the class defined in the file
+   * @param className the binary name of the class defined in the file
    * @return the loaded Class object
    */
   private static Class<?> loadClassFile(File directory, @BinaryName String className) {

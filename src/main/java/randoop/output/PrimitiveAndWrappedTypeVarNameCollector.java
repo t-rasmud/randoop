@@ -22,6 +22,7 @@ public class PrimitiveAndWrappedTypeVarNameCollector
    *     wrapped types. It is modified by side effect.
    */
   @SuppressWarnings("unchecked")
+  @Override
   public void visit(VariableDeclarationExpr n, Set<@PolyDet String> variableNames) {
     for (VariableDeclarator vd : n.getVariables()) {
       @PolyDet VariableDeclarator tmp = vd;

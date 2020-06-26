@@ -126,7 +126,6 @@ public final class Util {
           b.append(indentString);
         }
         b.append(string);
-        b.append(Globals.lineSep);
         return b.toString();
       }
 
@@ -164,7 +163,7 @@ public final class Util {
   public static String replaceWords(
       String text, Map<@PolyDet String, @PolyDet String> replacements) {
     Pattern namesPattern =
-        Pattern.compile("\\b(" + UtilPlume.join(replacements.keySet().toArray(), "|") + ")\\b");
+        Pattern.compile("\\b(" + UtilPlume.join("|", replacements.keySet().toArray()) + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);
     StringBuilder b = new StringBuilder();
     int position = 0;

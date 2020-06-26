@@ -79,7 +79,7 @@ public final class InitializedArrayCreation extends CallableOperation {
 
   @Override
   public String toString() {
-    return elementType.getName() + "[" + length + "]";
+    return elementType.getBinaryName() + "[" + length + "]";
   }
 
   /** {@inheritDoc} */
@@ -96,7 +96,7 @@ public final class InitializedArrayCreation extends CallableOperation {
           "Too many arguments: " + inputVars.size() + ", capacity: " + length);
     }
 
-    String arrayTypeName = this.elementType.getName();
+    String arrayTypeName = this.elementType.getFqName();
 
     b.append("new ").append(arrayTypeName).append("[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
@@ -140,7 +140,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return elementType.getName() + "[" + Integer.toString(length) + "]";
+    return elementType.getBinaryName() + "[" + Integer.toString(length) + "]";
   }
 
   @Override

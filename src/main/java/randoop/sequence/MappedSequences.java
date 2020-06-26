@@ -81,7 +81,7 @@ public class MappedSequences<T extends @Det Object> {
   public @Det Set<Sequence> getAllSequences(@Det MappedSequences<T> this) {
     @Det Set<@Det Sequence> result = new LinkedHashSet<>();
     for (@Det SequenceCollection c : map.values()) {
-      boolean ignore = result.addAll(c.getAllSequences());
+      result.addAll(c.getAllSequences());
     }
     return result;
   }

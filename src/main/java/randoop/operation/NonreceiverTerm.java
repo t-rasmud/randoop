@@ -8,7 +8,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
+import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -16,7 +16,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.StringEscapeUtils;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -66,12 +65,12 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       }
     } else if (type.isString()) {
-      if (value != null && !Value.stringLengthOK((String) value)) {
-        throw new IllegalArgumentException(
-            "String too long, length = " + ((String) value).length());
+      String s = (String) value;
+      if (value != null && !Value.escapedStringLengthOk(s)) {
+        throw new StringTooLongException(s);
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not a primitive, string, or Class value, then it must be null
+      // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
         throw new IllegalArgumentException(
             "value must be null for type " + type + " but was " + value);
@@ -173,7 +172,11 @@ public final class NonreceiverTerm extends CallableOperation {
     return value;
   }
 
-  /** @return the type */
+  /**
+   * Return the type.
+   *
+   * @return the type
+   */
   public Type getType() {
     return this.type;
   }
@@ -256,11 +259,11 @@ public final class NonreceiverTerm extends CallableOperation {
       @PolyDet String tmp = value.toString();
       valStr = tmp;
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(valStr) + "\"";
+        valStr = "\"" + UtilPlume.escapeJava(valStr) + "\"";
       }
     }
 
-    return type.getName() + ":" + valStr;
+    return type.getBinaryName() + ":" + valStr;
   }
 
   /**
@@ -447,12 +450,13 @@ public final class NonreceiverTerm extends CallableOperation {
                   + " but the string given was not enclosed in quotation marks.";
           throw new OperationParseException(msg);
         }
-        value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (!Value.stringLengthOK((String) value)) {
+        String valStringContent = valString.substring(1, valString.length() - 1);
+        if (!Value.stringLengthOk(valStringContent)) {
           throw new OperationParseException(
-              "Error when parsing String; length is greater than "
-                  + GenInputsAbstract.string_maxlen);
+              String.format(
+                  "Error when parsing String; length %d is too large", valStringContent.length()));
         }
+        value = UtilPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {

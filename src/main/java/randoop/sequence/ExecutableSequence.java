@@ -31,6 +31,7 @@ import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
+import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 
 /**
@@ -354,7 +355,12 @@ public class ExecutableSequence {
 
       // Phase 2 of specification checking: check for expected behavior after the call.
       // This is the only client call to generateTestChecks().
-      checks = gen.generateTestChecks(this);
+      if (Value.lastValueSizeOk(this)) {
+        checks = gen.generateTestChecks(this);
+      } else {
+        Log.logPrintf(
+            "Excluding from generateTestChecks due to value too large in last statement%n");
+      }
 
     } finally {
       exectime = System.nanoTime() - startTime;
@@ -400,7 +406,8 @@ public class ExecutableSequence {
       @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
       @PolyDet NormalExecution ne = (NormalExecution) execution.get(creatingStatementIdx);
       @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so assignment valid
-      Object ignore = (runtimeObjects[j] = ne.getRuntimeValue());
+      @PolyDet Object tmp = ne.getRuntimeValue();
+      runtimeObjects[j] = tmp;
     }
     return runtimeObjects;
   }
@@ -437,12 +444,15 @@ public class ExecutableSequence {
         r = tmp;
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
+      } finally {
+        if (GenInputsAbstract.capture_output) {
+          System.setOut(orig_out);
+          System.setErr(orig_err);
+        }
       }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         output_buffer_stream.flush();
-        System.setOut(orig_out);
-        System.setErr(orig_err);
         r.set_output(output_buffer.toString());
         output_buffer.reset();
       }
@@ -521,7 +531,7 @@ public class ExecutableSequence {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
-        boolean ignore = refValues.add(new ReferenceValue((ReferenceType) type, value));
+        refValues.add(new ReferenceValue((ReferenceType) type, value));
         variableMap.put(value, variable);
       }
     }
@@ -622,9 +632,12 @@ public class ExecutableSequence {
   }
 
   /**
+   * Return true if an exception of the given class (or a class compatible with it) was thrown
+   * during this sequence's execution
+   *
    * @param exceptionClass the exception class
-   * @return true if an exception of the given class (or a class compatible with it) has been thrown
-   *     during this sequence's execution
+   * @return true if an exception compatible with the given class was thrown during this sequence's
+   *     execution
    */
   public boolean throwsException(Class<?> exceptionClass) {
     return getExceptionIndex(exceptionClass) >= 0;

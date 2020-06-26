@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -67,9 +66,6 @@ public class CompareToAntiSymmetric extends ObjectContract {
   @Override
   public String toCodeString(@Det CompareToAntiSymmetric this) {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" ").append(toCommentString()).append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))");

@@ -112,7 +112,7 @@ public class ListOfLists<T extends @PolyDet Object> implements SimpleList<T>, Se
   public List<T> toJDKList() {
     @PolyDet List<T> result = new @PolyDet ArrayList<>();
     for (@PolyDet("up") SimpleList<T> l : lists) {
-      @SuppressWarnings("determinism") // valid rule relaxation: addAll requires @PolyDet("down") but not in the case of just making a copy
+      @SuppressWarnings({"determinism", "UnusedVariable"}) // valid rule relaxation: addAll requires @PolyDet("down") but not in the case of just making a copy
       boolean dummy = result.addAll(l.toJDKList());
     }
     return result;

@@ -9,7 +9,6 @@ import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
-import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -101,7 +100,7 @@ public final class MethodCall extends CallableOperation {
       Type expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((")
-            .append(expectedType.getName())
+            .append(expectedType.getFqName())
             .append(")")
             .append(receiverString)
             .append(")");
@@ -122,7 +121,7 @@ public final class MethodCall extends CallableOperation {
       // CASTING.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getName()).append(")");
+        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
       }
 
       String param = getArgumentString(inputVars.get(i));
@@ -151,8 +150,8 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
-   *     ExceptionalExecution} if an exception thrown.
+   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
+   *     ExceptionalExecution} if an exception was thrown
    */
   @Override
   @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
@@ -174,11 +173,7 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        if (params[i] != null && params[i].getClass().isArray()) {
-          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
-        } else {
-          Log.logPrintf("  Param %d = %s%n", i, params[i]);
-        }
+        Log.logPrintf("  Param %d = %s%n", i, Log.toStringAndClass(params[i]));
       }
     }
 

@@ -240,7 +240,7 @@ public class SpecificationTranslator {
       List<@PolyDet String> parameterNames) {
     @PolyDet("upDet") Map<@PolyDet String, @PolyDet String> replacementMap = new @PolyDet("upDet") HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
-      String ignore = replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
+      replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
     return replacementMap;
   }

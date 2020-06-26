@@ -57,6 +57,16 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
+  public String getFqName() {
+    return referenceType.getFqName();
+  }
+
+  @Override
+  public String getBinaryName() {
+    return referenceType.getBinaryName();
+  }
+
+  @Override
   public String toString() {
     return referenceType.toString();
   }
@@ -106,14 +116,21 @@ public class ReferenceArgument extends TypeArgument {
     return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return referenceType instanceof CaptureTypeVariable
+        || (referenceType.isParameterized()
+            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable());
+  }
+
   /**
    * Indicates whether a {@code ReferenceArgument} is generic.
    *
    * @return true if the {@link ReferenceType} is generic, false otherwise
    */
   @Override
-  public boolean isGeneric() {
-    return referenceType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return referenceType.isGeneric(ignoreWildcards);
   }
 
   @Override
