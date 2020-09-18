@@ -51,7 +51,7 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @SuppressWarnings("determinism:nondeterministic.tostring") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
-  public ObserverEqValue(@PolyDet TypedOperation observer, Object value) {
+  public ObserverEqValue(@PolyDet TypedOperation observer, @Det Object value) {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
@@ -85,8 +85,6 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings(
-      "determinism:nondeterministic.tostring") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
   public String toCodeString(@Det ObserverEqValue this) {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);

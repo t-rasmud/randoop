@@ -23,7 +23,6 @@ public class Value {
    *     primitive type, a String, or null.
    * @return a string representing code for the given value
    */
-  @RequiresDetToString
   public static String toCodeString(@Det Object value) {
 
     if (value == null) {
@@ -33,7 +32,7 @@ public class Value {
     Type valueType = Type.forClass(value.getClass());
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
-    @SuppressWarnings("determinism") // uses parameter with @RequiresDetToString
+    @SuppressWarnings("determinism") // pre-condition guarantees determinism: argument is an Object, but precondition states it must have a type with a @Det toString method.
     @Det String tmp = value.toString();
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(tmp);

@@ -42,7 +42,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param type the type of the term
    * @param value the value of the term
    */
-  public NonreceiverTerm(Type type, Object value) {
+  public NonreceiverTerm(@Det Type type, @Det Object value) {
     if (type == null) {
       throw new IllegalArgumentException("type should not be null.");
     }
@@ -152,7 +152,6 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param b {@link StringBuilder} to which string representation is appended
    */
   @Override
-  @SuppressWarnings("determinism:nondeterministic.tostring") // underlying value toString is deterministic
   public void appendCode(
       @Det NonreceiverTerm this,
       @Det Type declaringType,

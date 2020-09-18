@@ -31,7 +31,7 @@ public class RawSignature {
   private final String name;
 
   /** The method parameter types. */
-  private final Class<?>[] parameterTypes;
+  private final @PolyDet Class<?>[] parameterTypes;
 
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.

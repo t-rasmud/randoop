@@ -72,7 +72,7 @@ public class StreamRedirectThread extends Thread {
    * @param out stream to copy to
    */
   @SuppressWarnings("ThreadPriorityCheck")
-  public @Det StreamRedirectThread(String name, InputStream in, @Det OutputStream out) {
+  public StreamRedirectThread(String name, @Det InputStream in, @Det OutputStream out) {
     super(name);
     this.in = new InputStreamReader(in, UTF_8);
     this.out = new OutputStreamWriter(out, UTF_8);

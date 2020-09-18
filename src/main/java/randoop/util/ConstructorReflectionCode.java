@@ -3,6 +3,7 @@ package randoop.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
@@ -14,7 +15,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
    * The arguments that the constructor is applied to. If an inner class constructor has a receiver,
    * it is the first element of this array.
    */
-  private final Object @PolyDet [] inputs;
+  private final @PolyDet Object @PolyDet [] inputs;
 
   /**
    * Create a new ConstructorReflectionCode to represent a constructor invocation.
@@ -24,7 +25,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
    *     has a receiver, it is the first element of this array.
    */
   @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
-  public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
+  public ConstructorReflectionCode(@Det Constructor<?> constructor, Object[] inputs) {
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");
     }

@@ -13,6 +13,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
@@ -83,7 +84,7 @@ public class SequenceCompiler {
   public static String classpathToString() {
     StringJoiner result = new StringJoiner(Globals.lineSep);
     ClassLoader cl = ClassLoader.getSystemClassLoader();
-    URL[] urls = ((URLClassLoader) cl).getURLs();
+    @Det URL @Det [] urls = ((URLClassLoader) cl).getURLs();
     for (URL url : urls) {
       result.add(url.getFile());
     }
@@ -99,7 +100,7 @@ public class SequenceCompiler {
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
-      final String packageName, final String classname, final String javaSource) {
+      final String packageName, final String classname, final @Det String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     boolean result = compile(packageName, classname, javaSource, diagnostics);
     if (!result
@@ -107,8 +108,10 @@ public class SequenceCompiler {
         && javaSource.contains(debugCompilationFailure)) {
       StringJoiner sj = new StringJoiner(Globals.lineSep);
       sj.add("isCompilable => false");
-      for (Diagnostic<?> d : diagnostics.getDiagnostics()) {
-        sj.add(d.toString());
+      for (@Det Diagnostic<?> d : diagnostics.getDiagnostics()) {
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic
+        @Det String tmp = d.toString();
+        sj.add(tmp);
       }
       sj.add(javaSource);
       System.out.println(sj.toString());

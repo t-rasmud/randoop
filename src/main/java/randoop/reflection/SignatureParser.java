@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
@@ -154,7 +155,7 @@ public class SignatureParser {
       try {
         method = clazz.getMethod(name, argTypes);
       } catch (NoSuchMethodException e) {
-        StringBuilder b = new StringBuilder();
+        StringBuilder b = new @NonDet StringBuilder();
         b.append(
             String.format(
                 "Class %s found, but method %s(%s) not found for signature %s%n",

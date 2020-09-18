@@ -88,6 +88,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param visibilityPredicate the predicate for test visibility
    */
+  @SuppressWarnings("determinism") // valid rule relaxation: NO_OMISSION is @Det, but the class is immutable so safe to treat it as @PolyDet.
   public OperationExtractor(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,

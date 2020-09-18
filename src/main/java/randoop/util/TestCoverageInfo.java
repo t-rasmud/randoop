@@ -34,7 +34,7 @@ public class TestCoverageInfo {
   }
 
   private String getCoverageInfo() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
     int totalBranchesCovered = 0;
     int totalBranches = 0;
     for (Map.Entry<@PolyDet String, @PolyDet Set<@PolyDet Integer>> entry :

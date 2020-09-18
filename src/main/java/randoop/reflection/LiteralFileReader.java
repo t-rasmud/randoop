@@ -72,8 +72,6 @@ public class LiteralFileReader {
     RecordProcessor processor =
         new RecordProcessor() {
           @Override
-          @SuppressWarnings(
-              "determinism") // https://github.com/typetools/checker-framework/issues/2433
           public void processRecord(List<String> lines) {
 
             if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {
@@ -125,8 +123,8 @@ public class LiteralFileReader {
     throw new Error(e);
   }
 
-  private static void throwRecordSyntaxError(String string, List<String> lines, int i) {
-    StringBuilder b = new StringBuilder();
+  private static void throwRecordSyntaxError(String string, List<@PolyDet String> lines, int i) {
+    StringBuilder b = new @PolyDet StringBuilder();
     b.append("RECORD PROCESSING ERROR: ").append(string).append(Globals.lineSep);
     appendRecord(b, lines, i);
     throw new Error(b.toString());

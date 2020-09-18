@@ -334,7 +334,6 @@ public class ExecutableSequence {
             break;
           } else {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
-            @SuppressWarnings("determinism") // (ignore) error is from code randoop is run on: okay to have nondet toString
             String msg =
                 String.format(
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",

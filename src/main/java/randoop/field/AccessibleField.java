@@ -57,7 +57,7 @@ public class AccessibleField {
    * @return string representing code representation of field
    */
   public String toCode(Type declaringType, @PolyDet List<@PolyDet Variable> inputVars) {
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new @PolyDet StringBuilder();
     if (isStatic) {
       sb.append(declaringType.getCanonicalName());
     } else {

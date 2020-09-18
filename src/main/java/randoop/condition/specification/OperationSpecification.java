@@ -95,9 +95,9 @@ public class OperationSpecification {
     this(
         operation,
         identifiers,
-        new ArrayList<Precondition>(),
-        new ArrayList<Postcondition>(),
-        new ArrayList<ThrowsCondition>());
+        new @PolyDet ArrayList<@PolyDet Precondition>(),
+        new @PolyDet ArrayList<@PolyDet Postcondition>(),
+        new @PolyDet ArrayList<@PolyDet ThrowsCondition>());
   }
 
   /**
@@ -173,7 +173,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link Precondition} objects
    */
-  public void addParamSpecifications(List<Precondition> specifications) {
+  public void addParamSpecifications(List<@PolyDet Precondition> specifications) {
     preSpecifications.addAll(specifications);
   }
 
@@ -182,7 +182,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link Postcondition} objects
    */
-  public void addReturnSpecifications(List<Postcondition> specifications) {
+  public void addReturnSpecifications(List<@PolyDet Postcondition> specifications) {
     postSpecifications.addAll(specifications);
   }
 
@@ -191,7 +191,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link ThrowsCondition} objects
    */
-  public void addThrowsConditions(List<ThrowsCondition> specifications) {
+  public void addThrowsConditions(List<@PolyDet ThrowsCondition> specifications) {
     throwsSpecifications.addAll(specifications);
   }
 

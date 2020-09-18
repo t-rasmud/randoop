@@ -690,7 +690,6 @@ public final class Sequence {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
       @Det Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/178
       RandoopBug tmp =
           new RandoopBug(
               String.format(
@@ -868,7 +867,7 @@ public final class Sequence {
    */
   private String toParsableString(String statementSep) {
     assert statementSep != null;
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
     for (int i = 0; i < size(); i++) {
       @PolyDet Statement sk = getStatement(i);
       @SuppressWarnings("determinism") // forced overriding

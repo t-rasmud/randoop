@@ -79,8 +79,8 @@ public class ClassFileConstants {
     public @PolyDet("upDet") Set<@PolyDet Class<?>> classes = new @PolyDet("upDet") HashSet<>();
 
     @Override
-    public String toString() {
-      StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
+    public @NonDet String toString() {
+      StringJoiner sb = new @NonDet StringJoiner(randoop.Globals.lineSep);
 
       sb.add("START CLASSLITERALS for " + classname);
       for (int x : ints) {
@@ -114,6 +114,7 @@ public class ClassFileConstants {
    * @throws IOException if an error occurs in writing the constants
    * @see randoop.reflection.LiteralFileReader
    */
+  @SuppressWarnings("determinism") // not part of normal program execution
   public static void main(String[] args) throws IOException {
     for (String classname : args) {
       System.out.println(getConstants(classname));

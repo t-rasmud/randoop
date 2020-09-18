@@ -114,7 +114,7 @@ public final class Util {
 
     String indentString = new String(new char @PolyDet [indentWidth]).replace("\0", " ");
 
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
 
     boolean firstLine = true;
     while (true) {
@@ -166,7 +166,7 @@ public final class Util {
     Pattern namesPattern =
         Pattern.compile("\\b(" + UtilPlume.join(replacements.keySet().toArray(), "|") + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
     int position = 0;
     while (namesMatcher.find(position)) {
       b.append(text.substring(position, namesMatcher.start(1)));

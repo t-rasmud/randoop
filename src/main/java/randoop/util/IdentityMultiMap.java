@@ -8,6 +8,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** A multi-map using key identity rather than equality. */
+@SuppressWarnings("determinism") // not type checking this collection
 @HasQualifierParameter(NonDet.class)
 public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Object> {
 
@@ -16,7 +17,7 @@ public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Obje
 
   /** Creates an empty multi-map. */
   public IdentityMultiMap() {
-    map = new @PolyDet IdentityHashMap<>();
+    map = new IdentityHashMap<>();
   }
 
   /**

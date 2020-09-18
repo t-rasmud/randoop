@@ -35,7 +35,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   private final String name;
 
   /** The parameter types. */
-  private final Type[] paramTypes;
+  private final @PolyDet Type[] paramTypes;
 
   /**
    * Cached {@link org.apache.bcel.classfile.Method} object for this {@link MethodSignature}. Is set

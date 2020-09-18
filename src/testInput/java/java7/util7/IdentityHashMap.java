@@ -132,6 +132,7 @@ import java.util.Iterator;
  * @since   1.4
  */
 
+ @SuppressWarnings("determinism") // not type checking this collection
 public class IdentityHashMap<K,V>
     extends AbstractMap<K,V>
     implements Map<K,V>, java.io.Serializable, Cloneable

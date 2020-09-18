@@ -272,7 +272,7 @@ public class ExecutableBooleanExpression {
    */
   private static String getCompilerErrorMessage(
       List<Diagnostic<? extends JavaFileObject>> diagnostics, String classText) {
-    StringBuilder msg = new StringBuilder("Condition method did not compile:");
+    StringBuilder msg = new @PolyDet StringBuilder("Condition method did not compile:");
     msg.append(Globals.lineSep);
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {

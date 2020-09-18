@@ -1,16 +1,21 @@
 package randoop.instrument;
 
+import org.checkerframework.checker.determinism.qual.NonDet;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
+
 /** Exception representing an error in a replacement file. */
+@HasQualifierParameter(NonDet.class)
 class ReplacementFileException extends Throwable {
 
   /** The name of the replacement file in which the error occurred. */
-  private final String filename;
+  private final @PolyDet String filename;
 
   /** The line of the file where the error occurred. */
-  private final int lineNumber;
+  private final @PolyDet int lineNumber;
 
   /** The text of the line where the error occurred. */
-  private final String lineText;
+  private final @PolyDet String lineText;
 
   /**
    * Creates a {@link ReplacementFileException} with the message.
