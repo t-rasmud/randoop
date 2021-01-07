@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import org.checkerframework.checker.determinism.qual.Det;
-import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import randoop.CheckRep;
 import randoop.util.Log;
 
@@ -25,7 +25,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * The set of fully-qualified field names to omit from generated tests. See {@link
    * randoop.main.GenInputsAbstract#omit_field}.
    */
-  private Collection<@PolyDet String> omitFields;
+  private Collection<String> omitFields;
 
   /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
@@ -38,7 +38,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitFields set of fully-qualified field names to omit
    */
-  public DefaultReflectionPredicate(@PolyDet Collection<@PolyDet String> omitFields) {
+  public DefaultReflectionPredicate(@Det Collection<@Det String> omitFields) {
     super();
     this.omitFields = omitFields;
   }

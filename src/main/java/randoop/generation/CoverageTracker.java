@@ -53,7 +53,6 @@ public class CoverageTracker {
    *
    * @param classInterfaceTypes all the classes under test
    */
-  @SuppressWarnings("determinism") // iterating @PolyDet collection to create another
   public CoverageTracker(Set<@PolyDet ClassOrInterfaceType> classInterfaceTypes) {
     for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
       classesUnderTest.add(classOrInterfaceType.getRuntimeClass().getName());

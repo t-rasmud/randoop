@@ -15,19 +15,19 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
 public class GenericClassType extends ParameterizedType {
 
   /** The rawtype of the generic class. */
-  private Class<?> rawType;
+  private @Det Class<?> rawType;
 
   /** The type parameters of the generic class. */
-  private List<@PolyDet TypeVariable> parameters;
+  private List<TypeVariable> parameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
    *
    * @param rawType the {@code Class} raw type
    */
-  GenericClassType(@PolyDet Class<?> rawType) {
+  GenericClassType(@Det Class<?> rawType) {
     this.rawType = rawType;
-    this.parameters = new @PolyDet ArrayList<>();
+    this.parameters = new ArrayList<>();
 
     for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
       @PolyDet TypeVariable variable = TypeVariable.forType(v);

@@ -35,7 +35,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
-  CaptureTypeVariable(@PolyDet WildcardArgument wildcard) {
+  CaptureTypeVariable(@Det WildcardArgument wildcard) {
     super();
     this.varID = count++;
     this.wildcard = wildcard;
@@ -56,8 +56,8 @@ class CaptureTypeVariable extends TypeVariable {
    * @param upperBound the upper type bound of the variable
    */
   private CaptureTypeVariable(
-      int varID,
-      @PolyDet WildcardArgument wildcard,
+      @Det int varID,
+      @Det WildcardArgument wildcard,
       ParameterBound lowerBound,
       ParameterBound upperBound) {
     super(lowerBound, upperBound);
@@ -116,8 +116,6 @@ class CaptureTypeVariable extends TypeVariable {
    * @param typeParameter the formal type parameter of the generic type
    * @param substitution the capture conversion substitution
    */
-  @SuppressWarnings(
-      "determinism") // valid rule relaxation: can pass @Det receiver to @PolyDet method setUpperBound here because no chance of aliasing.
   public void convert(
       @Det CaptureTypeVariable this,
       @Det TypeVariable typeParameter,
@@ -127,7 +125,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
-      @PolyDet List<@PolyDet ParameterBound> boundList = new @PolyDet ArrayList<>();
+      @Det List<@Det ParameterBound> boundList = new @Det ArrayList<>();
       boundList.add(parameterBound);
       boundList.add(getUpperTypeBound());
       setUpperBound(new IntersectionTypeBound(boundList));
@@ -182,7 +180,7 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
+  public @Det TypeVariable createCopyWithBounds(@Det CaptureTypeVariable this, @Det ParameterBound lowerBound, @Det ParameterBound upperBound) {
     return new CaptureTypeVariable(this.varID, this.wildcard, lowerBound, upperBound);
   }
 }

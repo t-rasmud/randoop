@@ -89,9 +89,8 @@ public class ReplaceCallAgent {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
-        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
+        @Det String @Det[] target_args = options.parse(true, Options.tokenize(agentArgs));
         if (target_args.length > 0) {
-          @SuppressWarnings("determinism") // Arrays.toString deterministic in this case
           @Det String tmp = Arrays.toString(target_args);
           System.err.printf("Unexpected agent arguments %s%n", tmp);
           System.exit(1); // Exit on bad user input.

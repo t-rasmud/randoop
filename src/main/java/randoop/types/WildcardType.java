@@ -29,7 +29,7 @@ class WildcardType extends ParameterType {
     this.hasUpperBound = false;
   }
 
-  WildcardType(ParameterBound bound, boolean hasUpperBound) {
+  WildcardType(ParameterBound bound, @Det boolean hasUpperBound) {
     super();
     this.hasUpperBound = hasUpperBound;
     if (hasUpperBound) {

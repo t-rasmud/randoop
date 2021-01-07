@@ -35,7 +35,7 @@ public class ArrayType extends ReferenceType {
    * @param componentType the component type
    * @param runtimeClass the runtime class
    */
-  private ArrayType(Type componentType, Class<?> runtimeClass) {
+  private ArrayType(@Det Type componentType, @Det Class<?> runtimeClass) {
     this.componentType = componentType;
     this.runtimeClass = runtimeClass;
   }
@@ -87,7 +87,7 @@ public class ArrayType extends ReferenceType {
    * @param componentType the component type
    * @return an {@code ArrayType} with the given component type
    */
-  public static ArrayType ofComponentType(Type componentType) {
+  public static ArrayType ofComponentType(@Det Type componentType) {
     if (componentType instanceof TypeVariable) {
       return new ArrayType(componentType, Array.newInstance(Object.class, 0).getClass());
     }

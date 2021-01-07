@@ -242,7 +242,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  @SuppressWarnings("determinism") // process is order insensitive
+
   public InstantiatedType getMatchingSupertype(
       @Det ClassOrInterfaceType this, @Det GenericClassType goalType) {
     if (goalType.isInterface()) {

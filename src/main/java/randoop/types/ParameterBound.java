@@ -47,7 +47,7 @@ public abstract class ParameterBound {
    * @param type the {@link ReferenceType}
    * @return a {@link EagerReferenceBound} with the given type
    */
-  public static ParameterBound forType(ReferenceType type) {
+  public static ParameterBound forType(@Det ReferenceType type) {
     return new EagerReferenceBound(type);
   }
 
@@ -62,8 +62,8 @@ public abstract class ParameterBound {
    * @param bounds the type bounds
    * @return the {@code ParameterBound} for the given types
    */
-  static @PolyDet("up") ParameterBound forTypes(
-      Set<java.lang.reflect.@PolyDet("down") TypeVariable<?>> variableSet,
+  static @Det ParameterBound forTypes(
+      @Det Set<java.lang.reflect.@Det TypeVariable<?>> variableSet,
       java.lang.reflect.@Det Type @Det [] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non-null");
@@ -72,7 +72,7 @@ public abstract class ParameterBound {
     if (bounds.length == 1) {
       return ParameterBound.forType(variableSet, bounds[0]);
     } else {
-      @PolyDet List<@PolyDet ParameterBound> boundList = new @PolyDet ArrayList<>();
+      @Det List<@Det ParameterBound> boundList = new @Det ArrayList<>();
       for (java.lang.reflect.Type type : bounds) {
         boundList.add(ParameterBound.forType(variableSet, type));
       }

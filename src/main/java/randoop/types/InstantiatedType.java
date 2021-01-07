@@ -23,7 +23,7 @@ public class InstantiatedType extends ParameterizedType {
   private final GenericClassType instantiatedType;
 
   /** The type arguments for this class. */
-  private final List<@PolyDet TypeArgument> argumentList;
+  private final @Det List<@Det TypeArgument> argumentList;
 
   /**
    * Create a parameterized type from the generic class type.
@@ -33,8 +33,8 @@ public class InstantiatedType extends ParameterizedType {
    * @throws IllegalArgumentException if either argument is null
    */
   InstantiatedType(
-      @PolyDet GenericClassType instantiatedType,
-      @PolyDet List<@PolyDet TypeArgument> argumentList) {
+      @Det GenericClassType instantiatedType,
+      @Det List<@Det TypeArgument> argumentList) {
     if (instantiatedType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }

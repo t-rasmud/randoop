@@ -24,14 +24,14 @@ import org.plumelib.util.UtilPlume;
 class IntersectionTypeBound extends ParameterBound {
 
   /** the list of type bounds for the intersection bound */
-  private List<@PolyDet ParameterBound> boundList;
+  private List<@Det ParameterBound> boundList;
 
   /**
    * Create an intersection type bound from the list of type bounds.
    *
    * @param boundList the list of type bounds
    */
-  IntersectionTypeBound(@PolyDet List<@PolyDet ParameterBound> boundList) {
+  IntersectionTypeBound(@Det List<@Det ParameterBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }

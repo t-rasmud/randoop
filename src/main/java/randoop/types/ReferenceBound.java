@@ -16,7 +16,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param boundType the {@link ReferenceType} of this bound
    */
-  ReferenceBound(@PolyDet ReferenceType boundType) {
+  ReferenceBound(@Det ReferenceType boundType) {
     this.boundType = boundType;
   }
 

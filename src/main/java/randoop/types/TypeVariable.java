@@ -160,14 +160,14 @@ public abstract class TypeVariable extends ParameterType {
    * @return this variable
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
 
   public abstract TypeVariable createCopyWithBounds(
-      ParameterBound lowerBound, ParameterBound upperBound);
+      @Det TypeVariable this, @Det ParameterBound lowerBound, @Det ParameterBound upperBound);
 
   @Override
   public Type getRawtype(@Det TypeVariable this) {
