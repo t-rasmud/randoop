@@ -57,7 +57,7 @@ public class OmitMethodsPredicate {
 
   /** An OmitMethodsPredicate that does no omission. */
   public static final @Det OmitMethodsPredicate NO_OMISSION =
-      new OmitMethodsPredicate(new ArrayList<>());
+      new OmitMethodsPredicate(new @Det ArrayList<>());
 
   /** {@code Pattern}s to match operations that should be omitted. Never side-effected. */
   private final List<@PolyDet Pattern> omitPatterns;
@@ -106,7 +106,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature of the constructor is matched by an omit pattern, false otherwise
    */
   // * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
-  private boolean shouldOmitConstructor(TypedClassOperation operation) {
+  private boolean shouldOmitConstructor(@Det TypedClassOperation operation) {
     return shouldOmitExact(operation);
   }
 
@@ -196,7 +196,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   // TODO: Choose a better name for this helper method, that reflects its semantics.
-  private boolean shouldOmitExact(TypedClassOperation operation) {
+  private boolean shouldOmitExact(@Det TypedClassOperation operation) {
     if (logOmit) {
       Log.logPrintf("shouldOmitExact(%s)%n", operation);
     }

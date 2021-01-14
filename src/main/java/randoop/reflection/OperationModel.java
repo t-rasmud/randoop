@@ -325,8 +325,8 @@ public class OperationModel {
    * @return a map from each class type to its methods and constructors that were read from the file
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedClassOperation> readOperations(
-      @Nullable Path file, boolean ignoreParseError) throws OperationParseException {
+  public static @Det MultiMap<Type, TypedClassOperation> readOperations(
+      @Nullable @Det Path file, boolean ignoreParseError) throws OperationParseException {
     if (file != null) {
       try (@Det EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         return OperationModel.readOperations(er, ignoreParseError);
@@ -346,7 +346,7 @@ public class OperationModel {
    * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
    * @return contents of the file, as a map from classes to operations
    */
-  private static MultiMap<Type, TypedClassOperation> readOperations(
+  private static @Det MultiMap<Type, TypedClassOperation> readOperations(
       @Det EntryReader er, boolean ignoreParseError) {
     @Det MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
@@ -394,8 +394,8 @@ public class OperationModel {
    * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
    * @return contents of the file, as a map from classes to operations
    */
-  public static MultiMap<Type, TypedClassOperation> readOperations(
-      InputStream is, String filename, boolean ignoreParseError) {
+  public static @Det MultiMap<Type, TypedClassOperation> readOperations(
+      @Det InputStream is, @Det String filename, boolean ignoreParseError) {
     if (is == null) {
       throw new RandoopBug("input stream is null for file " + filename);
     }
@@ -681,11 +681,11 @@ public class OperationModel {
       @Det VisibilityPredicate visibility,
       @Det ReflectionPredicate reflectionPredicate,
       @Det SpecificationCollection operationSpecifications) {
-    Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
+    Iterator<@Det ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
       try {
-        Collection<TypedOperation> oneClassOperations =
+        Collection<@Det TypedOperation> oneClassOperations =
             OperationExtractor.operations(
                 classType,
                 reflectionPredicate,

@@ -279,7 +279,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
-    InputStream inputStream = GenTests.class.getResourceAsStream(omitClassesDefaultsFileName);
+    Class<@Det GenTests> tmpCls = GenTests.class;
+    InputStream inputStream = tmpCls.getResourceAsStream(omitClassesDefaultsFileName);
     omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
@@ -974,7 +975,8 @@ public class GenTests extends GenInputsAbstract {
    * @return contents of the resource, as a list of Patterns
    */
   private List<Pattern> readPatternsFromResource(String filename) {
-    InputStream inputStream = GenTests.class.getResourceAsStream(filename);
+    Class<@Det GenTests> tmpCls = GenTests.class;
+    InputStream inputStream = tmpCls.getResourceAsStream(filename);
     return readPatterns(inputStream, filename);
   }
 

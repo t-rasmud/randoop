@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -21,6 +22,7 @@ import org.plumelib.util.UtilPlume;
  * preserves the order of the types. In a capture conversion, if both types are classes, one must be
  * a subclass of the other.
  */
+@HasQualifierParameter(NonDet.class)
 class IntersectionTypeBound extends ParameterBound {
 
   /** the list of type bounds for the intersection bound */

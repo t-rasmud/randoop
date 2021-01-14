@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.Det;
 
 /**
@@ -72,4 +73,7 @@ public interface ClassVisitor {
    * @param c the class to visit
    */
   void visitAfter(Class<?> c);
+
+  @Override
+  @PolyDet String toString();
 }

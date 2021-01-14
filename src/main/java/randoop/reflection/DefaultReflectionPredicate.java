@@ -7,7 +7,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import randoop.CheckRep;
 import randoop.util.Log;
 
@@ -19,6 +21,7 @@ import randoop.util.Log;
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).
  */
+@HasQualifierParameter(NonDet.class)
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   /**

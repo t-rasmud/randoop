@@ -572,7 +572,7 @@ public class TypeInstantiator {
    */
   private ParameterBound getLowerBound(@Det TypeInstantiator this, TypeVariable argument) {
     ParameterBound lowerBound = argument.getLowerTypeBound();
-    List<TypeVariable> parameters = lowerBound.getTypeParameters();
+    @PolyDet List<@PolyDet TypeVariable> parameters = lowerBound.getTypeParameters();
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
       return lowerBound;
     }

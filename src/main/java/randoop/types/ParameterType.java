@@ -7,18 +7,20 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
  * wildcard types. Manages both upper and lower type bounds.
  */
+@HasQualifierParameter(NonDet.class)
 public abstract class ParameterType extends ReferenceType {
 
   /** The lower bound on this type. */
-  private ParameterBound lowerBound;
+  private @PolyDet ParameterBound lowerBound;
 
   /** The upper bound on this type. */
-  private ParameterBound upperBound;
+  private @PolyDet ParameterBound upperBound;
 
   ParameterType() {
     this.lowerBound = new EagerReferenceBound(JavaTypes.NULL_TYPE);

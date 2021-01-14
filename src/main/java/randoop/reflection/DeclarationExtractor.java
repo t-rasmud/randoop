@@ -48,11 +48,11 @@ public class DeclarationExtractor extends DefaultClassVisitor {
    * @return the classes that result from running a visitor
    */
   public static Set<ClassOrInterfaceType> classTypes(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det Class<?> c,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
-    Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
+    Set<@Det ClassOrInterfaceType> result = new LinkedHashSet<>();
     typeManager.apply(new DeclarationExtractor(result, reflectionPredicate), c);
     return result;
   }

@@ -149,7 +149,7 @@ public class Identifiers {
 
   @Override
   public String toString() {
-    return "{ \"receiverName\": "
+    @PolyDet String tmp = "{ \"receiverName\": "
         + "\""
         + receiverName
         + "\""
@@ -162,5 +162,6 @@ public class Identifiers {
         + returnName
         + "\""
         + " }";
+    return tmp;
   }
 }

@@ -606,8 +606,8 @@ public class Minimize extends CommandHandler {
   private static void primitiveVarEquality(
       Expression exp1,
       Expression exp2,
-      Map<String, String> primitiveValues,
-      Set<String> primitiveAndWrappedTypeVars) {
+      @OrderNonDet Map<String, String> primitiveValues,
+      @OrderNonDet Set<String> primitiveAndWrappedTypeVars) {
 
     NameExpr name;
     Expression val;

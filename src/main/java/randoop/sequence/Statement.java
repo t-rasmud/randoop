@@ -53,7 +53,7 @@ public final class Statement {
    * @param operation the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
-    this(operation, new ArrayList<RelativeNegativeIndex>());
+    this(operation, new @PolyDet ArrayList<@PolyDet RelativeNegativeIndex>());
   }
 
   /**
@@ -125,7 +125,7 @@ public final class Statement {
 
   public @PolyDet("up") String toParsableString(
       String variableName, List<@PolyDet Variable> inputs) {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
     b.append(variableName);
     b.append(" =  ");
     b.append(operation.getClass().getSimpleName());
@@ -227,10 +227,9 @@ public final class Statement {
   // Do not use the short output format if the value is null, because
   // the variable type may disambiguate among overloaded methods.
   // (It would be even nicer to add a cast where the null is used.)
-  public @NonDet String getInlinedForm(@Det Statement this) {
+  public @Det String getInlinedForm(@Det Statement this) {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
-      @SuppressWarnings("determinism") // uses @NonDet toString, but effect reflected in return value
-      @NonDet String tmp = Value.toCodeString(operation.getValue());
+      @Det String tmp = Value.toCodeString(operation.getValue());
       return tmp;
     }
     return null;

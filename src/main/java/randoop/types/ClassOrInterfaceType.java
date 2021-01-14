@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import java.util.Queue;
 import randoop.util.Log;
 
@@ -38,7 +39,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
    * static type).
    */
-  protected ClassOrInterfaceType enclosingType = null;
+  protected @PolyDet ClassOrInterfaceType enclosingType = null;
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -275,7 +276,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  @SuppressWarnings("determinism") // process is order insensitive
   public InstantiatedType getMatchingSupertype(
       @Det ClassOrInterfaceType this, @Det GenericClassType goalType) {
     if (goalType.isInterface()) {
@@ -397,10 +397,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return all supertypes of this type, including itself
    */
-  public Collection<ClassOrInterfaceType> getAllSupertypesInclusive() {
-    LinkedHashSet<ClassOrInterfaceType> result = new LinkedHashSet<>();
+  public Collection<ClassOrInterfaceType> getAllSupertypesInclusive(@Det ClassOrInterfaceType this) {
+    LinkedHashSet<@Det ClassOrInterfaceType> result = new LinkedHashSet<>();
 
-    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>();
+    Queue<@Det ClassOrInterfaceType> worklist = new ArrayDeque<>();
     worklist.add(this);
     while (!worklist.isEmpty()) {
       ClassOrInterfaceType type = worklist.remove();
@@ -576,7 +576,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @param enclosingType the type for the class enclosing the declaration of this type
    */
-  protected void setEnclosingType(ClassOrInterfaceType enclosingType) {
+  protected void setEnclosingType(@PolyDet ClassOrInterfaceType enclosingType) {
     this.enclosingType = enclosingType;
   }
 

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.determinism.qual.Det;
+import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import java.util.List;
 import java.util.StringJoiner;
@@ -117,12 +119,12 @@ public final class Log {
     } else if (v.getClass().isArray()) {
       return arrayToStringAndClass(v);
     } else if (v instanceof List) {
-      return listToStringAndClass((List<?>) v, shallow);
+      return listToStringAndClass((List<? extends @PolyDet Object>) v, shallow);
     } else {
       try {
-        String formatted = UtilPlume.escapeJava(v.toString());
-        return String.format("%s [%s]", formatted, v.getClass());
-      } catch (Exception e) {
+        @SuppressWarnings("determinism") // underlying value toString is deterministic: v is a value, which implies primitive type or String
+        @Det String formatted = UtilPlume.escapeJava(v.toString());
+        return String.format("%s [%s]", formatted, v.getClass()); } catch (Exception e) {
         return String.format("exception_when_calling_toString [%s]", v.getClass());
       }
     }
@@ -137,7 +139,8 @@ public final class Log {
    * @return the value's toString and its class
    */
   @SideEffectFree
-  public static String listToStringAndClass(List<?> lst, boolean shallow) {
+  @SuppressWarnings("determinism") // underlying value toString is deterministic: lst contains values, which have @Det toString methods
+  public static String listToStringAndClass(List<? extends @PolyDet Object> lst, boolean shallow) {
     if (lst == null) {
       return "null";
     } else {
@@ -154,7 +157,7 @@ public final class Log {
    * @return a string representation of each element and its class
    */
   @SideEffectFree
-  public static String listToString(List<?> lst, boolean shallow) {
+  public static @NonDet String listToString(List<? extends @PolyDet Object> lst, boolean shallow) {
     if (lst == null) {
       return "null";
     } else if (shallow) {
@@ -186,26 +189,36 @@ public final class Log {
     String theClass = " [" + a.getClass() + "]";
 
     if (a instanceof boolean[]) {
-      return Arrays.toString((boolean[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((boolean[]) a) + theClass;
+      return tmp;
     } else if (a instanceof byte[]) {
-      return Arrays.toString((byte[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((byte[]) a) + theClass;
+      return tmp;
     } else if (a instanceof char[]) {
-      return Arrays.toString((char[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((char[]) a) + theClass;
+      return tmp;
     } else if (a instanceof double[]) {
-      return Arrays.toString((double[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((double[]) a) + theClass;
+      return tmp;
     } else if (a instanceof float[]) {
-      return Arrays.toString((float[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((float[]) a) + theClass;
+      return tmp;
     } else if (a instanceof int[]) {
-      return Arrays.toString((int[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((int[]) a) + theClass;
+      return tmp;
     } else if (a instanceof long[]) {
-      return Arrays.toString((long[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((long[]) a) + theClass;
+      return tmp;
     } else if (a instanceof short[]) {
-      return Arrays.toString((short[]) a) + theClass;
+      @PolyDet String tmp = Arrays.toString((short[]) a) + theClass;
+      return tmp;
     }
 
     if (a instanceof Object[]) {
       try {
-        return listToString(Arrays.asList((Object[]) a), false) + theClass;
+        @SuppressWarnings("determinism") // underlying value toString is deterministic: the array will containd values, which have @Det toString
+        @PolyDet String tmp = listToString(Arrays.asList((Object[]) a), false) + theClass;
+        return tmp;
       } catch (Exception e) {
         return String.format("exception_when_printing_array" + theClass);
       }

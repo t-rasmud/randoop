@@ -58,7 +58,7 @@ public final class ConstructorCall extends CallableOperation {
   /** Returns concise string representation of this ConstructorCall. */
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
     b.append(constructor.getName());
     b.append("(");
     Class<?>[] types = constructor.getParameterTypes();
@@ -201,7 +201,7 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new @PolyDet StringBuilder();
     sb.append(constructor.getName()).append(".<init>(");
     @PolyDet Class<?> @PolyDet [] params = constructor.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);

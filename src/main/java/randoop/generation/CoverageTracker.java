@@ -58,7 +58,7 @@ public class CoverageTracker {
    * @param classInterfaceTypes all the classes under test
    */
   public CoverageTracker(Set<@PolyDet ClassOrInterfaceType> classInterfaceTypes) {
-    for (@PolyDet ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
+    for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
       @SuppressWarnings("signature") // class is non-array, so getName() returns @BinaryName
       @BinaryName String bn = classOrInterfaceType.getRuntimeClass().getName();
       classesUnderTest.add(bn);

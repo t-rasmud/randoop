@@ -335,7 +335,6 @@ public class ExecutableSequence {
             break;
           } else {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
-            @SuppressWarnings("determinism") // (ignore) error is from code randoop is run on: okay to have nondet toString
             String msg =
                 String.format(
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
@@ -405,7 +404,6 @@ public class ExecutableSequence {
           : execution.get(creatingStatementIdx).getClass();
       @SuppressWarnings("determinism") // collection mutated with other collection: iterating over @PolyDet collection to create another
       @PolyDet NormalExecution ne = (NormalExecution) execution.get(creatingStatementIdx);
-      @SuppressWarnings("determinism") // valid rule relaxation: no unintended aliasing, so assignment valid
       @PolyDet Object tmp = ne.getRuntimeValue();
       runtimeObjects[j] = tmp;
     }

@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.List;
 import randoop.Globals;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 
 public class SequenceParseException extends Exception {
 
@@ -10,7 +11,7 @@ public class SequenceParseException extends Exception {
 
   public SequenceParseException(String msg, List<String> statements, int statementCount) {
 
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new @PolyDet StringBuilder();
     b.append(
         "Error while parsing the following list of strings as a sequence (error was at index "
             + statementCount

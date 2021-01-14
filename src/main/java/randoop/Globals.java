@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 import randoop.main.RandoopBug;
+import org.checkerframework.checker.determinism.qual.Det;
 
 /** Various general global variables used throughout Randoop. */
 public class Globals {
@@ -44,7 +45,8 @@ public class Globals {
     if (isRelease) {
       return RANDOOP_VERSION;
     }
-    InputStream inputStream = Globals.class.getResourceAsStream("/git.properties");
+    Class<@Det Globals> tmp = Globals.class;
+    InputStream inputStream = tmp.getResourceAsStream("/git.properties");
     try {
       prop.load(inputStream);
     } catch (IOException e) {

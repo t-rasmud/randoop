@@ -125,8 +125,8 @@ public class LiteralFileReader {
     throw new Error(e);
   }
 
-  private static void throwRecordSyntaxError(String string, List<String> lines, int i) {
-    StringBuilder b = new StringBuilder();
+  private static void throwRecordSyntaxError(String string, List<@PolyDet String> lines, int i) {
+    StringBuilder b = new @PolyDet StringBuilder();
     b.append("RECORD PROCESSING ERROR: ").append(string).append(Globals.lineSep);
     appendRecord(b, lines, i);
     throw new Error(b.toString());

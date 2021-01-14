@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.RequiresDetToString;
 import org.plumelib.util.UtilPlume;
@@ -27,7 +28,6 @@ public class Value {
    *     primitive type, a String, or null.
    * @return a string representing code for the given value
    */
-  @RequiresDetToString
   public static String toCodeString(@Det Object value) {
 
     if (value == null) {
@@ -37,10 +37,10 @@ public class Value {
     Type valueType = Type.forClass(value.getClass());
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
-    @SuppressWarnings("determinism") // uses parameter with @RequiresDetToString
+    @SuppressWarnings("determinism") // underlying value toString is deterministic: value is a primitive, String, or null (see method comment)
     @Det String tmp = value.toString();
     if (valueType.isString()) {
-      String escaped = UtilPlume.escapeJava(value.toString());
+      String escaped = UtilPlume.escapeJava(tmp);
       if (!stringLengthOk(escaped)) {
         throw new StringTooLongException(escaped);
       }
@@ -61,7 +61,7 @@ public class Value {
       if (value.equals(' ')) {
         return "' '";
       }
-      return "\'" + UtilPlume.escapeJava(value.toString()) + "\'";
+      return "\'" + UtilPlume.escapeJava(tmp) + "\'";
     }
 
     if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
@@ -193,13 +193,14 @@ public class Value {
    * @return true if the string length is reasonable for generated tests, false otherwise
    * @see GenInputsAbstract#string_maxlen
    */
-  public static boolean escapedStringLengthOk(@Det String s) {
+  public static boolean escapedStringLengthOk(@PolyDet String s) {
     if (s == null) {
       throw new IllegalArgumentException();
     }
 
     // Optimization: return cached value if available.
     // String caches its hash code, so this is a cheap operation.
+    @SuppressWarnings("determinism") // valid rule relaxation: okay to modify cache with @PolyDet
     Boolean b = escapedStringLengthOkCached.get(s);
     if (b != null) {
       return b;
@@ -221,7 +222,8 @@ public class Value {
     }
 
     boolean result = stringLengthOk(UtilPlume.escapeJava(s));
-    escapedStringLengthOkCached.put(s, result);
+    @SuppressWarnings({"determinism", "UnusedVariable"}) // valid rule relaxation: okay to modify cache with @PolyDet
+    boolean tmp = escapedStringLengthOkCached.put(s, result);
     return result;
   }
 

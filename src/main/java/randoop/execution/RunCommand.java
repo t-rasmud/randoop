@@ -138,7 +138,7 @@ public class RunCommand {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
+      StringBuilder sb = new @PolyDet StringBuilder();
       sb.append(
           String.format(
               "Status %d (timedOut=%s) for command \"%s\"",

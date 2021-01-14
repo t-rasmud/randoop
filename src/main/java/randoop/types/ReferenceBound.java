@@ -4,12 +4,14 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
+@HasQualifierParameter(NonDet.class)
 public abstract class ReferenceBound extends ParameterBound {
 
   /** The type for this bound. */
-  private final ReferenceType boundType;
+  private final @PolyDet ReferenceType boundType;
 
   /**
    * Creates a {@link ReferenceBound} with the given bound type.

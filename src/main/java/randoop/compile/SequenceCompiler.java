@@ -18,6 +18,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.PolyDet;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
@@ -89,7 +90,7 @@ public class SequenceCompiler {
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
-      final String packageName, final String classname, final String javaSource) {
+      final @Det String packageName, final @Det String classname, final @Det String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     boolean result = compile(packageName, classname, javaSource, diagnostics);
 

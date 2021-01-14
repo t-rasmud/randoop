@@ -154,7 +154,6 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception was thrown
    */
   @Override
-  @SuppressWarnings("determinism") // uses a parameter with @RequiresDetToString
   @RequiresDetToString
   public @Det ExecutionOutcome execute(@Det MethodCall this, @Det Object @Det [] input) {
 
@@ -201,7 +200,7 @@ public final class MethodCall extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new @PolyDet StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
     @PolyDet Class<?> @PolyDet [] params = method.getParameterTypes();

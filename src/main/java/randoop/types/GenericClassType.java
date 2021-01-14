@@ -7,11 +7,13 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
  * instantiating with a {@link Substitution}.
  */
+@HasQualifierParameter(NonDet.class)
 public class GenericClassType extends ParameterizedType {
 
   /** The rawtype of the generic class. */

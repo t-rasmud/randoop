@@ -161,7 +161,7 @@ public class WildcardArgument extends TypeArgument {
     if (otherArgument instanceof ReferenceArgument) {
       ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
       if (otherReferenceType instanceof CaptureTypeVariable) {
-        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
+        @Det CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
         if (this.equals(otherCaptureTypeVar.getWildcard())) {
           return true;
         }
@@ -171,7 +171,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public @Det Substitution getInstantiatingSubstitution(@Det WildcardArgument this, @Det TypeArgument goalType) {
     if (this.equals(goalType)) {
       return new Substitution();
     }
@@ -183,7 +183,7 @@ public class WildcardArgument extends TypeArgument {
     if (goalType instanceof ReferenceArgument) {
       ReferenceType otherReferenceType = ((ReferenceArgument) goalType).getReferenceType();
       if (otherReferenceType instanceof CaptureTypeVariable) {
-        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
+        @Det CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
         return this.getInstantiatingSubstitution(otherCaptureTypeVar.getWildcard());
       }
     }

@@ -108,7 +108,7 @@ public class OperationSignature {
    *     parameter types
    */
   public static OperationSignature forMethodName(
-      @ClassGetName String classname, String name, List<@ClassGetName String> parameterTypes) {
+      @ClassGetName String classname, String name, List<@PolyDet @ClassGetName String> parameterTypes) {
     return new OperationSignature(classname, name, parameterTypes);
   }
 

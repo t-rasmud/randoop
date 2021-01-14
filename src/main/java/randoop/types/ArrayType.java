@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * Represents an array type as defined in JLS, Section 4.3.
@@ -21,13 +22,14 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
  * The type preceding the rightmost set of brackets is the <i>component</i> type, while the type
  * preceding the brackets is the <i>element</i> type. An array may have components of any type.
  */
+@HasQualifierParameter(NonDet.class)
 public class ArrayType extends ReferenceType {
 
   /** The type of components in this array. */
-  private final Type componentType;
+  private final @PolyDet Type componentType;
 
   /** The runtime type for this array. */
-  private final Class<?> runtimeClass;
+  private final @PolyDet Class<?> runtimeClass;
 
   /**
    * Creates an {@code ArrayType} with the given component type and runtime class.
@@ -87,7 +89,7 @@ public class ArrayType extends ReferenceType {
    * @param componentType the component type
    * @return an {@code ArrayType} with the given component type
    */
-  public static ArrayType ofComponentType(Type componentType) {
+  public static @PolyDet ArrayType ofComponentType(Type componentType) {
     if (componentType instanceof TypeVariable) {
       return new ArrayType(componentType, Array.newInstance(Object.class, 0).getClass());
     }
@@ -113,7 +115,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public ArrayType substitute(@Det ArrayType this, @Det Substitution substitution) {
+  public @Det ArrayType substitute(@Det ArrayType this, @Det Substitution substitution) {
     Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);

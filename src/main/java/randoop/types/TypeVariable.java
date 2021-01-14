@@ -160,7 +160,7 @@ public abstract class TypeVariable extends ParameterType {
    * @return this variable
    */
   @Override
-  public List<TypeVariable> getTypeParameters() {
+  public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);

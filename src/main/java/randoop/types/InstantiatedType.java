@@ -8,6 +8,7 @@ import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -17,6 +18,7 @@ import org.checkerframework.checker.determinism.qual.PolyDet;
  * from {@link java.lang.reflect.Type} interfaces is handled by {@link
  * Type#forType(java.lang.reflect.Type)}.
  */
+@HasQualifierParameter(NonDet.class)
 public class InstantiatedType extends ParameterizedType {
 
   /** The generic class for this type. Its enclosing type is instantiated (or is not generic). */
@@ -56,8 +58,9 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
-    return genericType.equals(other.getGenericClassType())
+    @PolyDet boolean tmp = genericType.equals(other.getGenericClassType())
         && argumentList.equals(other.argumentList);
+    return tmp;
   }
 
   @Override
@@ -273,7 +276,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean hasCaptureVariable() {
-    for (TypeArgument argument : argumentList) {
+    for (@PolyDet("up") TypeArgument argument : argumentList) {
       if (argument.hasCaptureVariable()) {
         return true;
       }

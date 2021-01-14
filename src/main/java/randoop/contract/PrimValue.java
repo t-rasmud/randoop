@@ -56,7 +56,7 @@ public final class PrimValue extends ObjectContract {
    * @param value the value for the expression: a primitive value or string
    * @param equalityMode what equality test the assertion uses
    */
-  public PrimValue(Object value, @PolyDet EqualityMode equalityMode) {
+  public PrimValue(@Det Object value, @PolyDet EqualityMode equalityMode) {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
@@ -92,6 +92,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
+  @SuppressWarnings("determinism") // underlying value toString is deterministic: value is a String or primitive (see comment on field)
   public String toString() {
     return "randoop.PrimValue, value=" + UtilPlume.escapeJava(value.toString());
   }

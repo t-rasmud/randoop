@@ -60,7 +60,7 @@ class UncheckedCast extends CallableOperation {
       @Det TypeTuple inputTypes,
       @Det Type outputType,
       @Det List<@Det Variable> inputVars,
-      StringBuilder b) {
+      @Det StringBuilder b) {
     b.append("(").append(type.getFqName()).append(")");
     int i = 0;
     String param = getArgumentString(inputVars.get(i));

@@ -42,7 +42,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   private ClassOrInterfaceType classType;
 
   /** The operations collected by the extractor. This is the product of applying the visitor. */
-  private final Collection<@PolyDet TypedOperation> operations = new TreeSet<>();
+  private final Collection<@PolyDet TypedOperation> operations = new @PolyDet TreeSet<>();
 
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
@@ -64,10 +64,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param visibilityPredicate the predicate for test visibility
    * @return the operations in the class that sastisfy the given predicates
    */
-  public static List<TypedOperation> operations(
-      Class<?> clazz,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+  public static @Det List<TypedOperation> operations(
+      @Det Class<?> clazz,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     return operations(
         clazz, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate, null);
   }
@@ -81,9 +81,9 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det ClassOrInterfaceType classType,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     return operations(
         classType,
         reflectionPredicate,
@@ -100,10 +100,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param visibilityPredicate the predicate for test visibility
    * @return the operations in the class that sastisfy the given predicates
    */
-  public static List<TypedOperation> operations(
-      Collection<ClassOrInterfaceType> classTypes,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+  public static @Det List<TypedOperation> operations(
+      @Det Collection<ClassOrInterfaceType> classTypes,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     return operations(
         classTypes,
         reflectionPredicate,
@@ -122,10 +122,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      Class<?> clazz,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det Class<?> clazz,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     return operations(clazz, reflectionPredicate, omitPredicate, visibilityPredicate, null);
   }
 
@@ -139,10 +139,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det ClassOrInterfaceType classType,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     return operations(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
   }
 
@@ -156,10 +156,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      Collection<ClassOrInterfaceType> classTypes,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      @Det Collection<ClassOrInterfaceType> classTypes,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitPredicate,
+      @Det VisibilityPredicate visibilityPredicate) {
     return operations(classTypes, reflectionPredicate, omitPredicate, visibilityPredicate, null);
   }
 
@@ -175,11 +175,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      Class<?> clazz,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      @Det Class<?> clazz,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitMethodsPredicate,
+      @Det VisibilityPredicate visibilityPredicate,
+      @Det SpecificationCollection operationSpecifications) {
     return operations(
         ClassOrInterfaceType.forClass(clazz),
         reflectionPredicate,
@@ -200,11 +200,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      ClassOrInterfaceType classType,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      @Det ClassOrInterfaceType classType,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitMethodsPredicate,
+      @Det VisibilityPredicate visibilityPredicate,
+      @Det SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
     OperationExtractor extractor =
         new OperationExtractor(
@@ -229,14 +229,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
-      Collection<ClassOrInterfaceType> classTypes,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
-      SpecificationCollection operationSpecifications) {
-    Collection<TypedOperation> result = new TreeSet<>();
+      @Det Collection<ClassOrInterfaceType> classTypes,
+      @Det ReflectionPredicate reflectionPredicate,
+      @Det OmitMethodsPredicate omitMethodsPredicate,
+      @Det VisibilityPredicate visibilityPredicate,
+      @Det SpecificationCollection operationSpecifications) {
+    Collection<@Det TypedOperation> result = new TreeSet<>();
     ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
-    for (ClassOrInterfaceType classType : classTypes) {
+    for (@Det ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
           new OperationExtractor(
               classType,
@@ -256,8 +256,8 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classes a list of Class objects
    * @return a list of ClassOrInterfaceType objects
    */
-  public static List<ClassOrInterfaceType> classListToTypeList(List<Class<?>> classes) {
-    List<ClassOrInterfaceType> result = new ArrayList<>();
+  public static List<@PolyDet ClassOrInterfaceType> classListToTypeList(List<Class<?>> classes) {
+    @PolyDet List<@PolyDet ClassOrInterfaceType> result = new @PolyDet ArrayList<>();
     for (Class<?> c : classes) {
       result.add(ClassOrInterfaceType.forClass(c));
     }
@@ -299,6 +299,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param visibilityPredicate the predicate for test visibility
    */
+  @SuppressWarnings("determinism") // valid rule relaxation: aliasing of NO_OMISSION okay because not mutated
   public OperationExtractor(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,

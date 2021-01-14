@@ -9,6 +9,7 @@ import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.OrderNonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 import randoop.main.RandoopBug;
 
 /**
@@ -16,10 +17,11 @@ import randoop.main.RandoopBug;
  * from having to deal with recursive type bounds. All methods that need to evaluate the bound are
  * provided with a substitution for the variable for which this object is a bound.
  */
+@HasQualifierParameter(NonDet.class)
 class LazyParameterBound extends ParameterBound {
 
   /** the type for this bound */
-  private final java.lang.reflect.Type boundType;
+  private final java.lang.reflect. @PolyDet Type boundType;
 
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.

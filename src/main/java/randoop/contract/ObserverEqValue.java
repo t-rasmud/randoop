@@ -54,8 +54,7 @@ public final class ObserverEqValue extends ObjectContract {
    * @param observer the observer method
    * @param value the run-time result of calling the observer: a primitive value or String
    */
-  @SuppressWarnings("determinism:nondeterministic.tostring") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
-  public ObserverEqValue(@PolyDet TypedOperation observer, Object value) {
+  public ObserverEqValue(@PolyDet TypedOperation observer, @Det Object value) {
     assert observer.isMethodCall() || observer.isConstructorCall()
         : "Observer must be MethodCall or ConstructorCall, got " + observer;
     this.observer = observer;
