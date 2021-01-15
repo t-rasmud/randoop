@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import org.checkerframework.checker.determinism.qual.Det;
 import org.checkerframework.checker.determinism.qual.NonDet;
 import org.checkerframework.checker.determinism.qual.PolyDet;
@@ -234,7 +233,7 @@ public class Bloodhound implements TypedOperationSelector {
   private void logMethodWeights(@Det Bloodhound this) {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
-      for (TypedOperation typedOperation : new TreeSet<>(methodWeights.keySet())) {
+      for (TypedOperation typedOperation : methodWeights.keySet()) {
         System.out.println(typedOperation.getName() + ": " + methodWeights.get(typedOperation));
       }
       System.out.println("--------------------------");
