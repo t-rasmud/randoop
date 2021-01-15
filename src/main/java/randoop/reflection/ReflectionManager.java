@@ -204,11 +204,9 @@ public class ReflectionManager {
       @Det ReflectionManager this, @Det ClassVisitor visitor, @Det Class<?> c) {
     // Maps from a name to a set of methods.
     @OrderNonDet Map<String, Set<Method>> overrideMethods = new HashMap<>();
-    @SuppressWarnings(
-        "determinism") // Class<? extends @Det Object? and Class<? extends @NonDet Object> are the
-    // same
-    @Det Class<? extends @Det Object> tmp = c;
-    for (@Det Object obj : tmp.getEnumConstants()) {
+    @SuppressWarnings("determinism") // getEnumConstants is deterministic
+    @Det Object @Det [] tmp = c.getEnumConstants();
+    for (@Det Object obj : tmp) {
       Enum<?> e = (Enum<?>) obj;
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?

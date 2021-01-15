@@ -263,7 +263,7 @@ public class TypeInstantiator {
     // answer question: what type instantiation would allow a call to this operation?
     @Det Set<@Det TypeVariable> typeParameters = new LinkedHashSet<>();
     @Det Substitution substitution = new Substitution();
-    for (Type origParamType : operation.getInputTypes()) {
+    for (@Det Type origParamType : operation.getInputTypes()) {
       Type paramType = origParamType.substitute(substitution);
       if (paramType.isGeneric()) {
         if (paramType.isClassOrInterfaceType()) {

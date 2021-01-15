@@ -111,7 +111,9 @@ public class SequenceCompiler {
       StringJoiner sj = new StringJoiner(Globals.lineSep);
       sj.add("isCompilable => false");
       for (Diagnostic<?> d : diagnostics.getDiagnostics()) {
-        sj.add(d.toString());
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic: the toString for a diagnostic should just contain the diagnostic
+        @Det String tmp = d.toString();
+        sj.add(tmp);
       }
       sj.add(javaSource);
       System.out.println(sj.toString());

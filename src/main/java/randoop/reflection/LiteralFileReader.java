@@ -72,8 +72,6 @@ public class LiteralFileReader {
     RecordProcessor processor =
         new RecordProcessor() {
           @Override
-          @SuppressWarnings(
-              "determinism") // https://github.com/typetools/checker-framework/issues/2433
           public void processRecord(List<String> lines) {
 
             if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {

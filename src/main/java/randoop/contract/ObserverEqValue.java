@@ -89,8 +89,6 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings(
-      "determinism:nondeterministic.tostring") // underlying value toString is deterministic: value is a primitive or String (see comment on field)
   public String toCodeString(@Det ObserverEqValue this) {
     StringBuilder b = new StringBuilder();
 

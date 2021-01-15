@@ -17,7 +17,7 @@ import org.plumelib.util.UtilPlume;
  * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples are
  * primarily used to represent the input types of operations.
  */
-public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet TypeTuple> {
+public class TypeTuple implements Iterable<Type>, Comparable<@PolyDet TypeTuple> {
 
   /** The sequence of types in this type tuple. */
   private final ArrayList<@PolyDet Type> list;
@@ -187,7 +187,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
   }
 
   @Override
-  public Iterator<@PolyDet Type> iterator() {
+  public Iterator<Type> iterator() {
     return new TypeIterator(list.iterator());
   }
 
@@ -207,7 +207,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     return result;
   }
 
-  private static class TypeIterator implements Iterator<@PolyDet Type> {
+  private static class TypeIterator implements Iterator<Type> {
 
     private Iterator<@PolyDet Type> iterator;
 
@@ -221,7 +221,7 @@ public class TypeTuple implements Iterable<@PolyDet Type>, Comparable<@PolyDet T
     }
 
     @Override
-    public @PolyDet("up") Type next() {
+    public @PolyDet("up") Type next(@PolyDet TypeIterator this) {
       return iterator.next();
     }
 

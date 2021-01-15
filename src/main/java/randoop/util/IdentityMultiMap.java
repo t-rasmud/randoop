@@ -15,6 +15,7 @@ public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Obje
   private @PolyDet IdentityHashMap<K, @PolyDet Set<V>> map;
 
   /** Creates an empty multi-map. */
+  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/222
   public IdentityMultiMap() {
     map = new @PolyDet IdentityHashMap<>();
   }

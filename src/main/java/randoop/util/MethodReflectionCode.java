@@ -55,7 +55,6 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        @SuppressWarnings({"determinism", "UnusedVariable"}) // (ignore) error is from code randoop is run on: okay to have nondet toString
         @Det String tmp = Log.toStringAndClass(retval);
         Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, Log.toStringAndClass(retval));
       } catch (OutOfMemoryError e) {

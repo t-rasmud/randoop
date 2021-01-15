@@ -81,8 +81,8 @@ public class KeyToMultiSet<T1 extends @PolyDet Object, T2 extends @PolyDet Objec
 
   // Removes all keys with an empty set
   public void clean(@Det KeyToMultiSet<T1, T2> this) {
-    for (@Det Iterator<Map. @Det Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
-      Map.Entry<T1, MultiSet<T2>> element = iter.next();
+    for (@Det Iterator<Map. @Det Entry<@Det T1, MultiSet<@Det T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+      Map. @Det Entry<@Det T1, MultiSet<@Det T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();
       }

@@ -80,7 +80,7 @@ public class ClassFileConstants {
 
     @Override
     public String toString() {
-      StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
+      StringJoiner sb = new @PolyDet StringJoiner(randoop.Globals.lineSep);
 
       sb.add("START CLASSLITERALS for " + classname);
       for (int x : ints) {
