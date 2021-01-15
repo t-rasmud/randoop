@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.util.Date;
 import java.io.File;
 import java.time.Instant;
 import java.util.Map;
@@ -203,6 +204,29 @@ public class ProgressDisplay extends Thread {
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }
+
+  /**
+   * Displays the current status. Call this if you don't want to wait until the next automatic
+   * display.
+   */
+  public void displayWithTime() {
+    if (noProgressOutput()) return;
+    display(messageWithTime());
+  }
+
+  public String messageWithoutTime() {
+    return "Progress update: steps="
+            + generator.num_steps
+            + ", test inputs generated="
+            + generator.num_sequences_generated
+            + ", failing inputs="
+            + generator.num_failing_sequences;
+  }
+
+  public String messageWithTime() {
+    return messageWithoutTime() + "      (" + new Date() + ")";
+  }
+
 
   /**
    * Displays the current status. Call this if you don't want to wait until the next automatic
