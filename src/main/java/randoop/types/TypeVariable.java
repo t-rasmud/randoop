@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.determinism.qual.Det;
@@ -161,7 +160,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   @Override
   public List<@PolyDet TypeVariable> getTypeParameters() {
-    @PolyDet Set<@PolyDet TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
+    @PolyDet Set<@PolyDet TypeVariable> parameters = new HashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
