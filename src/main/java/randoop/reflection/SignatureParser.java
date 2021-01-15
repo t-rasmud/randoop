@@ -170,7 +170,9 @@ public class SignatureParser {
                 clazz, name, argTypesString, signature));
         b.append(String.format("Here are the declared methods:%n"));
         for (Method m : clazz.getDeclaredMethods()) {
-          b.append(String.format("  %s%n", m));
+          @SuppressWarnings("determinism") // true positive: iterating over Class#getDeclaredMethods
+          @Det String tmp = String.format("  %s%n", m);
+          b.append(tmp);
         }
         throw new SignatureParseException(b.toString(), e);
       }

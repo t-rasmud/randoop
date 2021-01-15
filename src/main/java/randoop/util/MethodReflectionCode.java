@@ -55,7 +55,6 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        @Det String tmp = Log.toStringAndClass(retval);
         Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, Log.toStringAndClass(retval));
       } catch (OutOfMemoryError e) {
         Log.logPrintf(
