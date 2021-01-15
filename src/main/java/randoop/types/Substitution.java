@@ -226,7 +226,8 @@ public class Substitution {
   /** Print the entries of this substitution to standard out on multiple lines. */
   public void print(@Det Substitution this) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
-      System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
+      System.out.println(
+              entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
     }
   }
 
