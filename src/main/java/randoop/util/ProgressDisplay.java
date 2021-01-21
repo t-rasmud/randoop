@@ -209,6 +209,8 @@ public class ProgressDisplay extends Thread {
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
    */
+  // true positive: displays nondeterministic time
+  // Fixed: https://github.com/randoop/randoop/commit/a460df97
   public void displayWithTime() {
     if (noProgressOutput()) return;
     display(messageWithTime());

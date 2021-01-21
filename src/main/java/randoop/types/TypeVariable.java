@@ -159,6 +159,8 @@ public abstract class TypeVariable extends ParameterType {
    * @return this variable
    */
   @Override
+  // true positive: returns OrderNonDet list of parameters
+  // Fixed: https://github.com/randoop/randoop/commit/c975a9f7
   public List<@PolyDet TypeVariable> getTypeParameters() {
     @PolyDet Set<@PolyDet TypeVariable> parameters = new HashSet<>(super.getTypeParameters());
     parameters.add(this);

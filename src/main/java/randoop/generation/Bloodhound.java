@@ -230,6 +230,8 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /** For debugging, print all method weights to standard output. */
+  // true positive: Iteration over OrdernonDet `methodWeights.keySet()`
+  // Fixed: https://github.com/randoop/randoop/commit/f212cc7e
   private void logMethodWeights(@Det Bloodhound this) {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");

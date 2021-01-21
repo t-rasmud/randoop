@@ -79,6 +79,7 @@ public class ClassFileConstants {
     public @PolyDet("upDet") Set<@PolyDet Class<?>> classes = new @PolyDet("upDet") HashSet<>();
 
     @Override
+    // true positive: Creates String from OrderNonDet `classes`
     public String toString() {
       StringJoiner sb = new @PolyDet StringJoiner(randoop.Globals.lineSep);
 

@@ -66,6 +66,7 @@ public class SignatureParser {
    *     class or the method or constructor
    */
   @SuppressWarnings("signature") // parsing
+  // true positive: creates Exception String from OrderNonDet `clazz.getDeclaredMethods()`
   public static AccessibleObject parse(
       @Det String signature, @Det VisibilityPredicate visibility, @Det ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, FailedPredicateException {

@@ -224,6 +224,8 @@ public class Substitution {
   }
 
   /** Print the entries of this substitution to standard out on multiple lines. */
+  // true positive: Prints nondeterministic hashCode()
+  // Fixed: https://github.com/randoop/randoop/commit/661a4970
   public void print(@Det Substitution this) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       System.out.println(
