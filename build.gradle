@@ -98,7 +98,7 @@ allprojects { subproject ->
         // '-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop.*',
         '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log,java.version,sun.boot.class.path,java.home',
         // '-Astubs=NodeList.astub:BodyDeclaration.astub:ClassOrInterfaceDeclaration.astub:TypeDeclaration.astub:MethodDeclaration.astub:MethodCallExpr.astub:BlockStmt.astub:CompilationUnit.astub:VariableDeclarationExpr.astub:UtilPlume.astub:Thread.astub:Runnable.astub:ClassFileTransformer.astub',
-        // '-Astubs=javaparser.astub:utilplume.astub:jdk.astub',
+         '-Astubs=javaparser.astub:utilplume.astub:jdk.astub',
         // '-Astubs=Thread.astub',
         // '-Astubs=GenericVisitor2.astub',
         '-AsuppressWarnings=invalid.type.on.conditional,determinism:throw.type.invalid,determinism:type.anno.before.modifier,determinism:invariant.cast.unsafe,determinism:type.argument.invalid.hasqualparam,determinism:conflicting.qual.param',
