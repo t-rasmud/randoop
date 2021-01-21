@@ -99,7 +99,9 @@ public class ClassFileConstants {
         sb.add("String:\"" + x + "\"");
       }
       for (Class<?> x : classes) {
-        sb.add("Class:" + x);
+        @SuppressWarnings("determinism") // true positive: iterating over HashSet
+        @Det String tmp = "Class:" + x;
+        sb.add(tmp);
       }
       sb.add("%nEND CLASSLITERALS for " + classname);
 

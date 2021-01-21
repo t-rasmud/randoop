@@ -89,7 +89,6 @@ allprojects { subproject ->
 		// '-Aannotations',
 		// '-Anolocations',
 		'-AusePolyDefault',
-		'-Astubs=plume_util.astub',
 		// '-AonlyDefs=randoop.util.StreamRedirectThread$',
         // '-AonlyDefs=randoop.sequence.TupleSequence$',
         // '-AonlyDefs=randoop.reflection.RecordListReader$',

@@ -1,8 +1,0 @@
-import org.checkerframework.checker.determinism.qual.*;
-package org.plumelib.util;
-
-public class UtilPlume {
-    public static @PolyDet("up") String join(@PolyDet Iterable<? extends @PolyDet Object> v, @PolyDet CharSequence delim);
-    public static @PolyDet("up") String join(@PolyDet CharSequence delim, @PolyDet Iterable<? extends @PolyDet Object> v);
-    public static @PolyDet("up") String joinLines(@PolyDet Iterable<? extends @PolyDet Object> v);
-}
