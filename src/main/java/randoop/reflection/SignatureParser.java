@@ -66,7 +66,6 @@ public class SignatureParser {
    *     class or the method or constructor
    */
   @SuppressWarnings("signature") // parsing
-  // true positive: creates Exception String from OrderNonDet `clazz.getDeclaredMethods()`
   public static AccessibleObject parse(
       @Det String signature, @Det VisibilityPredicate visibility, @Det ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, FailedPredicateException {
@@ -171,7 +170,7 @@ public class SignatureParser {
                 clazz, name, argTypesString, signature));
         b.append(String.format("Here are the declared methods:%n"));
         for (Method m : clazz.getDeclaredMethods()) {
-          @SuppressWarnings("determinism") // true positive: iterating over Class#getDeclaredMethods
+          // true positive: iterating over Class#getDeclaredMethods
           @Det String tmp = String.format("  %s%n", m);
           b.append(tmp);
         }
