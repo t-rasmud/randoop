@@ -9,15 +9,15 @@ import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /** A multi-map using key identity rather than equality. */
 @HasQualifierParameter(NonDet.class)
+@SuppressWarnings("determinism") // valid rule relaxation: retreiving a @PolyDet Set value from a @PolyDet("upDet") map gives a @PolyDet("upDet") set, but should be @PolyDet.
 public class IdentityMultiMap<K extends @PolyDet Object, V extends @PolyDet Object> {
 
   /** the underlying map */
-  private @PolyDet IdentityHashMap<K, @PolyDet Set<V>> map;
+  private @PolyDet("upDet") IdentityHashMap<K, @PolyDet Set<V>> map;
 
   /** Creates an empty multi-map. */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/222
   public IdentityMultiMap() {
-    map = new @PolyDet IdentityHashMap<>();
+    map = new @PolyDet("upDet") IdentityHashMap<>();
   }
 
   /**

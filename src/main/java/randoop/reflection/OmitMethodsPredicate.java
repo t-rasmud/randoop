@@ -56,7 +56,6 @@ public class OmitMethodsPredicate {
   private static boolean logOmit = false;
 
   /** An OmitMethodsPredicate that does no omission. */
-  @SuppressWarnings("determinism") // https://github.com/t-rasmud/checker-framework/issues/222
   public static final @Det OmitMethodsPredicate NO_OMISSION =
       new @Det OmitMethodsPredicate(new @Det ArrayList<>());
 
@@ -68,7 +67,7 @@ public class OmitMethodsPredicate {
    *
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
    */
-  public OmitMethodsPredicate(@PolyDet List<@PolyDet Pattern> omitPatterns) {
+  public OmitMethodsPredicate(@PolyDet List<@PolyDet("use") Pattern> omitPatterns) {
     this.omitPatterns = new @PolyDet ArrayList<>(omitPatterns);
   }
 
