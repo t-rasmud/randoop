@@ -136,6 +136,8 @@ public class CoverageTracker {
 
     // For each method under test, copy its branch coverage information from the coverageBuilder to
     // branchCoverageMap.
+    // true positive: Iteration over OrderNonDet `coverageBuilder.getClasses()` and `cc.getMethods()`
+    // Fixed: https://github.com/randoop/randoop/commit/97828027
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         // cc is in internal form because Jacoco uses class names in internal form.

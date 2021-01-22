@@ -110,6 +110,8 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
+  // true positive: Prints nondeterministic `toString()`
+  // Fixed: https://github.com/randoop/randoop/commit/dff32159
   public final Check checkContract(
       @Det ObjectContract this, @Det ExecutableSequence eseq, @Det Object @Det [] values) {
 

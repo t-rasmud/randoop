@@ -372,6 +372,8 @@ public class ReplacementFileReader {
    * @throws ClassNotFoundException if no class corresponding to the replacement is found
    * @see #addReplacementsForClassOrPackage(HashMap, String, String)
    */
+  // true positive: Printing nondeterministic System property `java.class.path`
+  // Fixed: https://github.com/randoop/randoop/commit/330e3c56
   private static void addReplacementsForPackage(
       @OrderNonDet HashMap<MethodSignature, MethodSignature> replacementMap,
       @DotSeparatedIdentifiers @Det String originalPackage,

@@ -33,6 +33,7 @@ public class MinimizerWriter implements CodeWriter {
    * <p>Writes both the original class and the minimized class. Returns the original class.
    */
   @Override
+  // Fixed: https://github.com/randoop/randoop/commit/330e3c56
   public Path writeClassCode(
       @Det MinimizerWriter this,
       @Det String packageName,

@@ -750,6 +750,8 @@ public class OperationModel {
    *     class or the method or constructor
    * @throws SignatureParseException if the signature cannot be parsed
    */
+  // true positive: nondeterministic toString for `VisibilityPredicate`
+  // Fixed: https://github.com/randoop/randoop/commit/f8bdf992
   public static TypedClassOperation signatureToOperation(
       @Det String signature, @Det VisibilityPredicate visibility, @Det ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, FailedPredicateException {
