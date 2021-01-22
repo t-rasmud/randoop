@@ -3,8 +3,6 @@ package randoop.generation;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -113,7 +111,6 @@ public class CoverageTracker {
    * sequences. Coverage data is now collected and the {@code branchCoverageMap} field is updated to
    * contain the updated coverage information of each method branch.
    */
-  @SuppressWarnings("determinism") // (ignore) there is a determinism bug here, currently being fixed
   public void updateBranchCoverageMap() {
     // Collect coverage information. This updates the executionData object and gives us updated
     // coverage information for all of the classes under test.
@@ -139,13 +136,8 @@ public class CoverageTracker {
 
     // For each method under test, copy its branch coverage information from the coverageBuilder to
     // branchCoverageMap.
-    // Sorting is to make diagnostic output deterministic.
-    ArrayList<IClassCoverage> classes = new ArrayList<>(coverageBuilder.getClasses());
-    classes.sort(Comparator.comparing(IClassCoverage::toString));
-    for (final IClassCoverage cc : classes) {
-      ArrayList<IMethodCoverage> methods = new ArrayList<>(cc.getMethods());
-      methods.sort(Comparator.comparing(IMethodCoverage::toString));
-      for (final IMethodCoverage cm : methods) {
+    for (final IClassCoverage cc : coverageBuilder.getClasses()) {
+      for (final IMethodCoverage cm : cc.getMethods()) {
         // cc is in internal form because Jacoco uses class names in internal form.
         @SuppressWarnings("signature") // Jacoco is not annotated
         @InternalForm String ifClassName = cc.getName();
