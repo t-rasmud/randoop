@@ -167,6 +167,7 @@ public class Minimize extends CommandHandler {
    * System class path, a part of the classpath that is used to compile and run the input test
    * suite.
    */
+  // true positive: Printing nondeterministic System property `java.class.path`
   // Fixed: https://github.com/randoop/randoop/commit/330e3c56
   private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
 

@@ -663,6 +663,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
   }
 
+  // true positive: nondeterministic comparison (Found by accident while debugging another error reported by DTC)
+  // Fixed: https://github.com/randoop/randoop/commit/3d6cfb33
   /** Comparator used for sorting by ranking. */
   public static final Comparator<RankedTypeOperation> compareRankedTypeOperation =
           (RankedTypeOperation t, RankedTypeOperation t1) ->

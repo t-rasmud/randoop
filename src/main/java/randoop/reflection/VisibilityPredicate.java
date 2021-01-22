@@ -14,6 +14,8 @@ public abstract class VisibilityPredicate {
   /** A predicate that returns true for non-private elements. */
   public static @Det VisibilityPredicate IS_NOT_PRIVATE = new NotPrivateVisibilityPredicate();
   /** A predicate that always returns true. */
+  // true positive: nondeterministic toString for `VisibilityPredicate`
+  // Fixed: https://github.com/randoop/randoop/commit/f8bdf992
   public static @Det VisibilityPredicate IS_ANY = new AnyVisibilityPredicate();
 
   /**
@@ -101,6 +103,8 @@ public abstract class VisibilityPredicate {
    * PublicVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case that
    * the class/method/constructor/field is public.
    */
+  // true positive: nondeterministic toString for `VisibilityPredicate`
+  // Fixed: https://github.com/randoop/randoop/commit/f8bdf992
   public static class PublicVisibilityPredicate extends VisibilityPredicate {
 
     /**
@@ -167,6 +171,8 @@ public abstract class VisibilityPredicate {
    * in the given package. So, this class does not implement Java's full accessibility rules; those
    * for subclasses and default-visibility are not relevant to this predicate.
    */
+  // true positive: nondeterministic toString for `VisibilityPredicate`
+  // Fixed: https://github.com/randoop/randoop/commit/f8bdf992
   public static class PackageVisibilityPredicate extends VisibilityPredicate {
 
     /** The package name from which to test visibility of elements. */
@@ -249,6 +255,8 @@ public abstract class VisibilityPredicate {
    * NotPrivateVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case
    * that the class/method/constructor/field is not declared to be private.
    */
+  // true positive: nondeterministic toString for `VisibilityPredicate`
+  // Fixed: https://github.com/randoop/randoop/commit/f8bdf992
   public static class NotPrivateVisibilityPredicate extends VisibilityPredicate {
 
     /**
