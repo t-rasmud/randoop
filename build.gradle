@@ -95,7 +95,7 @@ allprojects { subproject ->
         // '-AonlyDefs=randoop.generation.Bloodhound$',
         // '-AonlyDefs=randoop.util.RunnerThread',
         // '-AdefaultHasQualifierParameter=org.checkerframework.checker.determinism.qual.NonDet:randoop.*',
-        '-AinputProperties=user.dir,java.class.path,randoop.log,randoop.selection.log,randoop.operation.history.log,java.version,sun.boot.class.path,java.home',
+        '-AinputProperties=user.dir,randoop.log,randoop.selection.log,randoop.operation.history.log,java.version,sun.boot.class.path,java.home',
         // '-Astubs=NodeList.astub:BodyDeclaration.astub:ClassOrInterfaceDeclaration.astub:TypeDeclaration.astub:MethodDeclaration.astub:MethodCallExpr.astub:BlockStmt.astub:CompilationUnit.astub:VariableDeclarationExpr.astub:UtilPlume.astub:Thread.astub:Runnable.astub:ClassFileTransformer.astub',
          '-Astubs=javaparser.astub:utilplume.astub:jdk.astub',
         // '-Astubs=Thread.astub',
