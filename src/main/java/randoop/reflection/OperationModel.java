@@ -756,7 +756,6 @@ public class OperationModel {
     AccessibleObject accessibleObject;
     accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
     if (accessibleObject == null) {
-      @SuppressWarnings("determinism") // (ignore) there is a determinism bug here, currently being fixed
       FailedPredicateException tmp = new FailedPredicateException(
           String.format(
               "accessibleObject is null for %s, typically due to predicates: %s, %s",

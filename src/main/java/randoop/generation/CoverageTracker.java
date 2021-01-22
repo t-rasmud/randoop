@@ -111,7 +111,6 @@ public class CoverageTracker {
    * sequences. Coverage data is now collected and the {@code branchCoverageMap} field is updated to
    * contain the updated coverage information of each method branch.
    */
-  @SuppressWarnings("determinism") // (ignore) there is a determinism bug here, currently being fixed
   public void updateBranchCoverageMap() {
     // Collect coverage information. This updates the executionData object and gives us updated
     // coverage information for all of the classes under test.

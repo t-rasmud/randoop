@@ -110,7 +110,6 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
    *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
-  @SuppressWarnings("determinism:nondeterministic.tostring") // enum toString is deterministic
   public final Check checkContract(
       @Det ObjectContract this, @Det ExecutableSequence eseq, @Det Object @Det [] values) {
 
