@@ -37,7 +37,7 @@ public class Value {
     Type valueType = Type.forClass(value.getClass());
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
-    @SuppressWarnings("determinism") // underlying value toString is deterministic: value is a primitive, String, or null (see method comment)
+    @SuppressWarnings("determinism") // all implementation toString methods deterministic: value is a primitive, String, or null (see method comment)
     @Det String tmp = value.toString();
     if (valueType.isString()) {
       String escaped = UtilPlume.escapeJava(tmp);

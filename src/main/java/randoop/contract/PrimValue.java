@@ -92,7 +92,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings("determinism") // underlying value toString is deterministic: value is a String or primitive (see comment on field)
+  @SuppressWarnings("determinism") // all implementation toString methods deterministic: value is a String or primitive (see comment on field)
   public String toString() {
     return "randoop.PrimValue, value=" + UtilPlume.escapeJava(value.toString());
   }

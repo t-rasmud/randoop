@@ -122,7 +122,7 @@ public final class Log {
       return listToStringAndClass((List<? extends @PolyDet Object>) v, shallow);
     } else {
       try {
-        @SuppressWarnings("determinism") // underlying value toString is deterministic: v is a value, which implies primitive type or String
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic: v is a value, which implies primitive type or String
         @Det String formatted = UtilPlume.escapeJava(v.toString());
         return String.format("%s [%s]", formatted, v.getClass()); } catch (Exception e) {
         return String.format("exception_when_calling_toString [%s]", v.getClass());
@@ -139,7 +139,7 @@ public final class Log {
    * @return the value's toString and its class
    */
   @SideEffectFree
-  @SuppressWarnings("determinism") // underlying value toString is deterministic: lst contains values, which have @Det toString methods
+  @SuppressWarnings("determinism") // all implementation toString methods deterministic: lst contains values, which have @Det toString methods
   public static String listToStringAndClass(List<? extends @PolyDet Object> lst, boolean shallow) {
     if (lst == null) {
       return "null";
@@ -216,7 +216,7 @@ public final class Log {
 
     if (a instanceof Object[]) {
       try {
-        @SuppressWarnings("determinism") // underlying value toString is deterministic: the array will containd values, which have @Det toString
+        @SuppressWarnings("determinism") // all implementation toString methods deterministic: the array will containd values, which have @Det toString
         @PolyDet String tmp = listToString(Arrays.asList((Object[]) a), false) + theClass;
         return tmp;
       } catch (Exception e) {
